@@ -4,7 +4,7 @@
 #' @param subtype emissions or emissionfactors
 #' @return magpie object of the GFED data in country level
 #' @author Lavinia Baumstark, Abhijeet Mishra
-#' @seealso \code{\link{readGFED}} {\link{extractGFED}}
+#' @seealso \code{\link{readGFED}}
 #' @examples
 #' 
 #' \dontrun{ x <- readGFED(subtype="emissions")

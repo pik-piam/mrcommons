@@ -1,4 +1,4 @@
-
+#' @importFrom quitte inline.data.frame
 
 calcMAgPIEReport <- function(subtype){
   

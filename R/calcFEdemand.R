@@ -3,9 +3,10 @@
 #' Returns the Edge data at the Remind level
 #'
 #' @param subtype Final energy (FE) or Energy service (ES) or Useful/Final Energy items from EDGEv3 corresponding to REMIND FE items (UE_for_Eff,FE_for_Eff)
-#' @importFrom data.table data.table tstrsplit setnames CJ setkey
+#' @importFrom data.table data.table tstrsplit setnames CJ setkey as.data.table := 
 #' @importFrom stats approx
-#' @importFrom dplyr as_tibble tibble last sym between first tribble
+#' @importFrom dplyr as_tibble tibble last sym between first tribble bind_rows filter ungroup
+#' lag arrange
 #' @importFrom tidyr extract complete nesting replace_na crossing unite
 #' @importFrom readr read_delim
 #' @importFrom quitte seq_range interpolate_missing_periods character.data.frame

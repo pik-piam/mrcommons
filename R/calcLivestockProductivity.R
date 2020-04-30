@@ -9,8 +9,7 @@
 #' @return MAgPIE-FEED data for livestock-yields and corresonding weights as a
 #' list of two MAgPIE objects
 #' @author Isabelle Weindl, Lavinia Baumstark, Stephen Wirth
-#' @seealso \code{\link{calcOutput}}, \code{\link{calcRegressionFEED}},
-#' \code{\link{readSource}}
+#' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
 #' @examples
 #' 
 #' \dontrun{ 
