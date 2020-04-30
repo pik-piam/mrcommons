@@ -11,7 +11,7 @@
 
 
 calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="FAO_WHO_UNU1985"){
-  ## to do for better transparency: delete scenario dimension of demo. but a bit complicated due to dimsums in this function and in toolIntake
+  ## to do for better transparency: delete scenario dimension of demo. but a bit complicated due to dimsums in this function and in calcOutput("IntakeBodyweight")
   
   # population dataset by Lutz 2014 and bodyweight dataset by Hic 2015
   demo <- calcOutput("Demography",convert=convert,education=FALSE,aggregate = FALSE)
@@ -77,7 +77,7 @@ calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="F
     getSets(inactivity)=c("region","year","scenario","sex","age")
     getSets(demo)=c("region","year","scenario","sex","age")
     
-    intk_procap <- toolIntake(bodyweight=weight,bodyheight=height,inactivity=inactivity,method=method,tmean=tmean)
+    intk_procap <- calcOutput("IntakeBodyweight",bodyweight=weight,bodyheight=height,inactivity=inactivity,method=method,tmean=tmean,aggregate=FALSE)
   } else if (standardize=="recommendations"){
     if(method!="HHS_USDA"){stop("Method for this standadization type not available")}
     if(convert==FALSE) {
@@ -85,7 +85,7 @@ calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="F
       demo <- demo[commonregions,,]
       inactivity <- inactivity[commonregions,getYears(demo),]
     }
-    intk_procap <- toolIntake(bodyweight=NULL,inactivity=inactivity,method=method)  
+    intk_procap <- calcOutput("IntakeBodyweight",bodyweight=NULL,inactivity=inactivity,method=method,aggregate=FALSE)  
   } else if (standardize=="BMI") {
     height<-calcOutput("BodyHeight",convert=convert,aggregate=FALSE)
     commonregions <- intersect(getRegions(demo),getRegions(inactivity))
@@ -118,7 +118,7 @@ calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="F
     weight[,,"15--19"] = 21*(height[,,"15--19"]/100)^2
     
 
-    intk_procap <- toolIntake(bodyweight=weight,bodyheight=height,inactivity=inactivity,tmean=tmean,method=method)
+    intk_procap <- calcOutput("IntakeBodyweight",bodyweight=weight,bodyheight=height,inactivity=inactivity,tmean=tmean,method=method,aggregate=FALSE)
     
 
   } else {stop("unknown setting for standardize")}

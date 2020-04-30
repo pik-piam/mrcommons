@@ -1,4 +1,4 @@
-#' @title toolIntake
+#' @title calcIntakeBodyweight
 #' @description it computes the food intake pro capita through the bodyweight 
 #' and the activity level. First it computes the basal metabolic rate (bmr) through 
 #' the Schofield equation and then the estimated energy required (eer) depending on 
@@ -9,10 +9,8 @@
 #' @param method method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans
 #' @param inactivity the activity level and the bodyweight computed by the readHic2015 function
 #' @author Eleonora Martinelli
-#' @export
 
-
-toolIntake <- function(bodyweight,bodyheight=NULL,inactivity,tmean=NULL, method=NULL) { 
+calcIntakeBodyweight <- function(bodyweight,bodyheight=NULL,inactivity,tmean=NULL, method=NULL) { 
   schoolkids=c("5--9","10--14","15--19")
   
   if(method=="FAO_WHO_UNU1985"){
