@@ -10,6 +10,7 @@
 #' @return A MAgPIE object containing future trends in first generation bioenergy demand in
 #' Petajoules as magpie object for each country for biodiesel and ethanol.
 #' @author Ewerton Araujo
+#' @importFrom luscale getAggregationMatrix
 #' @examples
 #' 
 #' 

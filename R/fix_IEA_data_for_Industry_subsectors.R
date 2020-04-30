@@ -29,7 +29,7 @@
 #' @importFrom rlang .data
 #' @importFrom readr read_delim cols col_skip col_character
 #' @importFrom quitte cartesian interpolate_missing_periods overwrite
-#'             character.data.frame
+#'             character.data.frame interpolate_missing_periods_
 #' @importFrom dplyr mutate inner_join group_by summarise anti_join left_join
 #'             tbl_df rename
 #' @importFrom assertr not_na
