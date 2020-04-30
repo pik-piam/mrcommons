@@ -1,8 +1,8 @@
-# R moinput package
+# R mrcommons package
 
 ## Purpose and Functionality
 
-The R-library moinput provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND
+MadRat commons data package provides commonly used data sources and calculations.
 
 
 ## Installation
@@ -17,7 +17,7 @@ The additional repository can be made available permanently by adding the line a
 After that the most recent version of the package can be installed using `install.packages`:
 
 ```r 
-install.packages("moinput")
+install.packages("mrcommons")
 ```
 
 Package updates can be installed using `update.packages` (make sure that the additional repository has been added before running that command):
@@ -26,17 +26,9 @@ Package updates can be installed using `update.packages` (make sure that the add
 update.packages()
 ```
 
-## Tutorial
-
-The package comes with a vignette describing the basic functionality of the package and how to use it. You can load it with the following command (the package needs to be installed):
-
-```r 
-vignette("moinput")
-```
-
 ## Travis CI Integration
 
-[![Travis build status](https://travis-ci.com/pik-piam/moinput.svg?branch=master)](https://travis-ci.com/pik-piam/moinput)
+[![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons)
 
 
 ## Questions / Problems
@@ -45,4 +37,4 @@ In case of questions / problems please contact Jan Dietrich <dietrich@pik-potsda
 
 ## Citation
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3699594.svg)](https://doi.org/10.5281/zenodo.3699594)
+citation("mrcommons")
