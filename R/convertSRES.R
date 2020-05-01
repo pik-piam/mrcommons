@@ -28,7 +28,7 @@ convertSRES<-function(x,subtype){
     return(out)
   }
   
-  ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "moinput"),stringsAsFactors = F)
+  ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
   
   if (substring(subtype,nchar(subtype)-2)=="pop"){
     #split according to JAMES PPP

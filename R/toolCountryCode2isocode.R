@@ -3,7 +3,7 @@ toolCountryCode2isocode <- function(code) {
 	#data(moinput)
   if (length(code) > 100) { # transformation into factor for better performance. Applied only to large objects.
     code <- as.factor(code)
-    countrycode2iso <- read.csv2(system.file("extdata","countrycode2iso.csv",package = "moinput"),row.names=NULL)
+    countrycode2iso <- read.csv2(system.file("extdata","countrycode2iso.csv",package = "mrcommons"),row.names=NULL)
     countrycode2iso1<-as.vector(countrycode2iso[,"x"])
     names(countrycode2iso1)<-countrycode2iso[,"X"]
     tmp <- as.character(countrycode2iso1[levels(code)])

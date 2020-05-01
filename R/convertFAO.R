@@ -126,7 +126,7 @@ convertFAO <- function(x,subtype) {
   
   ### in the dataset EmisAgRiceCult certain follow up states of the Soviet Union are missing. Add them with values of 0
   if(subtype=="EmisAgRiceCult") {
-    ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "moinput"),stringsAsFactors = F)
+    ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
     missing <- former[!former %in% getRegions(x)]
     x2 <- new.magpie(cells_and_regions = missing, years=getYears(x), names = getNames(x))
@@ -220,7 +220,7 @@ convertFAO <- function(x,subtype) {
       x <- mbind(x, mne)
     }
     ## Adjust prices of live animal weight to the carcass weith
-    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="moinput")
+    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="mrcommons")
     for(item in mapping$FAO_carcass){
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
       countries <- getRegions(which(!is.na(x[,,item]),arr.ind=TRUE))
@@ -240,7 +240,7 @@ convertFAO <- function(x,subtype) {
     x <- mbind(x, mne)
   }
   ## Adjust prices of live animal weight to the carcass weith
-  mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="moinput")
+  mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="mrcommons")
   for(item in mapping$FAO_carcass){
     litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
     countries <- getRegions(which(!is.na(x[,,item]),arr.ind=TRUE))

@@ -30,7 +30,7 @@ convertIEA <- function(x,subtype) {
     x <- x[setdiff(getRegions(x),as.vector(unique(mapping[[2]]))),,]
     x <- mbind(x,xadd)
     # dealing with extinct countries 
-    ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "moinput"),stringsAsFactors = F)
+    ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     x[is.na(x)] <- 0
     x <- toolISOhistorical(x,mapping=ISOhistorical[!ISOhistorical$toISO=="SCG",])
     # filling missing country data

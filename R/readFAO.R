@@ -137,7 +137,7 @@ readFAO <- function(subtype) {
   }
   
   ## collect the countries that do not exist in the data
-  FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="moinput")
+  FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
   not_incl <- countryandcode$Country[!countryandcode$CountryCode %in% FAOiso_faocode$CountryCode]
   not_incl_coun <- not_incl[!grepl("(Total)",not_incl)]  
   if (length(not_incl_coun) > 0) {
@@ -176,7 +176,7 @@ readFAO <- function(subtype) {
   }
   
   ### use ElementShort or a combination of Element and Unit instead of ElementCode
-  FAOelementShort <- toolGetMapping("FAOelementShort.csv", where="moinput")
+  FAOelementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
   
   elementShort <- FAOelementShort
   
