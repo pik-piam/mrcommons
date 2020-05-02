@@ -11,7 +11,7 @@
 #' @author Michaja Pehl
 #'
 #' @importFrom readr read_csv2
-#' @importFrom dplyr mutate_ select select_ filter_ arrange_ matches
+#' @importFrom dplyr mutate_ select select_ filter_ arrange_ matches bind_rows
 #' @importFrom lazyeval interp
 #' @importFrom quitte add_countrycode_
 #' @importFrom countrycode countrycode

@@ -9,7 +9,7 @@
 #' \dontrun{ 
 #' calcOutput("HistEmissions")
 #' }
-#'  
+#' @importFrom utils read.csv2  
 
 
 calcHistEmissions <- function(subtype="sector"){
