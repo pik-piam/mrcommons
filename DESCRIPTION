@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.0.1
-Date: 2020-05-01
+Version: 0.0.2
+Date: 2020-05-02
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = c("aut","cre")),
              person("Lavinia", "Baumstark", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -69,7 +69,7 @@ License: LGPL-3 | file LICENSE
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.0
-ValidationKey: 18383
+ValidationKey: 36768
 Suggests: 
     knitr,
     testthat,
