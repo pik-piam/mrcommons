@@ -1,5 +1,5 @@
 #' @importFrom ncdf4 nc_open
-#' @importFrom raster raster extent brick subset aggregate projectRaster extent<-
+#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach foreach %:% %dopar%
