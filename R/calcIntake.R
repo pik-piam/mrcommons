@@ -7,6 +7,7 @@
 #' @param standardize if FALSE, no standardization. if "recommendations", the US recommendations are used. if BMI, a normal BMI is used.
 #' @param method method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans
 #' @return  total "healthy" intake kcal/day procap for each countries divided by sex and 8 age groups.
+#' @author Benjamin Leon Bodirsky
 #' @export
 
 
@@ -17,6 +18,8 @@ calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="F
   demo <- calcOutput("Demography",convert=convert,education=FALSE,aggregate = FALSE)
   
   inactivity = calcOutput("PhysicalInactivity",aggregate = FALSE)
+  
+  tmean <- NULL
   
   # calculating calory requirements and adding pregnancy bonus
   if(standardize==FALSE) {
