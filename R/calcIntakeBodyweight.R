@@ -84,6 +84,11 @@ calcIntakeBodyweight <- function(bodyweight,bodyheight=NULL,inactivity,tmean=NUL
     
   } else {stop("unknown method")}
   
-
-  return(requirement)
+  return(list(x=requirement,
+              weight=NULL,
+              unit="kcal per capita per day",
+              description="Intake estimate",
+              min=500,
+              max=5000,
+              isocountries=FALSE)) 
 }
