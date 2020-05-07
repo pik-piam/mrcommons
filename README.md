@@ -1,4 +1,5 @@
 # R mrcommons package
+[![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons)
 
 ## Purpose and Functionality
 
@@ -25,11 +26,6 @@ Package updates can be installed using `update.packages` (make sure that the add
 ```r 
 update.packages()
 ```
-
-## Travis CI Integration
-
-[![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons)
-
 
 ## Questions / Problems
 
