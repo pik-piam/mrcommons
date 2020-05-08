@@ -58,10 +58,24 @@ calcExcretion<-function(cellular=FALSE, attributes="npk"){
 
   
   if(cellular){
-    LivestockProduction <- collapseNames(calcOutput("Production", products="kli", cellular=cellular ,aggregate=FALSE)[,,"dm"])
+    LivestockProduction <- collapseNames(calcOutput("LivestockGridded", aggregate=FALSE)[,,"dm"])
+  
+    ProductionWeights   <- new.magpie(getItems(LivestockProduction, dim=1), 
+                                      getItems(LivestockProduction, dim=2), 
+                                      outer(getNames(Excretion, dim=1),getNames(Excretion, dim=2), paste, sep="."),
+                                      fill = 0)
+    
+    ProductionWeights[,,"grazing"][,,c("livst_rum","livst_milk")]          <- LivestockProduction[,,"ext"][,,c("livst_rum","livst_milk")]
+    ProductionWeights[,,"fuel"][,,c("livst_rum","livst_milk")]             <- LivestockProduction[,,"ext"][,,c("livst_rum","livst_milk")]
+    ProductionWeights[,,"stubble_grazing"][,,c("livst_rum","livst_milk")]  <- LivestockProduction[,,"int"][,,c("livst_rum","livst_milk")]
+    ProductionWeights[,,"confinement"][,,c("livst_rum","livst_milk")]      <- LivestockProduction[,,"int"][,,c("livst_rum","livst_milk")]
+    ProductionWeights[,,c("livst_chick","livst_egg","livst_pig")]          <- dimSums(LivestockProduction[,,c("livst_chick","livst_egg","livst_pig")], dim=3.1)
+    
+    
+    
     mapping <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
     mapping <- mapping[which(mapping$iso%in%getRegions(LivestockProduction)),]
-    Excretion<-toolAggregate(x=Excretion[getRegions(LivestockProduction),,],rel = mapping,weight = LivestockProduction,from = "iso",to="celliso",dim=1)
+    Excretion<-toolAggregate(Excretion[getRegions(LivestockProduction),,], rel = mapping, weight = LivestockProduction, from = "iso", to="celliso", dim=1)
   }
   Excretion                          <- round(Excretion,8)
   

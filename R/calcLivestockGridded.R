@@ -1,6 +1,7 @@
 #' @title calcLivestockGridded
 #' @description Distributes crop, pasture and livestock production in space to 0.5 degree
 #'
+#' @param details switch, if set to TRUE will lead to reporting of extensive and intensive livestock shares 
 #' @return List of magpie objects with results on cellular level, weights on cellular level, unit and description.
 #' @author Kristine Karstens
 #' @examples
@@ -11,7 +12,7 @@
 #' 
 #' @importFrom magpiesets findset
 
-calcLivestockGridded <- function(){
+calcLivestockGridded <- function(details=FALSE){
   
   selectyears <- findset("past")
   
@@ -71,8 +72,20 @@ calcLivestockGridded <- function(){
   PigPoultryProdCell      <- ExtensivePigPoultryCell + IntensivePigPoultryCell
   
   ### Total Livestock
-  MAGProduction           <- mbind(RuminantProdCell, PigPoultryProdCell)
   
+  if(details == FALSE){
+    
+    MAGProduction           <- mbind(RuminantProdCell, PigPoultryProdCell)
+    
+  } else if(details == TRUE){
+    
+    MAGProduction           <- mbind(add_dimension(ExtensiveRuminentCell, dim = 3.1, add = "intensity", nm = "ext"), 
+                                     add_dimension(IntensiveRuminentCell, dim = 3.1, add = "intensity", nm = "int"),
+                                     add_dimension(ExtensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
+                                     add_dimension(IntensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
+  }
+  
+   
   return(list(x=MAGProduction,
               weight=NULL,
               unit="Mt DM/Nr/P/K/WM or PJ energy",

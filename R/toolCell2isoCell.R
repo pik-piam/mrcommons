@@ -8,7 +8,6 @@
 #' @importFrom utils read.csv
 #' @export
 
-
 toolCell2isoCell <- function(x){
 
    CellToCellISO  <- toolMappingFile("cell","CountryToCellMapping.csv",readcsv = TRUE)[1:2]
