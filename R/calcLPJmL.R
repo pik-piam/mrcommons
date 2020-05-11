@@ -83,12 +83,12 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
              sdate           = "day?",
              hdate           = "day?",
              transpiration   = "?",
-             discharge       = "?",
-             runoff          = "?",
+             discharge       = "mio.m3",
+             runoff          = "mio.m3",
              evaporation     = "?",
              mtranspiration  = "?",
-             mdischarge      = "?", # hm3/day from LPJmL; unit transformation in readLPJmL?
-             mrunoff         = "?", # mm/month from LPJmL; unit transformation in readLPJmL?
+             mdischarge      = "mio.m3", 
+             mrunoff         = "mio.m3", 
              mevaporation    = "?",
              vegc_grass      = "tC/ha",
              litc_grass      = "tC/ha",
