@@ -80,7 +80,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     years      <- seq(start_year,2017,1)
   }
 
-  unit_transform <-0.01               # Transformation factor gC/m^2 --> t/ha
+  unit_transform <- 0.01               # Transformation factor gC/m^2 --> t/ha
 
   if(subtype%in%c("soilc","litc","vegc","alitfallc","alitterfallc","alitfalln","vegc_grass","litc_grass","soilc_grass")){
 
@@ -157,9 +157,43 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       averaging_range = avg_range,
       monthly=TRUE,
       soilcells=TRUE)
-
-    x <- collapseNames(as.magpie(x))
-    x <- x*unit_transform
+    
+    # unit transformation
+    if (grepl("transpiration", subtype)) { 
+      # CHECK WHICH UNIT TRANSFORMATION IS NECESSARY
+      x <- x*unit_transform
+    }
+    
+    else if (grepl("discharge", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
+      # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
+      # Transform units of discharge: mio. m^3/day -> mio. m^3/month
+      month_days <- c(31,28,31,30,31,30,31,31,30,31,30,31)
+      names(month_days) <- dimnames(x)[[3]]
+      for(month in names(month_days)) {
+        x[,,month] <- x[,,month]*month_days[month]
+      }
+    }
+    
+    else if (grepl("runoff", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
+    # In LPJmL: (monthly) runoff given in LPJmL: mm/month
+      # Get cellular coordinate information and calculate cell area
+      cb <- as.data.frame(magpie_coord)
+      cb$xlon    <- (cb$lon-1)/2 - 180
+      cb$ylat    <- (cb$lat-1)/2 - 90
+      cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$ylat/180*pi)
+      # Transform units: liter/m^2 -> liter
+      x <- x*cell_area
+      # Transform units: liter -> mio. m^3
+      x <- x/(1000*1000000)
+    }
+    
+    else if (grepl("evaporation", subtype)) { 
+      # CHECK WHICH UNIT TRANSFORMATION IS NECESSARY
+      x <- x*unit_transform
+    }
+    
+    # Transform to MAgPIE object
+    x <- collapseNames(as.magpie(x)) #### NOTE TO KRISTINE: I shifted this here because of the calculation that is done in array format above. It would work after unit_transform, too, right?
     
     if(grepl("layer", subtype)){
       subtype     <- gsub("_", "\\.", subtype)       # Expand dimension to layers
@@ -170,7 +204,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       getSets(x)[4:5]  <- c("data" , "month")
     }
     
-    # annual value (total over all month)
+    # Annual value (total over all month)
     if(!grepl("^m", subtype)){
       x <- dimSums(x, dim="month")  
     }
@@ -218,7 +252,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       # 1 liter/m^2   = 10 m^3/ha
       # -> mm/yr * 10 = m^3/ha
     irrig_transform <- 10
-    x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per yr
+    x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per year
     
   } else {stop(paste0("subtype ",subtype," is not existing"))}
 
