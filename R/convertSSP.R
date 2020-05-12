@@ -94,7 +94,7 @@ convertSSP <- function(x,subtype) {
     x[is.na(x)] <- 0    # substitute NA by 0
   
     #--------------------------------------------------------------------------------
-    # check whether the country list agrees with the list of countries in the moinput library
+    # check whether the country list agrees with the list of countries in the madrat library
     # remove unrequired data, add missing data 
     x <- toolCountryFill(x, fill=0)
    

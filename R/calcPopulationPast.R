@@ -1,7 +1,7 @@
 #' calcPopulationPast
 #' 
 #' Calculates a time series of Population. Different sources are available and
-#' can be selected in the moinput config(getConfig()$calc$PopulationPast):
+#' can be selected in the madrat config(getConfig()$calc$PopulationPast):
 #' \itemize{ 
 #'   \item \code{WDI}: Source: Worldbank. Taiwan was estimated as the
 #'         difference between all countries and the global total.

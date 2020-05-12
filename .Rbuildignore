@@ -4,3 +4,5 @@
 carbon_stored.*
 ^\.git$
 ^\.travis.yml
+^codemeta\.json$
+^.*\.zenodo.json$

@@ -2,7 +2,7 @@
 #' @description calculates the soil nitrogen uptake efficiency. This is the nitrogen taken up from the soil (N in crop biomass minus biological fixation minus seed N) divided by the soil N inputs (fertilizer, manure etc). For the future, SNuPE scenarios are added.
 #' @param max_snupe Maximum realistic SNUPE. All values above will be limited to this value. Only holds for past values; future scneario values can exceed this number.
 #' @param cellular disaggregated to 0.5 degree grid
-#' @param rev revision number of moinput run
+#' @param rev revision number of madrat run
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso

@@ -1,7 +1,7 @@
 #' calcPopulation
 #' 
 #' Merges time series of population for the past and present. Different sources
-#' are available and can be selected in the moinput config. See
+#' are available and can be selected in the madrat config. See
 #' \code{\link{calcPopulationPast}} for past datasets, and
 #' \code{\link{calcPopulationFuture}} for future datasets. The time series are
 #' merged via the growth rates. The first year of the future scenarios

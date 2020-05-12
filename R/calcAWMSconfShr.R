@@ -1,6 +1,6 @@
 #' @title calcAWMSconfShr
 #' @description calculates the share of manure managed in different animal waste management systems in confinements. Starting with IPCC 2005 values, turning into scenarios for the future.
-#' @param rev revision number of moinput run
+#' @param rev revision number of madrat run
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky. Modifications by Edna J. Molina Bacca
 #' @seealso

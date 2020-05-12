@@ -72,7 +72,7 @@ convertIIASApop <- function(x) {
   x <- mbind(x,TWN)      # FIXME woher die Daten für 2010??? historische Quelle
   #--------------------------------------------------------------------------------
   
-  #check whether the country list agrees with the list of countries in the moinput library
+  #check whether the country list agrees with the list of countries in the madrat library
   #remove unrequired data, add missing data 
   x <- toolCountryFill(x,fill=0)
   return(x)

@@ -1,7 +1,7 @@
 #' calcPopulationFuture
 #' 
 #' Calculates a time series of Population. Different sources are available and
-#' can be selected in the moinput config (getConfig()$calc$PopulationPast):
+#' can be selected in the madrat config (getConfig()$calc$PopulationPast):
 #' \itemize{ \item \code{"IIASApop"}: Source: IIASA? Lavinia?  \item
 #' \code{"IIASApop"}: Source: Lavinia? }
 #' 

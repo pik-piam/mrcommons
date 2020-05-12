@@ -1,6 +1,5 @@
 toolCountryCode2isocode <- function(code) {
-    code <- as.character(code)
-	#data(moinput)
+  code <- as.character(code)
   if (length(code) > 100) { # transformation into factor for better performance. Applied only to large objects.
     code <- as.factor(code)
     countrycode2iso <- read.csv2(system.file("extdata","countrycode2iso.csv",package = "mrcommons"),row.names=NULL)

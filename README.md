@@ -1,9 +1,11 @@
-# R mrcommons package
-[![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons)
+# MadRat commons Input Data Library
+#### R package **mrcommons**, version **0.2.2**
+ 
 
 ## Purpose and Functionality
 
-MadRat commons data package provides commonly used data sources and calculations.
+Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND
+    of model input data.
 
 
 ## Installation
@@ -29,8 +31,25 @@ update.packages()
 
 ## Questions / Problems
 
-In case of questions / problems please contact Jan Dietrich <dietrich@pik-potsdam.de>.
+In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pik-potsdam.de>.
 
 ## Citation
 
-citation("mrcommons")
+To cite package **mrcommons** in publications use:
+
+Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U,
+Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Beier F, Oeser J, Pehl M, Leip D,
+Molina Bacca E, Martinelli E, Schreyer F, Dietrich J (2020). _mrcommons: MadRat commons Input Data Library_. R
+package version 0.2.2.
+
+A BibTeX entry for LaTeX users is
+
+ ```latex
+@Manual{,
+  title = {mrcommons: MadRat commons Input Data Library},
+  author = {Benjamin Leon Bodirsky and Kristine Karstens and Lavinia Baumstark and Isabelle Weindl and Xiaoxi Wang and Abhijeet Mishra and Stephen Wirth and Mishko Stevanovic and Nele Steinmetz and Ulrich Kreidenweis and Renato Rodrigues and Roman Popov and Florian Humpenoeder and Anastasis Giannousakis and Antoine Levesque and David Klein and Ewerton Araujo and Felicitas Beier and Julian Oeser and Michaja Pehl and Debbora Leip and Edna {Molina Bacca} and Eleonora Martinelli and Felix Schreyer and Jan Philipp Dietrich},
+  year = {2020},
+  note = {R package version 0.2.2},
+}
+```
+

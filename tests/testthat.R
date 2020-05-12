@@ -1,4 +1,4 @@
 library(testthat)
-library(moinput)
+library(mrcommons)
 
-test_check("moinput")
+test_check("mrcommons")

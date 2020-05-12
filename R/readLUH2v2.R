@@ -122,9 +122,6 @@ readLUH2v2 <- function(subtype) {
     data_states <- c("c3ann","c3per","c4ann","c4per","c3nfx","c3ann")
     data <- matrix(data=c(data_man,data_states),ncol=2)
 
-    #get coords
-    data("magpie_coord", envir=environment(), package = "moinput")
-
     #land area
     carea <- raster("staticData_quarterdeg.nc",varname="carea")
     extent(carea) <- c(-180,180,-90,90)
