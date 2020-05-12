@@ -61,6 +61,8 @@ Imports:
   stringr,
   tidyr
 License: LGPL-3 | file LICENSE
+URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
+BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.0
