@@ -58,7 +58,7 @@ calcExcretion<-function(cellular=FALSE, attributes="npk"){
 
   
   if(cellular){
-    LivestockProduction <- collapseNames(calcOutput("LivestockGridded", aggregate=FALSE)[,,"dm"])
+    LivestockProduction <- collapseNames(calcOutput("LivestockGridded", details=TRUE, aggregate=FALSE)[,,"dm"])
   
     ProductionWeights   <- new.magpie(getItems(LivestockProduction, dim=1), 
                                       getItems(LivestockProduction, dim=2), 

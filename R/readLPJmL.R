@@ -160,11 +160,11 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     
     # unit transformation
     if (grepl("transpiration", subtype)) { 
-      # CHECK WHICH UNIT TRANSFORMATION IS NECESSARY
-      x <- x*unit_transform
-    }
-    
-    else if (grepl("discharge", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
+      # Transform units: liter/m^2 -> m^3/ha
+      transp_unit_transform <- 10
+      x <- x*transp_unit_transform
+      
+    } else if (grepl("discharge", subtype)) {
       # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
       # Transform units of discharge: mio. m^3/day -> mio. m^3/month
       month_days <- c(31,28,31,30,31,30,31,31,30,31,30,31)
@@ -172,9 +172,8 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       for(month in names(month_days)) {
         x[,,month] <- x[,,month]*month_days[month]
       }
-    }
-    
-    else if (grepl("runoff", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
+      
+    } else if (grepl("runoff", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
     # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       # Get cellular coordinate information and calculate cell area
       cb <- as.data.frame(magpie_coord)
@@ -185,15 +184,15 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       x <- x*cell_area
       # Transform units: liter -> mio. m^3
       x <- x/(1000*1000000)
-    }
-    
-    else if (grepl("evaporation", subtype)) { 
-      # CHECK WHICH UNIT TRANSFORMATION IS NECESSARY
-      x <- x*unit_transform
+      
+    } else if (grepl("evaporation", subtype)) { 
+      # Transform units: liter/m^2 -> m^3/ha
+      evap_unit_transform <- 10
+      x <- x*evap_unit_transform
     }
     
     # Transform to MAgPIE object
-    x <- collapseNames(as.magpie(x)) #### NOTE TO KRISTINE: I shifted this here because of the calculation that is done in array format above. It would work after unit_transform, too, right?
+    x <- collapseNames(as.magpie(x)) 
     
     if(grepl("layer", subtype)){
       subtype     <- gsub("_", "\\.", subtype)       # Expand dimension to layers
