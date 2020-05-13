@@ -75,7 +75,7 @@ calcExcretion<-function(cellular=FALSE, attributes="npk"){
     
     mapping <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
     mapping <- mapping[which(mapping$iso%in%getRegions(LivestockProduction)),]
-    Excretion<-toolAggregate(Excretion[getRegions(LivestockProduction),,], rel = mapping, weight = LivestockProduction, from = "iso", to="celliso", dim=1)
+    Excretion<-toolAggregate(Excretion[getRegions(LivestockProduction),,], rel = mapping, weight = ProductionWeights, from = "iso", to="celliso", dim=1)
   }
   Excretion                          <- round(Excretion,8)
   
