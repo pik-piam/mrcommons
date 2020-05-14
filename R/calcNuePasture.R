@@ -28,7 +28,8 @@ calcNuePasture<-function(cellular=FALSE){
   NUE<-outputs/inputs
   
   #future
-  data<-toolNUEscenarios(x=NUE,weight=inputs)
+  zhang <- readSource("Zhang2015")
+  data<-toolNUEscenarios(x=NUE,weight=inputs,zhang=zhang)
   weight=data$weight
   out=data$x
   

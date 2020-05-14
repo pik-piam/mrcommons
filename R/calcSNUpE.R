@@ -41,7 +41,8 @@ calcSNUpE<-function(max_snupe=0.85,cellular=FALSE,rev=0.1){
   SNUpE[SNUpE<0]=0
   #future
   
-  data<-toolNUEscenarios(x=SNUpE,weight=inputs, rev=rev)
+  zhang <- readSource("Zhang2015")
+  data<-toolNUEscenarios(x=SNUpE,weight=inputs, rev=rev, zhang=zhang)
   
   weight=data$weight
   out=data$x

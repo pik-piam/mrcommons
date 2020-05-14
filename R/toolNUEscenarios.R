@@ -1,4 +1,4 @@
-toolNUEscenarios<-function(x,weight,rev=0.1){
+toolNUEscenarios<-function(x,weight,rev=0.1,zhang=NULL){
   x<-setNames(toolHoldConstantBeyondEnd(x),"constant")
   weight<-setNames(toolHoldConstantBeyondEnd(weight),"constant")
   
@@ -23,6 +23,17 @@ toolNUEscenarios<-function(x,weight,rev=0.1){
   
   if (rev>=4.33) {
     x<-scenariosetting(x,0.85,0.85,"y2010")
+  } else if (rev >= 4.47){
+    scenarioname="neff_ZhangBy2030_start2010"
+    x<-add_columns(x,addnm = scenarioname,dim = 3.1)
+    x[,,scenarioname]=convergence(origin = x[,,"constant"],aim = zhang,start_year = "y2010", end_year = "y2030",type = "linear")
+    x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = 0.8,start_year = "y2030",end_year = "y2070",type = "linear")
+    x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = 0.8,start_year = "y2070",end_year = "y2100",type = "linear")
+    
+    scenarioname="neff_ZhangBy2050_start2010"
+    x<-add_columns(x,addnm = scenarioname,dim = 3.1)
+    x[,,scenarioname]=convergence(origin = x[,,"constant"],aim = zhang,start_year = "y2010", end_year = "y2050",type = "linear")
+    x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = 0.8,start_year = "y2050",end_year = "y2100",type = "linear")
   }
   
   weight2<-x
