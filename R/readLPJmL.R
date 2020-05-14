@@ -170,7 +170,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       month_days <- c(31,28,31,30,31,30,31,31,30,31,30,31)
       names(month_days) <- dimnames(x)[[3]]
       for(month in names(month_days)) {
-        x[,,month] <- x[,,month]*month_days[month]
+        x[,,month,] <- x[,,month,]*month_days[month]
       }
       
     } else if (grepl("runoff", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
