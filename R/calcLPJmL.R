@@ -59,6 +59,7 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     } else if(time=="spline"){
       
       LPJmL_input <- toolTimeSpline(LPJmL_input, dof = dof)
+      if("y2099" %in%getYears(LPJmL_input)) LPJmL_input <- toolFillYears(LPJmL_input, c(getYears(LPJmL_input, as.integer=TRUE)[1]:2100))
       
     } else if(time!="raw"){
       
@@ -101,7 +102,7 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     x=LPJmL_input,
     weight=NULL,
     unit=unit, 
-    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, "and", climatetype, "."),
+    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, "."),
     isocountries=FALSE))
 }
   
