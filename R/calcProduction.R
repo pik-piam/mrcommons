@@ -76,17 +76,18 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
         
         if(any(noMAGCroparea!=0)){
           
-          # distribute equally over all non-irrigated cells first
+          # distribute total cropland weighted over all non-irrigated cells first
           MAGProduction[,,"rainfed"]    <- MAGProduction[,,"rainfed"]*(1-noMAGCroparea[,,"rainfed"]) + 
-            magpie_expand(noMAGCroparea[,,"rainfed"] * (toolIso2CellCountries(FAOProduction)-isoMAGProduction), MAGProduction[,,"rainfed"])/
-            new.magpie(names(getCPR(MAGProduction)),fill=getCPR(MAGProduction))
+                                           toolAggregate(noMAGCroparea[,,"rainfed"] * (toolIso2CellCountries(FAOProduction)-isoMAGProduction),
+                                                         rel=CountryToCell, weight=dimSums(MAGCroparea[,,"rainfed"], dim=3), from = "iso", to = "celliso")
+          
           
           isoMAGProduction  <- toolAggregate(dimSums(MAGProduction, dim=3.2), rel = CountryToCell, from = "celliso", to = "iso")
           
-          
+          # distribute total cropland weighted over irrigated cells
           MAGProduction[,,"irrigated"]   <- MAGProduction[,,"irrigated"]*(1-noMAGCroparea[,,"irrigated"]) + 
-            magpie_expand(noMAGCroparea[,,"irrigated"] * (toolIso2CellCountries(FAOProduction)-isoMAGProduction), MAGProduction[,,"irrigated"])/
-            new.magpie(names(getCPR(MAGProduction)),fill=getCPR(MAGProduction))
+            toolAggregate(noMAGCroparea[,,"irrigated"] * (toolIso2CellCountries(FAOProduction)-isoMAGProduction),
+                          rel=CountryToCell, weight=dimSums(MAGCroparea[,,"irrigated"], dim=3), from = "iso", to = "celliso")
         }
         
         # correct items with no yields
@@ -168,13 +169,13 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
         # correct items with no area
         isoPastureArea   <- noPastureArea <- toolAggregate(PastureArea, rel = CountryToCell, from = "celliso", to = "iso")
         noPastureArea[]  <- (isoPastureArea==0)*isoMismatch
-  
+        
         if(any(noPastureArea!=0)){
           
           # distribute equally over all cells
           MAGProduction     <- MAGProduction*(1-noPastureArea) + 
-                               magpie_expand(noPastureArea * toolIso2CellCountries(FAOProduction), MAGProduction)/
-                                 new.magpie(names(getCPR(MAGProduction)),fill=getCPR(MAGProduction))
+            magpie_expand(noPastureArea * toolIso2CellCountries(FAOProduction), MAGProduction)/
+            new.magpie(names(getCPR(MAGProduction)),fill=getCPR(MAGProduction))
           
         }
         
@@ -186,7 +187,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
           
           # distribute corresponding to pasture area share
           MAGProduction     <- MAGProduction*(1-noPastureYields) +
-                               noPastureYields*toolAggregate(toolIso2CellCountries(FAOProduction), rel= CountryToCell, weight=PastureArea, from="iso", to="celliso")
+            noPastureYields*toolAggregate(toolIso2CellCountries(FAOProduction), rel= CountryToCell, weight=PastureArea, from="iso", to="celliso")
         }
       }
       
