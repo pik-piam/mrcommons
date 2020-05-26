@@ -27,8 +27,6 @@
 calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, time="raw", averaging_range=NULL, dof=NULL, 
                       harmonize_baseline=FALSE, ref_year="y2015", limited=TRUE, hard_cut=FALSE, selectyears="all"){
 
-  
-  
   if(harmonize_baseline!=FALSE){
     
     if(harmonize_baseline==climatetype) stop("Climatetype and baseline are identical.")
@@ -50,6 +48,12 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     if(!is.null(subdata)){
       if(!all(subdata %in% getNames(LPJmL_input))) stop(paste0("Subdata items '", subdata,"' are not part of selected LPJmL subtype!"))
       LPJmL_input <- LPJmL_input[,,subdata]
+    }
+    
+    if("y2099" %in% (y <- getYears(LPJmL_input))){
+      LPJmL_input <- LPJmL_input[,tail(y, length(1985:2099)),] #crop GCM data to shorter time periods
+    } else {
+      LPJmL_input <- LPJmL_input[,1935:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
     }
     
     if(time=="average"){
