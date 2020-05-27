@@ -23,7 +23,7 @@ toolHarmonize2Baseline <- function(x, base, ref_year, limited=TRUE, hard_cut=FAL
   if(!ref_year%in%intersect(getYears(x),getYears(base))) stop("Overlapping time period of baseline and data is not including the reference year!")
   
   # set years
-  years       <- union(getYears(x), getYears(base))
+  years       <- sort(union(getYears(base),getYears(x)))
   till_ref    <- getYears(base, as.integer=TRUE)
   till_ref    <- paste0("y",till_ref[till_ref <= as.numeric(substring(ref_year,2))])
   after_ref   <- getYears(x, as.integer=TRUE)
