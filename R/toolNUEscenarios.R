@@ -23,7 +23,8 @@ toolNUEscenarios<-function(x,weight,rev=0.1,zhang=NULL){
   
   if (rev>=4.33) {
     x<-scenariosetting(x,0.85,0.85,"y2010")
-  } else if (rev >= 4.47){
+  } 
+  if (rev >= 4.47){
     scenarioname="neff_ZhangBy2030_start2010"
     x<-add_columns(x,addnm = scenarioname,dim = 3.1)
     x[,,scenarioname]=convergence(origin = x[,,"constant"],aim = zhang,start_year = "y2010", end_year = "y2030",type = "linear")
