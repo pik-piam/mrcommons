@@ -14,7 +14,7 @@
 
 convertPBL_MACC_2019 <- function(x,subtype) {
   
-  map <- toolMappingFile("regional","regionmapping_IMAGE_PBL_MACC_2019.csv")
+  map <- toolMappingFile("regional","regionmapping_IMAGE_PBL_MACC_2019.csv",readcsv = TRUE)
   
   if(subtype=="baseline_sources") {
     # convert back to CH4 and N2O using AR4 GWP factors
@@ -37,7 +37,7 @@ convertPBL_MACC_2019 <- function(x,subtype) {
     LU_MagPie <- calcOutput("MacBaseLandUse",subtype="MAgPIE",aggregate=F)[,2015,]
     emiMac <- calcOutput("EmiMac",aggregate=F)
     FGases <- readSource("IMAGE")[,2010,]
-    w <- toolCountryFill(new.magpie(cells_and_regions = NULL, years = NULL, names = getNames(x)))
+    w <- new.magpie(cells_and_regions = map$CountryCode, years = NULL, names = getNames(x),sets = names(dimnames(x)))
     w[,,"ch4coal"]        <- CEDS_CH4[,,"1B1_Fugitive-solid-fuels"]
     w[,,"ch4oil"]         <- CEDS_CH4[,,"1B2_Fugitive-petr-and-gas"]
     w[,,"ch4gas"]         <- CEDS_CH4[,,"1B2_Fugitive-petr-and-gas"]
@@ -56,11 +56,11 @@ convertPBL_MACC_2019 <- function(x,subtype) {
     # w[,,"PFC"]                             <- dimReduce(FGases[,,"SSP2-26-SPA0-V13.Emissions|PFC.kt CF4-equiv/yr"])
     # w[,,"SF6"]                             <- dimReduce(FGases[,,"SSP2-26-SPA0-V13.Emissions|SF6.kt SF6/yr"])
     
-    y <- toolAggregate(x,map,from = "RegionCode",to = "CountryCode",partrel = T,weight = w)
+    y <- toolAggregate(x,map,from = "RegionCode",to = "CountryCode",weight = w,dim = 1,wdim = 1)
     y <- toolCountryFill(y,fill = 0)
 
    } else {
-     y <- toolAggregate(x,map,from = "RegionCode",to = "CountryCode",partrel = T)
+     y <- toolAggregate(x,map,from = "RegionCode",to = "CountryCode")
      y <- toolCountryFill(y,fill = 0)
   }
 
