@@ -64,7 +64,11 @@ calcMACCsN2O <- function(sector="all",source="ImageMacc") {
     N2O <- NULL
     for (subtype in c("n2otrans","n2oadac","n2onitac","n2ofert","n2oanwst","n2owaste")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      x <- x[,intersect(wanted_years,getYears(x,as.integer = T)),]
+      existing_years <- getYears(x,as.integer = T)
+      tmp <- setdiff(wanted_years,existing_years)
+      missing_years <- tmp[tmp<existing_years[1]]
+      x <- x[,intersect(wanted_years,existing_years),]
+      x <- toolFillYears(x,c(missing_years,getYears(x,as.integer = T)))
       y <- time_interpolate(x, wanted_years, integrate_interpolated_years=TRUE, extrapolation_type="linear")
       names(dimnames(y)) <- names(dimnames(x))
       N2O <- mbind(N2O,y)

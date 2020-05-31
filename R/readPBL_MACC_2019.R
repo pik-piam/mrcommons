@@ -18,7 +18,7 @@ readPBL_MACC_2019 <- function(subtype) {
     x <- melt(x, id.vars = c(1,2),variable.name = "region")
     names(x) <- c("year","steps","region","value")
     x$type <- sheet
-    x$step <- x$steps/20+1
+    x$steps <- x$steps/20+1
     x$year <- factor(x$year)
     x <- x[,c("region","year","type","steps","value")]
     x <- as.magpie(x,spatial=1,temporal=2,tidy=TRUE)

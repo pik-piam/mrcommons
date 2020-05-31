@@ -72,7 +72,11 @@ calcMACCsCH4 <- function(sector="all",source="ImageMacc") {
     CH4 <- NULL
     for (subtype in c("ch4coal","ch4oil","ch4gas","ch4wstl","ch4wsts","ch4rice","ch4animals","ch4anmlwst")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      x <- x[,intersect(wanted_years,getYears(x,as.integer = T)),]
+      existing_years <- getYears(x,as.integer = T)
+      tmp <- setdiff(wanted_years,existing_years)
+      missing_years <- tmp[tmp<existing_years[1]]
+      x <- x[,intersect(wanted_years,existing_years),]
+      x <- toolFillYears(x,c(missing_years,getYears(x,as.integer = T)))
       y <- time_interpolate(x, wanted_years, integrate_interpolated_years=TRUE, extrapolation_type="linear")
       names(dimnames(y)) <- names(dimnames(x))
       CH4 <- mbind(CH4,y)

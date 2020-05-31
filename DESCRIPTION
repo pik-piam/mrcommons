@@ -1,7 +1,7 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.6.8
+Version: 0.6.9
 Date: 2020-05-31
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -66,7 +66,7 @@ BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.0
-ValidationKey: 1252084
+ValidationKey: 1270497
 Suggests: 
     knitr,
     testthat,
