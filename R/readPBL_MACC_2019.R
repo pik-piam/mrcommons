@@ -7,27 +7,25 @@
 #' @return magpie object of the PBL_MACC_2019 data
 #' @author Florian Humpenoeder
 #' @seealso \code{\link{readSource}}
-#' @importFrom data.table as.data.table ':='
+#' @importFrom data.table as.data.table
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
 readPBL_MACC_2019 <- function(subtype) {
   
   readMMC1 <- function(sheet) {
-    type <- steps <- NULL
     x <- as.data.table(read_xlsx("mmc1.xlsx",sheet = sheet))
     x <- melt(x, id.vars = c(1,2),variable.name = "region")
     names(x) <- c("year","steps","region","value")
-    x[,type:=sheet]
-    x <- x[,c("region","year","type","steps","value")]
-    x[,steps:=steps/20+1]
+    x$type <- sheet
+    x$step <- x$steps/20+1
     x$year <- factor(x$year)
-    x <- dcast(x, region + year + type ~ steps, value.var="value",fill = NA)
-    x <- as.magpie(x,spatial=1,temporal=2)
+    x <- x[,c("region","year","type","steps","value")]
+    x <- as.magpie(x,spatial=1,temporal=2,tidy=TRUE)
     names(dimnames(x))[3] <- "type.steps"
     return(x)
   }
-
+  
   readMMC2 <- function(sheet) {
     x <- as.data.table(read_xlsx("mmc2.xlsx",sheet = sheet))
     #Add code for reading mmc2 here
