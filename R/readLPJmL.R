@@ -14,7 +14,6 @@
 #' @import madrat
 #' @import magclass
 #' @importFrom lpjclass readLPJ
-#' @importFrom lucode path
 
 readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
@@ -66,9 +65,9 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
   file_name <- toolSubtypeSelect(subtype,files)
 
-  if(tmp <- file.exists(path(folder,"tmp.out"))){
+  if(tmp <- file.exists(file.path(folder,"tmp.out"))){
   
-    tmp        <- readLines(path(folder,"tmp.out"))
+    tmp        <- readLines(file.path(folder,"tmp.out"))
     years      <- as.numeric(unlist(regmatches(tmp, gregexpr("\\d{4}", tmp))))
     start_year <- years[1]
     years      <- seq(years[1],years[2],1)
@@ -90,7 +89,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range=avg_range,
@@ -109,7 +108,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range=avg_range,
@@ -129,7 +128,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range=avg_range,
@@ -151,7 +150,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
     # monthly values
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range = avg_range,
@@ -216,7 +215,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range=avg_range,
@@ -236,7 +235,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                    # Number of years used for averaging
     
     x <- readLPJ(
-      file_name=path(folder,file_name),
+      file_name=file.path(folder,file_name),
       wyears=years,
       syear=start_year,
       averaging_range=avg_range,
