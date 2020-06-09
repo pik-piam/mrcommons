@@ -160,6 +160,8 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
   return(list(x=out,
               weight=NULL,
               unit="Mha",
+              min=0,
+              max = 14900, ### global land area
               description="Land use initialisation data for different land pools",
               isocountries=!cellular)
   )
