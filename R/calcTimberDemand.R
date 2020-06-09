@@ -134,7 +134,7 @@ calcTimberDemand <- function(){
               weight=NULL,
               min=0,
               unit="mio m3",
-              description="Calculates the timber demand pattern based on historical FAO data"))
+              description="Calculates the timber demand based on historical FAO data"))
   
   }
   

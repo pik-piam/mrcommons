@@ -84,7 +84,10 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
       
       # Correct other land as diff of FAO forest area and LUH forest area
       FAOother            <- other + forest - FAOforest[,,"forest"]
-      
+      cat("Reallocation to other land results in extremely low negative values for other land in", where(FAOother<0)$true$regions,"with a range of", range(FAOother[FAOother<0]))
+      cat("\nSuch values are replaced with 0.")
+      FAOother[FAOother<0] <- 0
+
       # calculate other landpools
       crop    <- dimSums(LUH2v2[,,c("c3ann","c4ann","c3per","c4per","c3nfx")],dim=3)
       pasture <- dimSums(LUH2v2[,,c("pastr","range")],dim=3)
@@ -145,6 +148,9 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
     } else if(land=="fao"){
   
       out <- calcOutput("FAOForestRelocate", selectyears=selectyears, aggregate=FALSE)
+      cat("Reallocation in land pools results in extremely low negative values for", unique((where(out<0)$true$individual)[,3]),"land in", where(out<0)$true$regions,"with a range of", range(out[out<0]))
+      cat("\nSuch values are replaced with 0.")
+      FAOother[FAOother<0] <- 0
     }
   }
   
