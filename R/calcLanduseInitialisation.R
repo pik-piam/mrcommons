@@ -150,7 +150,7 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
       out <- calcOutput("FAOForestRelocate", selectyears=selectyears, aggregate=FALSE)
       cat("Reallocation in land pools results in extremely low negative values for", unique((where(out<0)$true$individual)[,3]),"land in", where(out<0)$true$regions,"with a range of", range(out[out<0]))
       cat("\nSuch values are replaced with 0.")
-      FAOother[FAOother<0] <- 0
+      out[out<0] <- 0
     }
   }
   
