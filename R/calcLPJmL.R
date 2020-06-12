@@ -51,9 +51,9 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     }
     
     if("y2099" %in% (y <- getYears(LPJmL_input))){
-      LPJmL_input <- LPJmL_input[,tail(y, length(1985:2099)),] #crop GCM data to shorter time periods
+      LPJmL_input <- LPJmL_input[,tail(y, length(1980:2099)),] #crop GCM data to shorter time periods
     } else {
-      LPJmL_input <- LPJmL_input[,1935:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
+      LPJmL_input <- LPJmL_input[,1931:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
     }
     
     if(time=="average"){
