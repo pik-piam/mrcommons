@@ -172,13 +172,11 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
         x[,,month,] <- x[,,month,]*month_days[month]
       }
       
-    } else if (grepl("runoff", subtype)) {       # QUESTION: DOES SAME UNIT TRANSFORMATION APPLY TO ANNUAL?
+    } else if (grepl("runoff", subtype)) {
     # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       # Get cellular coordinate information and calculate cell area
       cb <- as.data.frame(magpie_coord)
-      cb$xlon    <- (cb$lon-1)/2 - 180
-      cb$ylat    <- (cb$lat-1)/2 - 90
-      cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$ylat/180*pi)
+      cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
       # Transform units: liter/m^2 -> liter
       x <- x*cell_area
       # Transform units: liter -> mio. m^3
