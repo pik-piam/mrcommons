@@ -39,28 +39,33 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     cat(paste0("Set input folder to default climate data set: ", folder))
   }
   
-  files <- c(soilc           = "soilc_natveg.bin",
-             soilc_layer     = "soilc_layer_natveg.bin",
-             litc            = "litc_natveg.bin",
-             vegc            = "vegc_natveg.bin",
-             alitfallc       = "alitfallc_natveg.bin",
-             alitterfallc    = "alitterfallc_natveg.bin",
-             alitfalln       = "alitfalln_natveg.bin",
-             harvest         = "pft_harvest.pft.bin",
-             irrig           = "cft_airrig.pft.bin",
-             sdate           = "sdate.bin",
-             hdate           = "hdate.bin",
-             transpiration   = "mtransp_natveg.bin",
-             discharge       = "mdischarge_natveg.bin",
-             runoff          = "mrunoff_natveg.bin",
-             evaporation     = "mevap_natveg.bin",
-             mtranspiration  = "mtransp_natveg.bin",
-             mdischarge      = "mdischarge_natveg.bin",
-             mrunoff         = "mrunoff_natveg.bin",
-             mevaporation    = "mevap_natveg.bin",
-             vegc_grass      = "mean_vegc_mangrass.bin",
-             litc_grass      = "litc_mangrass.bin",
-             soilc_grass     = "soilc_mangrass.bin"
+  files <- c(soilc              = "soilc_natveg.bin",
+             soilc_layer        = "soilc_layer_natveg.bin",
+             litc               = "litc_natveg.bin",
+             vegc               = "vegc_natveg.bin",
+             alitfallc          = "alitfallc_natveg.bin",
+             alitterfallc       = "alitterfallc_natveg.bin",
+             alitfalln          = "alitfalln_natveg.bin",
+             harvest            = "pft_harvest.pft.bin",
+             irrig              = "cft_airrig.pft.bin",
+             irrig_lpjcell      = "cft_airrig.pft.bin",
+             sdate              = "sdate.bin",
+             hdate              = "hdate.bin",
+             transpiration      = "mtransp_natveg.bin",
+             discharge          = "mdischarge_natveg.bin",
+             discharge_lpjcell  = "mdischarge_natveg.bin",
+             runoff             = "mrunoff_natveg.bin",
+             runoff_lpjcell     = "mrunoff_natveg.bin",
+             evaporation        = "mevap_natveg.bin",
+             mtranspiration     = "mtransp_natveg.bin",
+             mdischarge         = "mdischarge_natveg.bin",
+             mdischarge_lpjcell = "mdischarge_natveg.bin",
+             mrunoff            = "mrunoff_natveg.bin",
+             mrunoff_lpjcell    = "mrunoff_natveg.bin",
+             mevaporation       = "mevap_natveg.bin",
+             vegc_grass         = "mean_vegc_mangrass.bin",
+             litc_grass         = "litc_mangrass.bin",
+             soilc_grass        = "soilc_mangrass.bin"
   )
 
   file_name <- toolSubtypeSelect(subtype,files)
@@ -149,14 +154,25 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                  # Number of years used for averaging
 
     # monthly values
-    x <- readLPJ(
-      file_name=file.path(folder,file_name),
-      wyears=years,
-      syear=start_year,
-      averaging_range = avg_range,
-      monthly=TRUE,
-      soilcells=TRUE)
-    
+    if (grepl("_lpjcell", subtype)){
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        monthly=TRUE,
+        ncells=67420,
+        soilcells=FALSE)
+    } else {
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        monthly=TRUE,
+        soilcells=TRUE)
+    }
+
     # unit transformation
     if (grepl("transpiration", subtype)) { 
       # Transform units: liter/m^2 -> m^3/ha
@@ -174,14 +190,19 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       
     } else if (grepl("runoff", subtype)) {
     # In LPJmL: (monthly) runoff given in LPJmL: mm/month
-      # Get cellular coordinate information and calculate cell area
-      cb <- as.data.frame(magpie_coord)
-      cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+      if (grepl("_lpjcell", subtype)){
+        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+        cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+      } else {
+        # Get cellular coordinate information and calculate cell area
+        cb <- as.data.frame(magpie_coord)
+        cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+      }
       # Transform units: liter/m^2 -> liter
       x <- x*cell_area
       # Transform units: liter -> mio. m^3
       x <- x/(1000*1000000)
-      
+
     } else if (grepl("evaporation", subtype)) { 
       # Transform units: liter/m^2 -> m^3/ha
       evap_unit_transform <- 10
@@ -189,7 +210,14 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     }
     
     # Transform to MAgPIE object
-    x <- collapseNames(as.magpie(x)) 
+    if (grepl("_lpjcell", subtype)){
+      class(x) <- "array"
+      x <- collapseNames(as.magpie(x, spatial=1)) 
+      getCells(x) <- paste0("GLO.",getCells(x))
+      names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
+    } else {
+      x <- collapseNames(as.magpie(x)) 
+    }
     
     if(grepl("layer", subtype)){
       subtype     <- gsub("_", "\\.", subtype)       # Expand dimension to layers
@@ -225,23 +253,40 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     x <- collapseNames(as.magpie(x))
     x <- x*yield_transform
 
-  } else if(subtype%in%c("irrig")){
+  } else if(grepl("irrig", subtype)){ 
     
     start_year  <- start_year           # Start year of data set
     years       <- years                # Vector of years that should be exported
     nbands      <- 32                   # Number of bands in the .bin file
     avg_range   <- 1                    # Number of years used for averaging
     
-    x <- readLPJ(
-      file_name=file.path(folder,file_name),
-      wyears=years,
-      syear=start_year,
-      averaging_range=avg_range,
-      bands=nbands,
-      soilcells=TRUE,
-      ncells=67420)
+    if (grepl("_lpjcell", subtype)){
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        bands=nbands,
+        ncells=67420,
+        soilcells=FALSE)
+    } else {
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        bands=nbands,
+        soilcells=TRUE)
+    }
     
-    x <- collapseNames(as.magpie(x))
+    if (grepl("_lpjcell", subtype)){
+      class(x) <- "array"
+      x <- collapseNames(as.magpie(x, spatial=1))
+      getCells(x) <- paste0("GLO.",getCells(x))
+      names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
+    } else {
+      x <- collapseNames(as.magpie(x))
+    }
     # Transform units (transform from: mm per year = liter per m^2 transform to: m^3 per ha)
       # 1 000 liter   = 1 m^3
       # 10 000 m^2    = 1 ha

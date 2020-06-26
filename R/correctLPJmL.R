@@ -3,7 +3,7 @@
 #'
 #' @param x magpie object provided by the read function
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Felicitas Beier
 #' @seealso
 #' \code{\link{correctLPJmL}}
 #' @examples
@@ -19,7 +19,9 @@
 correctLPJmL <- function(x){
 
   x <- toolConditionalReplace(x, conditions = c("is.na()","<0"), replaceby = 0)
-  x <- toolCell2isoCell(x)
-
+  if (length(getCells(x))==59199) {
+    x <- toolCell2isoCell(x)
+  }
+  
   return(x)
 }
