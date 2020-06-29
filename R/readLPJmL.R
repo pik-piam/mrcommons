@@ -49,6 +49,8 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
              harvest            = "pft_harvest.pft.bin",
              irrig              = "cft_airrig.pft.bin",
              irrig_lpjcell      = "cft_airrig.pft.bin",
+             cwater_b           = "cft_consump_water_b.pft.bin",
+             cwater_b_lpjcell   = "cft_consump_water_b.pft.bin",           
              sdate              = "sdate.bin",
              hdate              = "hdate.bin",
              transpiration      = "mtransp_natveg.bin",
@@ -213,7 +215,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     if (grepl("_lpjcell", subtype)){
       class(x) <- "array"
       x <- collapseNames(as.magpie(x, spatial=1)) 
-      getCells(x) <- paste0("GLO.",getCells(x))
+      getCells(x) <- paste0("LPJ.",getCells(x))
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
     } else {
       x <- collapseNames(as.magpie(x)) 
@@ -253,7 +255,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     x <- collapseNames(as.magpie(x))
     x <- x*yield_transform
 
-  } else if(grepl("irrig", subtype)){ 
+  } else if(grepl("irrig|cwater_b", subtype)){ 
     
     start_year  <- start_year           # Start year of data set
     years       <- years                # Vector of years that should be exported
@@ -282,7 +284,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     if (grepl("_lpjcell", subtype)){
       class(x) <- "array"
       x <- collapseNames(as.magpie(x, spatial=1))
-      getCells(x) <- paste0("GLO.",getCells(x))
+      getCells(x) <- paste0("LPJ.",getCells(x))
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
     } else {
       x <- collapseNames(as.magpie(x))

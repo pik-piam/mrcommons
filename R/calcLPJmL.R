@@ -86,6 +86,8 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
              harvest            = "tDM/ha",
              irrig              = "m^3/ha",
              irrig_lpjcell      = "m^3/ha",
+             cwater_b           = "m^3/ha",
+             cwater_b_lpjcell   = "m^3/ha",
              sdate              = "day of the year",
              hdate              = "day of the year",
              transpiration      = "m^3/ha",
