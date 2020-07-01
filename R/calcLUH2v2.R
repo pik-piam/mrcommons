@@ -4,10 +4,11 @@
 #' @param landuse_types magpie: magpie landuse classes. LUH2v2: original landuse classes.
 #' @param irrigation if true, the areas are returned sperated by irrigated and rainfed. Irrigation includes flooded area. possible inconsistencies, to be checked.
 #' @param cellular if true, dataset is returned on 0.5 degree resolution
+#' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param selectyears defaults to past
 #' 
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky, Florian Humpenoeder
+#' @author Benjamin Leon Bodirsky, Florian Humpenoeder, Felicitas Beier
 #' @seealso
 #' \code{\link{calcLanduseInitialisation}}
 #' @examples
@@ -17,19 +18,28 @@
 #' }
 #' @importFrom magclass getNames
 
-calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,selectyears="past"){
+calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cells="magpiecell",selectyears="past"){
   
 
   selectyears <- sort(findset(selectyears,noset = "original"))
   
   if (cellular){
-    x <- readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,selectyears,]
-    getSets(x) <- c("iso","cell","t","landuse")   
-    if (irrigation){
-      y<-readSource("LUH2v2",subtype="irrigation",convert="onlycorrect")[,selectyears,]
+    if (cells=="lpjcell"){
+      x <- readSource("LUH2v2",subtype = "states_lpjcell",convert="onlycorrect")[,selectyears,]
+      getSets(x) <- c("iso","cell","t","landuse")   
+    } else if(cells=="magpiecell"){
+      x <- readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,selectyears,]
+      getSets(x) <- c("fake","lpjcell","t","landuse")   
     }
-    
-    
+
+    if (irrigation){
+      
+      if (cells=="lpjcell"){
+        y<-readSource("LUH2v2",subtype="irrigation_lpjcell",convert="onlycorrect")[,selectyears,]
+      } else if(cells=="magpiecell"){
+        y<-readSource("LUH2v2",subtype="irrigation",convert="onlycorrect")[,selectyears,]
+      }
+    }
     
   } else {
     x <- readSource("LUH2v2",subtype = "states",convert=TRUE)[,selectyears,]
