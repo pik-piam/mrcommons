@@ -215,18 +215,19 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     if (grepl("_lpjcell", subtype)){
       class(x) <- "array"
       x <- collapseNames(as.magpie(x, spatial=1)) 
-      getCells(x) <- paste0("LPJ.",getCells(x))
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+      getCells(x)  <- paste(lpj_cell_map$ISO,1:67420,sep=".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
     } else {
       x <- collapseNames(as.magpie(x)) 
     }
     
     if(grepl("layer", subtype)){
-      subtype     <- gsub("_", "\\.", subtype)       # Expand dimension to layers
-      getNames(x) <- paste0(subtype,".",getNames(x))
+      subtype          <- gsub("_", "\\.", subtype)       # Expand dimension to layers
+      getNames(x)      <- paste0(subtype,".",getNames(x))
       getSets(x)[4:6]  <- c("data" ,"layer","month")
     } else{
-      getNames(x) <- paste0(subtype,".",getNames(x))
+      getNames(x)      <- paste0(subtype,".",getNames(x))
       getSets(x)[4:5]  <- c("data" , "month")
     }
     
@@ -284,7 +285,8 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     if (grepl("_lpjcell", subtype)){
       class(x) <- "array"
       x <- collapseNames(as.magpie(x, spatial=1))
-      getCells(x) <- paste0("LPJ.",getCells(x))
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+      getCells(x) <- paste(lpj_cell_map$ISO,1:67420,sep=".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
     } else {
       x <- collapseNames(as.magpie(x))
@@ -294,7 +296,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       # 10 000 m^2    = 1 ha
       # 1 liter/m^2   = 10 m^3/ha
       # -> mm/yr * 10 = m^3/ha
-    irrig_transform <- 10
+    irrig_transform  <- 10
     x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per year
     
   } else {stop(paste0("subtype ",subtype," is not existing"))}
