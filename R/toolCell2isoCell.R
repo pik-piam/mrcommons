@@ -2,6 +2,7 @@
 #' 
 #' Sets cell names to [iso country code].[cell number]
 #' @param x magpie object on cellular level
+#' @param cells switch between magpie cells (59199) and lpj cells (67420)
 #' @return return changed input data
 #' @author Kristine Karstens, Felicitas Beier
 #' 
