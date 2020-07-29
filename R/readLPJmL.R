@@ -59,6 +59,12 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
              runoff             = "mrunoff_natveg.bin",
              runoff_lpjcell     = "mrunoff_natveg.bin",
              evaporation        = "mevap_natveg.bin",
+             evap_lake          = "mevap_lake.bin",
+             evap_lake_lpjcell  = "mevap_lake.bin",
+             mevap_lake         = "mevap_lake.bin",
+             mevap_lake_lpjcell = "mevap_lake.bin",
+             input_lake         = "input_lake.bin",
+             input_lake_lpjcell = "input_lake.bin",
              mtranspiration     = "mtransp_natveg.bin",
              mdischarge         = "mdischarge_natveg.bin",
              mdischarge_lpjcell = "mdischarge_natveg.bin",
@@ -102,7 +108,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       averaging_range=avg_range,
       bands=nbands,
       soilcells=TRUE)
-
+    
     x <- collapseNames(as.magpie(x))
     x <- x*unit_transform
     getNames(x) <- subtype
@@ -148,7 +154,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     getNames(x)     <- paste0("soilc.",getNames(x))
     getSets(x)[4:5] <- c("data" ,"layer")
 
-  } else if(grepl("transpiration|discharge|runoff|evaporation", subtype)){
+  } else if(grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)){
 
     start_year  <- start_year         # Start year of data set
     years       <- years              # Vector of years that should be exported
@@ -190,7 +196,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
         x[,,month,] <- x[,,month,]*month_days[month]
       }
       
-    } else if (grepl("runoff", subtype)) {
+    } else if (grepl("runoff|evap_lake", subtype)) {
     # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       if (grepl("_lpjcell", subtype)){
         cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
@@ -209,6 +215,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       # Transform units: liter/m^2 -> m^3/ha
       evap_unit_transform <- 10
       x <- x*evap_unit_transform
+      
     }
     
     # Transform to MAgPIE object
@@ -298,6 +305,43 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       # -> mm/yr * 10 = m^3/ha
     irrig_transform  <- 10
     x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per year
+    
+  } else if(grepl("input_lake", subtype)){
+    
+    start_year  <- start_year           # Start year of data set
+    years       <- years                # Vector of years that should be exported
+    nbands      <- 1                    # Number of bands in the .bin file
+    avg_range   <- 1                    # Number of years used for averaging
+    
+    if (grepl("_lpjcell", subtype)){
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        bands=nbands,
+        ncells=67420,
+        soilcells=FALSE)
+    } else {
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        bands=nbands,
+        soilcells=TRUE)
+    }
+    
+    if (grepl("_lpjcell", subtype)){
+      class(x) <- "array"
+      x <- collapseNames(as.magpie(x, spatial=1))
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+      getCells(x) <- paste(lpj_cell_map$ISO,1:67420,sep=".")
+      names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
+    } else {
+      x <- collapseNames(as.magpie(x))
+    }
+    getNames(x) <- subtype
     
   } else {stop(paste0("subtype ",subtype," is not existing"))}
 
