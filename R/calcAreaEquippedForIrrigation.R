@@ -4,6 +4,7 @@
 #'
 #' @param cellular if true, dataset is returned on 0.5 degree resolution
 #' @param source switch between different data sources
+#' @param selectyears default on "past"
 #' 
 #' @return List of magpie objects with results on country/cellular level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
@@ -18,11 +19,13 @@
 #' @importFrom luscale groupAggregate
 
 
-calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2"){
+calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2", selectyears="past"){
+  
+  selectyears <- sort(findset(selectyears,noset = "original"))
  
   if(source=="LUH2v2"){
     
-    years_needed <- as.integer(substring(findset("past"),2))
+    years_needed <- as.integer(substring(selectyears,2))
     years_needed <- (years_needed[1]-20):tail(years_needed,1)
     
     x    <- calcOutput("LUH2v2", landuse_types="magpie", irrigation=TRUE, cellular=TRUE, selectyears=years_needed, aggregate=FALSE)
@@ -38,7 +41,7 @@ calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2"){
     
   } else if (source=="Siebert"){
     
-    out   <- readSource("Siebert", convert="onlycorrect")
+    out   <- readSource("Siebert", convert="onlycorrect")[,selectyears,]
     
   } else stop("Unknown source for calcAreaEquippedForIrrigation")
   
