@@ -28,12 +28,12 @@ calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2", selecty
     years_needed <- as.integer(substring(selectyears,2))
     years_needed <- (years_needed[1]-20):tail(years_needed,1)
     
-    x    <- calcOutput("LUH2v2", landuse_types="magpie", irrigation=TRUE, cellular=TRUE, selectyears=years_needed, aggregate=FALSE)
-    x    <- dimSums(x,dim=3)
-    past <- as.numeric(substring(findset("past"),2))
-    out  <- NULL
+    x     <- calcOutput("LUH2v2", landuse_types="magpie", irrigation=TRUE, cellular=TRUE, selectyears=years_needed, aggregate=FALSE)
+    x     <- dimSums(x,dim=3)
+    years <- as.numeric(substring(selectyears,2))
+    out   <- NULL
     
-    for (year_x in past){
+    for (year_x in years){
       span <- (year_x-20):year_x
       tmp  <- setYears(as.magpie(apply(X = x[,span,], FUN = max, MARGIN = 1)), paste0("y",year_x))
       out  <- mbind(out,tmp)
@@ -41,7 +41,7 @@ calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2", selecty
     
   } else if (source=="Siebert"){
     
-    out   <- readSource("Siebert", convert="onlycorrect")[,selectyears,]
+    out   <- readSource("Siebert", convert="onlycorrect")
     
   } else stop("Unknown source for calcAreaEquippedForIrrigation")
   
