@@ -28,7 +28,7 @@ calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2", selecty
     years_needed <- as.integer(substring(selectyears,2))
     years_needed <- (years_needed[1]-20):tail(years_needed,1)
     
-    x     <- calcOutput("LUH2v2", landuse_types="magpie", irrigation=TRUE, cellular=TRUE, selectyears=years_needed, aggregate=FALSE)
+    x     <- calcOutput("LUH2v2", landuse_types="magpie", irrigation=TRUE, cellular=TRUE, selectyears=years_needed, aggregate=FALSE)[,,"irrigated"]
     x     <- dimSums(x,dim=3)
     years <- as.numeric(substring(selectyears,2))
     out   <- NULL
