@@ -39,8 +39,10 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE){
   LUH2v2[,,"to_be_allocated"] <- 0
   
   #grep land areas dependend on vegetation carbon density
-  cellvegc_n <- cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
-
+  cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+  if(is.null(getYears(cellvegc))) getYears(cellvegc) <- getYears(countrydata)
+  cellvegc_n <- cellvegc
+  
   #weight function to determine correct cellweights for area removal
   findweight <- function(p,cellarea,isoreduction,cellweight){
     dimSums(cellarea*(1-(1-cellweight)^p), dim=1)+isoreduction+10^-10
