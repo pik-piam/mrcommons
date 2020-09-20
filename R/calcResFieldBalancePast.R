@@ -3,6 +3,9 @@
 #' 
 #' @param cellular If TRUE calculation and output on cellular level
 #' @param products "sum" (default) or "kres"
+#' @param scenario define scenario switch for sensititvy analysis 
+#'                 for historical SOC budget
+#'
 #' @return data
 #' @author Benjamin Bodirsky
 #' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
@@ -14,13 +17,13 @@
 #' }
 #'
 
-calcResFieldBalancePast<-function(cellular = FALSE, products = "sum"){
+calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario="default"){
   
   if(products=="kres"){
     past              <- findset("past")
     relevant_nutrients <- c("nr","p","k","c")  # after burning, unclear what dm and ge may be
     
-    production        <- collapseNames(calcOutput("ResBiomass", cellular=cellular, plantparts="ag", aggregate = FALSE))[,,relevant_nutrients]
+    production        <- collapseNames(calcOutput("ResBiomass", cellular=cellular, plantparts="ag", aggregate = FALSE, scenario=scenario))[,,relevant_nutrients]
     
     burnshr           <- calcOutput("ResCombustEff",aggregate = FALSE)[,,getNames(production,dim=1)]
     dev_state_past    <- collapseNames(calcOutput("DevelopmentState",aggregate = F)[,past,"SSP2"])
@@ -47,7 +50,7 @@ calcResFieldBalancePast<-function(cellular = FALSE, products = "sum"){
     if(cellular==TRUE){
  
       # to avoid negative values, take the regional share of removal by product
-      fieldbalance <- calcOutput("ResFieldBalancePast",cellular=FALSE,aggregate=FALSE,products="kres")
+      fieldbalance <- calcOutput("ResFieldBalancePast",cellular=FALSE,aggregate=FALSE,products="kres", scenario=scenario)
       # use nr for removalshare decision
       removalshare<-collapseNames((fieldbalance[,,"removal"]/(fieldbalance[,,"biomass"]-fieldbalance[,,"burned"]-fieldbalance[,,"ash"]))[,,"nr"])
       removalshare[is.nan(removalshare)]<-1
@@ -55,7 +58,7 @@ calcResFieldBalancePast<-function(cellular = FALSE, products = "sum"){
       removalshare<-toolAggregate(x=removalshare,rel=CellToCellIso,from = "iso",to="celliso",partrel=T)
       removal <- (production-burn-ash)*removalshare
     } else {
-      removal      <- collapseNames(calcOutput("ResDemand", cellular=FALSE, aggregate = FALSE)[,,"domestic_supply"])[,,relevant_nutrients]
+      removal      <- collapseNames(calcOutput("ResDemand", cellular=FALSE, aggregate = FALSE, scenario=scenario)[,,"domestic_supply"])[,,relevant_nutrients]
       removal      <- add_columns(removal,addnm = c("res_nouse"),dim = 3.1)
       removal[,,c("res_nouse")] <- 0
     }
@@ -85,7 +88,7 @@ calcResFieldBalancePast<-function(cellular = FALSE, products = "sum"){
     
   } else if(products=="sum"){
   
-    out<-calcOutput("ResFieldBalancePast", cellular = cellular, products = "kres",aggregate=FALSE)
+    out<-calcOutput("ResFieldBalancePast", cellular = cellular, products = "kres",aggregate=FALSE,  scenario=scenario)
     out<-dimSums(out,dim=3.2)
   
   } else {stop("Product category not avaiable!")}

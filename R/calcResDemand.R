@@ -2,6 +2,8 @@
 #' @description Calculates the demand for Crop Residues
 #'
 #' @param cellular If TRUE calculation and output on cellular level
+#' @param scenario define scenario switch for sensititvy analysis 
+#'                 for historical SOC budget
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
@@ -13,10 +15,7 @@
 #' }
 #' @importFrom magclass setNames
 
-
-
-
-calcResDemand<-function(cellular = FALSE){
+calcResDemand<-function(cellular = FALSE, scenario="dafault"){
   
   mapping<-toolMappingFile(type = "sectoral",name = "kcr_kres.csv",readcsv = TRUE)
   
@@ -29,19 +28,30 @@ calcResDemand<-function(cellular = FALSE){
   past           <- findset("past")
   
   dev_state_past <- collapseNames(calcOutput("DevelopmentState",aggregate = F)[,past,"SSP2"])
-  if(cellular){ 
-    
-    dev_state_past <- toolIso2CellCountries(dev_state_past)
-    }
   
-  biomass1       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE)[,,res_cereals]),dim=3.1), add = "kres", nm = "res_cereals")
-  biomass2       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE)[,,res_fibrous]),dim=3.1), add = "kres", nm = "res_fibrous")
-  biomass3       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE)[,,res_nonfibrous]),dim=3.1), add = "kres", nm = "res_nonfibrous")
+  if(cellular){ 
+    dev_state_past <- toolIso2CellCountries(dev_state_past)
+  }
+  
+  biomass1       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_cereals]),dim=3.1), add = "kres", nm = "res_cereals")
+  biomass2       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_fibrous]),dim=3.1), add = "kres", nm = "res_fibrous")
+  biomass3       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_nonfibrous]),dim=3.1), add = "kres", nm = "res_nonfibrous")
   biomass        <- mbind(biomass1,biomass2,biomass3)
   material       <- mbind(biomass[,,"res_cereals"] * (dev_state_past*0 + ( 1 - dev_state_past ) * 0.05) , biomass[,,c("res_fibrous","res_nonfibrous")] * 0)
   bioenergy      <- biomass * (dev_state_past * 0 + ( 1 - dev_state_past ) * 0.1)
   
   feed           <- dimSums(calcOutput("FeedPast", balanceflow=FALSE, cellular= cellular, aggregate = F,nutrients="dm")[,,kres], dim=c(3.1,3.3))
+  
+  if(grepl("freeze*",scenario)){
+    
+    biomass1       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario="default")[,,res_cereals]),dim=3.1), add = "kres", nm = "res_cereals")
+    biomass2       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario="default")[,,res_fibrous]),dim=3.1), add = "kres", nm = "res_fibrous")
+    biomass3       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario="default")[,,res_nonfibrous]),dim=3.1), add = "kres", nm = "res_nonfibrous")
+    biomassOld     <- mbind(biomass1,biomass2,biomass3)
+    
+    feedshare <- toolConditionalReplace(feed/biomassOld[,,"dm"], is.na(), 0)
+    feed      <- feedshare * biomass[,,"dm"]
+  }
   
   #attribute calculation for feed demand based on real residue mixture for each spatial unit 
   #kres attributes lead to distortion of phosphorus share within each kres
