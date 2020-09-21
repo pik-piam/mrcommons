@@ -35,6 +35,7 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
     # read in area harvested
     HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, cellular=cellular, irrigation=irrigation, aggregate=FALSE)
     CropProduction <- collapseNames(calcOutput("Production", products="kcr", cellular=cellular,attributes="dm", irrigation=irrigation, aggregate = FALSE))
+    HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
     
     if(grepl("freeze*", scenario)){
       
@@ -53,8 +54,6 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
     }
     
     if(plantparts=="ag"){
-      # read harvest index 
-      HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
       
       # calculate residue production 
       ResWithProduction     <- CropProduction * collapseNames(HarvestIndex[,,"slope"])                         
