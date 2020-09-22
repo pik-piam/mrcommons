@@ -49,7 +49,7 @@ calcResDemand<-function(cellular = FALSE, scenario="dafault"){
     biomass3       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario="default")[,,res_nonfibrous]),dim=3.1), add = "kres", nm = "res_nonfibrous")
     biomassOld     <- mbind(biomass1,biomass2,biomass3)
     
-    feedshare <- toolConditionalReplace(feed/biomassOld[,,"dm"], is.na(), 0)
+    feedshare <- toolConditionalReplace(feed/biomassOld[,,"dm"], "is.na()", 0)
     feed      <- feedshare * biomass[,,"dm"]
   }
   
