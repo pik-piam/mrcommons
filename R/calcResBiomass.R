@@ -47,9 +47,9 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
       CropYields                <- toolConditionalReplace(CropProduction/HarvestedArea, c("is.na()","is.infinite()"), 0)
       CropYields[,reset_years,] <- setYears(CropYields[,rep(freeze_year,sum(reset_years)),], getYears(CropYields[,reset_years,]))
       
-      # recalculate production and reset production to dummy values for young cropland cells (meaning firt cropping of a specific crop after freeze_year)  
+      # recalculate production and reset production to dummy values for young cropland cells (meaning first cropping of a specific crop after freeze_year)  
       CropProductionNew <- CropYields * HarvestedArea
-      CropProductionNew[(CropProductionNew==0) & (HarvestedArea!=0)] <- CropProduction[(CropProductionNew==0) & (HarvestedArea!=0)]
+      CropProductionNew[(CropProductionNew==0)] <- CropProduction[(CropProductionNew==0)]
       CropProduction    <- CropProductionNew
     }
     

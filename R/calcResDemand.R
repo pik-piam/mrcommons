@@ -50,7 +50,9 @@ calcResDemand<-function(cellular = FALSE, scenario="dafault"){
     biomassOld     <- mbind(biomass1,biomass2,biomass3)
     
     feedshare <- toolConditionalReplace(feed/biomassOld[,,"dm"], "is.na()", 0)
-    feed      <- collapseNames(feedshare * biomass[,,"dm"])
+    feedNew   <- collapseNames(feedshare * biomass[,,"dm"])
+    feedNew[feedNew==0] <- feed[feedNew==0]
+    feed      <- feedNew 
   }
   
   #attribute calculation for feed demand based on real residue mixture for each spatial unit 
