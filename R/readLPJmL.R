@@ -207,7 +207,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
         cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
       }
       # Transform units: liter/m^2 -> liter
-      x <- x*cell_area
+      x <- as.magpie(x)*cell_area
       # Transform units: liter -> mio. m^3
       x <- x/(1000*1000000)
 
