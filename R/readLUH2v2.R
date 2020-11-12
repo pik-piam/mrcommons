@@ -4,19 +4,15 @@
 #' @param subtype switch between different inputs
 #' 
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
-#' @author Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier
+#' @author Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
 #'
 #' @importFrom ncdf4 nc_open
-#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix
+#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel
 #' @importFrom foreach foreach %:% %dopar%
 #' @importFrom abind abind
 #' @importFrom magclass as.magpie mbind
-#' 
-
-#  %:% %dopar% abind brick data_sel detectCores foreach getCoordinates
-#makeCluster out outfile path registerDoParallel stopCluster time_sel
 
 readLUH2v2 <- function(subtype) {
 
@@ -55,7 +51,6 @@ readLUH2v2 <- function(subtype) {
     extent(carea) <- c(-180,180,-90,90)
 
     #Parallelization
- #   if(getConfig("parallel")){
     no_cores <- getConfig("nocores")
     cl       <- makeCluster(no_cores,outfile="par_debug.txt")
     registerDoParallel(cl)
@@ -87,31 +82,7 @@ readLUH2v2 <- function(subtype) {
     stopCluster(cl)
 
     gc()
-    # }  else  {
-    #   mag <- data_sel <- time_sel <- NULL
-    #  #TODO: create x in the correct dimensions then run loop and add things to the corresponding entries.
-    #  x <- array(NA, dim = c(ncells, length(seq(start_year-offset,end_year-offset,by=timesteps)), length(data)),
-    #             dimnames=list(cellNames, paste0("y", seq(start_year-offset,end_year-offset,by=timesteps)+offset), data))
-    #   for(data_sel in 1:length(data)){
-    #     for(time_sel in seq(start_year-offset,end_year-offset,by=timesteps)){
-    #       print(data[data_sel])
-    #       print(time_sel+offset)
-    #       shr <- brick(f,varname=data[data_sel])
-    #       shr <- subset(shr,time_sel)
-    #       xi <- shr*carea
-    #       xi <- aggregate(xi,fact=2,fun=sum)
-    #       xi <- t(as.matrix(xi))
-    #       mag <- array(NA,dim=c(ncells,1,1),dimnames=list(cellNames,paste0("y",time_sel+offset),data[data_sel]))
-    #       for (j in 1:ncells) {
-    #         #mag[j,,] <- xi[which(magpie_coord[j, 1]==lon), which(magpie_coord[j,2]==lat)]
-    #         x[j,paste0("y",time_sel+offset),data_sel] <- xi[which(magpie_coord[j, 1]==lon), which(magpie_coord[j,2]==lat)]
-    #       }
-    #     }
-    #   #  x <- mbind(as.magpie(x), as.magpie(xt))
-    #   }
-    #
-    #   gc()
-    # }
+
     x <- as.magpie(x,spatial=1,temporal=2)
 
     #Convert from km^2 to Mha
@@ -139,6 +110,7 @@ readLUH2v2 <- function(subtype) {
       cellNames <- paste(map$ISO,1:ncells,sep=".")
     } else {
       ncells=59199
+      map <- as.data.frame(magpie_coord)
       mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
       cellNames <- mapping$celliso
     }
@@ -159,70 +131,29 @@ readLUH2v2 <- function(subtype) {
     extent(carea) <- c(-180,180,-90,90)
     
     #Parallelization
-   # if(getConfig("parallel")){
-      no_cores <-  getConfig("nocores")
-#    no_cores <- detectCores() - 1
+    no_cores <-  getConfig("nocores")
     cl <- makeCluster(no_cores,outfile="par_debug.txt")
     registerDoParallel(cl)
 
     #Do the stuff
-    acomb2 <- function(...) abind(..., along=2)
-    acomb3 <- function(...) abind(..., along=3)
-    #.maxcombine=10
-    x <- foreach(data_sel=1:length(data_man),.combine='acomb3',.multicombine=TRUE, .export=c("start_year","end_year","timesteps","magpie_coord","cellNames","brick","subset","aggregate","abind")) %:%
-      foreach(time_sel=seq(start_year-offset,end_year-offset,by=timesteps),.combine='acomb2',.multicombine=TRUE) %dopar% {
-        print(data[data_sel,1])
-        print(time_sel+offset)
-        shr <- brick(f_states,varname=data[data_sel,2])
-        shr <- subset(shr,time_sel)
-        ir_shr <- brick(f_man,varname=data[data_sel,1])
-        ir_shr <- subset(ir_shr,time_sel)
+    time_sel <- seq(start_year-offset,end_year-offset,by=timesteps)
+    x <- foreach(data_sel=1:length(data_man),.combine='mbind',.multicombine=TRUE) %dopar% {
+        message(data[data_sel,1])
+        shr    <- subset(brick(f_states,varname=data[data_sel,2]),time_sel)
+        ir_shr <- subset(brick(f_man,varname=data[data_sel,1]),time_sel)
+        
         #grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
-        x <- shr*carea*ir_shr
-        x <- aggregate(x,fact=2,fun=sum)
-        x <- t(as.matrix(x))
-        mag <- array(NA,dim=c(ncells,1,1),dimnames=list(cellNames,paste0("y",time_sel+offset),data[data_sel,1]))
-        for (j in 1:ncells){
-          if (grepl("_lpjcell", subtype)){
-            mag[j,,] <- x[which(map$lon[j]==lon), which(map$lat[j]==lat)]
-          } else {
-            mag[j,,] <- x[which(magpie_coord[j, 1]==lon), which(magpie_coord[j,2]==lat)]
-          } 
-        }
+        x <- aggregate(shr*carea*ir_shr,fact=2,fun=sum)
+        
+        mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
+        getNames(mag) <- data[data_sel,1]
         return(mag)
       }
     stopCluster(cl)
-
     gc()
-    # }else{
-    #   mag <- data_sel <- time_sel <- NULL
-    #   #TODO: create x in the correct dimensions then run loop and add things to the corresponding entries.
-    #   x <- array(NA, dim = c(ncells, length(seq(start_year-offset,end_year-offset,by=timesteps)), length(data[,1])),
-    #              dimnames=list(cellNames, paste0("y", seq(start_year-offset,end_year-offset,by=timesteps)+offset), data[,1]))
-    #   for(data_sel in 1:length(data_man)){
-    #     for(time_sel in seq(start_year-offset,end_year-offset,by=timesteps)){
-    #       print(data[data_sel,1])
-    #       print(time_sel+offset)
-    #       shr <- brick(f_states,varname=data[data_sel,2])
-    #       shr <- subset(shr,time_sel)
-    #       ir_shr <- brick(f_man,varname=data[data_sel,1])
-    #       ir_shr <- subset(ir_shr,time_sel)
-    #       #grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
-    #       xi <- shr*carea*ir_shr
-    #       xi <- aggregate(xi,fact=2,fun=sum)
-    #       xi <- t(as.matrix(xi))
-    #       mag <- array(NA,dim=c(ncells,1,1),dimnames=list(cellNames,paste0("y",time_sel+offset),data[data_sel,1]))
-    #       for (j in 1:ncells) {
-    #       #  mag[j,,] <- xi[which(magpie_coord[j, 1]==lon), which(magpie_coord[j,2]==lat)]
-    #         x[j,paste0("y",time_sel+offset),data_sel] <- xi[which(magpie_coord[j, 1]==lon), which(magpie_coord[j,2]==lat)]
-    #       }
-    #     }
-    #     #x <- mbind(as.magpie(x), as.magpie(mag))
-    #   }
-    #   gc()
-   # }
-
-    x <- as.magpie(x,spatial=1,temporal=2)
+    
+    getYears(x) <- time_sel+offset
+    getCells(x) <- cellNames
 
     #Convert from km^2 to Mha
     x <- x/10000
