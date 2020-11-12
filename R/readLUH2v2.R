@@ -16,10 +16,8 @@
 readLUH2v2 <- function(subtype) {
 
   # basic settings  
-  start_year <- 1900 #min 850
-  end_year   <- 2015 #max 2015
+  time_sel   <- seq(1900,2015,by=1)
   offset     <- 849  #year 850=1, year 1900=1051, year 2015=1166
-  time_sel   <- seq(start_year-offset,end_year-offset,by=1)
   no_cores   <-  getConfig("nocores")
   
   #File to process
@@ -55,11 +53,10 @@ readLUH2v2 <- function(subtype) {
     data_sel <- NULL
     x <- foreach(data_sel=1:length(data)) %dopar% {
         message(data[data_sel])
-        shr <- subset(brick(f_states,varname=data[data_sel]),time_sel)
+        shr <- subset(brick(f_states,varname=data[data_sel]),time_sel-offset)
         x <- aggregate(shr*carea,fact=2,fun=sum)
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel]
-        getYears(x) <- time_sel+offset
         getCells(x) <- cellNames
         return(mag)
       }
@@ -67,6 +64,7 @@ readLUH2v2 <- function(subtype) {
     gc()
     
     x <- mbind(x)
+    getYears(x) <- time_sel
 
     #Convert from km^2 to Mha
     x <- x/10000
@@ -90,21 +88,21 @@ readLUH2v2 <- function(subtype) {
     #Do the stuff
     x <- foreach(data_sel=1:length(data_man)) %dopar% {
         message(data[data_sel,1])
-        shr    <- subset(brick(f_states,varname=data[data_sel,2]),time_sel)
-        ir_shr <- subset(brick(f_man,varname=data[data_sel,1]),time_sel)
+        shr    <- subset(brick(f_states,varname=data[data_sel,2]),time_sel-offset)
+        ir_shr <- subset(brick(f_man,varname=data[data_sel,1]),time_sel-offset)
         
         #grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
         x <- aggregate(shr*carea*ir_shr,fact=2,fun=sum)
         
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel,1]
-        getYears(x) <- time_sel+offset
         getCells(x) <- cellNames
         return(mag)
       }
     stopCluster(cl)
     gc()
     x <- mbind(x)
+    getYears(x) <- time_sel
 
     #Convert from km^2 to Mha
     x <- x/10000
