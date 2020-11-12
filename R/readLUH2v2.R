@@ -10,8 +10,7 @@
 #' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
 #' @importFrom parallel detectCores makeCluster stopCluster
 #' @importFrom doParallel registerDoParallel
-#' @importFrom foreach foreach %:% %dopar%
-#' @importFrom abind abind
+#' @importFrom foreach foreach %dopar%
 #' @importFrom magclass as.magpie mbind
 
 readLUH2v2 <- function(subtype) {
@@ -60,15 +59,14 @@ readLUH2v2 <- function(subtype) {
         x <- aggregate(shr*carea,fact=2,fun=sum)
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel]
-        
+        getYears(x) <- time_sel+offset
+        getCells(x) <- cellNames
         return(mag)
       }
     stopCluster(cl)
     gc()
     
     x <- mbind(x)
-    getYears(x) <- time_sel+offset
-    getCells(x) <- cellNames
 
     #Convert from km^2 to Mha
     x <- x/10000
@@ -100,13 +98,13 @@ readLUH2v2 <- function(subtype) {
         
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel,1]
+        getYears(x) <- time_sel+offset
+        getCells(x) <- cellNames
         return(mag)
       }
     stopCluster(cl)
     gc()
     x <- mbind(x)
-    getYears(x) <- time_sel+offset
-    getCells(x) <- cellNames
 
     #Convert from km^2 to Mha
     x <- x/10000
