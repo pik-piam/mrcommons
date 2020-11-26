@@ -1,6 +1,6 @@
 #' @importFrom utils download.file tail unzip
 
-downloadFAO <- function(subtype=NULL) {
+downloadFAO_online <- function(subtype=NULL) {
   
   links <- c(CBCrop="CommodityBalances_Crops_E_All_Data.zip",
              CBLive="CommodityBalances_LivestockFish_E_All_Data.zip",

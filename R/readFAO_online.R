@@ -1,8 +1,8 @@
-#' Read FAO
+#' Read FAO_online
 #' 
-#' Read in FAO data that has been bulk downloaded from the FAOSTAT website.
+#' Read in FAO data that has been downloaded from the FAOSTAT website.
 #' Files with exception of fodder.csv are aquired from:
-#' http://faostat.fao.org/Portals/_Faostat/Downloads/zip_files/
+#' http://fenixservices.fao.org/faostat/static/bulkdownloads/
 #' 
 #' Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 #' 
@@ -42,8 +42,9 @@
 #' @importFrom data.table fread
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
+#' @importFrom tidyr pivot_longer
 
-readFAO <- function(subtype) {
+readFAO_online <- function(subtype) {
   files <- c(CBCrop="CommodityBalances_Crops_E_All_Data.zip",
              CBLive="CommodityBalances_LivestockFish_E_All_Data.zip",
              Crop="Production_Crops_E_All_Data.zip",
@@ -109,12 +110,26 @@ readFAO <- function(subtype) {
     readcolClass <- rep("NULL",length(csvcolnames))
     readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
     readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
-    readcolClass[csvcolnames=="Value" | csvcolnames=="Year"] <- NA
+    readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
     FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
     names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
     names(FAO)[names(FAO) == "Area"] <- "Country"
     ## list countries where no respective ISO code is available in a message
     countryandcode <- unique(FAO[,c("CountryCode","Country")])
+  } else if (subtype == "CBCrop") {
+    readcolClass <- rep("NULL",length(csvcolnames))
+    readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
+    readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
+    readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
+    FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
+    # from wide to long (move years from individual columns into one column)
+    FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
+    #FAO$Year <- as.integer(FAO$Year)
+    names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
+    names(FAO)[names(FAO) == "Area"] <- "Country"
+    names(FAO) <- gsub("\\.","",names(FAO))
+    # find unique list of CountryCode and Country avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
+    #countryandcode <- FAO[match(levels(FAO$CountryCode),FAO$CountryCode),c("CountryCode","Country")]
   } else {
     readcolClass <- rep("NULL",length(csvcolnames))
     readcolClass[csvcolnames=="CountryCode" | csvcolnames=="ItemCode" | csvcolnames=="ElementCode"] <- "factor"
@@ -138,51 +153,48 @@ readFAO <- function(subtype) {
     countryandcode <- unique(FAO[,c("CountryCode","Country")])
   }
   
-  ## collect the countries that do not exist in the data
+  # Load FAO-ISO-mapping
   FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
-  not_incl <- countryandcode$Country[!countryandcode$CountryCode %in% FAOiso_faocode$CountryCode]
-  not_incl_coun <- not_incl[!grepl("(Total)",not_incl)]  
-  if (length(not_incl_coun) > 0) {
+  # Find countries that are not included in the FAO-ISO-mapping
+  not_incl <- FAO[!FAO$CountryCode %in% FAOiso_faocode$CountryCode,c("CountryCode","Country")]
+  # find unique list of countries using match avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
+  not_incl <- not_incl[match(levels(not_incl$CountryCode),not_incl$CountryCode),]
+  # ignore countries that are aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
+  not_incl <- not_incl[as.numeric(levels(not_incl$CountryCode))[not_incl$CountryCode]<5000,]
+  # remove rows containing NA
+  not_incl <- na.omit(not_incl)
+  if (!0 %in% dim(not_incl)) {
     vcat(1,"The following countries were not included due to missing ISO codes:",
-         "\n", paste(not_incl_coun, "\n"),"-> Consider an update of FAOiso_faocode.csv", "\n") }
+         "\n", paste0(not_incl$Country,"\n"),"-> Consider an update of FAOiso_faocode.csv", "\n") }
+  # Remove countries from data that are not included in the FAO-ISO-mapping
   FAO <- FAO[FAO$CountryCode %in% FAOiso_faocode$CountryCode,]
   gc()
   FAO$ISO <- FAO$CountryCode
   rownames(FAOiso_faocode) <- as.character(FAOiso_faocode$CountryCode) # becomes necessary because data is now loaded as .csv
   levels(FAO$ISO) <- as.character(FAOiso_faocode[levels(FAO$CountryCode),"ISO3"])
   
-  
+  # define helper function for unit conversion
+  .convert.unit <- function(x, old_unit, new_unit, factor) {
+    replace <- x$Unit == old_unit
+    if(any(replace)){
+      x$Value[replace] <- x$Value[replace]*factor
+      x$Unit[replace] <- new_unit
+    }
+    return(x)
+  }
+
   ### convert some units
-  replace <- FAO$Unit == "1000 tonnes"
-  if(any(replace)){
-    FAO$Value[replace] <- FAO$Value[replace]*1000
-    FAO$Unit[replace] <- "tonnes"
-  }
-  
-  replace <- FAO$Unit == "1000 Head"
-  if(any(replace)){
-    FAO$Value[replace] <- FAO$Value[replace]*1000
-    FAO$Unit[replace] <- "Head"
-  }  
-  
-  replace <- FAO$Unit == "1000"
-  if(any(replace)){
-    FAO$Value[replace] <- FAO$Value[replace]*1000
-    FAO$Unit[replace] <- "number"
-  }
-  
-  replace <- FAO$Unit == "1000 Ha"
-  if(any(replace)){
-    FAO$Value[replace] <- FAO$Value[replace]*1000
-    FAO$Unit[replace] <- "ha"
-  }
-  
+  FAO <- .convert.unit(x = FAO, old_unit = "1000 tonnes", new_unit = "tonnes", factor = 1000)
+  FAO <- .convert.unit(x = FAO, old_unit = "1000 Head",   new_unit = "Head",   factor = 1000)
+  FAO <- .convert.unit(x = FAO, old_unit = "1000 number", new_unit = "number", factor = 1000)
+  FAO <- .convert.unit(x = FAO, old_unit = "1000 Ha",     new_unit = "ha",     factor = 1000)
+
   ### use ElementShort or a combination of Element and Unit instead of ElementCode
   FAOelementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
   
   elementShort <- FAOelementShort
   
-  ## make ElementShort a combination of Element and Unit, replace special characters, and subsitute several _ by one
+  ## make ElementShort a combination of Element and Unit, replace special characters, and replace multiple _ by one
   FAO$ElementShort <- gsub("_{1,}","_", paste0(gsub("[\\.,;?\\+& \\/\\-]","_",FAO$Element, perl=TRUE),"_(",gsub("[\\.,;\\+& \\-]","_",FAO$Unit, perl=TRUE),")"), perl = TRUE)    
   ### replace ElementShort with the entries from ElementShort if the Unit is the same
   elementShort <- elementShort[elementShort$ElementCode %in% FAO$ElementCode,]
