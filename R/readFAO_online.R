@@ -111,25 +111,21 @@ readFAO_online <- function(subtype) {
     readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
     readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
     readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
-    FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
+    #FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
+    FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames, quote = "\"", encoding = "Latin-1", showProgress = FALSE)
     names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
     names(FAO)[names(FAO) == "Area"] <- "Country"
-    ## list countries where no respective ISO code is available in a message
-    countryandcode <- unique(FAO[,c("CountryCode","Country")])
   } else if (subtype == "CBCrop") {
     readcolClass <- rep("NULL",length(csvcolnames))
     readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
     readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
     readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
-    FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
+    FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
     # from wide to long (move years from individual columns into one column)
     FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
-    #FAO$Year <- as.integer(FAO$Year)
     names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
     names(FAO)[names(FAO) == "Area"] <- "Country"
     names(FAO) <- gsub("\\.","",names(FAO))
-    # find unique list of CountryCode and Country avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
-    #countryandcode <- FAO[match(levels(FAO$CountryCode),FAO$CountryCode),c("CountryCode","Country")]
   } else {
     readcolClass <- rep("NULL",length(csvcolnames))
     readcolClass[csvcolnames=="CountryCode" | csvcolnames=="ItemCode" | csvcolnames=="ElementCode"] <- "factor"
@@ -149,8 +145,6 @@ readFAO_online <- function(subtype) {
     FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames, quote = "\"", encoding = "Latin-1", showProgress = FALSE)
     if(all(!is.factor(FAO$CountryCode))) FAO$CountryCode <- as.factor(FAO$CountryCode)
     FAO$Value <- as.numeric(FAO$Value)
-    ## list countries where no respective ISO code is available in a message
-    countryandcode <- unique(FAO[,c("CountryCode","Country")])
   }
   
   # Load FAO-ISO-mapping
