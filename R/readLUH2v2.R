@@ -57,14 +57,14 @@ readLUH2v2 <- function(subtype) {
         x <- aggregate(shr*carea,fact=2,fun=sum)
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel]
-        getCells(x) <- cellNames
+        getCells(mag) <- cellNames
+        getYears(mag) <- time_sel
         return(mag)
       }
     stopCluster(cl)
     gc()
     
     x <- mbind(x)
-    getYears(x) <- time_sel
 
     #Convert from km^2 to Mha
     x <- x/10000
@@ -96,13 +96,13 @@ readLUH2v2 <- function(subtype) {
         
         mag <- as.magpie(extract(x,map),spatial=1,temporal=2)
         getNames(mag) <- data[data_sel,1]
-        getCells(x) <- cellNames
+        getYears(mag) <- time_sel
+        getCells(mag) <- cellNames
         return(mag)
       }
     stopCluster(cl)
     gc()
     x <- mbind(x)
-    getYears(x) <- time_sel
 
     #Convert from km^2 to Mha
     x <- x/10000
