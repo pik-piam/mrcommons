@@ -33,10 +33,10 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     
     #read in historical data for subtype
     x           <- calcOutput("LPJmL", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, time=time, 
-                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, selectyears=selectyears, aggregate=FALSE)
+                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, aggregate=FALSE)
 
     Baseline    <- calcOutput("LPJmL", version=version, climatetype=harmonize_baseline, subtype=subtype, subdata=subdata, time=time, 
-                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, selectyears=selectyears, aggregate=FALSE)
+                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, aggregate=FALSE)
     #harmonize to baseline
     LPJmL_input <- toolHarmonize2Baseline(x, Baseline,  ref_year=ref_year, limited=limited, hard_cut=hard_cut)
     
