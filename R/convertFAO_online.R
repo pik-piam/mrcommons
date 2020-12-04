@@ -152,11 +152,9 @@ convertFAO_online <- function(x,subtype) {
     
   } else if (any(subtype == c("FSCrop", "FSLive"))) {
 
-
-    xabs=x[,,relative[[subtype]], invert=T]
+    xabs <- x[,,relative[[subtype]], invert=T]
     xrel <- x[,,relative[[subtype]], invert=F]
-    
-    
+
     # handling of relative values
     # replaced toolISOhistorical by the following approach for disaggregation
     mapping <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
@@ -219,7 +217,7 @@ convertFAO_online <- function(x,subtype) {
       dimnames(mne)[[1]] <- "MNE"
       x <- mbind(x, mne)
     }
-    ## Adjust prices of live animal weight to the carcass weith
+    ## Adjust prices of live animal weight to the carcass weight
     mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="mrcommons")
     for(item in mapping$FAO_carcass){
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
@@ -230,30 +228,31 @@ convertFAO_online <- function(x,subtype) {
     x[is.na(x)] <- 0
     x <- toolISOhistorical(x, overwrite=TRUE, additional_mapping=additional_mapping)
     x <- toolCountryFill(x, fill=0, verbosity=2)
-  }  
-   else if(subtype=="PricesProducerAnnualLCU"){
-  x <- collapseNames(x[,,"Producer_Price_(Standard_local_Currency_tonne)_(SLC)"])
-  ## Serbia and Montenegro split
-  if(all(c("SCG","SRB") %in% getRegions(x)) & !"MNE" %in% getRegions(x)){
-    mne <- x["SRB",,]
-    dimnames(mne)[[1]] <- "MNE"
-    x <- mbind(x, mne)
-  }
-  ## Adjust prices of live animal weight to the carcass weith
-  mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="mrcommons")
-  for(item in mapping$FAO_carcass){
-    litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
-    countries <- getRegions(which(!is.na(x[,,item]),arr.ind=TRUE))
-    countries <- setdiff(getRegions(x), countries)
-    x[countries,,item] <- x[countries,,litem]/mapping$Price_factor[grep(item, mapping$FAO_carcass)]
-  }
-  x[is.na(x)] <- 0
-  x <- toolISOhistorical(x, overwrite=TRUE, additional_mapping=additional_mapping)
-  x <- toolCountryFill(x, fill=0, verbosity=2)
+    
+  } else if(subtype=="PricesProducerAnnualLCU"){
+    
+    x <- collapseNames(x[,,"Producer_Price_(Standard_local_Currency_tonne)_(SLC)"])
+    ## Serbia and Montenegro split
+    if(all(c("SCG","SRB") %in% getRegions(x)) & !"MNE" %in% getRegions(x)){
+      mne <- x["SRB",,]
+      dimnames(mne)[[1]] <- "MNE"
+      x <- mbind(x, mne)
+    }
+    ## Adjust prices of live animal weight to the carcass weight
+    mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv",type="sectoral",where="mrcommons")
+    for(item in mapping$FAO_carcass){
+      litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
+      countries <- getRegions(which(!is.na(x[,,item]),arr.ind=TRUE))
+      countries <- setdiff(getRegions(x), countries)
+      x[countries,,item] <- x[countries,,litem]/mapping$Price_factor[grep(item, mapping$FAO_carcass)]
+    }
+    x[is.na(x)] <- 0
+    x <- toolISOhistorical(x, overwrite=TRUE, additional_mapping=additional_mapping)
+    x <- toolCountryFill(x, fill=0, verbosity=2)
+    
   }else {
     cat("Specify whether dataset contains absolute or relative values in convertFAO")
   }
-  
   
   ### set negative values (except stock variation) to 0
   
@@ -262,28 +261,7 @@ convertFAO_online <- function(x,subtype) {
     x[,,novar][x[,,novar]<0] <- 0
   }
   
-  ## Unit conversion in case of FAO Forestry Trade and Production Data:
-  
-  if(subtype=="ForestProdTrade"){
-    x[,,"Import_Value_(1000_US$)"] <- x[,,"Import_Value_(1000_US$)"]/1000
-    x[,,"Export_Value_(1000_US$)"] <- x[,,"Export_Value_(1000_US$)"]/1000
-    x[,,"Production_(tonnes)"] <- x[,,"Production_(tonnes)"]/1000000
-    x[,,"Export_Quantity_(tonnes)"] <- x[,,"Export_Quantity_(tonnes)"]/1000000
-    x[,,"Import_Quantity_(tonnes)"] <- x[,,"Import_Quantity_(tonnes)"]/1000000
-    
-    getNames(x,dim = 2)[3] <- "Import_Value_(Mio_US$)"
-    getNames(x,dim = 2)[5] <- "Export_Value_(Mio_US$)"
-    getNames(x,dim = 2)[6] <- "Production_(Mio_tonnes)"
-    getNames(x,dim = 2)[7] <- "Import_Quantity_(Mio_tonnes)"
-    getNames(x,dim = 2)[8] <- "Export_Quantity_(Mio_tonnes)"
-    
-    getNames(x) <- gsub("^\\|","",getNames(x))
-  
-    
-    return(x) 
-  }
-  
-  else {return(x)}
+  return(x)
 }
 
 

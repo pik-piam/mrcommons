@@ -45,6 +45,9 @@
 #' @importFrom tidyr pivot_longer
 
 readFAO_online <- function(subtype) {
+  
+  # ---- Define subtypes and corresponding files ---- 
+  
   files <- c(CBCrop="CommodityBalances_Crops_E_All_Data.zip",
              CBLive="CommodityBalances_LivestockFish_E_All_Data.zip",
              Crop="Production_Crops_E_All_Data.zip",
@@ -101,44 +104,37 @@ readFAO_online <- function(subtype) {
     on.exit(file.remove(file))
   }
   
+  # ---- Select columns to be read from file and read file ---- 
+  
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)
   csvcolnames <- colnames(read.table(file, header=T, nrows=1, sep=","))
   
-  ## in case data with the years as columns has to be read in start the differentiation here
+  # check if data is in long or wide format
+  long <- ifelse("Year" %in% csvcolnames,TRUE,FALSE)
   
-  if(subtype=="ForestProdTrade"){
-    readcolClass <- rep("NULL",length(csvcolnames))
-    readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
-    readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
-    readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
-    #FAO <- read.table(file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names=csvcolnames, quote = "\"", encoding = "latin1")
-    FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames, quote = "\"", encoding = "Latin-1", showProgress = FALSE)
-    names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
-    names(FAO)[names(FAO) == "Area"] <- "Country"
-  } else if (subtype == "CBCrop") {
-    readcolClass <- rep("NULL",length(csvcolnames))
-    readcolClass[csvcolnames=="Area.Code" | csvcolnames=="Item.Code" | csvcolnames=="Element.Code"] <- "factor"
-    readcolClass[csvcolnames=="Area" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
-    readcolClass[csvcolnames=="Value" | csvcolnames=="Year" | grepl("Y[0-9]{4}$",csvcolnames)] <- NA
+  
+  # define vector with types corresponding to the columns in the file to be read
+  readcolClass <- rep("NULL",length(csvcolnames))
+  readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
+  readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit")] <- "character"
+  readcolClass[csvcolnames %in% c("Value","Year")] <- NA
+    
+  if (subtype %in% c("CBCrop","CBLive","CropProc","ForestProdTrade","EmisAgBurnCropResid")) {
+    if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
     FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
     # from wide to long (move years from individual columns into one column)
-    FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
+    if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
     names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
     names(FAO)[names(FAO) == "Area"] <- "Country"
     names(FAO) <- gsub("\\.","",names(FAO))
   } else {
-    readcolClass <- rep("NULL",length(csvcolnames))
-    readcolClass[csvcolnames=="CountryCode" | csvcolnames=="ItemCode" | csvcolnames=="ElementCode"] <- "factor"
-    readcolClass[csvcolnames=="Country" | csvcolnames=="Element" | csvcolnames=="Item" | csvcolnames=="Unit"] <- "character"
     
     if(subtype=="EmisLuTotal"){
       readcolClass[csvcolnames=="Flag" | csvcolnames=="ElementGroup"] <- NA
-      readcolClass[csvcolnames=="Value" | csvcolnames=="Year"] <- NA
     } else if(subtype=="Fodder"){
       readcolClass[csvcolnames=="Value" | csvcolnames=="Year"] <- "character"
       csvcolnames <- csvcolnames[-grep("NULL", readcolClass)]
     } else {
-      readcolClass[csvcolnames=="Value" | csvcolnames=="Year"] <- NA
       csvcolnames <- csvcolnames[-grep("NULL", readcolClass)]
     }
   
@@ -146,6 +142,8 @@ readFAO_online <- function(subtype) {
     if(all(!is.factor(FAO$CountryCode))) FAO$CountryCode <- as.factor(FAO$CountryCode)
     FAO$Value <- as.numeric(FAO$Value)
   }
+  
+  # ---- Identify unknown countries ----
   
   # Load FAO-ISO-mapping
   FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
@@ -167,6 +165,8 @@ readFAO_online <- function(subtype) {
   rownames(FAOiso_faocode) <- as.character(FAOiso_faocode$CountryCode) # becomes necessary because data is now loaded as .csv
   levels(FAO$ISO) <- as.character(FAOiso_faocode[levels(FAO$CountryCode),"ISO3"])
   
+  # ---- Convert units ----
+  
   # define helper function for unit conversion
   .convert.unit <- function(x, old_unit, new_unit, factor) {
     replace <- x$Unit == old_unit
@@ -183,37 +183,34 @@ readFAO_online <- function(subtype) {
   FAO <- .convert.unit(x = FAO, old_unit = "1000 number", new_unit = "number", factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 Ha",     new_unit = "ha",     factor = 1000)
 
-  ### use ElementShort or a combination of Element and Unit instead of ElementCode
-  FAOelementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
+  # ---- Reformat elements ----
   
-  elementShort <- FAOelementShort
-  
-  ## make ElementShort a combination of Element and Unit, replace special characters, and replace multiple _ by one
-  FAO$ElementShort <- gsub("_{1,}","_", paste0(gsub("[\\.,;?\\+& \\/\\-]","_",FAO$Element, perl=TRUE),"_(",gsub("[\\.,;\\+& \\-]","_",FAO$Unit, perl=TRUE),")"), perl = TRUE)    
-  ### replace ElementShort with the entries from ElementShort if the Unit is the same
+  elementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
+  # keep relevant rows only 
   elementShort <- elementShort[elementShort$ElementCode %in% FAO$ElementCode,]
   
+  # make ElementShort a combination of Element and Unit, replace special characters, and replace multiple _ by one
+  tmp <- paste0(FAO$Element,"_(",FAO$Unit,")")
+  tmp <- gsub("[\\.,;?\\+& \\/\\-]","_",tmp, perl = TRUE)
+  FAO$ElementShort <- gsub("_{1,}","_", tmp, perl = TRUE)
+
+  ### replace ElementShort with the entries from ElementShort if the Unit is the same
   if (length(elementShort) > 0) {
     for (i in 1:nrow(elementShort)) {
       FAO$ElementShort[FAO$ElementCode == elementShort[i,"ElementCode"] & FAO$Unit == elementShort[i,"Unit"]] <- as.character(elementShort[i,"ElementShort"])
     }
   }
   
-  # remove accent in Mate to avoid problems
-  # remove other strange names
+  # remove accent in Mate to avoid problems and remove other strange names
   FAO$Item <- gsub("\u00E9","e",FAO$Item, perl=TRUE)
   FAO$Item <- gsub("\n + (Total)", " + (Total)", FAO$Item, fixed = TRUE)
   FAO$ItemCodeItem <- paste0(FAO$ItemCode,"|", gsub("\\.","",FAO$Item,perl=TRUE))    
   
+  FAO <- as.magpie(FAO[,c("Year","ISO","ItemCodeItem","ElementShort","Value")], temporal=1, spatial=2, datacol=5)
+  if(subtype %in% c("EmisAgBurnCropResid","EmisAgCropResid","EmisLuForest")) getNames(FAO, dim=1) <- gsub("\\r", "", getNames(FAO, dim=1))
   gc()
   
-  FAO_mag <- as.magpie(FAO[,c("Year","ISO","ItemCodeItem","ElementShort","Value")], temporal=1, spatial=2, datacol=5)
-  if(subtype == "EmisAgBurnCropResid" | subtype == "EmisAgCropResid" | subtype == "EmisLuForest") getNames(FAO_mag, dim=1) <- gsub("\\r", "", getNames(FAO_mag, dim=1))
-  
-  rm(FAO)
-  gc()
-  
-  FAO_mag <- magpiesort(FAO_mag)
+  FAO <- magpiesort(FAO)
 
-  return(FAO_mag)
+  return(FAO)
 }
