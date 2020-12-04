@@ -44,7 +44,7 @@ readFRA2020 <- function(subtype){
                                                            mapping = c("United Kingdom of Great Britain and Northern Ireland" = "GBR",
                                                                        "Venezuela (Bolivarian Republic of)" = "VEN",
                                                                        "Bolivia (Plurinational State of)" = "BOL",
-                                                                       "CÃ´te d'Ivoire" = "CIV",
+                                                                    #   "CÃ´te d'Ivoire" = "CIV",
                                                                        "French Guyana"= "GUF")))
       
       # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
