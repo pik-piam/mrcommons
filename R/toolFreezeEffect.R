@@ -7,7 +7,8 @@
 #'
 #' @return magpie object with global parameters
 #' @author Kristine Karstens
-
+#' 
+#' @export
 
 toolFreezeEffect <- function(x, year, constrain=FALSE) {
 
