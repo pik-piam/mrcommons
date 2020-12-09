@@ -16,7 +16,7 @@
 #' "nExcrRate", "awmsconfef3, "fracgasms", "fraclossms",
 #' "emissionfactors","rescombusteff", "efnsoil"
 #' @return magpie object of the IPCC data
-#' @author Nele Steinmetz, Stephen Wirth
+#' @author Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' 
@@ -50,13 +50,34 @@ readIPCC <- function(subtype) {
              SCF_input ="ch5_F_I.csv",
              SCF_sub   ="ch5_F_LU.csv",
              manure_table5p5c ="19R_V4_Ch05_Cropland_Table5p5C.csv",
-             SCF_sub2019 ="ch5_F_LU_2019.csv"
-             )
+             SCF_sub2019 ="ch5_F_LU_2019.csv")
   
   file <- toolSubtypeSelect(subtype,files)
   
-  if(subtype=="awmsShr"||subtype=="awmsEfCh4"||subtype=="awmsParCh4"||subtype=="nExcrRate"|| subtype=="ch10_table10a9"){
-    data <- read.csv(file, sep=";", stringsAsFactors=FALSE)
+  .read <- function(file) {
+    .rowfilter <- function(x) return(!all(x=="" | is.na(x)))
+    data <- read.csv(file, sep=";", header=TRUE, comment.char = "*")
+    colnames(data) <- gsub(".","_",colnames(data),fixed=TRUE)
+    data <- data[apply(data,1,.rowfilter),]
+    regions <- c("groups"="groups", "North_America"="NOA", "Western_Europe"="WER", "Eastern_Europe"="EER", 
+                 "Oceania"="OCA", "Latin_America"="LAM",
+                 "Africa"="AFR", "Middle_East"="MDE", "Asia"="ASI", "Indian_Subcontinent"="ISC")
+    if(any(names(regions) %in% colnames(data))) {
+      d <- as.magpie(data,spatial="variable")  
+    } else {
+      d <- as.magpie(data)
+    }
+    if(ncells(d)!=1 || getCells(d)!="GLO") getCells(d) <- regions[getCells(d)]
+    getYears(d) <- "y2005"
+    return(d)
+  }
+  
+  if(subtype %in% c("awmsShr","awmsEfCh4","awmsParCh4","nExcrRate")) {
+    return(.read(file))
+  }
+  
+  if(subtype %in% c("ch10_table10a9","SCF_input","SCF_sub")){
+    data <- read.csv(file, sep=";", stringsAsFactors=FALSE, comment.char="*")
   } else if(subtype=="fraclossms"){
     data <-  read.csv(file,sep = ",", stringsAsFactors = F, header = T, skip=1)
   } else if(subtype=="efnsoil"){
@@ -65,58 +86,8 @@ readIPCC <- function(subtype) {
     data <-  read.csv(file,sep = ",", stringsAsFactors = F, header = F, skip=2)
   } else if (subtype=="rescombusteff"){
     data <-  read.csv(file,sep = ",", stringsAsFactors = F, header = F)
-  } else if(subtype %in% c("SCF_input","SCF_sub")){
-    data <-  read.csv(file,sep = ";", stringsAsFactors = F, header = T, comment.char = "*")
   } else {
-    data <-  read.csv(file,sep = ",", stringsAsFactors = F, header = T)
-  }
-  
-  if(subtype=="awmsShr"){
-    data <- read.csv("awmsShr.csv", sep=";", header=TRUE, skip=1)
-    data$groups <- paste(data$Livestock, data$Manure.Management.System.Usage, sep=".") # merge first 2 columns
-    data$Livestock <- NULL
-    data$Manure.Management.System.Usage <- NULL
-    data <- data[, c(10,1,2,3,4,5,6,7,8,9)] # reorder columns
-    
-    regions <- c("groups"="groups", "North America"="NOA", "Western Europe"="WER", "Eastern Europe"="EER", 
-                 "Oceania"="OCA", "Latin America"="LAM",
-                 "Africa"="AFR", "Middle East"="MDE", "Asia"="ASI", "Indian Subcontinent"="ISC")
-  }
-  
-  if(subtype=="awmsEfCh4"){
-    data <- read.csv("awmsEfCh4.csv", sep=";", header=TRUE)
-    data$groups <- paste(data$Livestock, data$Temperature, sep=".") # merge first 3 columns
-    data$Livestock <- NULL
-    data$Temperature.category <- NULL
-    data$Temperature <- NULL
-    data <- data[, c(10,1:9)] # reorder columns
-    
-    regions <- c("groups"="groups", "North America"="NOA", "Western Europe"="WER", "Eastern Europe"="EER", 
-                 "Oceania"="OCA", "Latin America"="LAM",
-                 "Africa"="AFR", "Middle East"="MDE", "Asia"="ASI", "Indian Subcontinent"="ISC")
-  }
-  
-  if(subtype=="awmsParCh4"){
-    data <- read.csv("awmsParCh4.csv", sep=";", header=TRUE)
-    data$groups <- paste(data$Livestock, data$Characteristics, sep=".") # merge first 2 columns
-    data$Livestock <- NULL
-    data$Characteristics <- NULL
-    data <- data[, c(10,1,2,3,4,5,6,7,8,9)] # reorder columns
-    
-    regions <- c("groups"="groups", "North America"="NOA", "Western Europe"="WER", "Eastern Europe"="EER", 
-                 "Oceania"="OCA", "Latin America"="LAM",
-                 "Africa"="AFR", "Middle East"="MDE", "Asia"="ASI", "Indian Subcontinent"="ISC")
-  }
-  
-  if(subtype=="nExcrRate"){
-    data <- read.csv("nExcrRate.csv", sep=";", header=TRUE)
-    data$groups <- as.character(data$Livestock)
-    data$Livestock <- NULL
-    data <- data[, c(9,1:8)]
-    
-    regions <- c("groups"="groups", "North America"="NOA", "Western Europe"="WER", "Eastern Europe"="EER", 
-                 "Oceania"="OCA", "Latin America"="LAM",
-                 "Africa"="AFR", "Middle East"="MDE", "Asia"="ASI")
+    data <-  read.csv(file,sep = ",", stringsAsFactors = F, header = T, comment.char = "*")
   }
   
   if(subtype=="awmsconfef3"){
@@ -125,8 +96,7 @@ readIPCC <- function(subtype) {
     d <- new.magpie(years = "y2005", names = n,  sets = c("region", "years", "data") )
     d[,,] <- value
     return(d)
-  }
-  if(subtype=="fracgasms"||subtype=="fraclossms"|| subtype=="efnsoil"|| subtype=="ch10_table10a9"){
+  } else if(subtype %in% c("fracgasms", "fraclossms", "efnsoil", "ch10_table10a9")){
     molten <- melt(data, id.vars = "dummy")
     #create vector for variable names
     rows <- molten$dummy
@@ -137,31 +107,17 @@ readIPCC <- function(subtype) {
     d <- new.magpie(years = "y2005", names = n,  sets = c("region", "years", "data") )
     if(subtype=="efnsoil"){getYears(d) <- "y2005"}
     d[,,] <- value
-
     return(d)
-  }
-  
-  if(subtype=="emissionfactors"|| subtype=="rescombusteff"){
+  } else if(subtype=="emissionfactors"|| subtype=="rescombusteff"){
     d <- new.magpie(years = "y2005", names = data[,1], sets = c("region", "year", "data"))
-    
     d[,,] <- data[,2]
-    
     return(d)
-  }
-  
-  if(subtype %in% c("SCF_input","SCF_sub")){
-    d <- as.magpie(data)
-    return(d)
-  }
-  
-  if(subtype=="manure_table5p5c"){
+  } else if(subtype=="manure_table5p5c"){
     d <- as.magpie(read.csv("19R_V4_Ch05_Cropland_Table5p5C.csv"))
     getSets(d) <- c("region", "year", "kli", "attributes")
     return(d)
+  } else {
+    d <- as.magpie(data)
+    return(d)
   }
-  
-  dimnames(data)[[2]] <- regions
-  d <- as.magpie(data)
-  getYears(d) <- "y2005"
-  return(d)
 } 
