@@ -13,6 +13,7 @@
 #' \dontrun{ 
 #' calcOutput("calcNitrogenFixationPast")
 #' }
+#' @importFrom magpiesets findset
 #' 
 
 calcNitrogenFixationPast<-function(fixation_types="both",sum_plantparts=TRUE,cellular=FALSE,irrigation=FALSE){
