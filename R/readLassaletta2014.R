@@ -6,7 +6,7 @@
 #'
 #' @param subtype budget provides the nr cropland budgets, fert_to_cropland the sahre of inorganic fertilizers being applied to croplands
 #' @return Magpie object with results on country level.
-#' @author Benjamin Leon Bodirsky
+#' @author Benjamin Leon Bodirsky, Felicitas Beier
 #' @seealso
 #' \code{\link{convertLassaletta2014}},
 #' \code{\link{readSource}}
@@ -15,6 +15,7 @@
 #' \dontrun{ 
 #' readSource("Lassaletta2014",subtype="budget",convert=FALSE)
 #' }
+#' @importFrom readxl read_excel
 
 
 readLassaletta2014<-function(subtype="budget"){
@@ -40,8 +41,8 @@ readLassaletta2014<-function(subtype="budget"){
           "Yugoslav SFR" ="YUG"
         ))
       rownames(data)<-countries
-      data<-data[,-1]
-      colnames(data)<-year
+      data[,1] <- rownames(data)
+      colnames(data)<-c("reg",year)
       data<-as.magpie(data)
       getNames(data)<-indicator
       out<-mbind(out,data)
