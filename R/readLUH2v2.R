@@ -27,7 +27,7 @@ readLUH2v2 <- function(subtype) {
   ### Define dimensions
   if (grepl("_lpjcell", subtype)){
     ncells    <- 67420
-    map       <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+    map       <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")[c("lon","lat")]
     cellNames <- paste(map$ISO,1:ncells,sep=".")
   } else {
     ncells    <- 59199
