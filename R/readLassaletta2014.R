@@ -41,8 +41,8 @@ readLassaletta2014<-function(subtype="budget"){
           "Yugoslav SFR" ="YUG"
         ))
       rownames(data) <- countries
-      data[,1]       <- rownames(data)
-      colnames(data) <- c("reg",year)
+      data           <- data[,-1]
+      colnames(data) <- year
       data           <- as.magpie(data)
       getNames(data) <- indicator
       out            <- mbind(out,data)
@@ -68,7 +68,6 @@ readLassaletta2014<-function(subtype="budget"){
       "Yugoslav SFR" ="YUG",
       "dprepublic of korea"="PRK"
     ))
-    a   <- cbind(data.frame(region=rownames(a),stringsAsFactors=F), a)
     out <- as.magpie(a)
   } else {stop("unknown subtype")}
   out <- clean_magpie(out)
