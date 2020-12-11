@@ -29,6 +29,7 @@ readLUH2v2 <- function(subtype) {
     ncells    <- 67420
     map       <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
     cellNames <- paste(map$ISO,1:ncells,sep=".")
+    map       <- map[c("lon","lat")]
   } else {
     ncells    <- 59199
     map       <- as.data.frame(magpie_coord)
