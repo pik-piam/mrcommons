@@ -101,9 +101,9 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       if(cells=="lpjcell"){
         LUHcroparea <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
         org_seq   <- getCells(LUHcroparea)
-        dummy     <- new.magpie(getCells(LUHcroparea[c("XNL","KO-")]),getYears(LUHcroparea),getNames(LUHweights,dim=2)) 
+        dummy     <- new.magpie(getCells(LUHcroparea[c("XNL","KO-"),,]),getYears(LUHcroparea),getNames(LUHweights,dim=2)) 
         dummy[,,] <- 0
-        LUHcroparea <- LUHcroparea[getCells(LUHcroparea[c("XNL","KO-")]),,invert=T]
+        LUHcroparea <- LUHcroparea[getCells(LUHcroparea[c("XNL","KO-"),,]),,invert=T]
       } else if(cells=="magpiecell"){
         LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
       }

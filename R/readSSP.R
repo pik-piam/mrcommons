@@ -23,9 +23,8 @@ readSSP<- function(subtype) {
   if(subtype=="all") {
     unziped_file <- gsub("[[:alnum:],[:punct:]]*/","",file)
     unziped_file <- gsub(".zip","",unziped_file)
-    ssp.raw <- read.csv(unz("SspDb_country_data_2013-06-12.csv.zip",unziped_file),check.names=FALSE, stringsAsFactors=FALSE)
+    ssp <- read.csv(unz("SspDb_country_data_2013-06-12.csv.zip",unziped_file),check.names=FALSE, stringsAsFactors=FALSE)
   
-    ssp <- ssp.raw
     ssp[,1]<- paste(ssp$MODEL,ssp$SCENARIO,ssp$VARIABLE,ssp$UNIT, sep = '.')
   
     ssp$SCENARIO <- NULL
@@ -37,7 +36,7 @@ readSSP<- function(subtype) {
   
     final <- ssp[,colSums(is.na(ssp)) != nrow(ssp)] # remove column with NANs
     
-    x <-as.magpie(final,datacol=3)  
+    x <-as.magpie(final,datacol=3,filter=FALSE)  
   } else if(subtype=="ratioPM") {
     data <- as.data.frame(read_excel(file))
     colnames(data) <- c("Region","value") 

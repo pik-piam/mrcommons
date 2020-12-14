@@ -37,14 +37,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
     ash[,,c("c","nr")] <- ash[,,c("c","nr")]*(1-burnshr)  ## assuming the same for C and Nr, maybe has to be updated
     burn                          <- burn - ash  
     
-  
-      
-    mapping       <- toolMappingFile(type = "sectoral",name = "kcr_kres.csv",readcsv = TRUE)
-    burn          <- toolAggregate(burn,rel = mapping,from = "kcr",to="kres",dim=3.1)
-    ash           <- toolAggregate(ash,rel = mapping,from = "kcr",to="kres",dim=3.1)
-    production    <- toolAggregate(production,rel = mapping,from = "kcr",to="kres",dim=3.1)
+    mapping       <- toolGetMapping("mappingCrop2Residue.csv", where="mrcommons", type="sectoral")
+    burn          <- toolAggregate(burn,       rel = mapping, from = "kcr", to="kres", dim=3.1)
+    ash           <- toolAggregate(ash,        rel = mapping, from = "kcr", to="kres", dim=3.1)
+    production    <- toolAggregate(production, rel = mapping, from = "kcr", to="kres", dim=3.1)
 
-    
     ### estimate removal
     
     if(cellular==TRUE){

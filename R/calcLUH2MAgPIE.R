@@ -24,7 +24,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", selectyears = 
     FAOdata     <- calcOutput("Croparea", sectoral="ProductionItem", physical=FALSE, aggregate = FALSE)
   
     kcr         <- findset("kcr")
-    mapping     <- toolGetMapping("FAOvsLUHvsMAG_croptypes.csv", type="sectoral",  where="mappingfolder")
+    mapping     <- toolGetMapping("FAO2LUH2MAG_croptypes.csv", type="sectoral", where="mrcommons")
     
     aggregation <- toolAggregate(FAOdata, rel=mapping, from="ProductionItem", to="LUH2kcr", dim=3.1, partrel = TRUE)
     aggregation <- add_columns(aggregation, addnm = c("betr", "begr"), dim = 3.2)

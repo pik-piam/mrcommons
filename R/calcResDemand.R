@@ -17,7 +17,7 @@
 
 calcResDemand<-function(cellular = FALSE, scenario="dafault"){
   
-  mapping<-toolMappingFile(type = "sectoral",name = "kcr_kres.csv",readcsv = TRUE)
+  mapping       <- toolGetMapping("mappingCrop2Residue.csv", where="mrcommons", type="sectoral")
   
   res_cereals    <- mapping$kcr[mapping$kres=="res_cereals"]
   res_fibrous    <- mapping$kcr[mapping$kres=="res_fibrous"]
