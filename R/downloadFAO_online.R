@@ -1,6 +1,6 @@
 #' @importFrom utils download.file tail unzip
 
-downloadFAO_online <- function(subtype=NULL) {
+downloadFAO_online <- function(subtype) {
   
   links <- c(CBCrop="CommodityBalances_Crops_E_All_Data.zip",
              CBLive="CommodityBalances_LivestockFish_E_All_Data.zip",
@@ -42,6 +42,14 @@ downloadFAO_online <- function(subtype=NULL) {
              
              ValueOfProd="Value_of_Production_E_All_Data.zip",
              ForestProdTrade="Forestry_E_All_Data_(Normalized).zip")
+  
+  settings <- list( CBCrop= list(title = "Food Balance: Commodity Balances - Crops Primary Equivalent.",
+                                   url = "CommodityBalances_Crops_E_All_Data.zip"),
+                    CBLive= list(title = "Food Balance: Commodity Balances - Livestock and Fish Primary Equivalent",
+                                   url = "CommodityBalances_LivestockFish_E_All_Data.zip")
+                    )
+  
+  meta <- toolSubtypeSelect(subtype,settings)
   
   # add base link (preserve 'links' as named vector by using '[] <-')
   links[] <- paste0("http://fenixservices.fao.org/faostat/static/bulkdownloads/",links)

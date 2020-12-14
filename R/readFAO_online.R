@@ -93,9 +93,14 @@ readFAO_online <- function(subtype) {
   
   file <- toolSubtypeSelect(subtype,files)
   
+  # If the name of the csv file is longer than the zip file name add the missing part here.
+  # This is the case for "Pop": the csv file with the same name as the zip file ("Population_E_All_Data") has no header. 
+  # There is a second file ("Population_E_All_Data_NOFLAG") with header (and without the superfluous flags).
+  affix <- ifelse(subtype=="Pop","_NOFLAG","")
+  
   ## if file is .zip uncompress
   extension <- file_ext(basename(file))
-  csv_name <- paste0(file_path_sans_ext(file), ".csv")
+  csv_name <- paste0(file_path_sans_ext(file),affix, ".csv")
   if (file.exists(csv_name)) {
     file <- csv_name
   } else if(extension=="zip" & !file.exists(csv_name)){
@@ -118,8 +123,12 @@ readFAO_online <- function(subtype) {
   readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
   readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit")] <- "character"
   readcolClass[csvcolnames %in% c("Value","Year")] <- NA
+  
+  subtypes_tested <- c("CBCrop","CBLive","Crop","CropProc","ForestProdTrade",
+                       "EmisAgBurnCropResid","Fertilizer","FoodSecurity",
+                       "FSCrop","FSLive","LiveHead","LivePrim","LiveProc","Pop","PricesProducerAnnual")
     
-  if (subtype %in% c("CBCrop","CBLive","CropProc","ForestProdTrade","EmisAgBurnCropResid")) {
+  if (subtype %in% subtypes_tested) {
     if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
     FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
     # from wide to long (move years from individual columns into one column)
@@ -182,7 +191,8 @@ readFAO_online <- function(subtype) {
   FAO <- .convert.unit(x = FAO, old_unit = "1000 Head",   new_unit = "Head",   factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 number", new_unit = "number", factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 Ha",     new_unit = "ha",     factor = 1000)
-
+  FAO <- .convert.unit(x = FAO, old_unit = "1000 persons",new_unit = "persons",factor = 1000)
+  
   # ---- Reformat elements ----
   
   elementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
@@ -190,10 +200,11 @@ readFAO_online <- function(subtype) {
   elementShort <- elementShort[elementShort$ElementCode %in% FAO$ElementCode,]
   
   # make ElementShort a combination of Element and Unit, replace special characters, and replace multiple _ by one
-  tmp <- paste0(FAO$Element,"_(",FAO$Unit,")")
-  tmp <- gsub("[\\.,;?\\+& \\/\\-]","_",tmp, perl = TRUE)
-  FAO$ElementShort <- gsub("_{1,}","_", tmp, perl = TRUE)
-
+  tmp_element <- gsub("[\\.,;?\\+& \\/\\-]","_",FAO$Element, perl=TRUE)
+  tmp_unit    <- gsub("[\\.,;\\+& \\-]","_",    FAO$Unit, perl=TRUE)
+  tmp_elementshort <- paste0(tmp_element,"_(",tmp_unit,")")
+  FAO$ElementShort <- gsub("_{1,}","_", tmp_elementshort, perl = TRUE)    
+  
   ### replace ElementShort with the entries from ElementShort if the Unit is the same
   if (length(elementShort) > 0) {
     for (i in 1:nrow(elementShort)) {

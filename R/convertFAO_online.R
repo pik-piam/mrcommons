@@ -20,10 +20,7 @@
 #' @importFrom magclass magpiesort
 #' 
 
-
-
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
-
 
 convertFAO_online <- function(x,subtype) { 
   
@@ -31,19 +28,26 @@ convertFAO_online <- function(x,subtype) {
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead", 
                 "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs")
   
-
-  
   ## datasets that contain relative values that can be deleted because they can 
   ## be calculated again at a later point in time
   ## and the dimensions that can be deleted
   relative_delete <- list()
-  relative_delete[["Crop"]] <- "Yield_(Hg/Ha)"
+  relative_delete[["Crop"]] <- c("Yield_(hg/ha)","Yield_(Hg/Ha)")
   relative_delete[["Fodder"]] <- "Yield_(Hg/Ha)"
   relative_delete[["LivePrim"]] <- c("Yield_Carcass_Weight_(Hg/An)", 
                                      "Yield_(100Mg/An)", 
                                      "Yield_Carcass_Weight_(0_1Gr/An)", 
                                      "Yield_(Hg/An)", 
-                                     "Yield_(Hg)")          
+                                     "Yield_(Hg)",
+                                     "Yield_(100mg/An)",               # new FAO data
+                                     "Yield_(hg/An)",                  # new FAO data
+                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
+                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
+                                     "Yield_(hg)")                     # new FAO data
+  
+  # select elements only if unit (dim=3.2) exists in x (otherwise magclass would complain when trying to remove non-existent elements with invert=TRUE)
+  relative_delete <- if(subtype %in% names(relative_delete)) relative_delete[[subtype]][relative_delete[[subtype]] %in% getItems(x,dim=3.2)] else NULL
+  if (identical(relative_delete, character(0))) stop("For this subtype (",subtype,") units are listed in 'convertFAO' whose entries should be deleted from the data, but none of the specified units could be found in the data.")
   
   ## datasets that contain relative values: and define these dimensions
   relative <- list()
@@ -58,7 +62,6 @@ convertFAO_online <- function(x,subtype) {
                             "food_supply_kcal/cap/day", 
                             "protein_supply_g/cap/day", 
                             "fat_supply_g/cap/day")
-
   
   ### Section for country specific treatment ###
   
@@ -110,7 +113,6 @@ convertFAO_online <- function(x,subtype) {
   if(any(getRegions(x) == "ANT")) {
     x <- x["ANT",,,invert=T]
   }
-  
 
   ## data for PCI split up into:
   # Marshall Islands (MH, MHL, 584)
@@ -124,8 +126,8 @@ convertFAO_online <- function(x,subtype) {
   }
   
   
-  ### in the dataset EmisAgRiceCult certain follow up states of the Soviet Union are missing. Add them with values of 0
-  if(subtype=="EmisAgRiceCult") {
+  ### For certain subtypes: if some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and Montenegro (SCG) are missing add them with values of 0
+  if(subtype %in% c("EmisAgRiceCult","Fertilizer")) {
     ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
     missing <- former[!former %in% getRegions(x)]
@@ -134,7 +136,6 @@ convertFAO_online <- function(x,subtype) {
     x <- mbind(x,x2)
     vcat(2, "Added the countries", missing, "with value of 0 from 1992 onwards")
   }
-  
 
 
   if (any(subtype == absolute)) {
@@ -143,9 +144,9 @@ convertFAO_online <- function(x,subtype) {
     x <- toolCountryFill(x, fill=0, verbosity = 2)
     if (any(grepl(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]], value=TRUE),collapse=" "), "\n" , "and would need a different treatment of NAs in convertFAO")
     
-  } else if (any(subtype == names(relative_delete))) {
+  } else if (!is.null(relative_delete)) {
     x[is.na(x)] <- 0
-    x <- x[,,relative_delete[[subtype]], invert=T]  
+    x <- x[,,relative_delete, invert=T]  
     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
     x <- toolCountryFill(x, fill=0, verbosity = 2)
     if (any(grepl(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]], value=TRUE),collapse=" "), "\n" , "and would need a different treatment of NAs in convertFAO")
@@ -251,7 +252,7 @@ convertFAO_online <- function(x,subtype) {
     x <- toolCountryFill(x, fill=0, verbosity=2)
     
   }else {
-    cat("Specify whether dataset contains absolute or relative values in convertFAO")
+    cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
   
   ### set negative values (except stock variation) to 0
