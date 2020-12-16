@@ -48,7 +48,7 @@ calcUrban <- function(UrbanCalib="past", UrbanPast="WDI", UrbanFuture="SSP",nami
   }
   
   wp <- calcOutput("Population", aggregate = FALSE)
-  getNames(wp) <- gsub("(pop_SSP\\d).*","\\1",getNames(wp))
+  #getNames(wp) <- gsub("(pop_SSP\\d).*","\\1",getNames(wp))
   combined <- combined[getRegions(wp),getYears(wp),]
   
  

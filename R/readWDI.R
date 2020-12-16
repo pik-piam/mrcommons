@@ -31,18 +31,20 @@
 #' }
 #' 
 
-readWDI<-function(subtype){
+readWDI <- function(subtype){
   load("WDI.rda")
   if (subtype == "NE.CON.PRVT.PP.CD"){
     # Some values for Chinese Household Consumption Expenditure are not reported in the newer version (will probably be corrected later)
-    wdi[wdi$country == "China" & wdi$Year %in% c(1990:2009), "NE.CON.PRVT.PP.CD"] <- c( 3.87E+11, 4.42E+11, 5.19E+11, 5.88E+11, 
-                                                                                        6.47E+11, 7.39E+11, 8.40E+11, 9.09E+11,
-                                                                                        9.89E+11, 1.10E+12, 1.24E+12, 1.36E+12,
-                                                                                        1.49E+12, 1.64E+12, 1.84E+12, 2.09E+12,
-                                                                                        2.40E+12, 2.75E+12, 3.13E+12, 3.47E+12 )
+    wdi[wdi$country == "China" & wdi$Year %in% c(1990:2009), "NE.CON.PRVT.PP.CD"] <- c( 
+      3.87E+11, 4.42E+11, 5.19E+11, 5.88E+11, 
+      6.47E+11, 7.39E+11, 8.40E+11, 9.09E+11,
+      9.89E+11, 1.10E+12, 1.24E+12, 1.36E+12,
+      1.49E+12, 1.64E+12, 1.84E+12, 2.09E+12,
+      2.40E+12, 2.75E+12, 3.13E+12, 3.47E+12 
+    )
   }
   wdi$country <- NULL
-  wdi <- as.magpie(melt(wdi,id.vars = c("iso2c","year")),spatial=1,temporal=2,tidy=TRUE,replacement =".")
+  wdi <- as.magpie(melt(wdi, id.vars = c("iso2c","year")), spatial=1, temporal=2, tidy=TRUE, replacement =".")
   wdi <- wdi[,,subtype]
   return(wdi)
 }

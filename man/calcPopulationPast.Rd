@@ -23,9 +23,6 @@ can be selected in the madrat config(getConfig()$calc$PopulationPast):
         values set to zero.
 }
 }
-\seealso{
-\code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
-}
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

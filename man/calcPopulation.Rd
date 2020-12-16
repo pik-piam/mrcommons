@@ -5,9 +5,10 @@
 \title{calcPopulation}
 \usage{
 calcPopulation(
-  PopulationCalib = "past_transition",
-  PopulationPast = "WDI_completed",
-  PopulationFuture = "SRES_SSP_completed",
+  PopulationCalib = c("past_grPEAP_grFuture", "Ariadne"),
+  PopulationPast = c("WDI_completed", "Eurostat_WDI_completed"),
+  PopulationFuture = c("SSP2018Update_completed_bezierOut",
+    "SSP2Ariadne_completed_bezierOut"),
   FiveYearSteps = TRUE,
   naming = "indicator_scenario"
 )
@@ -36,8 +37,8 @@ determines the merging point. All data is calibrated either to the "past" or
 the "future" dataset as specified in "getConfig()$calc$PopulationCalib".
 }
 \seealso{
-\code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
+\code{\link{calcPopulationPast}},\code{\link{calcPopulationFuture}}
 }
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

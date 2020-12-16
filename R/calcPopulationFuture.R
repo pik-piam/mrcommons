@@ -7,64 +7,192 @@
 #' 
 #' @param PopulationFuture population future data source
 #' @return Population in millions.
-#' @author Lavinia Baumstark, Benjamin Bodirsky
-#' @seealso \code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
-#' @importFrom magclass getNames clean_magpie
-#' @importFrom madrat readSource
+#' @author Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
+calcPopulationFuture <- function(PopulationFuture = "SSP2018Update_completed_bezierOut") {
 
-
-calcPopulationFuture <- function(PopulationFuture="SSP_completed") {
-  type <- PopulationFuture
-  if (type=="SRES"){type=c("sres_a1_pop","sres_a2_pop","sres_b1_pop","sres_b2_pop")} 
-  if(all(type%in%"IIASApop")){
-    data <- readSource("IIASApop")/1000000
-    time_extend <- c("y2105","y2110","y2115","y2120","y2125","y2130","y2135","y2140","y2145","y2150")
-    data <- time_interpolate(data,time_extend,extrapolation_type="constant",integrate_interpolated_years=TRUE)
-  } else if (all(type%in%"SSP")){
-    data <- collapseNames(readSource("SSP",subtype="all")[,,"Population"][,,"IIASA-WiC POP"])
-    getNames(data) <- paste("pop_",gsub("_v[[:alnum:],[:punct:]]*","",getNames(data)),sep="")
-    # change name of "SSP4d" to "SSP4
-    getNames(data)<-sub("SSP4d","SSP4",getNames(data))
-    # remove 2000 and 2005, because these years are not complete
-    data <- data[,setdiff(getYears(data),c("y2000","y2005")),]
-    #remove years which only contain 0s as entries
-    data <- data[,!apply(data,2,function(x) return(all(x==0))),]
-    time_extend <- c("y2105","y2110","y2115","y2120","y2125","y2130","y2135","y2140","y2145","y2150")
-    data <- time_interpolate(data,time_extend,extrapolation_type="constant",integrate_interpolated_years=TRUE)
-  } else if (all(type%in%c("sres_a1_pop","sres_a2_pop","sres_b1_pop","sres_b2_pop"))){
-    data<-NULL
-    for (i in type) {
-      data <- mbind(data,readSource(type="SRES",subtype=i))
-    }
-    getNames(data)<-paste0("pop_",substr(getNames(data),6,7))
-    time_extend <- c("y2105","y2110","y2115","y2120","y2125","y2130","y2135","y2140","y2145","y2150")
-    data <- time_interpolate(data,time_extend,extrapolation_type="constant",integrate_interpolated_years=TRUE)
-    data[is.na(data)]<-0
-  } else if (type %in% c("SRES_completed","SSP_completed")){
-    if (type=="SSP_completed") {
-      data <- calcOutput("PopulationFuture", PopulationFuture="SSP",  aggregate = F)  
-      fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
-    } else if (type=="SRES_completed") {
-      data <- calcOutput("PopulationFuture", PopulationFuture="SRES",  aggregate = F)
-      fill <- calcOutput("PopulationFuture", PopulationFuture="SSP_completed",  aggregate = F)[,,"pop_SSP2"]
-    }
-    
-    missing<-where(data==0)$true$region
-    fill <- time_interpolate(fill,interpolated_year = getYears(data),extrapolation_type = "constant")
-    
-    missing<-where(setYears(dimSums(data,dim=2),"y2000")==0)$true$region
-    data[missing,,]<-fill[missing,,]
-    missing<-where(data==0)$true$region
-    for(ii in missing){
-      missingyears=where(data[ii,,]==0)$true$years
-      data[ii,missingyears,] <- time_interpolate(dataset = data[ii,,][,missingyears,,invert=T],interpolated_year = missingyears,extrapolation_type = "constant")
-    }
-    
-  } else{
-    stop(type, " is not a valid source type for population")
+  # Look for "_completed" tag. Remove if found.
+  if (grepl("_completed", PopulationFuture)) {
+    PopulationFuture <- gsub("_completed", "", PopulationFuture)
+    complete <- TRUE
+  } else {
+    complete <- FALSE
   }
-  data<-clean_magpie(data)
-  # put in alphabetical order
-  data<-data[,,order(getNames(data))]
-  return(list(x=data,weight=NULL,unit="million",description=paste0("Population data based on ",type)))
+
+  # Look for "_bezierOut" tag. Remove if found.
+  if (grepl("_bezierOut", PopulationFuture)) {
+    PopulationFuture <- gsub("_bezierOut", "", PopulationFuture)
+    bezierOut <- TRUE
+  } else {
+    bezierOut <- FALSE
+  }
+
+  # Check left-over input argument  
+  valid_inputs <- c(
+    "SSP",
+    "SSP2018Update",
+    "SRES",
+    "IIASApop",
+    "SSP2Ariadne"
+  )
+  if (!PopulationFuture %in% valid_inputs) {
+    stop("Bad input for PopulationFuture. Invalid 'PopulationFuture' argument.")
+  }
+
+  data <- switch(PopulationFuture,
+                 "SSP" = calcPopulationFutureSSP(complete, bezierOut),
+                 "SSP2018Update" = calcPopulationFutureSSP2018Update(complete, bezierOut),
+                 "SRES" = calcPopulationFutureSRES(complete),
+                 "IIASApop" = calcPopulationFutureIIASApop(),
+                 "SSP2Ariadne" = calcPopulationFutureSSP2Ariadne(complete, bezierOut))
+
+  # Clean and put in alphabetical order
+  data <- clean_magpie(data)
+  data <- data[,,order(getNames(data))]
+
+  return(list(x = data,
+              weight = NULL,
+              unit = "million",
+              description = paste0("Population data based on ", PopulationFuture)))
+}
+
+
+
+######################################################################################
+# Functions
+######################################################################################
+calcPopulationFutureIIASApop <- function() {
+  data <- readSource("IIASApop") / 1e+6
+  time_extend <- seq(2105, 2150, 5)
+  data <- time_interpolate(data,
+                           time_extend,
+                           extrapolation_type = "constant",
+                           integrate_interpolated_years = TRUE)
+  data
+}
+
+calcPopulationFutureSSP <- function(complete, bezierOut) {
+  data <- readSource("SSP", subtype = "all")[,,"Population"][,,"IIASA-WiC POP"]
+  
+  # Refactor names
+  data <- collapseNames(data) 
+  getNames(data) <- paste0("pop_", gsub("_v[[:alnum:],[:punct:]]*", "", getNames(data)))
+  getNames(data) <- sub("SSP4d", "SSP4", getNames(data))
+
+  # Remove 2000 and 2005, because these years are not complete
+  data <- data[,setdiff(getYears(data), c("y2000", "y2005")),]
+
+  # Extend from 2100 to 2150
+  time_extend <- seq(2105, 2150, 5)
+  if (bezierOut) {
+    data <- bezierExtension(data, time_extend)
+  } else {
+    helper <- getSets(data)
+    data <- time_interpolate(data,
+                             time_extend,
+                             extrapolation_type = "constant",
+                             integrate_interpolated_years = TRUE)
+    # Time_interpolate destroys the setNames for some reason...
+    getSets(data) <- helper
+  }
+  
+  # Complete with missing islands
+  if (complete) {
+     fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+     data <- completeData(data, fill)
+  }
+
+  data
+}
+
+calcPopulationFutureSSP2018Update <- function(complete, bezierOut) {
+  data <- readSource("SSP", "pop2018Update") / 1e+3
+  getNames(data) <- paste0("pop_", getNames(data))
+
+  # Extend from 2100 to 2150
+  time_extend <- seq(2105, 2150, 5)
+  if (bezierOut) {
+    data <- bezierExtension(data, time_extend)
+  } else {
+    helper <- getSets(data)
+    data <- time_interpolate(data,
+                             time_extend,
+                             extrapolation_type = "constant",
+                             integrate_interpolated_years = TRUE)
+    # Time_interpolate destroys the setNames for some reason...
+    getSets(data) <- helper
+  }
+  
+  # Complete with missing islands
+  if (complete) {
+     fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+     data <- completeData(data, fill)
+  }
+
+  data
+}
+
+
+calcPopulationFutureSRES <- function(complete) {
+  data <- NULL
+  for (i in c("sres_a1_pop","sres_a2_pop","sres_b1_pop","sres_b2_pop")) {
+    data <- mbind(data, readSource("SRES", i))
+  }
+  getNames(data) <- paste0("pop_", substr(getNames(data), 6, 7))
+  time_extend <- seq(2105, 2150, 5)
+  data <- time_interpolate(data,
+                           time_extend,
+                           extrapolation_type = "constant",
+                           integrate_interpolated_years = TRUE)
+  data[is.na(data)] <- 0
+
+  if (complete) {
+     fill <- calcOutput("PopulationFuture", PopulationFuture = "SSP_completed",  aggregate = F)[,,"pop_SSP2"]
+     data <- completeData(data, fill)
+  }
+
+  data
+}
+
+
+calcPopulationFutureSSP2Ariadne <- function(complete, bezierOut) {
+  data_eurostat <- readSource("Eurostat", "population_projections") / 1e+6
+  data_ssp2 <- calcPopulationFutureSSP2018Update(FALSE, FALSE)[,, "pop_SSP2"]
+
+  # Get EUR countries - GBR. (Great Britatin still in EUR mapping, but no Eurostat projections exist.) 
+  EUR_countries <- toolGetMapping("regionmappingH12.csv") %>% 
+    tibble::as_tibble() %>% 
+    filter(.data$RegionCode == "EUR", .data$CountryCode != "GBR") %>% 
+    dplyr::pull(.data$CountryCode)
+  
+  # Get common years
+  cy <- intersect(getYears(data_ssp2),  getYears(data_eurostat))
+
+  # Start with the SSP2 scenario until 2100. Change the name, and overwrite the EUR
+  # countries with the Eurostat data.
+  data <- data_ssp2[, getYears(data_ssp2)[getYears(data_ssp2, as.integer = TRUE) <= 2100], ] %>% 
+    setNames("pop_SSP2Ariadne")
+  data[EUR_countries,,] <- 0
+  data[EUR_countries, cy, ] <- data_eurostat[EUR_countries, cy,]
+
+  # Extend from 2100 to 2150
+  time_extend <- seq(2105, 2150, 5)
+  if (bezierOut) {
+    data <- bezierExtension(data, time_extend)
+  } else {
+    helper <- getSets(data)
+    data <- time_interpolate(data,
+                             time_extend,
+                             extrapolation_type = "constant",
+                             integrate_interpolated_years = TRUE)
+    # Time_interpolate destroys the setNames for some reason...
+    getSets(data) <- helper
+  }
+  
+  # Complete with missing islands
+  if (complete) {
+     fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+     data <- completeData(data, fill)
+  }
+
+  data
 }
