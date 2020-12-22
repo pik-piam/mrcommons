@@ -3,8 +3,8 @@
 #' Read-in an FRA data from 2020 (forest resource assessment). 
 #' 
 #' 
-#' @param subtype data subtype. 
-#' @return magpie object of the FRA 2020 data
+#' @param subtype data subtype. Available subtypes: "forest_area","growing_stock","biomass_stock","carbon_stock","management","disturbance","forest_fire"
+#' @return Magpie object of the FRA 2020 data
 #' @author Abhijeet Mishra
 #' @seealso \code{\link{readSource}}
 #' @examples
@@ -12,7 +12,7 @@
 #' \dontrun{ a <- readSource("FRA2020","growing_stock")
 #' }
 #' 
-#' @importFrom magclass as.magpie
+#' @importFrom magclass as.magpie getRegions
 #' @importFrom madrat toolSubtypeSelect toolCountry2isocode
 #' @import countrycode 
 #' @importFrom stats complete.cases
@@ -20,70 +20,167 @@
 
 readFRA2020 <- function(subtype){
   
-  if (subtype=="growing_stock") { ## from FAO in mio. m3
+  ## Capture source data
+  file      <- "FRA_Years_2020_12_01.csv"
+  fra_data  <- read.csv(file,header = T)
+  colnames(fra_data) <- gsub(pattern = "X",replacement = "",x = colnames(fra_data),ignore.case = FALSE)
+  all_variables <- colnames(fra_data)
+  id <- c("iso3","year")
+  
+  subtype_list <- c("forest_area","growing_stock","biomass_stock","carbon_stock","management","disturbance","forest_fire")
+  
+  ### Some cleanup in read data may be necessary in case of missing or unreported data
+  
+  clean_data <- function(x){
     
-    ## Declare the file names which contain relevant data
-    forest_data  <- "fra2020-growingStock_forest.csv" # Origin = C:/PIK/data_processing/inputdata/sources/FRA2020/
-    natveg_data  <- "fra2020-growingStock_natveg.csv"
-    planted_data <- "fra2020-growingStock_planted.csv"
+    # Read the csv source file, First row is info not needed by us
+    data   <- x
     
-    ## Manual function to cleanup the data. Takes in source file as input
-    process_data <- function(x){
-      
-      # Read the csv source file, First row is info not needed by us
-      data   <- read.csv(x,header = TRUE,skip = 1)
-
-      # Manually rename first column
-      colnames(data)[1]  <- "Country"
-      
-      # Cleanup additional name info
-      data$Country <- gsub(pattern = " \\(French Part\\)| \\(Desk study\\)",replacement = "",x = data$Country)
-      
-      # Convert from country names to ISO codes
-      data$Country <- suppressWarnings(toolCountry2isocode(data$Country,warn = T,
-                                                           mapping = c("United Kingdom of Great Britain and Northern Ireland" = "GBR",
-                                                                       "Venezuela (Bolivarian Republic of)" = "VEN",
-                                                                       "Bolivia (Plurinational State of)" = "BOL",
-                                                                    #   "CÃ´te d'Ivoire" = "CIV",
-                                                                       "French Guyana"= "GUF")))
-      
-      # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
-      data <- data[!is.na(data$Country),]
-      
-      # If data is not reported in any of the years, set it to 0, 
-      # if partial data is reported, set it to mean values of known data in that country
-      yr_count <- ncol(data)
-      for (i in 1:nrow(data)) {
-        na_count <- as.numeric(apply(data[i,], 1, function(x) sum(is.na(x))))
-        if(na_count == yr_count-1){
-          cat("No data reported for",data[i,1],"\n")
-          data[i,-1] <- 0
-        } else if ( na_count > 0 & na_count < yr_count-1){
-          cat("Partial or missing data reported for",data[i,1],"\n")
-          data[i,is.na(data[i,])] <- mean(as.numeric(as.vector(data[i,-1])),na.rm = TRUE)
+    # If data is not reported in any of the years, set it to 0, 
+    # if partial data is reported, set it to mean values of known data in that country
+    var_count <- length(getNames(data))
+    yr_count <- length(getYears(data))
+    missing_data <- 0
+    partial_data <- 0
+    for(j in getRegions(data)){
+      for (i in 1:var_count) {
+        na_count <- as.numeric(apply(data[j,,i], 1, function(x) sum(is.na(x))))
+        if(na_count == yr_count){
+          missing_data <- missing_data + 1
+          data[j,,i] <- 0
+          missing_data = missing_data
+        } else if ( na_count > 0 & na_count < yr_count){
+          partial_data <- partial_data + 1
+          data[j,,i][is.na(data[j,,i])] <- mean(as.numeric(as.vector(data[j,,i])),na.rm = TRUE)
+          partial_data <- partial_data
         }
       }
-      cat("\nCountries with no growing stock data will be set to 0.\n")
-      cat("Countries with partial or missing growing stock data will be set to mean value of reported data.\n")
-      
-      # Replace X in colnames with y to make sure as.magpie recognizes this column as temporal dimension later
-      colnames(data) <- gsub(pattern = "X",replacement = "y",x = colnames(data))
-      
-      # Return the cleaned data frame
-      return(data)
     }
     
-    # Plug in data via mbin - which uses cleaning up of source data while conversion to magpie object happens before mbind
-    out <- mbind(setNames(as.magpie(process_data(forest_data)),"Forest"),
-                 setNames(as.magpie(process_data(natveg_data)),"Natural vegetation"),
-                 setNames(as.magpie(process_data(planted_data)),"Plantations"))
+    if(missing_data>0) message(missing_data," missing data points."," Such data will be set to 0.")
+    if(partial_data>0) message(partial_data," partial data points."," Such data will be set to mean value of reported data.")
     
-    # Add additional dimension to clealy state which data will be returned (set to subtype here)
-    out <- add_dimension(x = out,dim = 3.1,nm = subtype, add = "Indicator")
+    # Replace X in colnames with y to make sure as.magpie recognizes this column as temporal dimension later
+    colnames(data) <- gsub(pattern = "X",replacement = "y",x = colnames(data))
     
-    return(out)
+    # Return the cleaned data frame
+    return(data)
+  }
 
-  } else if (subtype!="growing_stock") {
-    stop("Invalid or unsupported subtype ",subtype,". Check function documentation for valid subtypes. Returning NULL")
+  if (subtype=="forest_area") {
+    ## Unit = 1000 ha
+    identifiers <- c("1a_|1b_|1c_|1d_|1e_|1f_")
+    variables <- grep(pattern = identifiers,x = all_variables,value = TRUE)
+    data <- fra_data[,all_variables %in% c(id,variables)]
+    colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
+    out <- clean_data(as.magpie(data,spatial="iso3"))
+  }
+  
+  if (subtype=="growing_stock") {
+    ## Unit = m3/ha or Mm3
+    identifiers <- c("2a_")
+    variables <- grep(pattern = identifiers,x = all_variables,value = TRUE)
+    data <- fra_data[,all_variables %in% c(id,variables)]
+    colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
+    out <- clean_data(as.magpie(data,spatial="iso3"))
+  }
+  
+  if (subtype=="biomass_stock") {
+    ## Unit = tDM/ha
+    identifiers <- c("2c_")
+    variables <- grep(pattern = identifiers,x = all_variables,value = TRUE)
+    data <- fra_data[,all_variables %in% c(id,variables)]
+    colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
+    out <- clean_data(as.magpie(data,spatial="iso3"))
+  }
+  
+  if (subtype=="carbon_stock") {
+    ## Unit = tC/ha
+    identifiers <- c("2d_")
+    variables <- grep(pattern = identifiers,x = all_variables,value = TRUE)
+    data <- fra_data[,all_variables %in% c(id,variables[-length(variables)])] ##"2d_soil_depth_cm" not needed hence dropped
+    colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
+    out <- clean_data(as.magpie(data,spatial="iso3"))
+  }
+  
+  if (subtype=="management") {
+    ## Unit = 1000 ha
+    identifiers <- c("3a_tot_")
+    variables <- grep(pattern = identifiers,x = all_variables,value = TRUE)
+    data <- fra_data[,all_variables %in% c(id,variables)]
+    colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
+    out <- clean_data(as.magpie(data,spatial="iso3"))
+  }
+
+  
+  ##### Some data does not belong to the bulk download and has to be downloaded manually
+  ##### This data also needs some cleaning
+  
+  ## Manual function to cleanup the data. Takes in source file as input
+  process_data <- function(x){
+    
+    # Read the csv source file, First row is info not needed by us
+    data   <- read.csv(x,header = TRUE,skip = 1)
+    
+    # Manually rename first column
+    colnames(data)[1]  <- "Country"
+    
+    # Cleanup additional name info
+    data$Country <- gsub(pattern = " \\(French Part\\)| \\(Desk study\\)",replacement = "",x = data$Country)
+    
+    # Convert from country names to ISO codes
+    data$Country <- suppressWarnings(toolCountry2isocode(data$Country,warn = T,
+                                                         mapping = c("United Kingdom of Great Britain and Northern Ireland" = "GBR",
+                                                                     "Venezuela (Bolivarian Republic of)" = "VEN",
+                                                                     "Bolivia (Plurinational State of)" = "BOL",
+                                                                     #   "CÃ´te d'Ivoire" = "CIV",
+                                                                     "French Guyana"= "GUF")))
+    
+    # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
+    data <- data[!is.na(data$Country),]
+    
+    # If data is not reported in any of the years, set it to 0, 
+    # if partial data is reported, set it to mean values of known data in that country
+    yr_count <- ncol(data)
+    missing_data <- 0
+    partial_data <- 0
+    for (i in 1:nrow(data)) {
+      na_count <- as.numeric(apply(data[i,], 1, function(x) sum(is.na(x))))
+      if(na_count == yr_count-1){
+        missing_data <- missing_data + 1
+        data[i,-1] <- 0
+        missing_data = missing_data
+      } else if ( na_count > 0 & na_count < yr_count-1){
+        partial_data <- partial_data + 1
+        data[i,is.na(data[i,])] <- mean(as.numeric(as.vector(data[i,-1])),na.rm = TRUE)
+        partial_data <- partial_data
+      }
+    }
+    if(missing_data>0) message(missing_data," missing data points."," Such data will be set to 0.")
+    if(partial_data>0) message(partial_data," partial data points."," Such data will be set to mean value of reported data.")
+    
+    # Replace X in colnames with y to make sure as.magpie recognizes this column as temporal dimension later
+    colnames(data) <- gsub(pattern = "X",replacement = "y",x = colnames(data))
+    
+    # Return the cleaned data frame
+    return(data)
+  }
+    
+  if (subtype=="disturbance") {
+    ## Unit 1000ha
+    file      <- "fra2020-disturbances.csv"
+    out <- as.magpie(process_data(file))
+  }
+  
+  if (subtype=="forest_fire") {
+    ## Unit 1000 ha
+    file      <- "fra2020-areaAffectedByFire.csv"
+    out <- as.magpie(process_data(file))
+  }
+  
+  else if (!(subtype %in% subtype_list)) {
+    stop("Invalid or unsupported subtype ",subtype,". Accepted subtypes are ",paste(subtype_list,collapse = ", "),". Choose one of the accepted subtype. Returning NULL")
   }  
+  out <- out[grep(pattern = "X0|X1|X2",x = getRegions(out),value = TRUE,invert = TRUE),,]
+  return(out)
 } 

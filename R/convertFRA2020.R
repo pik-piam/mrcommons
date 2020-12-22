@@ -13,9 +13,21 @@
 
 convertFRA2020 <- function(x,subtype){
   
-  if(subtype == "growing_stock"){
+  if(subtype %in% c("forest_area","growing_stock","management","disturbance","forest_fire")){
     x <- toolCountryFill(x,fill = 0)
-    out<- x/1000 ## Conversion from million m3 to billion m3
+    
+    if(any(getNames(x) %in% grep(pattern = "gs_ha",x = getNames(x),value = TRUE))){
+      ## This is done because gs_ha variables are already in m3/ha
+      out <- x
+    } else {
+      out <- x/1000 ## Conversion from million units to billion units  
+    }
     return(out)
-  } else {stop("Invalid subtype ", subtype)}
+  } else if(subtype %in% c("biomass_stock","carbon_stock")){
+    x <- toolCountryFill(x,fill = 0)
+    out <- x
+    return(out)
+  } else {
+    stop("Invalid subtype ", subtype)
+    }
 }
