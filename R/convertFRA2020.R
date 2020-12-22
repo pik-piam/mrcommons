@@ -20,7 +20,7 @@ convertFRA2020 <- function(x,subtype){
       ## This is done because gs_ha variables are already in m3/ha
       out <- x
     } else {
-      out <- x/1000 ## Conversion from million units to billion units  
+      out <- x/1000 ## Conversion from 000 units to million units  
     }
     return(out)
   } else if(subtype %in% c("biomass_stock","carbon_stock")){
