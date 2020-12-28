@@ -22,7 +22,7 @@ readFRA2020 <- function(subtype){
   
   ## Capture source data
   file      <- "FRA_Years_2020_12_01.csv"
-  fra_data  <- read.csv(file,header = T)
+  fra_data  <- read.csv(file,header = TRUE,dec = ".",na.strings=c(""," ","NA","."))
   colnames(fra_data) <- gsub(pattern = "X",replacement = "",x = colnames(fra_data),ignore.case = FALSE)
   all_variables <- colnames(fra_data)
   id <- c("iso3","year")
@@ -110,6 +110,7 @@ readFRA2020 <- function(subtype){
     data <- fra_data[,all_variables %in% c(id,variables)]
     colnames(data) <- gsub(pattern = identifiers,replacement = "", x = colnames(data))
     out <- clean_data(as.magpie(data,spatial="iso3"))
+    out["SUR","y2020",] <- out["SUR","y2020",]/1000 ## Suriname has misreporting? The bad value is empty in 2020 from original file but when it is read in R it takes bizarre values
   }
 
   
