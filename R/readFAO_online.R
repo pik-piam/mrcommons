@@ -59,7 +59,7 @@ readFAO_online <- function(subtype) {
              FoodSecurity="Food_Security_Data_E_All_Data.zip",
              FSCrop="FoodSupply_Crops_E_All_Data.zip",
              FSLive="FoodSupply_LivestockFish_E_All_Data.zip",
-             Land="Resources_Land_E_All_Data.zip",
+             Land="Inputs_LandUse_E_All_Data_(Normalized).zip", # old source file: Resources_Land_E_All_Data.zip,
              LiveHead="Production_Livestock_E_All_Data.zip",
              LivePrim="Production_LivestockPrimary_E_All_Data.zip",
              LiveProc="Production_LivestockProcessed_E_All_Data.zip",
@@ -120,38 +120,24 @@ readFAO_online <- function(subtype) {
   
   # define vector with types corresponding to the columns in the file to be read
   readcolClass <- rep("NULL",length(csvcolnames))
-  readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
-  readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit")] <- "character"
+  readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Country.Code","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
+  readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit","Months")] <- "character"
   readcolClass[csvcolnames %in% c("Value","Year")] <- NA
   
-  subtypes_tested <- c("CBCrop","CBLive","Crop","CropProc","ForestProdTrade",
-                       "EmisAgBurnCropResid","Fertilizer","FoodSecurity",
-                       "FSCrop","FSLive","LiveHead","LivePrim","LiveProc","Pop","PricesProducerAnnual")
-    
-  if (subtype %in% subtypes_tested) {
-    if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
-    FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
-    # from wide to long (move years from individual columns into one column)
-    if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
-    names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
-    names(FAO)[names(FAO) == "Area"] <- "Country"
-    names(FAO) <- gsub("\\.","",names(FAO))
-  } else {
-    
-    if(subtype=="EmisLuTotal"){
-      readcolClass[csvcolnames=="Flag" | csvcolnames=="ElementGroup"] <- NA
-    } else if(subtype=="Fodder"){
-      readcolClass[csvcolnames=="Value" | csvcolnames=="Year"] <- "character"
-      csvcolnames <- csvcolnames[-grep("NULL", readcolClass)]
-    } else {
-      csvcolnames <- csvcolnames[-grep("NULL", readcolClass)]
-    }
-  
-    FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames, quote = "\"", encoding = "Latin-1", showProgress = FALSE)
-    if(all(!is.factor(FAO$CountryCode))) FAO$CountryCode <- as.factor(FAO$CountryCode)
-    FAO$Value <- as.numeric(FAO$Value)
+  if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
+  FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
+  # from wide to long (move years from individual columns into one column)
+  if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
+  if ("Months" %in% names(FAO)) {
+    # subtype 'PricesProducerAnnual' contains annual values and seasonal data. Select annual data only and delete 'Months' column afterwards
+    FAO <- FAO[FAO$Months == "Annual value",]
+    FAO <- FAO[,!names(FAO) %in% "Months"]
   }
   
+  names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
+  names(FAO)[names(FAO) == "Area"] <- "Country"
+  names(FAO) <- gsub("\\.","",names(FAO))
+
   # ---- Identify unknown countries ----
   
   # Load FAO-ISO-mapping
@@ -166,7 +152,7 @@ readFAO_online <- function(subtype) {
   not_incl <- na.omit(not_incl)
   if (!0 %in% dim(not_incl)) {
     vcat(1,"The following countries were not included due to missing ISO codes:",
-         "\n", paste0(not_incl$Country,"\n"),"-> Consider an update of FAOiso_faocode.csv", "\n") }
+         "\n", paste0(not_incl$Country,"\n"),"-> Consider updating FAOiso_faocode.csv", "\n") }
   # Remove countries from data that are not included in the FAO-ISO-mapping
   FAO <- FAO[FAO$CountryCode %in% FAOiso_faocode$CountryCode,]
   gc()
@@ -190,6 +176,7 @@ readFAO_online <- function(subtype) {
   FAO <- .convert.unit(x = FAO, old_unit = "1000 tonnes", new_unit = "tonnes", factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 Head",   new_unit = "Head",   factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 number", new_unit = "number", factor = 1000)
+  FAO <- .convert.unit(x = FAO, old_unit = "1000",        new_unit = "number", factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 Ha",     new_unit = "ha",     factor = 1000)
   FAO <- .convert.unit(x = FAO, old_unit = "1000 persons",new_unit = "persons",factor = 1000)
   
