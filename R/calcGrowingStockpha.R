@@ -1,31 +1,34 @@
-#' @title calcGrowingStock
+#' @title calcGrowingStockpha
 #' @description 
 #' Calculates the growing stocks on FAO data.
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Abhijeet Mishra
 #' @examples
-#' 
 #' \dontrun{ 
-#' calcOutput("GrowingStock",aggregate=TRUE)
+#' calcOutput("GrowingStockpha",aggregate=TRUE)
 #' }
 #' 
 #' @importFrom magpiesets FRAnames
 #' @export
 
-calcGrowingStock <- function(){
+calcGrowingStockpha <- function(){
   
   ## Read Growing Stock
   out <- readSource("FRA2020",subtype = "growing_stock",convert = TRUE)
-  x <- out[,,grep(pattern = "tot",x = getNames(out),value = TRUE)]
-  getNames(x) <- gsub(pattern = "gs_tot_",replacement = "",x = getNames(x))
+  x <- out[,,grep(pattern = "ha",x = getNames(out),value = TRUE)]
+  getNames(x) <- gsub(pattern = "gs_ha_",replacement = "",x = getNames(x))
   getNames(x) <- FRAnames(getNames(x))
-  weight=NULL
+  area <- readSource("FRA2020","forest_area",convert = TRUE)
+  getNames(area) <- FRAnames(getNames(area))
+  vars <- intersect(getNames(area),getNames(x))
+  x = x[,,vars]
+  weight=area[,,vars]
   
   return(list(x=x,
               weight=weight,
               min=0,
-              unit="Mm3",
+              unit="m3/ha",
               description="Calculates Growing stocks as reported by Forest Resources Assessment Data 2020."))
   
 }
