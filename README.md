@@ -1,6 +1,6 @@
 # MadRat commons Input Data Library
 
-R package **mrcommons**, version **0.12.5**
+R package **mrcommons**, version **0.12.6**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/mrcommons)](https://cran.r-project.org/package=mrcommons) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009) [![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons)  
 
@@ -41,8 +41,8 @@ To cite package **mrcommons** in publications use:
 
 Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov
 R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Beier F, Oeser J, Pehl M, Leip D, Molina Bacca E, Martinelli E,
-Schreyer F, Dietrich J (2020). _mrcommons: MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL:
-https://doi.org/10.5281/zenodo.3822009), R package version 0.12.5, <URL: https://github.com/pik-piam/mrcommons>.
+Schreyer F, Dietrich J (2021). _mrcommons: MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL:
+https://doi.org/10.5281/zenodo.3822009), R package version 0.12.6, <URL: https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
 
@@ -50,8 +50,8 @@ A BibTeX entry for LaTeX users is
 @Manual{,
   title = {mrcommons: MadRat commons Input Data Library},
   author = {Benjamin Leon Bodirsky and Kristine Karstens and Lavinia Baumstark and Isabelle Weindl and Xiaoxi Wang and Abhijeet Mishra and Stephen Wirth and Mishko Stevanovic and Nele Steinmetz and Ulrich Kreidenweis and Renato Rodrigues and Roman Popov and Florian Humpenoeder and Anastasis Giannousakis and Antoine Levesque and David Klein and Ewerton Araujo and Felicitas Beier and Julian Oeser and Michaja Pehl and Debbora Leip and Edna {Molina Bacca} and Eleonora Martinelli and Felix Schreyer and Jan Philipp Dietrich},
-  year = {2020},
-  note = {R package version 0.12.5},
+  year = {2021},
+  note = {R package version 0.12.6},
   doi = {10.5281/zenodo.3822009},
   url = {https://github.com/pik-piam/mrcommons},
 }
