@@ -42,7 +42,7 @@
 #' @importFrom data.table fread
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
-#' @importFrom tidyr pivot_longer
+#' @importFrom tidyr pivot_longer starts_with
 
 readFAO_online <- function(subtype) {
   
@@ -66,7 +66,6 @@ readFAO_online <- function(subtype) {
              Pop="Population_E_All_Data.zip",
              PricesProducerAnnual="Prices_E_All_Data.zip",
              PricesProducerAnnualLCU="Prices_E_All_Data.zip",
-             
              
              EmisAgTotal="Emissions_Agriculture_Agriculture_total_E_All_Data.zip",
              EmisAgBurnCropResid="Emissions_Agriculture_Burning_crop_residues_E_All_Data.zip",
@@ -93,20 +92,33 @@ readFAO_online <- function(subtype) {
   
   file <- toolSubtypeSelect(subtype,files)
   
-  # If the name of the csv file is longer than the zip file name add the missing part here.
-  # This is the case for "Pop": the csv file with the same name as the zip file ("Population_E_All_Data") has no header. 
-  # There is a second file ("Population_E_All_Data_NOFLAG") with header (and without the superfluous flags).
-  affix <- ifelse(subtype=="Pop","_NOFLAG","")
+  # # For "Pop" If the name of the csv file is longer than the zip file name add the missing part here.
+  # # This is the case for "Pop": the csv file with the same name as the zip file ("Population_E_All_Data") has no header. 
+  # # There is a second file ("Population_E_All_Data_NOFLAG") with header (and without the superfluous flags).
+  # affix <- ifelse(subtype=="Pop","_NOFLAG","")
   
   ## if file is .zip uncompress
   extension <- file_ext(basename(file))
-  csv_name <- paste0(file_path_sans_ext(file),affix, ".csv")
-  if (file.exists(csv_name)) {
-    file <- csv_name
-  } else if(extension=="zip" & !file.exists(csv_name)){
-    unzip(file, exdir = tempdir())                       # use the absolute path to the file in order to unzip when working in the function
-    file <- paste0(tempdir(), "/",csv_name)
-    on.exit(file.remove(file))
+  #csv_name <- paste0(file_path_sans_ext(file),affix, ".csv")
+  csv_name <- paste0(file_path_sans_ext(file), ".csv")
+  
+  # look for data in normalized (i.e. long) format first before looking for the wide format
+  if (grepl("Normalized",file)) {
+      try_files <- file
+    } else {
+      try_files <- c(paste0(file_path_sans_ext(file),"_(Normalized).",extension),file)
+    }
+
+  for(file in try_files) {
+    if (file.exists(csv_name)) {
+      file <- csv_name
+      break
+    } else if(extension=="zip" & file.exists(file)){
+      files_extracted <- unzip(file, exdir = tempdir()) # use the absolute path to the file in order to unzip when working in the function
+      file <- paste0(tempdir(), "/",csv_name)
+      on.exit(file.remove(files_extracted))
+      break
+    }
   }
   
   # ---- Select columns to be read from file and read file ---- 
@@ -117,19 +129,18 @@ readFAO_online <- function(subtype) {
   # check if data is in long or wide format
   long <- ifelse("Year" %in% csvcolnames,TRUE,FALSE)
   
-  
-  # define vector with types corresponding to the columns in the file to be read
+  # define vector with types corresponding to the columns in the file
   readcolClass <- rep("NULL",length(csvcolnames))
   readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Country.Code","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
   readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit","Months")] <- "character"
   readcolClass[csvcolnames %in% c("Value","Year")] <- NA
-  
   if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
+  
   FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
   # from wide to long (move years from individual columns into one column)
   if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
+  # subtype 'PricesProducerAnnual' contains annual and seasonal data. Select annual data only and delete 'Months' column afterwards
   if ("Months" %in% names(FAO)) {
-    # subtype 'PricesProducerAnnual' contains annual values and seasonal data. Select annual data only and delete 'Months' column afterwards
     FAO <- FAO[FAO$Months == "Annual value",]
     FAO <- FAO[,!names(FAO) %in% "Months"]
   }
@@ -144,14 +155,14 @@ readFAO_online <- function(subtype) {
   FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
   # Find countries that are not included in the FAO-ISO-mapping
   not_incl <- FAO[!FAO$CountryCode %in% FAOiso_faocode$CountryCode,c("CountryCode","Country")]
-  # find unique list of countries using match avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
+  # find unique list of countries using 'match()' avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
   not_incl <- not_incl[match(levels(not_incl$CountryCode),not_incl$CountryCode),]
   # ignore countries that are aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
   not_incl <- not_incl[as.numeric(levels(not_incl$CountryCode))[not_incl$CountryCode]<5000,]
   # remove rows containing NA
   not_incl <- na.omit(not_incl)
   if (!0 %in% dim(not_incl)) {
-    vcat(1,"The following countries were not included due to missing ISO codes:",
+    vcat(1,"The following countries are removed because they are missing from the (country to ISO code) mapping (for country aggregates this may be ok):",
          "\n", paste0(not_incl$Country,"\n"),"-> Consider updating FAOiso_faocode.csv", "\n") }
   # Remove countries from data that are not included in the FAO-ISO-mapping
   FAO <- FAO[FAO$CountryCode %in% FAOiso_faocode$CountryCode,]
