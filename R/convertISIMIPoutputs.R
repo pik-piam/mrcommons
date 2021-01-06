@@ -13,7 +13,6 @@
 #' }
 #' 
 #' @importFrom madrat toolCountryFill toolMappingFile
-#' @importFrom mrcommons toolCell2isoCell
 
 convertISIMIPoutputs <- function(x){
   
