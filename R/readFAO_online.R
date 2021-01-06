@@ -92,17 +92,11 @@ readFAO_online <- function(subtype) {
   
   file <- toolSubtypeSelect(subtype,files)
   
-  # # For "Pop" If the name of the csv file is longer than the zip file name add the missing part here.
-  # # This is the case for "Pop": the csv file with the same name as the zip file ("Population_E_All_Data") has no header. 
-  # # There is a second file ("Population_E_All_Data_NOFLAG") with header (and without the superfluous flags).
-  # affix <- ifelse(subtype=="Pop","_NOFLAG","")
-  
-  ## if file is .zip uncompress
-  extension <- file_ext(basename(file))
-  #csv_name <- paste0(file_path_sans_ext(file),affix, ".csv")
-  csv_name <- paste0(file_path_sans_ext(file), ".csv")
-  
   # look for data in normalized (i.e. long) format first before looking for the wide format
+  # decompress if it is zipped
+  
+  extension <- file_ext(basename(file))
+  
   if (grepl("Normalized",file)) {
       try_files <- file
     } else {
@@ -110,6 +104,7 @@ readFAO_online <- function(subtype) {
     }
 
   for(file in try_files) {
+    csv_name <- paste0(file_path_sans_ext(file), ".csv")
     if (file.exists(csv_name)) {
       file <- csv_name
       break
@@ -131,12 +126,13 @@ readFAO_online <- function(subtype) {
   
   # define vector with types corresponding to the columns in the file
   readcolClass <- rep("NULL",length(csvcolnames))
-  readcolClass[csvcolnames %in% c("Area.Code","CountryCode","Country.Code","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
+  readcolClass[csvcolnames %in% c("Area.Code","Country.Code","CountryCode","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor" 
   readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit","Months")] <- "character"
   readcolClass[csvcolnames %in% c("Value","Year")] <- NA
   if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
   
   FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
+  FAO <- as_tibble(FAO)
   # from wide to long (move years from individual columns into one column)
   if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
   # subtype 'PricesProducerAnnual' contains annual and seasonal data. Select annual data only and delete 'Months' column afterwards
