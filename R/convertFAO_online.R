@@ -127,7 +127,7 @@ convertFAO_online <- function(x,subtype) {
   
   
   ### For certain subtypes: if some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and Montenegro (SCG) are missing add them with values of 0
-  if(subtype %in% c("EmisAgRiceCult","Fertilizer","EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass")) {
+  if(subtype %in% c("EmisAgRiceCult","Fertilizer","EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
     ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
     missing <- former[!former %in% getRegions(x)]
@@ -234,7 +234,7 @@ convertFAO_online <- function(x,subtype) {
     x <- toolISOhistorical(x, overwrite=TRUE, additional_mapping=additional_mapping)
     x <- toolCountryFill(x, fill=0, verbosity=2)
 
-  }else {
+  } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
   
