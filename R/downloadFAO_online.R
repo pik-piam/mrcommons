@@ -33,7 +33,7 @@ downloadFAO_online <- function(subtype) {
                 LiveProc             = list(title = "",
                                               url = "Production_LivestockProcessed_E_All_Data.zip"),
                 Pop                  = list(title = "",
-                                              url = "Population_E_All_Data.zip"),
+                                              url = "Population_E_All_Data_(Normalized).zip"),
                 PricesProducerAnnual = list(title = "",
                                               url = "Prices_E_All_Data.zip"),
                 PricesProducerAnnualLCU = list(title = "",
@@ -92,6 +92,9 @@ downloadFAO_online <- function(subtype) {
   # http://www.fao.org/3/ca7570en/ca7570en.pdf
   # http://fenixservices.fao.org/faostat/static/releasecalendar/Default.aspx
   
+  # always download normalized version of data (long format)
+  extension <- file_ext(basename(meta$url))
+  if (!grepl("Normalized",meta$url)) meta$url <- paste0(file_path_sans_ext(meta$url),"_(Normalized).",extension)
   
   download.file(paste0("http://fenixservices.fao.org/faostat/static/bulkdownloads/",meta$url), destfile=meta$url, mode="wb")
 
