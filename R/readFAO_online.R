@@ -1,11 +1,10 @@
 #' Read FAO_online
 #' 
 #' Read in FAO data that has been downloaded from the FAOSTAT website.
-#' Files with exception of fodder.csv are aquired from:
-#' http://fenixservices.fao.org/faostat/static/bulkdownloads/
+#' Files with exception of fodder.csv are aquired according to downloadFAO.
 #' 
 #' Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
-#' 
+#'  
 #' 
 #' @param subtype Type of FAO data that should be read. Available types are:
 #' \itemize{ 
@@ -32,7 +31,7 @@
 #' \item \code{ValueOfProd}: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip") 
 #' }
 #' @return FAO data as MAgPIE object
-#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic
+#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' 
