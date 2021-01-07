@@ -2,7 +2,9 @@
 #' 
 #' Downloads the latest data and meta data form the FAOStat website.
 #' 
-#' @importFrom utils download.file tail unzip
+#' @param subtype Type of FAO data that should be read.
+#' 
+#' @importFrom utils download.file unzip person
 #' @importFrom XML xmlToDataFrame
 
 downloadFAO_online <- function(subtype) {

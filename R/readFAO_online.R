@@ -42,6 +42,7 @@
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
+#' @importFrom tibble as_tibble
 
 readFAO_online <- function(subtype) {
   
