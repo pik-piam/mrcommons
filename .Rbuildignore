@@ -3,7 +3,8 @@
 ^GFED_1997.nc
 carbon_stored.*
 ^\.git$
-^\.travis.yml
 ^codemeta\.json$
 ^.*\.zenodo.json$
 ^\.buildlibrary$
+^\.github$
+^codecov\.yml$
