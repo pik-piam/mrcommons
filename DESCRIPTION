@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.13.0
-Date: 2021-01-07
+Version: 0.14.0
+Date: 2021-01-11
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -24,6 +24,7 @@ Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.d
              person("Julian", "Oeser", role = "aut"),
              person("Michaja", "Pehl", role = "aut"),
              person("Debbora", "Leip", role = "aut"),
+             person("Michael", "Crawford", role = "aut"),
              person("Edna", "Molina Bacca", role = "aut"),
              person("Eleonora", "Martinelli", role = "aut"),
              person("Felix", "Schreyer", role = "aut"),
@@ -35,6 +36,7 @@ Depends:
     magclass(>= 3.17),
     madrat(>= 1.30),
 Imports:
+  abind,
   SPEI,
   WDI, 
   assertr, 
@@ -71,5 +73,6 @@ RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     testthat,
-    rmarkdown
+    rmarkdown,
+    covr
 VignetteBuilder: knitr
