@@ -2,7 +2,7 @@
 
 R package **mrcommons**, version **0.15.0**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/mrcommons)](https://cran.r-project.org/package=mrcommons) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009)  [![R build status](https://github.com/pik-piam/mrcommons/workflows/check/badge.svg)](https://github.com/pik-piam/mrcommons/actions) [![codecov](https://codecov.io/gh/pik-piam/mrcommons/branch/master/graph/badge.svg)](https://codecov.io/gh/pik-piam/mrcommons)
+[![Travis build status](https://travis-ci.com/pik-piam/mrcommons.svg?branch=master)](https://travis-ci.com/pik-piam/mrcommons) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009) 
 
 ## Purpose and Functionality
 
@@ -39,10 +39,10 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **mrcommons** in publications use:
 
-Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F,
-Giannousakis A, Levesque A, Klein D, Araujo E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, Martinelli E, Schreyer F, Dietrich J
-(2021). _mrcommons: MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL: https://doi.org/10.5281/zenodo.3822009), R package version
-0.15.0, <URL: https://github.com/pik-piam/mrcommons>.
+Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R,
+Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, Martinelli E,
+Schreyer F, Dietrich J (2021). _mrcommons: MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL:
+https://doi.org/10.5281/zenodo.3822009), R package version 0.15.0, <URL: https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
 

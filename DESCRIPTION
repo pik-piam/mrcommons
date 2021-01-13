@@ -2,7 +2,7 @@ Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
 Version: 0.15.0
-Date: 2021-01-12
+Date: 2021-01-13
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -62,8 +62,7 @@ Imports:
   tidyr,
   zoo,
   XML,
-  tibble,
-  abind
+  tibble
 License: LGPL-3 | file LICENSE
 URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues
