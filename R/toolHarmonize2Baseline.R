@@ -57,9 +57,9 @@ toolHarmonize2Baseline <- function(x, base, ref_year, limited=TRUE, hard_cut=FAL
     
     full[,after_ref,]       <- base[,rep(ref_year,length(after_ref)),] * (x[,after_ref,] / x[,rep(ref_year,length(after_ref)),])
     
-    full[,after_ref,][is.na(full[,after_ref,])] <- base[,rep(ref_year,length(after_ref)),][is.na(full[,after_ref,])]  # does this make sense?
-    #full[is.infinite(full)]  <- toolFillYears(base[,ref_year,], after_ref) # does this make sense?
-    
+    # correct NAs and infinite
+    full[,after_ref,][!is.finite(full[,after_ref,])] <- (base[,rep(ref_year,length(after_ref)),]+x[,after_ref,])[!is.finite(full[,after_ref,])]  # does this make sense?
+
   } else {
     
     ###########################################
