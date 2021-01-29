@@ -113,7 +113,6 @@ readISIMIPoutputs <- function(subtype="ISIMIP2b:water.histsoc_airrww_pcr-globwb_
   co2 <- unlist(var)[4]
 
   crops<- c("mai","soy", "ri1","ri2", "swh","wwh")
-  crops2 <-  c("mai","swh","wwh")
   irrs <- c("firr", "noirr")
 
   mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
@@ -152,7 +151,7 @@ make.array <- function(x, t, irr){
 
 out <- array(NA,dim=c(59199,length(years_out),length(crops),2),dimnames=list(cellNames,paste0("y",years_out),crops,irrs))
 
-    for (cr in crops2){
+    for (cr in crops){
     for (ir in irrs){
       # put all yields into cropmodel/climatemodel/ folder
 

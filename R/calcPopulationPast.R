@@ -19,10 +19,7 @@
 
 calcPopulationPast <- function(PopulationPast="WDI_completed") {
   type <- PopulationPast
-  if (type=="DemandModel"){
-    data <- collapseNames(readSource("DemandModel")[,,"pop"])
-    getNames(data) <- paste0("pop_",getNames(data))
-  } else if (type=="WDI") {
+  if (type=="WDI") {
     data <- readSource(type = "WDI",subtype = "SP.POP.TOTL",convert = T)
     getNames(data) <- "population"
     

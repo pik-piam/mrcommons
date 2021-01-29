@@ -34,9 +34,6 @@ calcGDPpppPast <- function(GDPpppPast="IHME_USD05_PPP_pc_completed") {
   if(type=="PWT"){
     data <- readSource("PWT")[,,"rgdpna"]
     getNames(data) <- "GDPppp_PWT"
-  } else if (type=="DemandModel"){
-    data <- collapseNames(readSource("DemandModel")[,,"gdp"])
-    getNames(data) <- paste0("Pop_",getNames(data))
   } else if (type=="WDI"){
     
     LCU<-readSource("WDI","NY.GDP.MKTP.KN")
