@@ -151,28 +151,19 @@ readFAO_online <- function(subtype) {
   names(FAO)[names(FAO) == "Area"] <- "Country"
   names(FAO) <- gsub("\\.","",names(FAO))
 
-  # ---- Identify unknown countries ----
+  # ---- Assigning the ISO codes to countries ----
   
-  # Load FAO-ISO-mapping
-  FAOiso_faocode <- toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
-  # Find countries that are not included in the FAO-ISO-mapping
-  not_incl <- FAO[!FAO$CountryCode %in% FAOiso_faocode$CountryCode,c("CountryCode","Country")]
-  # find unique list of countries using 'match()' avoiding time consuming 'unique()' command. Old: countryandcode <- unique(FAO[,c("CountryCode","Country")])
-  not_incl <- not_incl[match(levels(not_incl$CountryCode),not_incl$CountryCode),]
-  # ignore countries that are aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
-  not_incl <- not_incl[as.numeric(levels(not_incl$CountryCode))[not_incl$CountryCode]<5000,]
-  # remove rows containing NA
-  not_incl <- na.omit(not_incl)
-  if (!0 %in% dim(not_incl)) {
-    vcat(1,"The following countries are removed because they are missing from the (country to ISO code) mapping (for country aggregates this may be ok):",
-         "\n", paste0(not_incl$Country,"\n"),"-> Consider updating FAOiso_faocode.csv", "\n") }
-  # Remove countries from data that are not included in the FAO-ISO-mapping
-  FAO <- FAO[FAO$CountryCode %in% FAOiso_faocode$CountryCode,]
-  gc()
-  FAO$ISO <- FAO$CountryCode
-  rownames(FAOiso_faocode) <- as.character(FAOiso_faocode$CountryCode) # becomes necessary because data is now loaded as .csv
-  levels(FAO$ISO) <- as.character(FAOiso_faocode[levels(FAO$CountryCode),"ISO3"])
-  
+  # Load FAO specific countries (not included in country2iso.csv in madrat)
+  FAOiso_faocode <- toolGetMapping("FAOiso_faocode_online.csv", where="mrcommons")
+  # convert data frame into named vector as required by toolCountry2isocode
+  FAOiso_faocode <- structure(as.character(FAOiso_faocode$ISO),names=as.character(FAOiso_faocode$Country))
+  # look up ISO codes using central definition and extra FAO mapping from line above
+  FAO$ISO <- toolCountry2isocode(FAO$Country,mapping = FAOiso_faocode)
+  # remove country aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
+  FAO <- FAO[as.integer(levels(FAO$CountryCode)[FAO$CountryCode])<5000,]
+  # remove countries with missing ISO code
+  FAO <- FAO[!is.na(FAO$ISO),]
+
   # ---- Convert units ----
   
   # define helper function for unit conversion

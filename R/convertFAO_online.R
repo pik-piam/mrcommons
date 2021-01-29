@@ -24,6 +24,8 @@
 
 convertFAO_online <- function(x,subtype) { 
   
+  # ---- Settings ----
+  
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead", 
                 "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs")
@@ -63,7 +65,7 @@ convertFAO_online <- function(x,subtype) {
                             "protein_supply_g/cap/day", 
                             "fat_supply_g/cap/day")
   
-  ### Section for country specific treatment ###
+  # ---- Section for country specific treatment ----
   
   ## data for Eritrea ERI added with 0 if not existing in the dimensionality of 
   ## Ethiopia, to make toolISOhistorical work
@@ -86,7 +88,7 @@ convertFAO_online <- function(x,subtype) {
   if (all(c("XBL","BEL","LUX") %in% getRegions(x))) {
     additional_mapping <- append(additional_mapping, list(c("XBL","BEL","y1999"), c("XBL","LUX", "y1999")))
   } else if(("XBL" %in% getRegions(x)) & !("BEL" %in% getRegions(x))) {
-    getCells(x)[getCells(x)=="XBL"] <- "BEL"
+    getRegions(x)[getRegions(x)=="XBL"] <- "BEL"
   }
   
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
@@ -96,8 +98,8 @@ convertFAO_online <- function(x,subtype) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
   }
     
-  ## if there is information for CHN: China, XCN: China, mainland and at least one of the regions
-  ## HKG: China, Hong Kong SAR, TWN: China, Taiwan Province of, MAC: China, Macao SAR
+  ## if there is information for CHN (China) and XCN (China, mainland) and at least one of the regions
+  ## HKG (China, Hong Kong SAR), TWN (China, Taiwan Province of), or MAC (China, Macao SAR)
   ## then replace CHN information by XCN, otherwise discard XCN
   if(any(getRegions(x)=="CHN") & any(getRegions(x)=="XCN") & any(getRegions(x) %in% c("HKG","TWN","MAC"))){
     China_mainland <- x["XCN",,]
@@ -137,6 +139,7 @@ convertFAO_online <- function(x,subtype) {
     vcat(2, "Added the countries", missing, "with value of 0 from 1992 onwards")
   }
 
+  # ---- Treatment of absolute or relative values ----
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
@@ -161,7 +164,7 @@ convertFAO_online <- function(x,subtype) {
     mapping <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     for(elem in additional_mapping) {    mapping <- rbind(mapping,elem)  }
     
-    adopt_aggregated_average<-function(country,data,mapping){
+    .adopt_aggregated_average <- function(country,data,mapping){
       if(length(country)>1){stop("only one transition per function call")}
       toISO=mapping$toISO[mapping$fromISO==country]
       lastyear=unique(mapping$lastYear[mapping$fromISO==country])
@@ -172,13 +175,14 @@ convertFAO_online <- function(x,subtype) {
       data <- data[country,,,invert=T]
       return(data)
     }
-    xrel=adopt_aggregated_average(country = "SUN",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "YUG",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "CSK",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "XET",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "XBL",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "SCG",data=xrel,mapping = mapping)
-    xrel=adopt_aggregated_average(country = "XSD",data=xrel,mapping = mapping)
+    
+    xrel=.adopt_aggregated_average(country = "SUN",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "YUG",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "CSK",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "XET",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "XBL",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "SCG",data=xrel,mapping = mapping)
+    xrel=.adopt_aggregated_average(country = "XSD",data=xrel,mapping = mapping)
 
     # transforming relative values into absolute values
     pop <- calcOutput("PopulationPast",aggregate=FALSE)
@@ -238,7 +242,7 @@ convertFAO_online <- function(x,subtype) {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
   
-  ### set negative values (except stock variation) to 0
+  # ---- Set negative values to 0 (except stock variation) ----
   
   if(length(fulldim(x)[[2]])>3){
     novar <- setdiff(fulldim(x)[[2]][[4]], "stock_variation")
