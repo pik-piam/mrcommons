@@ -13,12 +13,20 @@
 #' @importFrom foreach foreach %dopar%
 #' @importFrom magclass as.magpie mbind
 #' @importFrom madrat getConfig
+#' @importFrom stringr str_match
 
 readLUH2v2 <- function(subtype) {
 
   # basic settings  
-  time_sel   <- seq(1900,2015,by=1)
+  time_sel   <- seq(1901,2015,by=1)
   offset     <- 849  #year 850=1, year 1900=1051, year 2015=1166
+  
+  # grep years to set other than default years, if subtypes ends with '_850to1901' like time span expression
+  if(all(!is.na(time_span <- str_match(subtype, "_(\\d+)to(\\d+)")[2:3]))){
+    time_sel  <- seq(time_span[1],time_span[2],by=1)
+    subtype   <- gsub("_(\\d+)to(\\d+)","",subtype)
+  } 
+  
   # limit no_cores to max 2 to avoid out of memory errors caused
   # by to many runs in parallel
   no_cores   <-  min(getConfig("nocores"),2)
