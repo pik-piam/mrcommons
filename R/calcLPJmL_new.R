@@ -14,7 +14,7 @@
 #' @examples
 #' 
 #' \dontrun{ 
-#' calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
+#' calcOutput("LPJmL_new", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
 #' }
 
 calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, stage="harmonized"){
@@ -40,8 +40,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   } else if(stage=="harmonized"){
     
     #read in historical data for subtype
-    x           <- calcOutput("LPJmL", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
-    Baseline    <- calcOutput("LPJmL", version=version, climatetype="CRU_4",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    Baseline    <- calcOutput("LPJmL_new", version=version, climatetype="CRU_4",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
     #harmonize to baseline
     LPJmL_input <- toolHarmonize2Baseline(x, Baseline)
     
