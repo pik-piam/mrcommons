@@ -86,7 +86,7 @@ toolHarmonize2Baseline <- function(x, base, ref_year="y2015", limited=TRUE, hard
     full[full<0] <- 0
   } 
   
-  out <- as.magpie(full)
+  out <- as.magpie(full, spatial=1)
   
   return(out)
 }
