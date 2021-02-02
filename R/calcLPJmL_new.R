@@ -35,7 +35,12 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       LPJmL_input <- LPJmL_input[,1931:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
     }
     
-    if(stage=="smoothed") LPJmL_input <- toolSmooth(LPJmL_input)
+    if(stage=="smoothed"){
+      LPJmL_input <- toolSmooth(LPJmL_input)
+      if("y2099" %in%getYears(LPJmL_input)){
+        LPJmL_input <- toolFillYears(LPJmL_input, c(getYears(LPJmL_input, as.integer=TRUE)[1]:2100))
+      }
+    }
     
   } else if(stage=="harmonized"){
     
