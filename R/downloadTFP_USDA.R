@@ -1,4 +1,6 @@
-#' Downloads data of input shares based on a TFP assessment from USDA.
+#' @title downloadTFP_USDA
+#' @description Downloads data of input shares based on a TFP assessment from USDA.
+#' 
 #'
 #'
 #'

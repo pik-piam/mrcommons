@@ -1,4 +1,6 @@
-#' Calculates the value of production of individual production items or its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
+#' @title calcVoP_crops
+#' @description Calculates the value of production of individual production items or its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
+#' 
 #'
 #' 
 #'

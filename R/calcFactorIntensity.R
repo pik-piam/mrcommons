@@ -1,6 +1,8 @@
-#' Calculates factor intensity for labour and/or capital from USDA (Inputs share) and FAO (Value of Production)in USD05 per ton.
+#' @title calcFactorIntensity
+#' @description Calculates factor intensity for labour and/or capital from USDA (Inputs share) and FAO (Value of Production)in USD05 per ton.
 #' Capital intensity and requirements can also be calculated from FAO's CapitalStock database.
 #'
+#' 
 #'
 #' @param output needed outputs. It can be either "intensities" (Capital/Labour factor intensities), "requirements" (Capital Stock requirements per ton), and "CapitalShare" for "USDA" method. For the "CapitalStock" method only "intensities" and "requirements" outputs supported.  
 #' @param method "USDA" or "CapitalStock"

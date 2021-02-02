@@ -1,5 +1,5 @@
-#' Calculates the overall value of production of the agriculture, forestry and fisheries sectors. Forestry and Fisheries are calculated from exports values.
-#'
+#' @title calcVoP_AFF 
+#' @description Calculates the overall value of production of the agriculture, forestry and fisheries sectors. Forestry and Fisheries are calculated from exports values.
 #' 
 #'
 #'

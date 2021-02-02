@@ -1,4 +1,6 @@
-#' Reads the input shares from USDA's Agricultural total factor productivity growth indices assessment
+#' @title readTFP_USDA
+#' @description Reads the input shares from USDA's Agricultural total factor productivity growth indices assessment.
+#' 
 #'
 #'
 #'

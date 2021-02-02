@@ -1,6 +1,5 @@
-#' Reads data of fisheries generated using the FishstatJ app of FAO.
-#'
-#' Read-in exports_value, exports_quantity, and/or overall production of fish/aquatic products
+#' @title readFishstatJ_FAO
+#' @description  Reads data of fisheries generated using the FishstatJ app of FAO. Read-in specifically, exports_value, exports_quantity, and/or overall production of fish/aquatic products.
 #'
 #'
 #' @param subtype data subtype needed. Either "exportsValue", "exportsQuantity", or "Production"
@@ -25,7 +24,7 @@ readFishstatJ_FAO <- function(subtype="Production") {
   file <- toolSubtypeSelect(subtype,files)
   isocode_FAO<-toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
 
-  data <- as.data.frame(read.csv(system.file("extdata/sectoral", file , package="mrcommons")))
+  data <- read.csv(file=paste(path.package("mrcommons"),paste0("/extdata/sectoral/",file),sep="")) 
 
   fao_cleaning <- function(data = data, mapping = isocode_FAO, subsetvar = "Unit..Name.", UnitVar= "Tonnes - live weight", Value = "Production"){
 
