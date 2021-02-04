@@ -24,6 +24,8 @@ readProductAttributes <- function(subtype="Products") {
   
   folder <- "Version_2020/"
   
+  if(!is.null(tmp <- getOption("prodatt_folder"))) folder <- tmp
+  
   files <- c(Products        = "product_attributes.csv"       ,
              AgResidues      = "f_attributes_residue_ag.csv"  ,
              BgResidues      = "nr_residue_bg.csv"            ,

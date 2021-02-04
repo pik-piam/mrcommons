@@ -12,7 +12,7 @@
 #'
 #' @export
 
-toolHarmonize2Baseline <- function(x, base, ref_year, limited=TRUE, hard_cut=FALSE){
+toolHarmonize2Baseline <- function(x, base, ref_year="y2015", limited=TRUE, hard_cut=FALSE){
   
   if(!is.magpie(x) | !is.magpie(base)) stop("Input is not a MAgPIE object, x has to be a MAgPIE object!")
   
@@ -57,9 +57,9 @@ toolHarmonize2Baseline <- function(x, base, ref_year, limited=TRUE, hard_cut=FAL
     
     full[,after_ref,]       <- base[,rep(ref_year,length(after_ref)),] * (x[,after_ref,] / x[,rep(ref_year,length(after_ref)),])
     
-    full[,after_ref,][is.na(full[,after_ref,])] <- base[,rep(ref_year,length(after_ref)),][is.na(full[,after_ref,])]  # does this make sense?
-    #full[is.infinite(full)]  <- toolFillYears(base[,ref_year,], after_ref) # does this make sense?
-    
+    # correct NAs and infinite
+    full[,after_ref,][!is.finite(full[,after_ref,])] <- (base[,rep(ref_year,length(after_ref)),]+x[,after_ref,])[!is.finite(full[,after_ref,])]  # does this make sense?
+
   } else {
     
     ###########################################
@@ -86,7 +86,7 @@ toolHarmonize2Baseline <- function(x, base, ref_year, limited=TRUE, hard_cut=FAL
     full[full<0] <- 0
   } 
   
-  out <- as.magpie(full)
+  out <- as.magpie(full, spatial=1)
   
   return(out)
 }

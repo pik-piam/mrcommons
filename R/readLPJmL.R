@@ -201,13 +201,17 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
       if (grepl("_lpjcell", subtype)){
         cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
         cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        class(x) <- "array"
+        x <- as.magpie(x, spatial=1)
+        # Transform units: liter/m^2 -> liter
+        x <- x*cell_area
       } else {
         # Get cellular coordinate information and calculate cell area
         cb <- as.data.frame(magpie_coord)
         cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        # Transform units: liter/m^2 -> liter
+        x <- as.magpie(x)*cell_area
       }
-      # Transform units: liter/m^2 -> liter
-      x <- x*cell_area
       # Transform units: liter -> mio. m^3
       x <- x/(1000*1000000)
 

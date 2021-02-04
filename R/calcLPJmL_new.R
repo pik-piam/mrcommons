@@ -1,18 +1,11 @@
-#' @title calcLPJmL
-#' @description Handle LPJmL data and its time behaviour (averaging, approximation, harmonizing to baseline)
+#' @title calcLPJmL_new
+#' @description Handle LPJmL data and its time behaviour (smoothing and harmonizing to baseline)
 #' 
-#' @param version Switch between LPJmL4 and LPJmL4
+#' @param version Switch between LPJmL versions
 #' @param climatetype Switch between different climate scenarios (default: "CRU_4")
 #' @param subtype Switch between different lpjml input as specified in readLPJmL
 #' @param subdata Switch between data dimension subitems
-#' @param selectyears defaults to all years available
-#' @param time average, spline or raw (default)
-#' @param averaging_range just specify for time=="average": number of time steps to average
-#' @param dof             just specify for time=="spline": degrees of freedom
-#' @param harmonize_baseline FALSE (default) nothing happens, if a baseline is specified here data is harmonized to that baseline (from ref_year on)
-#' @param ref_year just specify for harmonize_baseline != FALSE : Reference year
-#' @param limited  just specify for harmonize_baseline != FALSE : if TRUE limited approached is used
-#' @param hard_cut just specify for harmonize_baseline != FALSE : use hard cut instead of multiplicative factor
+#' @param stage Degree of processing: raw, smoothed, harmonized
 #' 
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens, Felicitas Beier
@@ -21,26 +14,12 @@
 #' @examples
 #' 
 #' \dontrun{ 
-#' calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
+#' calcOutput("LPJmL_new", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
 #' }
 
-calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, time="raw", averaging_range=NULL, dof=NULL, 
-                      harmonize_baseline=FALSE, ref_year="y2015", limited=TRUE, hard_cut=FALSE, selectyears="all"){
-
-  if(harmonize_baseline!=FALSE){
-    
-    if(harmonize_baseline==climatetype) stop("Climatetype and baseline are identical.")
-    
-    #read in historical data for subtype
-    x           <- calcOutput("LPJmL", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, time=time, 
-                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, aggregate=FALSE)
-
-    Baseline    <- calcOutput("LPJmL", version=version, climatetype=harmonize_baseline, subtype=subtype, subdata=subdata, time=time, 
-                              averaging_range=averaging_range, dof=dof, harmonize_baseline=FALSE, aggregate=FALSE)
-    #harmonize to baseline
-    LPJmL_input <- toolHarmonize2Baseline(x, Baseline,  ref_year=ref_year, limited=limited, hard_cut=hard_cut)
-    
-  } else {
+calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, stage="harmonized"){
+  
+  if(stage%in%c("raw","smoothed")){
     
     readin_name <- paste0(version,":",climatetype,".",subtype)  
     LPJmL_input <- readSource("LPJmL", subtype=readin_name, convert="onlycorrect")
@@ -56,25 +35,22 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
       LPJmL_input <- LPJmL_input[,1931:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
     }
     
-    if(time=="average"){
-      
-      LPJmL_input <- toolTimeAverage(LPJmL_input, averaging_range = averaging_range)
-      
-    } else if(time=="spline"){
-      
-      LPJmL_input <- toolTimeSpline(LPJmL_input, dof = dof)
-      if("y2099" %in%getYears(LPJmL_input)) LPJmL_input <- toolFillYears(LPJmL_input, c(getYears(LPJmL_input, as.integer=TRUE)[1]:2100))
-      
-    } else if(time!="raw"){
-      
-      stop("Time argument not supported!")
+    if(stage=="smoothed"){
+      LPJmL_input <- toolSmooth(LPJmL_input)
+      if("y2099" %in%getYears(LPJmL_input)){
+        LPJmL_input <- toolFillYears(LPJmL_input, c(getYears(LPJmL_input, as.integer=TRUE)[1]:2100))
+      }
     }
-  }
-  
-  if(selectyears!="all"){
-    years       <- sort(findset(selectyears,noset = "original"))
-    LPJmL_input <- LPJmL_input[,years,]
-  } 
+    
+  } else if(stage=="harmonized"){
+    
+    #read in historical data for subtype
+    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    Baseline    <- calcOutput("LPJmL_new", version=version, climatetype="CRU_4",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    #harmonize to baseline
+    LPJmL_input <- toolHarmonize2Baseline(x, Baseline)
+    
+  } else { stop("Stage argument not supported!") }
   
   # unit table for subtypes from readLPJmL
   units <- c(soilc              = "tC/ha",
@@ -119,7 +95,6 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
     x=LPJmL_input,
     weight=NULL,
     unit=unit, 
-    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, "."),
+    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
     isocountries=FALSE))
 }
-  

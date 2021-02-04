@@ -11,7 +11,7 @@
 #' \item ndfa: fixation for each country and each commodity.
 #' \item freeliving: fixation by free living agents
 #' }
-#' @author Stephen Wirth
+#' @author Stephen Wirth, Jan Philipp Dietrich
 #' @examples
 #' 
 #'   \dontrun{
@@ -20,9 +20,7 @@
 #'   }
 #' 
 readHerridge <- function(subtype=NULL){
-  
-  
-  
+
   #file to read
   files <- c(ndfa="ndfa.csv",
              freeliving ="freeliving.csv")
@@ -31,26 +29,14 @@ readHerridge <- function(subtype=NULL){
   #read file
   if (subtype=="ndfa"){
     data <- read.csv(file = file, header = T,stringsAsFactors = F, skip=4)
-    dimnames <- data[,1]
-    data[,1] <- NULL
-    #reformat file
-    data <- t(data)
-    #dimnames <- data[1,]
-    #data <- data[-1,]
-    dimnames(data)[[2]] <- dimnames
-    data <- as.data.frame(data)
-    #create magpie obect containing data from file
-    d <- as.magpie(data)
-    # set the year for the data TODO: Confirm year
-    getYears(d) <- "y2005"
-    #Name Sets
-    getSets(d) <- c("region", "year", "groups")
   } else if (subtype=="freeliving") {
     data <- read.csv(file=file, header=F, stringsAsFactors = F)
-    d <- new.magpie(years = "y2005", names = data[,1], sets = c("region", "year", "data"))
-    d[,,] <- data[,2]
+  } else {
+    stop("Unsupported type!")
   }
-  #return magpieobject
+  d <- as.magpie(data)
+  getYears(d) <- "y2005"
+  getSets(d)  <- c("region", "year", ifelse(subtype=="ndfa","groups","data"))
   return(d)
    
 }
