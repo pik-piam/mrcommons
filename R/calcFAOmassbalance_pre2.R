@@ -21,9 +21,8 @@
 #' @importFrom madrat madlapply
 
 calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
-  
   #### Data input
-  # FAO Commodity Balance  ------
+  ## FAO Commodity Balance  ------
   CBC <- calcOutput(type = "FAOharmonized", aggregate = F)
   
   getSets(CBC) <- c("region", "year", "ItemCodeItem.ElementShort")
@@ -82,12 +81,12 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   CBC <- add_columns(CBC, addnm = missingproducts, dim = 3.1)
   
   
-  # Production Attributes  ------
+  ## Production Attributes  ------
   prod_attributes <- calcOutput("Attributes", aggregate = F)
   remove_prod <-  c("betr", "begr", "pasture", "scp", "res_cereals", "res_fibrous", "res_nonfibrous", "wood", "woodfuel")
   prod_attributes <- prod_attributes[, , remove_prod, invert = T]
   
-  # Sectoral mapping for FAO items ------
+  ## Sectoral mapping for FAO items ------
   relationmatrix <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
   relationmatrix <- relationmatrix[, c("FoodBalanceItem", "k")]
   relationmatrix <- relationmatrix[!duplicated(relationmatrix[, "FoodBalanceItem"]), ]
@@ -102,7 +101,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   brans <- relationmatrix[relationmatrix[, 2] == "brans", 1]
   
   
-  # Map production attributes to FAO items ------ 
+  ## Map production attributes to FAO items ------ 
   
   prod_attributes <- toolAggregate(x = prod_attributes, rel = relationmatrix, dim = 3.2, from = "k", to = "FoodBalanceItem", partrel = TRUE)
   getSets(prod_attributes) <- c("region", "year", "attributes", "ItemCodeItem")
@@ -136,7 +135,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
         stop("Output flows already exist.")
       }
     
-      # only for checking massbalance and conv_factor
+      # attributes relevant for checking massbalance and conv_factor
       relevant_attributes <- c("dm", "nr", "p", "k", "ge")
       
       conv_factor <- (dimSums(object[, , list(goods_out, "production")], dim = c("region", "ElementShort"))
@@ -169,15 +168,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       
       diff <- (dimSums(object[, , goods_in][, , c(from)], dim = c("ElementShort", "ItemCodeItem"))
                - dimSums(object[, , goods_in][, , c(lossname)], dim = c("ElementShort", "ItemCodeItem"))
-               - dimSums(object[, , goods_out][, , c("production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
-      )
+               - dimSums(object[, , goods_out][, , c("production_estimated")], dim = c("ElementShort", "ItemCodeItem")))
       if (any(abs(diff) > 0.01)) {
         print(diff[, , goods_in])
         stop("NAs in dataset or function corrupt.")
       }
       
       diff <- sum(object[, , goods_out][, , c("production_estimated")]) - sum(object[, , goods_out][, , c("production")])
-      
       if (any(abs(diff) > 0.01)) {
         print(diff[, , goods_in])
         stop("global estimated production does not meet global production")
@@ -192,7 +189,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       # return ----
       if (from != process) {
         object[, , list(process, goods_in)] <- object[, , list(from, goods_in)]
-        object[, , from][, , goods_in] <- 0
+        object[, , list(from, goods_in)] <- 0
       }
       return(object)
     }
@@ -225,7 +222,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       warning("output flows already exist")
     }
     
-    attr_no_wm <- c("dm", "nr", "p", "k", "ge") # also no c??
+    attr_no_wm <- c("dm", "nr", "p", "k", "ge") # DL also no c?
     
     # given globally as share of extraction attribute
     attributes_from <- dimSums(object[, , list(from, good_in), drop = T], dim = "region") / dimSums(object[, , list(from, good_in, extraction_attribute), drop = T], dim = c("region"))
@@ -242,21 +239,18 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       stop("too high extraction quantity")
     }
     
-    # extracted e.g. ethanol quantity (maximum amount of ethanol that can be produce without violating the available wheat.other_util in any of it's attributes)
+    # DL extracted e.g. ethanol quantity (maximum amount of ethanol that can be produce without violating the available wheat.other_util in any of it's attributes)
     # if the extraction_quantity is the original input extraction_quantity, isn't that then basically the constraint regarding weight, and shouldn't then
     # extracted be the full dm? 
     extracted <- object[, , list(from, good_in, extraction_attribute), drop = T] * extraction_quantity * attributes_to
-    
-    # from.good_in would be e.g. wheat.other_util
     losses <- dimSums(object[, , list(good_in, from)], dim = "ElementShort") - extracted
     
-    # wheat-ethanol1 => amount of wheat used for ethanol production, or amount of ethanol that comes from wheat?
     object[, , list(good_in, report_as)] <- extracted
     object[, , list(good_in, residual)] <- losses
     
-    # X01|Ethanol.production_estimate => the amount of ethanol that is produced. Hence extracted should be amount of ethanol that was produced from wheat
     object[, , list("production_estimated", extract)] <- object[, , list("production_estimated", extract)] + extracted
     
+    # massbalance check
     diff <- (dimSums(object[, , list(good_in, c(report_as, residual))], dim = c("ElementShort"))
              - dimSums(object[, , list(good_in, from)], dim = c("ElementShort")))
     if (any(abs(diff) > 0.01)) {
@@ -264,7 +258,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       stop("NAs in dataset or function corrupt.")
     }
     
-    # it seems that if from == process, it is from == process == intermediate, and 
+    # DL it seems that if from == process, it is from == process == intermediate, and 
     # it is set to zero manually after the function anyways??
     if (from != process) {
       object[, , list(process, good_in)] <- object[, , list(from, good_in)]
@@ -294,7 +288,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     }
     
     milled_global <- dimSums(object[, , list(cereals, milled)], dim = c("region", "ElementShort"))
-    brans_global <- dimSums(object[, , brans][, , "production"], dim = c("region", "ElementShort", "ItemCodeItem"))
+    brans_global <- dimSums(object[, , list(brans, "production")], dim = c("region", "ElementShort", "ItemCodeItem"))
     # as share of dm instaed of wm
     bran_attributes <- setYears(brans_global / dimSums(brans_global[, , "dm"], dim = "attributes"), NULL)
     
@@ -309,17 +303,18 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     brans_uncalibrated <- dimSums(bran_ratio * milled_global[, , "dm"], dim = "ItemCodeItem")
     bran_ratio <- bran_ratio * dimSums(brans_global[, , "dm"], dim = "attributes") / brans_uncalibrated
     
-    bran_estimated <- bran_ratio * dimSums(object[, , cereals][, , milled][, , "dm"], dim = "attributes") * bran_attributes
-    object[, , "brans1"][, , cereals] <- dimSums(bran_estimated[, , cereals], dim = c("ElementShort"))
-    object[, , "production_estimated"][, , brans] <- dimSums(bran_estimated[, , cereals], dim = c("ItemCodeItem", "ElementShort"))
-    object[, , flour][, , cereals] <- object[, , milled][, , cereals] - bran_estimated
+    bran_estimated <- bran_ratio * dimSums(object[, , list(cereals, milled)][, , "dm"], dim = "attributes") * bran_attributes
+    object[, , list("brans1", cereals)] <- dimSums(bran_estimated[, , cereals], dim = c("ElementShort"))
+    object[, , list("production_estimated", brans)] <- dimSums(bran_estimated[, , cereals], dim = c("ItemCodeItem", "ElementShort"))
+    object[, , list(flour, cereals)] <- object[, , list(milled, cereals)] - bran_estimated
     
     .branoil1_production <- function(object, branoilItem, cropItem) {
-      branoil_ratio <- dimSums(object[, , branoilItem][, , "production"], dim = c("region", "ItemCodeItem", "ElementShort")) / dimSums(milled_global[, , cropItem], dim = "ItemCodeItem")
-      estimated_branoil <- object[, , cropItem][, , milled] * branoil_ratio
-      object[, , "branoil1"][, , cropItem] <- dimSums(estimated_branoil[, , cropItem], dim = c("ElementShort"))
-      object[, , "production_estimated"][, , branoilItem] <- dimSums(estimated_branoil[, , cropItem], dim = c("ItemCodeItem", "ElementShort"))
-      object[, , flour][, , cropItem] <- object[, , flour][, , cropItem] - estimated_branoil
+      branoil_ratio <- (dimSums(object[, , list(branoilItem, "production")], dim = c("region", "ItemCodeItem", "ElementShort"))  
+                         / dimSums(milled_global[, , cropItem], dim = "ItemCodeItem"))
+      estimated_branoil <- object[, , list(cropItem, milled)] * branoil_ratio
+      object[, , list("branoil1", cropItem)] <- dimSums(estimated_branoil[, , cropItem], dim = c("ElementShort"))
+      object[, , list("production_estimated", branoilItem)] <- dimSums(estimated_branoil[, , cropItem], dim = c("ItemCodeItem", "ElementShort"))
+      object[, , list(flour, cropItem)] <- object[, , list(flour, cropItem)] - estimated_branoil
       return(object)
     }
     
@@ -354,7 +349,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     # For simplicity, we distribute brans proportional to all cereal fooduse.
     
     # DL this changes only household dimension -> could be treated separately?
-    branshr <- dimSums(object[, , list(brans, milled, c("wm", "ge", "nr"))], dim = c(3.1, 3.2)) / dimSums(object[, , list(cereals, "households", c("wm", "ge", "nr"))], dim = c(3.1, 3.2))
+    branshr <- (dimSums(object[, , list(brans, milled, c("wm", "ge", "nr"))], dim = c(3.1, 3.2)) 
+                  / dimSums(object[, , list(cereals, "households", c("wm", "ge", "nr"))], dim = c(3.1, 3.2)))
     branshr[is.nan(branshr)] <- 0
     if (any(branshr < 0)) {
       vcat(1, "branshr should not be smaller than zero.")
@@ -598,9 +594,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     invisible(lapply(other_goods_in, calc_goods_in_c))
     
-    # object[, , goods_in][, , "intermediate"] <- 0 ?
     object[, , list(c(goods_in, other_goods_in), "intermediate")] <- 0
-    
     return(object)
   }
   oil_processing_c <- cmpfun(oil_processing)
@@ -686,7 +680,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   
 
   #### Calculations 
-  # Setting up massbalance for each considered year ------
+  ## Setting up massbalance for each considered year ------
   if (is.null(years)) {
     years <- getYears(CBC)
   }
@@ -694,15 +688,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     years <- paste0("y", years)
   }
   
-  # DL why does this give ALL years while default input is five year steps (and
-  # there is stuff happening after this that takes into account all elements
-  # of years)?
+  # DL why does this give ALL years while default input is five year steps?
   
   # estimating processing flows
   massbalance <- mbind(lapply(X = years, FUN = massbalance_in_yeargroups_c))
   # massbalance <- mbind(madlapply(X = years, FUN = massbalance_in_yeargroups_c))
   
-  # Define use of products that are not existing in FAOSTAT  ------
+  ## Define use of products that are not existing in FAOSTAT  ------
   
   # DL why domestic_supply == feed for distillers grain/brewers grain?
   goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
@@ -713,7 +705,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   massbalance[, , "other_util"] <- dimSums(massbalance[, , c("other_util", "processed")], dim = 3.2)
   
   # remove obsolete columns
-  massbalance <- massbalance[, , setdiff(getNames(massbalance, dim = 2), c("processed", "intermediate"))]
+  massbalance <- massbalance[, , c("processed", "intermediate"), invert = TRUE]
   
   # map to MAgPIE categories
   massbalance <- toolAggregate(x = massbalance, rel = relationmatrix, dim = 3.1, from = "FoodBalanceItem", to = "k", partrel = TRUE)
