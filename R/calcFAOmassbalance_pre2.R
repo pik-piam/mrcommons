@@ -17,10 +17,9 @@
 #' @importFrom graphics plot
 #' @importFrom magclass getSets as.magpie fulldim complete_magpie
 #' @importFrom utils read.csv
-#' @importFrom compiler cmpfun
 #' @importFrom madrat madlapply
 
-calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
+calcFAOmassbalance_pre2 <- function(years = paste0("y", seq(1965, 2010, 5))) {
   #### Data input
   ## FAO Commodity Balance  ------
   CBC <- calcOutput(type = "FAOharmonized", aggregate = F)
@@ -80,7 +79,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   
   CBC <- add_columns(CBC, addnm = missingproducts, dim = 3.1)
   
-  
   ## Production Attributes  ------
   prod_attributes <- calcOutput("Attributes", aggregate = F)
   remove_prod <-  c("betr", "begr", "pasture", "scp", "res_cereals", 
@@ -101,9 +99,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   molasse <- relationmatrix[relationmatrix[, 2] == "molasses", 1]
   brans <- relationmatrix[relationmatrix[, 2] == "brans", 1]
   
-  
   ## Map production attributes to FAO items ------ 
-  
   prod_attributes <- toolAggregate(x = prod_attributes, rel = relationmatrix, dim = 3.2, from = "k", to = "FoodBalanceItem", partrel = TRUE)
   getSets(prod_attributes) <- c("region", "year", "attributes", "ItemCodeItem")
   # change prod attributes from share of DM to share of WM
@@ -118,8 +114,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     stop("For the following items there were entries in prod_attributes but no respective data: ", 
          paste(getNames(attributes_wm, dim = 2)[!(getNames(attributes_wm, dim = 2) %in% getNames(CBC, dim = 1))], collapse = "\", \""))
   }
-  
-  
   
   #### Definition of Subfunctions #####
   
@@ -212,14 +206,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     # check results
     .massbalance_tests(object, goods_in, from, report_as, lossname, relevant_attributes)
     
-    # clear "from" ---- 
+    # clear "from"
     if (from != process) {
       object[, , list(process, goods_in)] <- object[, , list(from, goods_in)]
     }
     object[, , list(from, goods_in)] <- 0  # if == process it is "intermediate" which is to be cleared as well
     return(object)
   }
-  
  
   .extract_good_from_flow <- function(object,
                                       good_in,
@@ -276,7 +269,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     object[, , list("production_estimated", extract)] <- object[, , list("production_estimated", extract)] + extracted
     
     # check results
-    .massbalance_tests(object, good_in, from, report_as, residual) # DL no negative value check? 
+    .massbalance_tests(object, good_in, from, report_as, residual) # DL originally no negative value check? 
     
     # clear "from"
     if (from != process) {
@@ -390,12 +383,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     ethanol_yield_liter_per_ton_maize <- 408
     ethanol_yield_liter_per_ton_sugarcane <- 654
     
+    # DL what exactly is the meaning of the extraction quantity?
     ethanol_yield_liter_per_ton_tece_maize <- c(rep(ethanol_yield_liter_per_ton_tece, length(tece)), ethanol_yield_liter_per_ton_maize)
     extraction_quantity_tece_maize <- 0.789 * ethanol_yield_liter_per_ton_tece_maize / 1000
     extraction_quantity_sugarcane <- 0.789 * ethanol_yield_liter_per_ton_sugarcane / 1000
 
     # ethanol processing from tece and maize (ethanol1, distilles_grain, and distillingloss)
-    .extract_ethanol <- function(j) {
+    .extract_grain_loss <- function(j) {
       object <<- .extract_good_from_flow(object = object,
                                          good_in = tece_maize[j],
                                          from = "other_util",
@@ -418,7 +412,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          residual = "distillingloss",
                                          prod_attributes = prod_attributes) 
     }
-    invisible(lapply(1:length(tece_maize), .extract_ethanol))
+    lapply(1:length(tece_maize), .extract_grain_loss)
     
     # ethanol processing from sugarcane (only ethanol1 and distillingloss)
     object <- .extract_good_from_flow(object = object,
@@ -460,7 +454,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes)
     } 
     
-    invisible(lapply(beercereals, .add_beercereals))
+    lapply(beercereals, .add_beercereals)
     
     return(object)
   }
@@ -556,7 +550,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes)
     }
     
-    invisible(lapply(1:length(crops_in), .extract_oil))
+    lapply(1:length(crops_in), .extract_oil)
     
     # other oil crops
     object <- .processing_global(object = object,
@@ -581,7 +575,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes)
     }
     
-    invisible(lapply(other_crops_in, .calc_goods_in))
+    lapply(other_crops_in, .calc_goods_in)
     
     return(object)
   }
@@ -663,7 +657,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     return(CBCflows)
   }
   
-
   #### Calculations 
   ## Setting up massbalance for each considered year ------
   if (is.null(years)) {
