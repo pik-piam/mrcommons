@@ -120,14 +120,14 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   
   #### Definition of Subfunctions #####
   
-  processing_global <- function(object,
-                                goods_in = c("2536|Sugar cane", "2537|Sugar beet"),
-                                from = "processed",
-                                process = "refining",
-                                # the order matters!
-                                goods_out = c("2818|Sugar, Refined Equiv", "2544|Molasses"),
-                                report_as = c("sugar1", "molasses1"),
-                                lossname = "refiningloss") {
+  .processing_global <- function(object,
+                                 goods_in = c("2536|Sugar cane", "2537|Sugar beet"),
+                                 from = "processed",
+                                 process = "refining",
+                                 # the order matters!
+                                 goods_out = c("2818|Sugar, Refined Equiv", "2544|Molasses"),
+                                 report_as = c("sugar1", "molasses1"),
+                                 lossname = "refiningloss") {
       if (any(object[, , goods_in][, , c(report_as, lossname)] != 0)) {
         stop("Output flows already exist.")
       }
@@ -146,13 +146,12 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       }
       
       # estimate outputs
-      estim_outputs <- function(j) {
+      .estim_outputs <- function(j) {
         object[, , list(report_as[j], goods_in)] <<- dimSums(object[, , list(goods_in, from)], dim = "ElementShort") * conv_factor[, , goods_out[j], drop = T]
         object[, , list("production_estimated", goods_out[j])] <<- dimSums(object[, , list(report_as[j], goods_in)], dim = c("ElementShort", "ItemCodeItem"))
       }
-      estim_outputs_c <- cmpfun(estim_outputs)
       
-      invisible(lapply(c(1:length(goods_out)), estim_outputs_c))
+      invisible(lapply(c(1:length(goods_out)), .estim_outputs))
       
       # calculate refining losses as mass balance difference
       object[, , list(goods_in, lossname)] <- (dimSums(object[, , list(goods_in, from)], dim = c("ElementShort"))
@@ -193,19 +192,18 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
       }
       return(object)
     }
-  processing_global_c <- cmpfun(processing_global)
   
  
-  extract_good_from_flow <- function(object,
-                                     good_in,
-                                     from,
-                                     process,
-                                     extract,
-                                     report_as,
-                                     extraction_quantity,
-                                     extraction_attribute,
-                                     residual,
-                                     prod_attributes) {
+  .extract_good_from_flow <- function(object,
+                                      good_in,
+                                      from,
+                                      process,
+                                      extract,
+                                      report_as,
+                                      extraction_quantity,
+                                      extraction_attribute,
+                                      residual,
+                                      prod_attributes) {
     if (length(from) > 1) {
       stop("please only use one item as \"from\"")
     }
@@ -266,9 +264,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     }
     return(object)
   }
-  extract_good_from_flow_c <- cmpfun(extract_good_from_flow)
   
-  cereal_milling_global <- function(object) {
+  .cereal_milling_global <- function(object) {
     cereals <- c("2511|Wheat and products", 
                  "2513|Barley and products", 
                  "2514|Maize and products",
@@ -341,8 +338,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     }
     
     # add processed item
-    object[, , process][, , cereals] <- object[, , milled][, , cereals]
-    object[, , milled][, , cereals] <- 0
+    object[, , list(process, cereals)] <- object[, , list(milled, cereals)]
+    object[, , list(milled, cereals)] <- 0
     
     ### Fooduse in brans is included in the commodity balance sheets, but not reflected in calories.
     # We subtract bran consumption from cereal consumption in the respective countries.
@@ -360,9 +357,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     return(object)
   }
-  cereal_milling_global_c <- cmpfun(cereal_milling_global)
   
-  ethanol_processing <- function(object) {
+  .ethanol_processing <- function(object) {
     "  
     ethanol:
     DDGS Handbook
@@ -392,8 +388,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     extraction_quantity_sugarcane <- 0.789 * ethanol_yield_liter_per_ton_sugarcane / 1000
 
     # ethanol processing from tece and maize (ethanol1, distilles_grain, and distillingloss)
-    extract_ethanol <- function(j) {
-      object <<- extract_good_from_flow_c(object = object,
+    .extract_ethanol <- function(j) {
+      object <<- .extract_good_from_flow(object = object,
                                          good_in = tece_maize[j],
                                          from = "other_util",
                                          process = "distilling",
@@ -404,7 +400,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          residual = "intermediate",
                                          prod_attributes = prod_attributes)
       
-      object <<- extract_good_from_flow_c(object = object,
+      object <<- .extract_good_from_flow(object = object,
                                          good_in = tece_maize[j],
                                          from = "intermediate",
                                          process = "intermediate",
@@ -415,116 +411,110 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          residual = "distillingloss",
                                          prod_attributes = prod_attributes) 
     }
-    extract_ethanol_c <- cmpfun(extract_ethanol)
-    invisible(lapply(1:length(tece_maize), extract_ethanol_c))
+    invisible(lapply(1:length(tece_maize), .extract_ethanol))
     
     object[, , list(tece_maize, "intermediate")] <- 0
     
     # ethanol processing from sugarcane (only ethanol1 and distillingloss)
-    object <- extract_good_from_flow_c(object = object,
-                                       good_in = "2536|Sugar cane",
-                                       from = "other_util",
-                                       process = "distilling",
-                                       extract = "X001|Ethanol",
-                                       report_as = "ethanol1",
-                                       extraction_quantity = extraction_quantity_sugarcane,
-                                       extraction_attribute = "dm",
-                                       residual = "distillingloss",
-                                       prod_attributes = prod_attributes)
+    object <- .extract_good_from_flow(object = object,
+                                      good_in = "2536|Sugar cane",
+                                      from = "other_util",
+                                      process = "distilling",
+                                      extract = "X001|Ethanol",
+                                      report_as = "ethanol1",
+                                      extraction_quantity = extraction_quantity_sugarcane,
+                                      extraction_attribute = "dm",
+                                      residual = "distillingloss",
+                                      prod_attributes = prod_attributes)
    
     return(object)
   }
-  ethanol_processing_c <- cmpfun(ethanol_processing)
   
-  beer_processing <- function(object) {
+  .beer_processing <- function(object) {
     # Barley would be more correct, but we need to have homogenous products
     beercereals <- tece
     
-    object <- processing_global_c(object = object,
-                                  goods_in = beercereals,
-                                  from = "processed",
-                                  process = "fermentation",
-                                  goods_out = "2656|Beer",
-                                  report_as = "alcohol1",
-                                  lossname = "intermediate")
+    object <- .processing_global(object = object,
+                                 goods_in = beercereals,
+                                 from = "processed",
+                                 process = "fermentation",
+                                 goods_out = "2656|Beer",
+                                 report_as = "alcohol1",
+                                 lossname = "intermediate")
     
-    add_beercereals <- function(x) {
-      object <<- extract_good_from_flow_c(object = object,
-                                          good_in = x,
-                                          from = "intermediate",
-                                          process = "intermediate",
-                                          extract = "X004|Brewers_grain",
-                                          report_as = "brewers_grain1",
-                                          extraction_quantity = "max",
-                                          extraction_attribute = "dm",
-                                          residual = "alcoholloss",
-                                          prod_attributes = prod_attributes)
-    }
-    add_beercereals_c <- cmpfun(add_beercereals)
+    .add_beercereals <- function(x) {
+      object <<- .extract_good_from_flow(object = object,
+                                         good_in = x,
+                                         from = "intermediate",
+                                         process = "intermediate",
+                                         extract = "X004|Brewers_grain",
+                                         report_as = "brewers_grain1",
+                                         extraction_quantity = "max",
+                                         extraction_attribute = "dm",
+                                         residual = "alcoholloss",
+                                         prod_attributes = prod_attributes)
+    } 
     
-    invisible(lapply(beercereals, add_beercereals_c))
+    invisible(lapply(beercereals, .add_beercereals))
     
     object[, , "intermediate"] <- 0
     return(object)
   }
-  beer_processing_c <- cmpfun(beer_processing)
   
-  sugar_processing <- function(object) {
-    object <- processing_global_c(object = object,
-                                  goods_in = c("2536|Sugar cane", "2537|Sugar beet"),
-                                  from = "processed",
-                                  process = "refining",
-                                  # the order matters!
-                                  goods_out = c("2818|Sugar, Refined Equiv", "2544|Molasses"),
-                                  report_as = c("sugar1", "molasses1"),
-                                  lossname = "refiningloss")
+  .sugar_processing <- function(object) {
+    object <- .processing_global(object = object,
+                                 goods_in = c("2536|Sugar cane", "2537|Sugar beet"),
+                                 from = "processed",
+                                 process = "refining",
+                                 # the order matters!
+                                 goods_out = c("2818|Sugar, Refined Equiv", "2544|Molasses"),
+                                 report_as = c("sugar1", "molasses1"),
+                                 lossname = "refiningloss")
     
-    object <- processing_global_c(object = object,
-                                  goods_in = c("2514|Maize and products"),
-                                  from = "processed",
-                                  process = "refining",
-                                  # the order matters!
-                                  goods_out = c("2543|Sweeteners, Other"),
-                                  report_as = c("sugar1"),
-                                  lossname = "refiningloss")
+    object <- .processing_global(object = object,
+                                 goods_in = c("2514|Maize and products"),
+                                 from = "processed",
+                                 process = "refining",
+                                 # the order matters!
+                                 goods_out = c("2543|Sweeteners, Other"),
+                                 report_as = c("sugar1"),
+                                 lossname = "refiningloss")
     
     return(object)
   }
-  sugar_processing_c <- cmpfun(sugar_processing)
   
-  oilpalm_processing <- function(object, prod_attributes) {
+  .oilpalm_processing <- function(object, prod_attributes) {
     newproduct <- dimSums(object[, , list("production", c("2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake"), "dm")], dim = c("ItemCodeItem", "ElementShort", "attributes"))
     newproduct <- prod_attributes[, , "X003|Palmoil_Kerneloil_Kernelcake"] * newproduct
     object[, , list("X003|Palmoil_Kerneloil_Kernelcake", c("production", "domestic_supply", "processed"))] <- newproduct
     object[, , list("X003|Palmoil_Kerneloil_Kernelcake", "intermediate")] <- 0
     
     # extract oil
-    object <- processing_global_c(object = object,
-                                  goods_in = "X003|Palmoil_Kerneloil_Kernelcake",
-                                  from = "processed",
-                                  process = "extracting",
-                                  # the order matters!
-                                  goods_out = c("2577|Palm Oil", "2576|Palmkernel Oil"),
-                                  report_as = c("oil1", "oil2"),
-                                  lossname = "intermediate")
+    object <- .processing_global(object = object,
+                                 goods_in = "X003|Palmoil_Kerneloil_Kernelcake",
+                                 from = "processed",
+                                 process = "extracting",
+                                 # the order matters!
+                                 goods_out = c("2577|Palm Oil", "2576|Palmkernel Oil"),
+                                 report_as = c("oil1", "oil2"),
+                                 lossname = "intermediate")
     
-    object <- extract_good_from_flow_c(object = object,
-                                       good_in = "X003|Palmoil_Kerneloil_Kernelcake",
-                                       from = "intermediate",
-                                       process = "intermediate",
-                                       extract = "2595|Palmkernel Cake",
-                                       report_as = "oilcakes1",
-                                       extraction_quantity = "max",
-                                       extraction_attribute = "dm",
-                                       residual = "extractionloss",
-                                       prod_attributes = prod_attributes)
+    object <- .extract_good_from_flow(object = object,
+                                      good_in = "X003|Palmoil_Kerneloil_Kernelcake",
+                                      from = "intermediate",
+                                      process = "intermediate",
+                                      extract = "2595|Palmkernel Cake",
+                                      report_as = "oilcakes1",
+                                      extraction_quantity = "max",
+                                      extraction_attribute = "dm",
+                                      residual = "extractionloss",
+                                      prod_attributes = prod_attributes)
     
     object[, , "intermediate"] <- 0
     return(object)
   }
-  oilpalm_processing_c <- cmpfun(oilpalm_processing)
   
-  oil_processing <- function(object) {
+  .oil_processing <- function(object) {
     
     # orders must match!
     goods_in <- c("2555|Soyabeans", "2820|Groundnuts (in Shell Eq)", "2557|Sunflower seed", 
@@ -544,64 +534,60 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     object[, , list(c(goods_in, other_goods_in), "intermediate")] <- 0
     
     # main oil crops
-    extract_oil <- function(j){
-      object <<- processing_global_c(object = object,
-                                     goods_in = goods_in[j],
-                                     from = "processed",
-                                     process = "extracting",
-                                     # the order matters!
-                                     goods_out = oil_out[j],
-                                     report_as = "oil1",
-                                     lossname = "intermediate")
-      object <<- extract_good_from_flow_c(object = object,
-                                          good_in = goods_in[j],
-                                          from = "intermediate",
-                                          process = "intermediate",
-                                          extract = cake_out[j],
-                                          report_as = "oilcakes1",
-                                          extraction_quantity = "max",
-                                          extraction_attribute = "dm",
-                                          residual = "extractionloss",
-                                          prod_attributes = prod_attributes)
+    .extract_oil <- function(j){
+      object <<- .processing_global(object = object,
+                                    goods_in = goods_in[j],
+                                    from = "processed",
+                                    process = "extracting",
+                                    # the order matters!
+                                    goods_out = oil_out[j],
+                                    report_as = "oil1",
+                                    lossname = "intermediate")
+      object <<- .extract_good_from_flow(object = object,
+                                         good_in = goods_in[j],
+                                         from = "intermediate",
+                                         process = "intermediate",
+                                         extract = cake_out[j],
+                                         report_as = "oilcakes1",
+                                         extraction_quantity = "max",
+                                         extraction_attribute = "dm",
+                                         residual = "extractionloss",
+                                         prod_attributes = prod_attributes)
     }
-    extract_oil_c <- cmpfun(extract_oil)
     
-    invisible(lapply(1:length(goods_in), extract_oil_c))
+    invisible(lapply(1:length(goods_in), .extract_oil))
     
     # other oil crops
-    object <- processing_global_c(object = object,
-                                  goods_in = other_goods_in,
-                                  from = "processed",
-                                  process = "extracting",
-                                  # the order matters!
-                                  goods_out = other_oil_out,
-                                  report_as = "oil1",
-                                  lossname = "intermediate")
+    object <- .processing_global(object = object,
+                                 goods_in = other_goods_in,
+                                 from = "processed",
+                                 process = "extracting",
+                                 # the order matters!
+                                 goods_out = other_oil_out,
+                                 report_as = "oil1",
+                                 lossname = "intermediate")
     
-    calc_goods_in <- function(good_in) {
-      object <<- extract_good_from_flow_c(object = object,
-                                          good_in = good_in,
-                                          from = "intermediate",
-                                          process = "intermediate",
-                                          extract = other_cake_out,
-                                          report_as = "oilcakes1",
-                                          extraction_quantity = "max",
-                                          extraction_attribute = "dm",
-                                          residual = "extractionloss",
-                                          prod_attributes = prod_attributes)
+    .calc_goods_in <- function(good_in) {
+      object <<- .extract_good_from_flow(object = object,
+                                         good_in = good_in,
+                                         from = "intermediate",
+                                         process = "intermediate",
+                                         extract = other_cake_out,
+                                         report_as = "oilcakes1",
+                                         extraction_quantity = "max",
+                                         extraction_attribute = "dm",
+                                         residual = "extractionloss",
+                                         prod_attributes = prod_attributes)
     }
-    calc_goods_in_c <- cmpfun(calc_goods_in)
     
-    invisible(lapply(other_goods_in, calc_goods_in_c))
+    invisible(lapply(other_goods_in, .calc_goods_in))
     
     object[, , list(c(goods_in, other_goods_in), "intermediate")] <- 0
     return(object)
   }
-  oil_processing_c <- cmpfun(oil_processing)
-  
   
   # main function combining all processing functions
-  massbalance_in_yeargroups <- function(year_x) {
+  .massbalance_in_yeargroups <- function(year_x) {
     
     ###### preparing dataset for given year
     CBCflows <- CBC[, year_x, ] * attributes_wm
@@ -631,68 +617,65 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     ###### Food processing calculations
     
     ## Cereal milling
-    CBCflows <- cereal_milling_global(CBCflows)
+    CBCflows <- .cereal_milling_global(CBCflows)
     
     ## Ethanol production
-    CBCflows <- ethanol_processing_c(CBCflows)
+    CBCflows <- .ethanol_processing(CBCflows)
   
     ## Beer brewing
-    CBCflows <- beer_processing_c(CBCflows)
+    CBCflows <- .beer_processing(CBCflows)
     
     ## Sugar refining
-    CBCflows <- sugar_processing_c(CBCflows)
+    CBCflows <- .sugar_processing(CBCflows)
     
     ## Oil milling
-    CBCflows <- oilpalm_processing_c(CBCflows, prod_attributes = prod_attributes)
-    CBCflows <- oil_processing_c(CBCflows)
+    CBCflows <- .oilpalm_processing(CBCflows, prod_attributes = prod_attributes)
+    CBCflows <- .oil_processing(CBCflows)
   
     ## harmonizing conversion factors within the rapeseed group
     oils_out <- list("2574|Rape and Mustard Oil", "2578|Coconut Oil", "2579|Sesameseed Oil", "2586|Oilcrops Oil, Other")
     cakes_out <- list("2593|Rape and Mustard Cake", "2596|Copra Cake", "2597|Sesameseed Cake","2598|Oilseed Cakes, Other")
     goods_in <- list("2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra", "2561|Sesame seed", c("2570|Oilcrops, Other", "2563|Olives (including preserved)"))
     
-    harmonize1 <- function(from) {
+    .harmonize1 <- function(from) {
       factor <- dimSums(CBCflows[, , unlist(goods_in)][, , from], dim = c(1, 3.1, 3.2)) / dimSums(CBCflows[, , unlist(goods_in)][, , "extracting"], dim = c(1, 3.1, 3.2))
       CBCflows[, , unlist(goods_in)][, , from] <<- dimSums(CBCflows[, , unlist(goods_in)][, , "extracting"], dim = 3.2) * factor
     }
     
-    lapply(c("oil1", "oilcakes1", "extractionloss"), harmonize1)
+    lapply(c("oil1", "oilcakes1", "extractionloss"), .harmonize1)
     
-    harmonize2 <- function(j) {
+    .harmonize2 <- function(j) {
       CBCflows[, , list(oils_out[[j]], "production_estimated")] <<- dimSums(CBCflows[, , list(goods_in[[j]], "oil1")], dim = c(3.1, 3.2))
       CBCflows[, , list(cakes_out[[j]], "production_estimated")] <<- dimSums(CBCflows[, , list(goods_in[[j]], "oilcakes1")], dim = c(3.1, 3.2))
     }
     
-    lapply(1:length(oils_out), harmonize2)
+    lapply(1:length(oils_out), .harmonize2)
     
     ## Alcohol production
-    CBCflows <- processing_global_c(CBCflows,
-                                    goods_in = c(other_crops, trce, "2804|Rice (Paddy Equivalent)", potato, cassava_sp, sugar, molasse, "2600|Brans"),
-                                    goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic"),
-                                    from = "processed",
-                                    process = "fermentation",
-                                    report_as = c("alcohol1", "alcohol2", "alcohol3"),
-                                    lossname = "alcoholloss")
+    CBCflows <- .processing_global(CBCflows,
+                                  goods_in = c(other_crops, trce, "2804|Rice (Paddy Equivalent)", potato, cassava_sp, sugar, molasse, "2600|Brans"),
+                                  goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic"),
+                                  from = "processed",
+                                  process = "fermentation",
+                                  report_as = c("alcohol1", "alcohol2", "alcohol3"),
+                                  lossname = "alcoholloss")
     
     return(CBCflows)
   }
-  massbalance_in_yeargroups_c <- cmpfun(massbalance_in_yeargroups)
   
 
   #### Calculations 
   ## Setting up massbalance for each considered year ------
   if (is.null(years)) {
-    years <- getYears(CBC)
+    years <- getYears(CBC)  # DL why does this give ALL years while default input is five year steps?
   }
   if (nchar(years[[1]]) < 5) {
     years <- paste0("y", years)
   }
   
-  # DL why does this give ALL years while default input is five year steps?
-  
-  # estimating processing flows
-  massbalance <- mbind(lapply(X = years, FUN = massbalance_in_yeargroups_c))
-  # massbalance <- mbind(madlapply(X = years, FUN = massbalance_in_yeargroups_c))
+  ## estimating processing flows
+  massbalance <- mbind(lapply(X = years, FUN = .massbalance_in_yeargroups))
+  # massbalance <- mbind(madlapply(X = years, FUN = massbalance_in_yeargroups))
   
   ## Define use of products that are not existing in FAOSTAT  ------
   
