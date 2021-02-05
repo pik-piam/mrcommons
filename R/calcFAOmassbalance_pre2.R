@@ -17,16 +17,17 @@
 #' @importFrom graphics plot
 #' @importFrom magclass getSets as.magpie fulldim complete_magpie
 #' @importFrom utils read.csv
+#' @importFrom compiler cmpfun
 #' @importFrom madrat madlapply
 
 calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   #### Data input
   ## FAO Commodity Balance  ------
   CBC <- calcOutput(type = "FAOharmonized", aggregate = F)
-  
   getSets(CBC) <- c("region", "year", "ItemCodeItem.ElementShort")
+  
   if (any(duplicated(dimnames(CBC)[[3]]) == T)) {
-    stop("The folowing dimnames are duplicated: ", paste(dimnames(CBC)[[3]][which(duplicated(dimnames(CBC)[[3]]) == T)], collapse = "\", \""))  
+    stop("The folowing dimnames are duplicated: ", paste(getNames(CBC)[duplicated(getNames(CBC))], collapse = "\", \""))  
   }
   
   # remove double counting  
@@ -82,7 +83,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   
   ## Production Attributes  ------
   prod_attributes <- calcOutput("Attributes", aggregate = F)
-  remove_prod <-  c("betr", "begr", "pasture", "scp", "res_cereals", "res_fibrous", "res_nonfibrous", "wood", "woodfuel")
+  remove_prod <-  c("betr", "begr", "pasture", "scp", "res_cereals", 
+                    "res_fibrous", "res_nonfibrous", "wood", "woodfuel")
   prod_attributes <- prod_attributes[, , remove_prod, invert = T]
   
   ## Sectoral mapping for FAO items ------
@@ -108,16 +110,67 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   attributes_wm <- (prod_attributes / dimSums(prod_attributes[, , "wm"], dim = "attributes"))
   
   if (!(all(getNames(CBC, dim = "ItemCodeItem") %in% getNames(attributes_wm, dim = "ItemCodeItem")))) {
-    vcat(verbosity = 2, "The following items were removed from the dataset because of missing prod_attributes: ", paste(getNames(CBC, dim = 1)[!(getNames(CBC, dim = 1) %in% getNames(attributes_wm, dim = 2))], collapse = "\", \""))
-    CBC <- CBC[, , getNames(CBC, dim = "ItemCodeItem")[which(getNames(CBC, dim = "ItemCodeItem") %in% getNames(attributes_wm, dim = "ItemCodeItem"))]]
+    vcat(verbosity = 2, "The following items were removed from the dataset because of missing prod_attributes: ", 
+         paste(getNames(CBC, dim = 1)[!(getNames(CBC, dim = 1) %in% getNames(attributes_wm, dim = 2))], collapse = "\", \""))
+    CBC <- CBC[, , getNames(CBC, dim = "ItemCodeItem")[getNames(CBC, dim = "ItemCodeItem") %in% getNames(attributes_wm, dim = "ItemCodeItem")]]
   }
   if (!all(getNames(attributes_wm, dim = "ItemCodeItem") %in% getNames(CBC, dim = "ItemCodeItem"))) {
-    stop("For the following items there were entries in prod_attributes but no respective data: ", paste(getNames(attributes_wm, dim = 2)[!(getNames(attributes_wm, dim = 2) %in% getNames(CBC, dim = 1))], collapse = "\", \""))
+    stop("For the following items there were entries in prod_attributes but no respective data: ", 
+         paste(getNames(attributes_wm, dim = 2)[!(getNames(attributes_wm, dim = 2) %in% getNames(CBC, dim = 1))], collapse = "\", \""))
   }
   
   
   
   #### Definition of Subfunctions #####
+  
+  .massbalance_tests <- function(object, 
+                                 goods_in,
+                                 from,
+                                 report_as,
+                                 residual,
+                                 relevant_attributes = c("dm", "nr", "p", "k", "ge", "c", "wm"), 
+                                 goods_out = NULL, 
+                                 threshold = 1e-2) {
+    diff <- (dimSums(object[, , list(goods_in, c(report_as, residual))], dim = c("ElementShort"))
+             - dimSums(object[, , list(goods_in, from)], dim = c("ElementShort")))
+    if (any(abs(diff) > threshold)) {
+      stop("NAs in dataset or function corrupt: process not balanced for ", 
+           paste(goods_in, collapse = ", "), " reported as ", paste(report_as, collapse = ", "))
+    }
+    
+    if (!is.null(goods_out)) {
+      diff <- (dimSums(object[, , list(goods_in, from)], dim = c("ElementShort", "ItemCodeItem"))
+               - dimSums(object[, , list(goods_in, residual)], dim = c("ElementShort", "ItemCodeItem"))
+               - dimSums(object[, , list(goods_out, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
+      )
+      if (any(abs(diff) > threshold)) {
+        stop("NAs in dataset or function corrupt: goods not balanced for ", 
+             paste(goods_out, collapse = ", "), " from ", paste(goods_in, collapse = ", "))
+      }
+      
+      diff <- (sum(object[, , list(goods_out, "production_estimated")]) 
+               - sum(object[, , list(goods_out, "production")]))
+      
+      if (any(abs(diff) > threshold)) {
+        stop("Global estimated production does not meet global production for ",
+             paste(goods_out, collapse = ", "))
+      }
+      
+      # negative value check
+      if (any(object[, , list(goods_in, c(report_as, from, residual), relevant_attributes)] < 0)) {
+        warning("Massbalancing failed, negative values for ", 
+                paste(unname(where(object[, , list(goods_in, c(report_as, from, residual), relevant_attributes)] < 0)[[1]]$individual[,3]), collapse = ", "))
+      }
+    }
+    
+    if (residual == "flour1") {
+      diff <- (dimSums(object[, , list(goods_in, "branoil1")], dim = c("ElementShort", "ItemCodeItem"))
+                              - dimSums(object[, , list(c("2581|Ricebran Oil", "2582|Maize Germ Oil"), "production_estimated")], dim = c("ElementShort", "ItemCodeItem")))
+      if (any(abs(diff) > threshold)) {
+        stop("NAs in dataset or function corrupt: branoil1 not balanced")
+      }
+    }
+  }
   
   .processing_global <- function(object,
                                  goods_in = c("2536|Sugar cane", "2537|Sugar beet"),
@@ -127,70 +180,45 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                  goods_out = c("2818|Sugar, Refined Equiv", "2544|Molasses"),
                                  report_as = c("sugar1", "molasses1"),
                                  lossname = "refiningloss") {
-      if (any(object[, , goods_in][, , c(report_as, lossname)] != 0)) {
-        stop("Output flows already exist.")
-      }
-      if (any(object[, , goods_out][, , c("production_estimated")] != 0)) {
-        stop("Output flows already exist.")
-      }
-    
-      # attributes relevant for checking massbalance and conv_factor
-      relevant_attributes <- c("dm", "nr", "p", "k", "ge")
-      
-      conv_factor <- (dimSums(object[, , list(goods_out, "production")], dim = c("region", "ElementShort"))
-                          / dimSums(object[, , list(goods_in, from)], dim = c("region", "ItemCodeItem", "ElementShort")))
-      
-      if (any(dimSums(conv_factor[, , goods_out], dim = "ItemCodeItem")[, , relevant_attributes] > 1)) {
-        stop("conversion factors exceed 1. not suitable for a global conversion factor.")
-      }
-      
-      # estimate outputs
-      .estim_outputs <- function(j) {
-        object[, , list(report_as[j], goods_in)] <<- dimSums(object[, , list(goods_in, from)], dim = "ElementShort") * conv_factor[, , goods_out[j], drop = T]
-        object[, , list("production_estimated", goods_out[j])] <<- dimSums(object[, , list(report_as[j], goods_in)], dim = c("ElementShort", "ItemCodeItem"))
-      }
-      
-      invisible(lapply(c(1:length(goods_out)), .estim_outputs))
-      
-      # calculate refining losses as mass balance difference
-      object[, , list(goods_in, lossname)] <- (dimSums(object[, , list(goods_in, from)], dim = c("ElementShort"))
-                                               - dimSums(object[, , list(goods_in, report_as)], dim = c("ElementShort")))
-      
-      # Massbalance tests ----
-      diff <- (dimSums(object[, , goods_in][, , c(report_as, lossname)], dim = c("ElementShort"))
-               - dimSums(object[, , goods_in][, , c(from)], dim = c("ElementShort")))
-      if (any(abs(diff) > 0.01)) {
-        print(diff[, , goods_in])
-        stop("NAs in dataset or function corrupt.")
-      }
-      
-      diff <- (dimSums(object[, , goods_in][, , c(from)], dim = c("ElementShort", "ItemCodeItem"))
-               - dimSums(object[, , goods_in][, , c(lossname)], dim = c("ElementShort", "ItemCodeItem"))
-               - dimSums(object[, , goods_out][, , c("production_estimated")], dim = c("ElementShort", "ItemCodeItem")))
-      if (any(abs(diff) > 0.01)) {
-        print(diff[, , goods_in])
-        stop("NAs in dataset or function corrupt.")
-      }
-      
-      diff <- sum(object[, , goods_out][, , c("production_estimated")]) - sum(object[, , goods_out][, , c("production")])
-      if (any(abs(diff) > 0.01)) {
-        print(diff[, , goods_in])
-        stop("global estimated production does not meet global production")
-      }
-      
-      # negative value check
-      if (any(object[, , goods_in][, , c(report_as, from, lossname)][, , relevant_attributes] < 0)) {
-        print(diff[, , goods_in])
-        warning("Massbalancing failed, negative values.")
-      }
-      
-      # return ----
-      if (from != process) {
-        object[, , list(process, goods_in)] <- object[, , list(from, goods_in)]
-        object[, , list(from, goods_in)] <- 0
-      }
-      return(object)
+    if (any(object[, , list(goods_in, c(report_as, lossname))] != 0)) {
+      stop("Output flows already exist.")
     }
+    if (any(object[, , list(goods_out, "production_estimated")] != 0)) {
+      stop("Output flows already exist.")
+    }
+  
+    # attributes relevant for checking massbalance and conv_factor
+    relevant_attributes <- c("dm", "nr", "p", "k", "ge")
+    
+    conv_factor <- (dimSums(object[, , list(goods_out, "production")], dim = c("region", "ElementShort"))
+                      / dimSums(object[, , list(goods_in, from)], dim = c("region", "ItemCodeItem", "ElementShort")))
+    
+    if (any(dimSums(conv_factor[, , list(goods_out, relevant_attributes)], dim = "ItemCodeItem") > 1)) {
+      stop("conversion factors exceed 1. not suitable for a global conversion factor.")
+    }
+    
+    # estimate outputs
+    .estim_outputs <- function(j) {
+      object[, , list(report_as[j], goods_in)] <<- dimSums(object[, , list(goods_in, from)], dim = "ElementShort") * conv_factor[, , goods_out[j], drop = T]
+      object[, , list("production_estimated", goods_out[j])] <<- dimSums(object[, , list(report_as[j], goods_in)], dim = c("ElementShort", "ItemCodeItem"))
+    }
+    
+    lapply(c(1:length(goods_out)), .estim_outputs)
+    
+    # calculate refining losses as mass balance difference
+    object[, , list(goods_in, lossname)] <- (dimSums(object[, , list(goods_in, from)], dim = c("ElementShort"))
+                                             - dimSums(object[, , list(goods_in, report_as)], dim = c("ElementShort")))
+    
+    # check results
+    .massbalance_tests(object, goods_in, from, report_as, lossname, relevant_attributes)
+    
+    # clear "from" ---- 
+    if (from != process) {
+      object[, , list(process, goods_in)] <- object[, , list(from, goods_in)]
+    }
+    object[, , list(from, goods_in)] <- 0  # if == process it is "intermediate" which is to be cleared as well
+    return(object)
+  }
   
  
   .extract_good_from_flow <- function(object,
@@ -247,20 +275,15 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     object[, , list("production_estimated", extract)] <- object[, , list("production_estimated", extract)] + extracted
     
-    # massbalance check
-    diff <- (dimSums(object[, , list(good_in, c(report_as, residual))], dim = c("ElementShort"))
-             - dimSums(object[, , list(good_in, from)], dim = c("ElementShort")))
-    if (any(abs(diff) > 0.01)) {
-      print(diff[, , good_in])
-      stop("NAs in dataset or function corrupt.")
-    }
+    # check results
+    .massbalance_tests(object, good_in, from, report_as, residual) # DL no negative value check? 
     
-    # DL it seems that if from == process, it is from == process == intermediate, and 
-    # it is set to zero manually after the function anyways??
+    # clear "from"
     if (from != process) {
       object[, , list(process, good_in)] <- object[, , list(from, good_in)]
-      object[, , list(from, good_in)] <- 0
     }
+    object[, , list(from, good_in)] <- 0 # if from == process it is "intermediate" which is to be cleared as well
+    
     return(object)
   }
   
@@ -299,11 +322,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     brans_uncalibrated <- dimSums(bran_ratio * milled_global[, , "dm"], dim = "ItemCodeItem")
     bran_ratio <- bran_ratio * dimSums(brans_global[, , "dm"], dim = "attributes") / brans_uncalibrated
     
+    # bran estimation
     bran_estimated <- bran_ratio * dimSums(object[, , list(cereals, milled)][, , "dm"], dim = "attributes") * bran_attributes
     object[, , list("brans1", cereals)] <- dimSums(bran_estimated[, , cereals], dim = c("ElementShort"))
     object[, , list("production_estimated", brans)] <- dimSums(bran_estimated[, , cereals], dim = c("ItemCodeItem", "ElementShort"))
     object[, , list(flour, cereals)] <- object[, , list(milled, cereals)] - bran_estimated
     
+    # branoil estimation
     .branoil1_production <- function(object, branoilItem, cropItem) {
       branoil_ratio <- (dimSums(object[, , list(branoilItem, "production")], dim = c("region", "ItemCodeItem", "ElementShort"))  
                          / dimSums(milled_global[, , cropItem], dim = "ItemCodeItem"))
@@ -316,25 +341,9 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     object <- .branoil1_production(object, "2582|Maize Germ Oil", "2514|Maize and products")
     object <- .branoil1_production(object, "2581|Ricebran Oil", "2804|Rice (Paddy Equivalent)")
-    
-    # massbalance checks
-    diff <- (dimSums(object[, , cereals][, , c(flour, "brans1", "branoil1")], dim = c("ElementShort"))
-             - dimSums(object[, , cereals][, , c(milled)], dim = c("ElementShort")))
-    if (any(round(diff, 5) != 0)) {
-      print(diff[, , cereals])
-      stop("NAs in dataset or function corrupt.1")
-    }
-    diff <- (dimSums(object[, , cereals][, , c("branoil1")], dim = c("ElementShort", "ItemCodeItem"))
-             - dimSums(object[, , c("2581|Ricebran Oil", "2582|Maize Germ Oil")][, , c("production_estimated")], dim = c("ElementShort", "ItemCodeItem")))
-    if (any(round(diff, 5) != 0)) {
-      print(diff)
-      stop("NAs in dataset or function corrupt.2")
-    }
-    
-    # negative value check
-    if (any(round(object[, , cereals][, , c(flour, milled, "brans1", "branoil1")], 5) < 0)) {
-      stop("Massbalancing failed, negative values.")
-    }
+
+    # check results
+    .massbalance_tests(object, cereals, milled, c("brans1", "branoil1"), flour)
     
     # add processed item
     object[, , list(process, cereals)] <- object[, , list(milled, cereals)]
@@ -375,7 +384,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     # Wheat instead of tece would be more correct, but we need to have homogenous products
     tece_maize <- c(tece, "2514|Maize and products")
-    object[, , list(tece_maize, "intermediate")] <- 0
     
     # liter yield in dm
     ethanol_yield_liter_per_ton_tece <- 375
@@ -411,8 +419,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes) 
     }
     invisible(lapply(1:length(tece_maize), .extract_ethanol))
-    
-    object[, , list(tece_maize, "intermediate")] <- 0
     
     # ethanol processing from sugarcane (only ethanol1 and distillingloss)
     object <- .extract_good_from_flow(object = object,
@@ -456,7 +462,6 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     invisible(lapply(beercereals, .add_beercereals))
     
-    object[, , "intermediate"] <- 0
     return(object)
   }
   
@@ -509,14 +514,13 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                       residual = "extractionloss",
                                       prod_attributes = prod_attributes)
     
-    object[, , "intermediate"] <- 0
     return(object)
   }
   
   .oil_processing <- function(object) {
     
     # orders must match!
-    goods_in <- c("2555|Soyabeans", "2820|Groundnuts (in Shell Eq)", "2557|Sunflower seed", 
+    crops_in <- c("2555|Soyabeans", "2820|Groundnuts (in Shell Eq)", "2557|Sunflower seed", 
                   "2559|Cottonseed", "2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra",
                   "2561|Sesame seed")
     oil_out <- c("2571|Soyabean Oil", "2572|Groundnut Oil", "2573|Sunflowerseed Oil",
@@ -526,16 +530,14 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                  "2594|Cottonseed Cake", "2593|Rape and Mustard Cake", "2596|Copra Cake", 
                  "2597|Sesameseed Cake")   
     
-    other_goods_in <- c("2570|Oilcrops, Other", "2563|Olives (including preserved)")
+    other_crops_in <- c("2570|Oilcrops, Other", "2563|Olives (including preserved)")
     other_oil_out <- "2586|Oilcrops Oil, Other"
     other_cake_out <-  "2598|Oilseed Cakes, Other"
-    
-    object[, , list(c(goods_in, other_goods_in), "intermediate")] <- 0
     
     # main oil crops
     .extract_oil <- function(j){
       object <<- .processing_global(object = object,
-                                    goods_in = goods_in[j],
+                                    goods_in = crops_in[j],
                                     from = "processed",
                                     process = "extracting",
                                     # the order matters!
@@ -543,7 +545,7 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                     report_as = "oil1",
                                     lossname = "intermediate")
       object <<- .extract_good_from_flow(object = object,
-                                         good_in = goods_in[j],
+                                         good_in = crops_in[j],
                                          from = "intermediate",
                                          process = "intermediate",
                                          extract = cake_out[j],
@@ -554,11 +556,11 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes)
     }
     
-    invisible(lapply(1:length(goods_in), .extract_oil))
+    invisible(lapply(1:length(crops_in), .extract_oil))
     
     # other oil crops
     object <- .processing_global(object = object,
-                                 goods_in = other_goods_in,
+                                 goods_in = other_crops_in,
                                  from = "processed",
                                  process = "extracting",
                                  # the order matters!
@@ -579,9 +581,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
                                          prod_attributes = prod_attributes)
     }
     
-    invisible(lapply(other_goods_in, .calc_goods_in))
+    invisible(lapply(other_crops_in, .calc_goods_in))
     
-    object[, , list(c(goods_in, other_goods_in), "intermediate")] <- 0
     return(object)
   }
   
@@ -652,12 +653,12 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
     
     ## Alcohol production
     CBCflows <- .processing_global(CBCflows,
-                                  goods_in = c(other_crops, trce, "2804|Rice (Paddy Equivalent)", potato, cassava_sp, sugar, molasse, "2600|Brans"),
-                                  goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic"),
-                                  from = "processed",
-                                  process = "fermentation",
-                                  report_as = c("alcohol1", "alcohol2", "alcohol3"),
-                                  lossname = "alcoholloss")
+                                   goods_in = c(other_crops, trce, "2804|Rice (Paddy Equivalent)", potato, cassava_sp, sugar, molasse, "2600|Brans"),
+                                   goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic"),
+                                   from = "processed",
+                                   process = "fermentation",
+                                   report_as = c("alcohol1", "alcohol2", "alcohol3"),
+                                   lossname = "alcoholloss")
     
     return(CBCflows)
   }
@@ -693,10 +694,8 @@ calcFAOmassbalance_pre2 <- function(years = paste0("y",(seq(1965,2010,5)))) {
   massbalance <- toolAggregate(x = massbalance, rel = relationmatrix, dim = 3.1, from = "FoodBalanceItem", to = "k", partrel = TRUE)
   
   #### Return ----
-  return(list(
-    x = massbalance,
-    weight = NULL,
-    unit = "Mt DM, Mt WM, PJ, Mt Nr, Mt P, Mt K",
-    description = "FAO massbalance calculates all conversion processes within the FAO CBS/FBS and makes them explict. More complete version can be found in calcFAOmassbalance"
-  ))
+  return(list(x = massbalance,
+              weight = NULL,
+              unit = "Mt DM, Mt WM, PJ, Mt Nr, Mt P, Mt K",
+              description = "FAO massbalance calculates all conversion processes within the FAO CBS/FBS and makes them explict. More complete version can be found in calcFAOmassbalance"))
 }
