@@ -30,6 +30,7 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiec
     colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
     mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
     countries <- unique(mapping$iso)
+    countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
     
     cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc_lpjcell", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
     
