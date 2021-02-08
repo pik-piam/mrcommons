@@ -28,10 +28,10 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     natveg <- c("soilc", "soilc_layer", "litc", "vegc", "alitterfallc", 
     "transpiration", "discharge", "runoff", "evaporation")
 
-    if(subtype %in% natveg){
+    if (subtype %in% natveg) {
     
       folder <- "LPJmL4/CRU_4"  
-    } else{
+    } else {
       
       folder <- "LPJmL5/CRU_4"
     }
@@ -95,8 +95,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
   unit_transform <- 0.01               # Transformation factor gC/m^2 --> t/ha
 
-  if(subtype%in%c("soilc","litc","vegc","alitfallc","alitterfallc","alitfalln","vegc_grass","litc_grass","soilc_grass")){
-
+  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype)) {
     start_year  <- start_year           # Start year of data set
     years       <- years                # Vector of years that should be exported
     nbands      <- 1                    # Number of bands in the .bin file
@@ -110,7 +109,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
         averaging_range = avg_range,
         ncells=67420,
         bands=nbands,
-        soilcells=TRUE)
+        soilcells=FALSE)
     } else {
       x <- readLPJ(
         file_name=file.path(folder,file_name),
@@ -121,7 +120,16 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
         soilcells=TRUE)
     }
     
-    x <- collapseNames(as.magpie(x, spatial=1))
+    # Transform to MAgPIE object
+    if (grepl("_lpjcell", subtype)){
+      class(x) <- "array"
+      x <- collapseNames(as.magpie(x, spatial=1)) 
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+      getCells(x)  <- paste(lpj_cell_map$ISO,1:67420,sep=".")
+      names(dimnames(x))[1] <- paste0(names(dimnames(x))[1],".region")
+    } else {
+      x <- collapseNames(as.magpie(x)) 
+    }
     x <- x*unit_transform
     getNames(x) <- subtype
 
@@ -166,7 +174,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     getNames(x)     <- paste0("soilc.",getNames(x))
     getSets(x)[4:5] <- c("data" ,"layer")
 
-  } else if(grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)){
+  } else if (grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)) {
 
     start_year  <- start_year         # Start year of data set
     years       <- years              # Vector of years that should be exported
@@ -174,7 +182,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     avg_range   <- 1                  # Number of years used for averaging
 
     # monthly values
-    if (grepl("_lpjcell", subtype)){
+    if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
         file_name=file.path(folder,file_name),
         wyears=years,

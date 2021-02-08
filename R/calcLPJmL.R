@@ -81,6 +81,7 @@ calcLPJmL <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", su
              soilc_layer        = "tC/ha",
              litc               = "tC/ha",
              vegc               = "tC/ha",
+             vegc_lpjcell       = "tC/ha",
              alitfallc          = "tC/ha",
              alitfalln          = "tN/ha",
              harvest            = "tDM/ha",
