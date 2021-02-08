@@ -2,20 +2,22 @@
 #' @description Calculates the cellular MAgPIE landuse initialisation area. Data from FAO on forestry is used to split the secondary forest pool of the LU2v1 dataset into forestry and secd_forest.
 #'
 #' @param cellular cellular (TRUE) or country-level/regional (FALSE) data? For country-level vs regional data, remember to set "aggregate" to false.
+#' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #' @param land new default land="fao", if land="new", the set land seperates primary and secondary forests, "old" uses the old land set (including only forest)
 #' @param input_magpie uses just 1995 values and apply area fix (set cell with zero area to minimal value to not distrube aggregating to clusters)
 #' @param selectyears default on "past"
 #' @return List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
-#' @author Benjamin Leon Bodirsky
+#' @author Benjamin Leon Bodirsky, Felicitas Beier
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("LanduseInitialisation")
 #' }
-#' @importFrom magclass setNames
+#' @import madrat
+#' @importFrom magclass setNames new.magpie
 
 
-calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="past", input_magpie=FALSE){
+calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="past", cells="magpiecell", input_magpie=FALSE){
 
   selectyears <- sort(findset(selectyears,noset = "original"))
   
@@ -26,7 +28,7 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
     if(land%in%c("new","old")){
       
       # divide secondary forest into forestry and secdf.    
-      forestry_country   <- readSource("FAO_FRA2015","fac")[,,"PlantFor"]
+      forestry_country  <- readSource("FAO_FRA2015","fac")[,,"PlantFor"]
       forestry_country  <-  time_interpolate(forestry_country,interpolated_year = selectyears,integrate_interpolated_years = TRUE,extrapolation_type = "constant")
       vcat(verbosity = 3,"Forestry is interpolated for missing years and held constant for the period before FAO starts")
       
@@ -105,20 +107,39 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
     
     if(land%in%c("new","old")){
       
-      mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
-      countries <- unique(mapping$iso)
-      if(is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")
-      
       # Load cellular and country data
-      countrydata <- calcOutput("LanduseInitialisation",aggregate = FALSE,land=land, selectyears=selectyears ,cellular=FALSE)
-      LUH2v2      <- calcOutput("LUH2v2", aggregate=FALSE, landuse_types="LUH2v2", irrigation=FALSE, cellular=TRUE, selectyears = selectyears)
-      LUH2v2      <- toolCell2isoCell(LUH2v2)
+      countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, land=land, selectyears=selectyears, cellular=FALSE)
+      LUH2v2      <- calcOutput("LUH2v2", aggregate=FALSE, cells=cells, landuse_types="LUH2v2", irrigation=FALSE, cellular=TRUE, selectyears = selectyears)
+      LUH2v2      <- toolCell2isoCell(LUH2v2, cells=cells)
       
+      if (cells=="lpjcell") {
+        mapping   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+        colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
+        mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
+        countries <- unique(mapping$iso)
+        # remove missing countries from mapping and countries list
+        countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
+        mapping   <- mapping[(mapping$iso!="XNL"& mapping$iso!="KO-"),]
+      } else {
+        mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
+        countries <- unique(mapping$iso)
+      }
+      if(is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")
+    
       # divide secondary forest into forestry and secdf. 
-      forestry_shr <- countrydata[,,"forestry"] / dimSums(countrydata[,,c("forestry","secdforest")],dim=3)
-      forestry_shr[is.nan(forestry_shr)]<-0
-      forestry_shr <- toolAggregate(x = forestry_shr[countries,,],rel = mapping,from="iso",to="celliso",dim=1)
-      forestry <- forestry_shr * LUH2v2[,,"secdf"]
+      forestry_shr <- countrydata[,,"forestry"] / dimSums(countrydata[,,c("forestry","secdforest")], dim=3)
+      forestry_shr[is.nan(forestry_shr)] <- 0
+      forestry_shr <- toolAggregate(x = forestry_shr[countries,,], rel = mapping, from="iso", to="celliso", dim=1)
+      
+      if (cells=="lpjcell") {
+        # missing countries: forestry share is set to 0
+        tmp <- new.magpie(cells_and_regions = getCells(LUH2v2), years = getYears(LUH2v2), names = getNames(forestry_shr), fill = 0)
+        tmp[getCells(forestry_shr),,] <- forestry_shr[,,]
+        forestry_shr <- tmp
+        rm(tmp)
+      }
+
+      forestry         <- forestry_shr * LUH2v2[,,"secdf"]
       secondary_forest <- (1-forestry_shr) * LUH2v2[,,"secdf"]
       
       # calculate other landpools
@@ -147,7 +168,7 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
       
     } else if(land=="fao"){
   
-      out <- calcOutput("FAOForestRelocate", selectyears=selectyears, aggregate=FALSE)
+      out <- calcOutput("FAOForestRelocate", selectyears=selectyears, cells=cells, aggregate=FALSE)
       cat("Reallocation in land pools results in extremely low negative values for", unique((where(out<0)$true$individual)[,3]),"land in", where(out<0)$true$regions,"with a range of", range(out[out<0]))
       cat("\nSuch values are replaced with 0.")
       out[out<0] <- 0
@@ -169,13 +190,5 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
               min=0,
               max = 14900, ### global land area
               description="Land use initialisation data for different land pools",
-              isocountries=!cellular)
-  )
+              isocountries=!cellular))
 }
-  
-  
-  
-  
-  
-  
-

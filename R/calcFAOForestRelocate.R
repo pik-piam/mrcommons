@@ -3,28 +3,40 @@
 #'
 #' @param selectyears default on "past"
 #' @param track if intermediate results shoul be printed
+#' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Felicitas Beier
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("FAOForestRelocate")
 #' }
-#' @importFrom magclass setNames
+#' @import madrat
+#' @importFrom magclass setNames new.magpie
 #' @import nleqslv
 #' @importFrom nleqslv nleqslv
 #' @export
 
-calcFAOForestRelocate <- function(selectyears="past", track=TRUE){
+calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiecell"){
   
   # Load cellular and country data
-  countrydata <- calcOutput("LanduseInitialisation",aggregate = FALSE,land="fao", selectyears=selectyears ,cellular=FALSE)
-  LUH2v2      <- calcOutput("LanduseInitialisation",aggregate = FALSE,land="new", selectyears=selectyears , cellular=TRUE)
+  countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, land="fao", selectyears=selectyears, cellular=FALSE)
+  LUH2v2      <- calcOutput("LanduseInitialisation", aggregate = FALSE, land="new", selectyears=selectyears, cellular=TRUE, cells=cells)
   
   totalarea   <- dimSums(LUH2v2, dim=c(1,3))
   
-  mapping     <- toolGetMapping(name="CountryToCellMapping.csv", type="cell") 
-  countries   <- sort(unique(mapping$iso))
+  if (cells=="lpjcell") {
+    mapping   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+    colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
+    mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
+    countries <- unique(mapping$iso)
+    # remove missing countries from mapping and countries list
+    countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
+    mapping   <- mapping[(mapping$iso!="XNL"& mapping$iso!="KO-"),]
+  } else {
+    mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
+    countries <- unique(mapping$iso)
+  }
   
   forests <- c("primforest","secdforest","forestry")
   nature  <- c(forests, "other")
@@ -32,6 +44,16 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE){
    
   # reduce, if nessessary to FAO 
   reduce     <- increase <- round(countrydata - toolCountryFill(toolAggregate(LUH2v2, rel=mapping, from="celliso", to="iso", partrel=TRUE), fill=0),8)
+  
+  if (cells=="lpjcell") {
+    # missing countries: forestry share is set to 0
+    tmp <- new.magpie(cells_and_regions = getCells(LUH2v2), years = getYears(LUH2v2), names = getNames(reduce), fill = 0)
+    tmp[getCells(reduce),,] <- reduce[,,]
+    reduce   <- tmp
+    increase <- reduce
+    rm(tmp)
+  }
+  
   reduce[reduce>0]     <- 0
   increase[increase<0] <- 0
   
