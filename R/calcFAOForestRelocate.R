@@ -30,9 +30,14 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiec
     colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
     mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
     countries <- unique(mapping$iso)
+    
+    cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc_lpjcell", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+    
   } else {
     mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
     countries <- unique(mapping$iso)
+    
+    cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
   }
   
   forests <- c("primforest","secdforest","forestry")
@@ -47,8 +52,7 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiec
   LUH2v2 <- add_columns(LUH2v2, "to_be_allocated", dim=3.1)
   LUH2v2[,,"to_be_allocated"] <- 0
   
-  #grep land areas dependend on vegetation carbon density
-  cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+  #grep land areas dependent on vegetation carbon density
   if(is.null(getYears(cellvegc))) getYears(cellvegc) <- getYears(countrydata)
   cellvegc_n <- cellvegc
   

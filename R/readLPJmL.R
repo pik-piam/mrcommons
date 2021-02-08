@@ -43,6 +43,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
              soilc_layer        = "soilc_layer_natveg.bin",
              litc               = "litc_natveg.bin",
              vegc               = "vegc_natveg.bin",
+             vegc_lpjcell       = "vegc_natveg.bin",
              alitfallc          = "alitfallc_natveg.bin",
              alitterfallc       = "alitterfallc_natveg.bin",
              alitfalln          = "alitfalln_natveg.bin",
@@ -101,15 +102,26 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     nbands      <- 1                    # Number of bands in the .bin file
     avg_range   <- 1                    # Number of years used for averaging
 
-    x <- readLPJ(
-      file_name=file.path(folder,file_name),
-      wyears=years,
-      syear=start_year,
-      averaging_range=avg_range,
-      bands=nbands,
-      soilcells=TRUE)
+    if (grepl("_lpjcell", subtype)){
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range = avg_range,
+        ncells=67420,
+        bands=nbands,
+        soilcells=TRUE)
+    } else {
+      x <- readLPJ(
+        file_name=file.path(folder,file_name),
+        wyears=years,
+        syear=start_year,
+        averaging_range=avg_range,
+        bands=nbands,
+        soilcells=TRUE)
+    }
     
-    x <- collapseNames(as.magpie(x))
+    x <- collapseNames(as.magpie(x, spatial=1))
     x <- x*unit_transform
     getNames(x) <- subtype
 
