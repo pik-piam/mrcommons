@@ -30,9 +30,6 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiec
     colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
     mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
     countries <- unique(mapping$iso)
-    # remove missing countries from mapping and countries list
-    countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
-    mapping   <- mapping[(mapping$iso!="XNL"& mapping$iso!="KO-"),]
   } else {
     mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
     countries <- unique(mapping$iso)
@@ -44,16 +41,6 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiec
    
   # reduce, if nessessary to FAO 
   reduce     <- increase <- round(countrydata - toolCountryFill(toolAggregate(LUH2v2, rel=mapping, from="celliso", to="iso", partrel=TRUE), fill=0),8)
-  
-  if (cells=="lpjcell") {
-    # missing countries: forestry share is set to 0
-    tmp <- new.magpie(cells_and_regions = getCells(LUH2v2), years = getYears(LUH2v2), names = getNames(reduce), fill = 0)
-    tmp[getCells(reduce),,] <- reduce[,,]
-    reduce   <- tmp
-    increase <- reduce
-    rm(tmp)
-  }
-  
   reduce[reduce>0]     <- 0
   increase[increase<0] <- 0
   

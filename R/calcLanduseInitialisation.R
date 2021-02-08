@@ -117,9 +117,10 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
         colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
         mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
-        # remove missing countries from mapping and countries list
-        countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
-        mapping   <- mapping[(mapping$iso!="XNL"& mapping$iso!="KO-"),]
+      
+        tmp         <- countrydata
+        countrydata <- new.magpie(cells_and_regions = countries, years = getYears(countrydata), names = getNames(countrydata), fill = 0)
+        countrydata[countries[!grepl("XNL", countries) & !grepl("KO-", countries)],,] <- tmp[countries[!grepl("XNL", countries) & !grepl("KO-", countries)],,]
       } else {
         mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
         countries <- unique(mapping$iso)
@@ -130,15 +131,6 @@ calcLanduseInitialisation<-function(cellular=FALSE, land="fao", selectyears="pas
       forestry_shr <- countrydata[,,"forestry"] / dimSums(countrydata[,,c("forestry","secdforest")], dim=3)
       forestry_shr[is.nan(forestry_shr)] <- 0
       forestry_shr <- toolAggregate(x = forestry_shr[countries,,], rel = mapping, from="iso", to="celliso", dim=1)
-      
-      if (cells=="lpjcell") {
-        # missing countries: forestry share is set to 0
-        tmp <- new.magpie(cells_and_regions = getCells(LUH2v2), years = getYears(LUH2v2), names = getNames(forestry_shr), fill = 0)
-        tmp[getCells(forestry_shr),,] <- forestry_shr[,,]
-        forestry_shr <- tmp
-        rm(tmp)
-      }
-
       forestry         <- forestry_shr * LUH2v2[,,"secdf"]
       secondary_forest <- (1-forestry_shr) * LUH2v2[,,"secdf"]
       
