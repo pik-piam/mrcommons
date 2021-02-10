@@ -24,7 +24,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE) {
   past=findset("past")
   calib = fbask_sys[,past,]-FeedBasketsUncalibrated[,past,]
   calib_constant = toolHoldConstantBeyondEnd(calib)
-  calib_decline2050 = convergence(origin = calib_constant,aim = 0,start_year = 2010,end_year = 2050)
+  calib_decline2050 = convergence(origin = calib_constant,aim = 0,start_year = 2010,end_year = 2050,type = "s")
   
   if(fadeout){
     out = calib_decline2050
@@ -32,14 +32,18 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE) {
     out = calib_constant
   }
   
+  out=out+FeedBasketsUncalibrated
+  out[out<0] = 0
+  
   # change from sys to kli
   prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
   prod_sys_ratio <- toolHoldConstantBeyondEnd(prod_sys_ratio)
   out <- dimSums(out*prod_sys_ratio,dim="sys")
   
+  ### careful from here on: livst_milk is in two of the sets of out
   if(non_eaten_food==FALSE){
-    other_foods = setdiff("non_eaten_food",getNames(out,dim="kall"))
-    out = out[,,other_foods]
+    other_foods = setdiff(getNames(out,dim="kall"),"non_eaten_food")
+    out = out[,,list(kall=other_foods)]
   } 
   
   weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,findset("kli")][,,"dm"][,,"production"])

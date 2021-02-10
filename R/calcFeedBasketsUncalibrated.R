@@ -27,12 +27,16 @@ calcFeedBasketsUncalibrated <- function() {
   fbask_sys <- setYears(calcOutput("FeedBasketsSysPast", aggregate = FALSE)[,calib_year,],NULL)
   getSets(fbask_sys) = c("iso","year","sys","kall")
   
+  # make sure there are no NANs
+  fbask_sys_tmp=fbask_sys 
+  fbask_sys_tmp[,,list(sys = c("sys_beef","sys_dairy"), kall = c("maiz","pasture"))] = fbask_sys[,,list(sys=c("sys_beef","sys_dairy"),kall=c("maiz","pasture"))]+10^-10 
+  fbask_sys_tmp[,,list(sys = c("sys_pig"), kall = c("maiz","foddr"))] = fbask_sys[,,list(sys = c("sys_pig"), kall = c("maiz","foddr"))] + 10^-10 
+  
   compose_ideal_feed<-function(
     main_shr,
     anit_shr,
     sys
   ){
-    fbask_sys_tmp=fbask_sys+10^(-10) # make sure there are no NANs
     composition_main = fbask_sys_tmp[,,main_shr][,,sys]/dimSums(fbask_sys_tmp[,,main_shr][,,sys],dim = "kall")
     composition_anti = fbask_sys_tmp[,,anit_shr][,,sys]/dimSums(fbask_sys_tmp[,,anit_shr][,,sys],dim = "kall")
     main_bask = out_eff[,,sys] * central_feed_shr[,,sys] * composition_main
@@ -63,14 +67,15 @@ calcFeedBasketsUncalibrated <- function() {
   
   ### Chicken
   # mainshr_poultry <- c("distillers_grain", "molasses", "oilcakes", "brans")
-  sys=c("sys_chicken","sys_hen")
+  sys = c("sys_chicken","sys_hen")
   bask_chick = out_eff[,,sys] * fbask_sys[,,sys]/dimSums(fbask_sys[,,sys],dim = "kall")
   
-  out<-mbind(
+  out <- mbind(
     bask_rum,
     bask_pig,
     bask_chick
   )
+  out <- round(out,3)
   
   #use livestock production as weight
   kli <- findset("kli")
