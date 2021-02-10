@@ -45,6 +45,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE) {
     other_foods = setdiff(getNames(out,dim="kall"),"non_eaten_food")
     out = out[,,list(kall=other_foods)]
   } 
+  out<-dimOrder(out,perm = c(3,1,2))
   
   weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,findset("kli")][,,"dm"][,,"production"])
   weight_kli <- toolHoldConstantBeyondEnd(weight_kli)
