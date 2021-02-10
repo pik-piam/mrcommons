@@ -3,28 +3,43 @@
 #'
 #' @param selectyears default on "past"
 #' @param track if intermediate results shoul be printed
+#' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Felicitas Beier
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("FAOForestRelocate")
 #' }
-#' @importFrom magclass setNames
+#' @import madrat
+#' @importFrom magclass setNames new.magpie
 #' @import nleqslv
 #' @importFrom nleqslv nleqslv
 #' @export
 
-calcFAOForestRelocate <- function(selectyears="past", track=TRUE){
+calcFAOForestRelocate <- function(selectyears="past", track=TRUE, cells="magpiecell"){
   
   # Load cellular and country data
-  countrydata <- calcOutput("LanduseInitialisation",aggregate = FALSE,land="fao", selectyears=selectyears ,cellular=FALSE)
-  LUH2v2      <- calcOutput("LanduseInitialisation",aggregate = FALSE,land="new", selectyears=selectyears , cellular=TRUE)
+  countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, land="fao", selectyears=selectyears, cellular=FALSE)
+  LUH2v2      <- calcOutput("LanduseInitialisation", aggregate = FALSE, land="new", selectyears=selectyears, cellular=TRUE, cells=cells)
   
   totalarea   <- dimSums(LUH2v2, dim=c(1,3))
   
-  mapping     <- toolGetMapping(name="CountryToCellMapping.csv", type="cell") 
-  countries   <- sort(unique(mapping$iso))
+  if (cells=="lpjcell") {
+    mapping   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+    colnames(mapping)[colnames(mapping)=="ISO"] <- "iso"
+    mapping   <- data.frame(mapping, "celliso"=paste(mapping$iso,1:67420,sep="."), stringsAsFactors = FALSE)
+    countries <- unique(mapping$iso)
+    countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
+    
+    cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc_lpjcell", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+    
+  } else {
+    mapping   <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE) 
+    countries <- unique(mapping$iso)
+    
+    cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+  }
   
   forests <- c("primforest","secdforest","forestry")
   nature  <- c(forests, "other")
@@ -38,8 +53,7 @@ calcFAOForestRelocate <- function(selectyears="past", track=TRUE){
   LUH2v2 <- add_columns(LUH2v2, "to_be_allocated", dim=3.1)
   LUH2v2[,,"to_be_allocated"] <- 0
   
-  #grep land areas dependend on vegetation carbon density
-  cellvegc <- calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="vegc", time="average", averaging_range=8, aggregate=FALSE, years=getYears(countrydata))
+  #grep land areas dependent on vegetation carbon density
   if(is.null(getYears(cellvegc))) getYears(cellvegc) <- getYears(countrydata)
   cellvegc_n <- cellvegc
   
