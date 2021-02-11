@@ -50,6 +50,10 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE) {
   weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,findset("kli")][,,"dm"][,,"production"])
   weight_kli <- toolHoldConstantBeyondEnd(weight_kli)
   
+  if(any(out[,,list(data1 = "livst_milk", kall = "livst_milk")] >= 1 )){
+    stop("more livestock products in feed basket than being produced") 
+  }
+  
   return(list(x=out,
               weight=weight_kli,
               unit="tDM per tDM",
