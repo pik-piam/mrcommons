@@ -2,6 +2,7 @@
 #' @description Combines feed baskets of the past with scenario-dependent future feed baskets.
 #'
 #' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
+#' @param fadeout if TRUE, feed basket calibration fades out till 2050.
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Isabelle Weindl, Benjamin Leon Bodirsky, Stephen Wirth, Jan Philipp Dietrich
 #' @examples
@@ -13,9 +14,52 @@
 #' @importFrom luscale rename_dimnames
 #' @importFrom utils tail
 
-
-calcFeedBaskets <- function(non_eaten_food=FALSE) {
+calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE) {
+  FeedBasketsUncalibrated <- calcOutput("FeedBasketsUncalibrated",aggregate = FALSE)
+  fbask_sys <- calcOutput("FeedBasketsSysPast", aggregate = FALSE)
+  getSets(fbask_sys) = c("iso","year","sys","kall")
   
+  fbask_sys = toolHoldConstantBeyondEnd(fbask_sys)
+  
+  past=findset("past")
+  calib = fbask_sys[,past,]-FeedBasketsUncalibrated[,past,]
+  calib_constant = toolHoldConstantBeyondEnd(calib)
+  calib_decline2050 = convergence(origin = calib_constant,aim = 0,start_year = 2010,end_year = 2050,type = "s")
+  
+  if(fadeout){
+    out = calib_decline2050
+  } else {
+    out = calib_constant
+  }
+  
+  out=out+FeedBasketsUncalibrated
+  out[out<0] = 0
+  
+  # change from sys to kli
+  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
+  prod_sys_ratio <- toolHoldConstantBeyondEnd(prod_sys_ratio)
+  out <- dimSums(out*prod_sys_ratio,dim="sys")
+  
+  ### careful from here on: livst_milk is in two of the sets of out
+  if(non_eaten_food==FALSE){
+    other_foods = setdiff(getNames(out,dim="kall"),"non_eaten_food")
+    out = out[,,list(kall=other_foods)]
+  } 
+  out<-dimOrder(out,perm = c(3,1,2))
+  
+  weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,findset("kli")][,,"dm"][,,"production"])
+  weight_kli <- toolHoldConstantBeyondEnd(weight_kli)
+  
+  return(list(x=out,
+              weight=weight_kli,
+              unit="tDM per tDM",
+              description="Detailed feed requirements in DM per DM products generated for 5 livestock commodities"))
+  
+}
+
+'
+calcFeedBaskets <- function(non_eaten_food=FALSE) {
+
   fbask_sys <- calcOutput("FeedBasketsSysPast", aggregate = FALSE)
   
   # create MAgPIE objects which contain 1 for entries belonging to the main share and 0 for entries belonging to the anti share
@@ -201,3 +245,4 @@ calcFeedBaskets <- function(non_eaten_food=FALSE) {
               unit="1",
               description="Detailed feed requirements in DM per DM products generated for 5 livestock commodities"))
 }
+'

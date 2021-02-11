@@ -16,6 +16,28 @@ calcForestArea <- function(selectyears="past"){
   years <- sort(findset(selectyears,noset = "original"))
   
   forest_country   <- readSource("FAO_FRA2015","fac")[,,c("Forest","NatFor","PrimFor","NatRegFor","PlantFor")]
+  
+  ## Plantation data is bit strange in FRA2015, we update this with FRA2020 data (but only till 2015)
+  ## We do this because FRA2020 has stopped reporting separately on primf and secdf but we can still use data for planted forest
+  
+  ## Overall FRA 2020 data
+  fra_2020      <- readSource("FRA2020","forest_area")                  
+  
+  ## Find which year is missing in FRA2020 data (which exisits in FRA2015)
+  missing_years <- setdiff(getYears(forest_country),getYears(fra_2020))    
+  
+  ## Linear interpolation to missing year
+  fra_2020      <- time_interpolate(dataset = fra_2020,
+                                    interpolated_year = missing_years,
+                                    integrate_interpolated_years = TRUE,
+                                    extrapolation_type = "linear")
+  
+  ## Replace FRA2015 planted forest data with FRA 2020 data
+  forest_country[,,"PlantFor"] <- fra_2020[,getYears(forest_country),"plantedForest"]
+  
+  ## As planted forest data is now differen, we need to update overall forest area (sum of nat.reg.forest and planted forest)
+  forest_country[,,"Forest"]   <- forest_country[,,"NatFor"] + forest_country[,,"PlantFor"]
+  
   forest_country   <- time_interpolate(forest_country,interpolated_year = years,integrate_interpolated_years = TRUE,extrapolation_type = "constant")[,years,]
   vcat(verbosity = 3,"Forest is interpolated for missing years and held constant for the period before FAO starts")
   
