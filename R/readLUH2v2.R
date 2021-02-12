@@ -27,9 +27,9 @@ readLUH2v2 <- function(subtype) {
     subtype   <- gsub("_(\\d+)to(\\d+)","",subtype)
   } 
   
-  # limit no_cores to max 2 to avoid out of memory errors caused
+  # limit no_cores to 1 to avoid out of memory errors caused
   # by to many runs in parallel
-  no_cores   <-  min(getConfig("nocores"),2)
+  no_cores   <-  1
   
   #File to process
   f_states <- "states.nc"
