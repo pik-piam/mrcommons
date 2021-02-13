@@ -13,7 +13,7 @@
 #' }
 #'
 #' @import madrat
-#' @import magclass
+#' @importFrom magclass getCoords
 #' @importFrom ncdf4 nc_open ncvar_get ncatt_get nc_close
 #' @importFrom raster brick subset as.matrix t
 #' @importFrom abind abind
@@ -37,7 +37,7 @@ readISIMIPoutputs2 <- function(subtype="ISIMIP2b:water.histsoc_airrww_pcr-globwb
 
     r <- brick(nc_file)
     years      <- paste0("y",c(1861:2005))
-    ysubset    <- paste0("y",c(1955:2005))
+    ysubset    <- paste0("y",c(1961:2005))
     months    <- c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec")
     names(r) <- paste0(rep(years,each=12),"..",months)
     subset   <- paste0(rep(ysubset,each=12),"..",months)
