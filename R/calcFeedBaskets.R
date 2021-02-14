@@ -15,7 +15,7 @@
 #' @importFrom luscale rename_dimnames
 #' @importFrom utils tail
 
-calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE, method="new") {
+calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=FALSE, method="new") {
   if(method=="new"){
     FeedBasketsUncalibrated <- calcOutput("FeedBasketsUncalibrated",aggregate = FALSE)
     fbask_sys <- calcOutput("FeedBasketsSysPast", aggregate = FALSE)
@@ -59,6 +59,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE, method="new") {
     return(list(x=out,
                 weight=weight_kli,
                 unit="tDM per tDM",
+                min=0,
                 description="Detailed feed requirements in DM per DM products generated for 5 livestock commodities"))
     
   } else {
@@ -246,6 +247,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=TRUE, method="new") {
     return(list(x=data,
                 weight=weight_kli,
                 unit="1",
+                min=0,
                 description="Detailed feed requirements in DM per DM products generated for 5 livestock commodities"))
   }
 }
