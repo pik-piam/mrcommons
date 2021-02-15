@@ -10,7 +10,7 @@
 
 toolAggregateCell2Country <- function(x, ...){
 
-  map <- readRDS(system.file("extdata/mapCoords2Country.rds", package = "mrcommons"))
+  map <- toolGetMappingCoord2Country()
   
   unknown <- which(!(getItems(x, dim = 1) %in% map$coords))
   if (length(unknown) > 0) {
