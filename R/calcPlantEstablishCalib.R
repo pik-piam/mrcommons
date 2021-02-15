@@ -17,7 +17,7 @@ calcPlantEstablishCalib <- function(){
   ## Call mapping file
   mapping <- toolMappingFile(type = "regional",name = "h12.csv",readcsv = TRUE)
   mapping$value <- 1
-  mapping[mapping$RegionCode == "EUR",]$value = 0.5
+  mapping[mapping$RegionCode == "EUR",]$value = 0.8
   mapping[mapping$RegionCode == "REF",]$value = 0.5
   mapping[mapping$RegionCode == "CAZ",]$value = 0.5
   mapping[mapping$RegionCode == "LAM",]$value = 4.0
