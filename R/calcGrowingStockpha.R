@@ -25,8 +25,8 @@ calcGrowingStockpha <- function(){
   x = x[,,vars]
   weight=area[,,vars]
   
-  x <- setYears(collapseNames(x[,"y2000","Planted Forest"]),NULL)
-  weight <- setYears(collapseNames(weight[,"y2000","Planted Forest"]),NULL)
+  x <- setYears(collapseNames(x[,"y2000","Plantations"]),NULL)
+  weight <- setYears(collapseNames(weight[,"y2000","Plantations"]),NULL)
   
   return(list(x=x,
               weight=weight,

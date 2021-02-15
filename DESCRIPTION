@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.16.2.9004
-Date: 2021-02-02
+Version: 0.21.5
+Date: 2021-02-15
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -38,38 +38,38 @@ Depends:
 Imports:
   abind,
   SPEI,
-  WDI, 
-  assertr, 
-  countrycode, 
+  WDI,
+  assertr,
+  countrycode,
   data.table,
-  doParallel, 
-  dplyr, 
-  foreach, 
-  lazyeval, 
-  lpjclass, 
-  luscale, 
-  magpiesets, 
-  mstools, 
-  ncdf4, 
-  nleqslv, 
+  doParallel,
+  dplyr,
+  foreach,
+  lazyeval,
+  lpjclass,
+  luscale,
+  magpiesets,
+  mstools,
+  ncdf4,
+  nleqslv,
   plyr,
   quitte,
-  raster, 
-  readr, 
-  readxl, 
-  reshape2, 
+  raster,
+  readr,
+  readxl,
+  reshape2,
   stringr,
+  tibble,
   tidyr,
-  zoo,
   XML,
-  tibble
+  zoo
 License: LGPL-3 | file LICENSE
 URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.1
-Suggests: 
+Suggests:
     knitr,
     testthat,
     rmarkdown,
