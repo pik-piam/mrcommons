@@ -20,7 +20,8 @@ calcStorage <- function(datasource="FAO"){
   
 aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
   
-  
+#use mass balance here in future
+
 stocks <- collapseNames(calcOutput("FAOharmonized",aggregate=FALSE)[,,"stock_variation"]) 
 stocks  <- stocks[,,-grep("Total", getNames(stocks))]
 
@@ -29,12 +30,10 @@ stocks  <- stocks[,,-grep("Total", getNames(stocks))]
 stocks <- toolAggregate(stocks, rel=aggregation, from="FoodBalanceItem", 
                      to="k", dim=3, partrel=TRUE, verbosity=2)
 
-for (i in getRegions(stocks)){
-  for (j in getNames(stocks)){
-    
-    stocks[i,,j] <- stocks[i,,j] - min(stocks[i,,j])
-  }
-}
+
+mins <- magpply(stocks, min, c(1,3))
+stocks1 <- stocks + mins
+
 
 description <- "stock level based on FAO harmonized stock_variation assuming lowest stock change is 0"
 isocountries=TRUE
