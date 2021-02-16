@@ -16,22 +16,25 @@
 downloadISIMIP <- function(subtype) {
   
   x <- toolSplitSubtype(subtype, list(dataset = "airww", 
-                                      model   = c("LPJmL", "pcr-globwb"),
-                                      gcm     = c("gfdl-esm2m","gswp3"),
+                                      model   = c("CLM45", "CLM50", "CWatM", "DBH", "H08", "JULES-W1", "LPJmL", "MATSIRO", "MPI-HM", "ORCHIDEE", "ORCHIDEE-DGVM", "PCR-GLOBWB", "WaterGAP2"),
+                                      gcm     = c("gfdl-esm2m","hadgem2-es","ipsl-cm5a-lr","miroc5"),
                                       version = c("2a","2b","3a","3b")))
   
   paths <- c(airww = paste0("ISIMIP",x$version,"/OutputData/water_global/",x$model,"/",x$gcm,"/historical/",
                             tolower(x$model),"_",tolower(x$gcm),"_ewembi_picontrol_histsoc_co2_airrww_global_monthly_1861_2005.nc4"))
                             
   path <- toolSubtypeSelect(x$dataset,paths)
-  storage <- ifelse(file.exists(paste0("/p/isimip/isimip/",path)), "/p/isimip/isimip/", "https://files.isimip.org/")
-  
-  # download the data
-  err <- try(suppressWarnings(download.file(paste0(storage,path), 
-                                            destfile = basename(path), mode = "wb", 
-                                            quiet = FALSE)), silent = TRUE)
-  if(class(err)=="try-error") stop("Data for requested subtype \"",subtype,"\" could not be found!")
-    
+  if (file.exists(paste0("/p/isimip/isimip/",path))) {  
+    storage <- "/p/isimip/isimip/"
+    file.copy(paste0(storage,path), basename(path))
+  } else {
+    storage <- "https://files.isimip.org/"
+    # download the data
+    err <- try(suppressWarnings(download.file(paste0(storage,path), 
+                                              destfile = basename(path), mode = "wb", 
+                                              quiet = FALSE)), silent = TRUE)
+    if(class(err)=="try-error") stop("Data for requested subtype \"",subtype,"\" could not be found!")
+  }
   .getMetadata <- function(dataset, version) {
     out <- list(doi = NULL, version = NULL, title = NULL, description = NULL)
     # Info about DOIs is available here: https://www.isimip.org/outputdata/dois-isimip-data-sets/
