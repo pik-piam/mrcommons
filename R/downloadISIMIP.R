@@ -24,8 +24,8 @@ downloadISIMIP <- function(subtype) {
                             tolower(x$model),"_",tolower(x$gcm),"_ewembi_picontrol_histsoc_co2_airrww_global_monthly_1861_2005.nc4"))
                             
   path <- toolSubtypeSelect(x$dataset,paths)
-  if (file.exists(paste0("/p/isimip/isimip/",path))) {  
-    storage <- "/p/isimip/isimip/"
+  if (file.exists(paste0("/p/projects/isimip/isimip/",path))) {  
+    storage <- "/p/projects/isimip/isimip/"
     file.copy(paste0(storage,path), basename(path))
   } else {
     storage <- "https://files.isimip.org/"

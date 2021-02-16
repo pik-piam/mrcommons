@@ -19,7 +19,7 @@ toolAggregateCell2Country <- function(x, weight=NULL, ...){
     x <- x[-unknown,,]
   }
   
-  out <- toolAggregate(x, map, from = 2, partrel = TRUE, weight = weight)
+  out <- toolAggregate(x, map, from = 2, partrel = TRUE, weight = weight[getItems(x,dim = 1),,])
   
   # island states are NAs: will be set to 0
   out <- toolCountryFill(out,...)
