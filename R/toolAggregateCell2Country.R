@@ -2,13 +2,14 @@
 #' 
 #' Aggregate cellular data (with coordinate information) to countries and perform consistency checks
 #' @param x cellular magpie object with coordinates
+#' @param weight aggregation weight
 #' @param ... additional options forwarded to \code{toolCountryFill}
 #' @return return country ISO level data
 #' @author Jan Philipp Dietrich
 #' @importFrom magclass getItems
 #' @export
 
-toolAggregateCell2Country <- function(x, ...){
+toolAggregateCell2Country <- function(x, weight=NULL, ...){
 
   map <- toolGetMappingCoord2Country()
   
@@ -18,7 +19,7 @@ toolAggregateCell2Country <- function(x, ...){
     x <- x[-unknown,,]
   }
   
-  out <- toolAggregate(x, map, from = 1, partrel = TRUE)
+  out <- toolAggregate(x, map, from = 2, partrel = TRUE, weight = weight)
   
   # island states are NAs: will be set to 0
   out <- toolCountryFill(out,...)
