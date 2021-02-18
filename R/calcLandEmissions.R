@@ -197,35 +197,34 @@ calcLandEmissions <- function(datasource="CEDS") {
     
   } else if (datasource=="FAO_EmisAg") {
     
-    #The global warming potential (GWP) with a time horizon of 100 years based on the IPCC Fourth Assessment Report (AR4) (2007) is used to convert N2O and CH4 to CO2-eq terms. Consequently, GWP of 25 and 298 were used for CH4 and N2O, respectively.
-    total <- readSource("FAO",subtype="EmisAgTotal")
-    mapping=toolMappingFile(type = "sectoral",name = "FAOitems_emissions.csv",readcsv = T)
-    #n2o
-    n2o <- toolAggregate(total[,,"Emissions_(CO2eq)_from_N2O_(Gigagrams)"],rel = mapping,from = "fao",to = "magpie_n2o",dim = 3.1,partrel = TRUE)
-    n2o<-n2o[,,"",invert=T]
-    n2o<-n2o/1000/298
-    n2o<-collapseNames(n2o)
-    #ch4
-    ch4 <- toolAggregate(total[,,"Emissions_(CO2eq)_from_CH4_(Gigagrams)"],rel = mapping,from = "fao",to = "magpie_ch4",dim = 3.1,partrel = TRUE)
-    ch4<-ch4[,,"",invert=T]
-    ch4<-ch4/1000/25
-    ch4<-collapseNames(ch4)
+    total   <- readSource("FAO_online", subtype = "EmisAgTotal")
+    mapping <- toolMappingFile(type = "sectoral", name = "FAO_online_emissionsMapping.csv", readcsv = T)
     
-    out<-mbind(
-      n2o,ch4
-    )
+    .calculateEmissions <- function(FAO_name, magpie_name) 
+    {
+      emission <- toolAggregate(total[,, FAO_name], 
+                                rel = mapping, from = "fao", to = magpie_name, 
+                                dim = 3.1, partrel = TRUE)
+      emission <- emission[,, "", invert = T]
+      emission <- emission / 1000 # Gg to Mt X
+      emission <- collapseDim(emission, dim = 3.2)
+      
+      return(emission)
+    }
     
-    out <- mbind(
-      add_dimension(out, dim=3.1, add="scenario", nm="historical"),
-      add_dimension(out, dim=3.1, add="scenario", nm="projection")
-    )
-    out[,,"projection"]<-NA
-    out[,,"projection"][,c("y2030","y2050"),]<-collapseNames(out[,,"historical"][,c("y2030","y2050"),])
-    out[,,"historical"][,c("y2030","y2050"),]<-NA
+    N2O <- .calculateEmissions("N2O_emissions_(gigagrams)", "magpie_n2o")
+    CH4 <- .calculateEmissions("CH4_emissions_(gigagrams)", "magpie_ch4")
+    out <- mbind(N2O, CH4)
     
-    out <- add_dimension(out, dim=3.2, add="model", nm=datasource)
+    out <- mbind(add_dimension(out, dim = 3.1, add = "scenario", nm = "historical"),
+                 add_dimension(out, dim = 3.1, add = "scenario", nm = "projection"))
+    
+    out[,, "projection"] <- NA
+    out[,, "projection"][, c("y2030","y2050"),] <- collapseNames(out[,, "historical"][, c("y2030","y2050"), ])
+    out[,, "historical"][, c("y2030","y2050"),] <- NA
+    
+    out <- add_dimension(out, dim = 3.2, add = "model", nm = "FAO_EmisAg")
     names(dimnames(out))[3] <- "scenario.model.variable"
-    out[is.na(out)] <- 0
     
   } else if (datasource=="PRIMAPhist") {
     
