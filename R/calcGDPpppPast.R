@@ -63,7 +63,7 @@ calcGDPpppPast <- function(GDPpppPast="IHME_USD05_PPP_pc_completed") {
     data<-PPP*colSums(inflator,na.rm=T)
     getNames(data) <- "GDPppp05_WDI_ICP11"
   } else if (type%in%c("IHME_USD05_PPP_pc","IHME_USD05_MER_pc","IMF_USD05_PPP_pc","PENN_USD05_PPP_pc","WB_USD05_PPP_pc","MADDISON_USD05_PPP_pc","WB_USD05_MER_pc","IMF_USD05_MER_pc","UN_USD05_MER_pc")) {
-    PPP_pc<-readSource(type="James",subtype = type)
+    PPP_pc<-readSource(type="James2019",subtype = type)
     pop<-readSource("WDI",subtype = "SP.POP.TOTL")
     years<-intersect(getYears(PPP_pc),getYears(pop))
     data=PPP_pc[,years,]*pop[,years,]
