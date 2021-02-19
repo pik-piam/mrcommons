@@ -1,14 +1,18 @@
-#' @title toolCoord2Isocell
-#' @description Transforms an object wirh coordinate spatial data (on half-degree) to isocell (59199) standard
+#' @title       toolCoord2Isocell
+#' @description Transforms an object with coordinate spatial data (on half-degree) to isocell (59199) standard
+#' 
+#' @param x object to be transformed from coordinates to (old) magpie isocell standard
 #'
 #' @return magpie object with 59199 cells in isocell naming
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Felicitas Beier
+#' 
 #' @importFrom magpiesets addLocation
 #' @importFrom madrat toolOrderCells
 #' @importFrom magclass collapseDim
+#' 
 #' @export
 
-toolCoord2Isocell <- function() {
+toolCoord2Isocell <- function(x) {
   
   # check if hasCoords works for more than x.y (e.g. x.y.iso) spatial dim names
   # if(!hasCoords(x)) stop()
