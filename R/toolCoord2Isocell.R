@@ -4,6 +4,8 @@
 #' @return magpie object with 59199 cells in isocell naming
 #' @author Kristine Karstens
 #' @importFrom magpiesets addLocation
+#' @importFrom madrat toolOrderCells
+#' @importFrom magclass collapseDim
 #' @export
 
 toolCoord2Isocell <- function() {
