@@ -23,21 +23,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     folder      <- unlist(subtype)[1]
     subtype     <- unlist(subtype)[2]
     
-  } else {
-    
-    natveg <- c("soilc", "soilc_layer", "litc", "vegc", "alitterfallc", 
-    "transpiration", "discharge", "runoff", "evaporation")
-
-    if (subtype %in% natveg) {
-    
-      folder <- "LPJmL4/CRU_4"  
-    } else {
-      
-      folder <- "LPJmL5/CRU_4"
-    }
-      
-    cat(paste0("Set input folder to default climate data set: ", folder))
-  }
+  } else {stop("readLPJmL needs version and climatetype information")}
   
   files <- c(soilc              = "soilc_natveg.bin",
              soilc_layer        = "soilc_layer_natveg.bin",
