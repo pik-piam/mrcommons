@@ -17,9 +17,11 @@ toolCoord2Isocell <- function(x) {
   # check if hasCoords works for more than x.y (e.g. x.y.iso) spatial dim names
   # if(!hasCoords(x)) stop()
   
-  x <- collapseDim(x, keepdim = "x.y")
+  removedim <- setdiff(unlist(strsplit(names(getItems(x))[1],"\\.")), c("x","y"))
+  x <- collapseDim(x, dim = removedim)
   x <- addLocation(x)
   x <- x["NA",,,invert=TRUE] 
+  x <- collapseDim(x, dim=c("x","y"))
   x <- toolOrderCells(x)
   if(length(getCells(x)) != 59199) stop("Some cells out of the 59199 standard cells are missing for this data set.
                                         Please first expand your object to cover all needed cells.")

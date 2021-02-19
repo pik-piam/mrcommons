@@ -58,13 +58,14 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:his
   
   # Compose meta data
   return(list(url           = paste0(storage,file_path),
-              doi           = meta$doi,
-              title         = meta$title,
-              author        = meta$authors,
-              version       = meta$version,
-              release_date  = meta$year,
-              description   = meta$description,
-              license       = meta$license,
-              reference     = meta$citation)
+              doi           = NULL,
+              title         = x$version,
+              author        = list(person("Christoph", "Mueller", email = "cmueller@pik-potsdam.de"),
+                                   person("Jens",      "Heinke", email = "heinke@pik-potsdam.de")),
+              version       = x$version,
+              release_date  = NULL,
+              description   = NULL,
+              license       = "Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0)",
+              reference     = NULL)
   )
 }
