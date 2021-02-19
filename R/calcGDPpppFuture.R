@@ -37,7 +37,7 @@ calcGDPpppFuture <- function(GDPpppFuture="SSP_completed") {
       data <- mbind(data,readSource(type="SRES",subtype=i))
     }
     getNames(data)<-paste0("gdp_",substr(getNames(data),6,7))
-    PPP_pc<-readSource(type="James2019",subtype ="IHME_USD05_PPP_pc")
+    PPP_pc<-readSource(type="James",subtype ="IHME_USD05_PPP_pc")
     pop<-readSource("WDI",subtype = "SP.POP.TOTL")
     years<-intersect(getYears(PPP_pc),getYears(pop))
     calib=PPP_pc[,years,]*pop[,years,]

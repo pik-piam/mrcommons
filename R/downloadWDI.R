@@ -18,10 +18,17 @@ downloadWDI<-function(){
   end_year <- as.numeric(strsplit(as.character(Sys.Date()),"-")[[1]][1]) -1
   WDIsearch(cache = WDIcache())
   indicator <- c("SP.POP.TOTL", #population, total
-                 "NY.GDP.MKTP.PP.KD",
-                 "NY.GDP.MKTP.PP.CD","NY.GDP.MKTP.CD",
-                 "NY.GDP.MKTP.KD","NY.GDP.MKTP.KN","NV.AGR.TOTL.ZS",
-                 "NV.AGR.TOTL.KD","SP.URB.TOTL.IN.ZS","AG.SRF.TOTL.K2",
+                 "NY.GDP.MKTP.PP.KD", #GDP ppp, constant 2017 int$
+                 "NY.GDP.MKTP.PP.CD", # GDP current international $
+                 "NY.GDP.MKTP.KD", #GDP constant 2010 US$
+                 "NY.GDP.MKTP.CD", # GDP current US$
+                 "NY.GDP.MKTP.KN", # GDP constant LCU
+                 "NY.GDP.MKTP.CN", # GDP current lCU
+                 "NY.GDP.DEFL.KD.ZG", # GDP deflator (annual%)"
+                 "NV.AGR.TOTL.ZS", #AFF value added (%of GDP)
+                 "NV.AGR.TOTL.KD", # AFF value added (constant 2010 US$)
+                 "SP.URB.TOTL.IN.ZS", #Urban Population (% of total)
+                 "AG.SRF.TOTL.K2", #surface area, sq. km
                  "NY.GDP.PCAP.CN", #GDP per capita current LCU,
                  "NY.GDP.PCAP.PP.KD", #GDP per capita PPP, 2011int$,
                  "NY.GDP.PCAP.KD", #GDP per capita MER, 2010 US$,
