@@ -16,7 +16,9 @@
 
 convertISIMIP <- function(x, subtype){
   if (grepl("^airww", subtype)) {
-    weight <- toolSurfaceArea()
+    landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="magpiecell", irrigation=FALSE, years="y1995"), dim=3)
+    names(dimnames(landarea))[1] <- "iso.cell"
+    weight <- landarea
   } else stop("Aggregation rule for given subtype \"",subtype,"\" not defined!")
   return(toolAggregateCell2Country(x, weight = weight, fill = 0))
 }
