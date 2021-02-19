@@ -81,7 +81,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
   unit_transform <- 0.01               # Transformation factor gC/m^2 --> t/ha
 
-  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype)) {
+  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype) & subtype!="soilc_layer") {
     start_year  <- start_year           # Start year of data set
     years       <- years                # Vector of years that should be exported
     nbands      <- 1                    # Number of bands in the .bin file
