@@ -12,8 +12,8 @@
 #'  readSource("ISIMIPoutputs", convert=TRUE)
 #' }
 #'
-#' @import madrat
-#' @import magclass
+#' @importFrom madrat toolGetMapping calcOutput
+#' @importFrom magclass new.magpie as.magpie mbind dimSums
 #' @importFrom ncdf4 nc_open ncvar_get ncatt_get nc_close
 #' @importFrom raster brick subset as.matrix t
 #' @importFrom abind abind
@@ -29,7 +29,7 @@ readISIMIPoutputs <- function(subtype="ISIMIP2b:water.histsoc_airrww_pcr-globwb_
   if (grepl("water",folder)) {
     # Construct path
     model    <- strsplit(subtype,split="\\_")
-    time <- unlist(model)[1]
+    time     <- unlist(model)[1]
     variable <- unlist(model)[2]
     gcm      <- unlist(model)[4]
     model    <- unlist(model)[3]
@@ -82,27 +82,26 @@ readISIMIPoutputs <- function(subtype="ISIMIP2b:water.histsoc_airrww_pcr-globwb_
     # (Note: 1 day = 60*60*24 = 86400 seconds)
     x <- x*86400
     # magpie object with days per month with same dimension as x
-    tmp            <- c(31,28,31,30,31,30,31,31,30,31,30,31)
-    month_days     <- new.magpie(names=dimnames(x)[[3]])
-    month_days[,,] <- tmp
+    tmp                  <- c(31,28,31,30,31,30,31,31,30,31,30,31)
+    month_days           <- new.magpie(names=dimnames(x)[[3]])
+    month_days[,,]       <- tmp
     month_day_magpie     <- as.magpie(x)
     month_day_magpie[,,] <- 1
     month_day_magpie     <- month_day_magpie * month_days
-    x <- x*month_day_magpie
+    x <- x * month_day_magpie
     # yearly data
     x <- dimSums(x, dim=3)
 
     # from mm/month to mio. m^2
     # (Note: 1 mm = 1 liter/m^3)
     # Get cellular coordinate information and calculate cell area
-    cb <- as.data.frame(magpie_coord)
-    cell_area  <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+    landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="magpiecell", irrigation=FALSE, years="y1995"), dim=3)
     # liter/m^2 -> liter
-    x <- x*cell_area
+    x        <- x * landarea
     # liter -> mio. m^3
-    x <- x/(1000*1000000)
+    x        <- x / (1000*1000000)
   }
 
-  
 return(x)
+  
 }
