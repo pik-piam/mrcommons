@@ -72,8 +72,12 @@ calcFractionInputsUSDA <- function() {
     x<-mbind(fraction_capital,fraction_labor,fraction_revenue,fraction_land,fraction_materials)
     getNames(x)<-c("Capital","Labor","Revenue","Land","Materials")
     
+    #Production as weight
+    Production<-dimSums(collapseDim(calcOutput("Production",products="kcr",aggregate=FALSE)[,,"dm"]),dim=3)
+    
     weight<-x
-    weight[,,]<-1
+    weight[,,]<-magpiesort(time_interpolate(Production[,,],interpolated_year = 2015,
+                                            extrapolation_type = "constant",integrate_interpolated_years = TRUE))[,getYears(x),] 
     weight[!is.finite(x)]<- 0
     weight[x == 0 ]<- 0
     

@@ -56,9 +56,11 @@ calcFactorIntensity <- function(output="intensities", method = "USDA") {
        x["PHL",,]<-0 #inconsistent data in Philippines
        
        weight <- x
-       weight[,,] <- 1
-       weight[!is.finite(x)]<- 0
-       weight[x == 0 ]<- 0
+       weight[,,"Capital"] <- crop_prod_dm_All[,fyears,gnames]
+       weight[,,"Labor"] <- crop_prod_dm_All[,fyears,gnames]
+       weight[!is.finite(x)]<-0
+       weight[x == 0]<-0
+       
        
    }else if (method == "CapitalStock" & output %in% c("intensities","requirements")){
     
@@ -72,11 +74,13 @@ calcFactorIntensity <- function(output="intensities", method = "USDA") {
           
           #Capital stocks per crop
           CapitalStocks_crop<-collapseDim(CapitalStocks[region,years,]*fraction_VoP_crop[region,years,]/(1+0.04)^10) #to bring to USD05
-
+           
+          #Production
+          Production<-collapseDim(calcOutput("Production",products="kcr",aggregate=FALSE)[,,"dm"])
+          
           
           if (output %in% c("requirements","intensities")){
-              Production<-collapseDim(calcOutput("Production",products="kcr",aggregate=FALSE)[,,"dm"])
-
+              
               names<-intersect(getNames(Production),getNames(CapitalStocks_crop))
               years<-intersect(getYears(Production),getYears(CapitalStocks_crop))
               cells<-intersect(getCells(Production),getCells(CapitalStocks_crop))
@@ -98,8 +102,9 @@ calcFactorIntensity <- function(output="intensities", method = "USDA") {
 
           
           weight <- x
-          weight[,,] <- 1
-          weight [x == 0] <- 0
+          weight[,,] <- Production[,getYears(x),getNames(x)]
+          weight[!is.finite(x)]<-0
+          weight[x == 0]<-0
 
   }else{
     stop ("Method or output not supported")
