@@ -41,7 +41,7 @@ convertSRES<-function(x,subtype){
    
   } else if (substring(subtype,nchar(subtype)-2)=="gdp"){
     
-    gdpJames<-readSource(type = "James",subtype="IHME_USD05_PPP_pc")
+    gdpJames<-readSource(type = "James2019",subtype="IHME_USD05_PPP_pc")
 	
     region_from<-"SCG"
     countries_to<-ISOhistorical$toISO[which(ISOhistorical$fromISO==region_from)]  

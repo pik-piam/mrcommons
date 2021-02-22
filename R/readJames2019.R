@@ -13,7 +13,7 @@
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' 
-#' \dontrun{ a <- readSource(type="James",subtype="IHME_USD05_PPP_pc")
+#' \dontrun{ a <- readSource(type="James2019",subtype="IHME_USD05_PPP_pc")
 #' }
 #' 
 readJames2019 <- function() {

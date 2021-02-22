@@ -11,6 +11,7 @@
 #' \dontrun{ a <- convertSource("James2019","IHME_USD05_PPP_pc")
 #' }
 #' @importFrom countrycode countrycode
+#' @importFrom mstools toolHoldConstant 
 
 convertJames2019 <- function(x,subtype) {
   x<-x[c("USSR_FRMR","CHN_354","CHN_361"),,,invert=TRUE] #Macao and HKG and Former USSR have 0 values in the dataset
@@ -24,21 +25,20 @@ convertJames2019 <- function(x,subtype) {
   # use old HKG and MAC shares, and subtract from CHN
   # new james has much higher (double in earliest time steps)
   # historical china values
-  pop<-readSource("WDI",subtype = "SP.POP.TOTL")
+  pop<-readSource("WDI",subtype = "SP.POP.TOTL")[c("CHN","HKG","MAC"),,]
   oldyears <- intersect(getYears(pop), getYears(old))
-  old_t <- pop[,oldyears,]*old[,oldyears,]
-  old_t <- collapseNames(old_t)
-  shr <- old_t[c("HKG","MAC"),,]/dimSums(old_t[c("CHN","HKG","MAC"),,], dim=1)
-
-  newyears <- intersect(getYears(pop), getYears(x))
-  shr <- time_interpolate(shr, interpolated_year = newyears)
+  old <- pop[,oldyears,]*old[c("CHN","HKG","MAC"),oldyears,]
+  old <- collapseNames(old)
+  shr <- old[c("HKG","MAC"),,]/dimSums(old[c("CHN","HKG","MAC"),,], dim=1)
   
+  shr <- time_interpolate(shr, getYears(pop))
+  x1 <- x[c("CHN","HKG","MAC"),getYears(pop),]*pop[c("CHN","HKG","MAC"), getYears(pop),] 
+  x1[c("HKG","MAC"),,] <- shr*x1["CHN",,]
+  x1["CHN",,] <- x1["CHN",,]-dimSums(x1[c("HKG","MAC"),,], dim=1)
   
-  x <- pop[,newyears,]*x[,newyears,]
-  x[c("HKG","MAC"),,] <- shr*x["CHN",,]
-  x["CHN",,] <- x["CHN",,]-dimSums(x[c("HKG","MAC"),,], dim=1)
-  x <- x/pop
-  x <- collapseNames(x, preservedim=4)
+  #fill 1950-1959 HKG and MAC with 1960 values, don't subtract from CHINA for these years because no population data to convert to totals, but very small differnece anyways
+  x[c("CHN","HKG","MAC"),getYears(x1),] <- x1/pop[c("CHN","HKG","MAC"),,]
+  x[c("HKG","MAC"),1950:1959,] <- setYears(x[c("HKG","MAC"),1960,],NULL)
   
   return(x)
 }  
