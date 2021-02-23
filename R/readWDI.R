@@ -5,13 +5,16 @@
 #' 
 #' 
 #' @param subtype Type of WDI data that should be read. Please use the
-#' worldbank indicator abbreviation. Available types are e.g.: \itemize{\item
-#' \code{SP.POP.TOTL}: Population, total \item \code{NY.GDP.MKTP.PP.KD}: GDP,
-#' PPP (constant 2011 international Dollar) \item \code{NY.GDP.MKTP.PP.CD}:
-#' GDP, PPP (current international Dollar) \item \code{NY.GDP.MKTP.CD}: GDP MER
-#' (current USDollar) \item \code{NY.GDP.MKTP.KD}: GDP MER (constant 2010
-#' USDollar) \item \code{NY.GDP.MKTP.KN}: GDP LCU (constant LCU) \item \code{SP.URB.TOTL.IN.ZS}: 
-#' Urban population (percentage of total)
+#' worldbank indicator abbreviation. Available types are e.g.: \itemize{
+#' \item \code{SP.POP.TOTL}: Population, total
+#' \item \code{NY.GDP.MKTP.PP.KD}: GDP,PPP (constant 2011 international Dollar)
+#' \item \code{NY.GDP.MKTP.PP.CD}:GDP, PPP (current international Dollar)
+#' \item \code{NY.GDP.MKTP.CD}: GDP MER (current US Dollar)
+#' \item \code{NY.GDP.MKTP.KD}: GDP MER (constant 2010 USDollar)
+#' \item \code{NY.GDP.MKTP.KN}: GDP LCU (constant LCU)
+#' \item \code{NY.GDP.MKTP.CN}: GDP LCU (current LCU) 
+#' \item \code{NY.GDP.DEFL.KD.ZG}: Country GDP deflator (annual %) 
+#' \item \code{SP.URB.TOTL.IN.ZS}: Urban population (percentage of total)
 #' \item \code{NY.GDP.PCAP.CN}:GDP, LCU, per capita (current LCU)
 #' \item \code{NY.GDP.PCAP.PP.KD}: #' GDP PPP, per capita (2011 international $)
 #' \item \code{NY.GDP.PCAP.KD}: #' GDP, MER, per capita (2010 US$)

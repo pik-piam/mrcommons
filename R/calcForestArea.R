@@ -61,7 +61,7 @@ calcForestArea <- function(selectyears="past"){
  
   ### fixing missing data on split between PrimFor (primforest), NatRegFor (secdforest) and PlantFor (forestry) with LUH data
   
-  Landuse_Ini <- calcOutput("LanduseInitialisation", land="new", aggregate = FALSE, selectyears=selectyears ,cellular=FALSE)[,,c("primforest","secdforest","forestry")]
+  Landuse_Ini <- calcOutput("LanduseInitialisation", nclasses="seven", fao_corr=FALSE, aggregate = FALSE, selectyears=selectyears ,cellular=FALSE)[,,c("primforest","secdforest","forestry")]
   
  
   reg_missing         <- where(round(dimSums(forest_country[,,c("NatFor", "PlantFor")], dim=3),6)!=round(forest_country[,,"Forest"],6))$true$reg    

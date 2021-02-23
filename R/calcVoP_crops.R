@@ -1,0 +1,72 @@
+#' @title calcVoP_crops
+#' @description Calculates the value of production of individual production items or its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
+#' 
+#'
+#' 
+#'
+#' @param output defines if output should be given as an "absolute" value or as a "fraction" of the overall value of production.
+#' @param units if output units should be in mio. "USD05", mio. of "USD15", "current" or NULL for output "fraction" type
+#' @return magpie object. in current mio. USD units, in mio. USD05, current USD or NULL (fraction).
+#' @author Edna J. Molina Bacca
+#' @importFrom dplyr mutate
+#' @importFrom luscale speed_aggregate
+#' @importFrom dplyr intersect
+#'
+#' @seealso \code{\link{calcOutput}}
+#' @examples
+#'
+#' \dontrun{
+#' a <- calcOutput("VoP_crops")
+
+#' }
+#'
+calcVoP_crops <- function(output="absolute",units="USD05") {
+
+  # Value of production for Agriculture, forestry and fishes
+  VoP_AFF<-calcOutput("VoP_AFF",aggregate=FALSE) 
+  VoP_Total<-dimSums(VoP_AFF,dim = 3) #mio. current USD
+
+  # Value of production of indiviual ites
+  VoP_All<-readSource("FAO_online","ValueOfProd")[,,"Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"]*(1+0.04)^5
+  getNames(VoP_All)<-gsub("\\..*","",getNames(VoP_All))
+  getNames(VoP_All)[getNames(VoP_All) == "257|Oil, palm"] <- "257|Oil palm"
+
+  #items for aggregation
+  mappingFAO<-toolGetMapping("FAO_VoP_kcr.csv",type="sectoral")
+  items_intersect<-intersect(getNames(VoP_All),unique(mappingFAO$ProductionItem))
+  mappingFAO<-mappingFAO[mappingFAO$ProductionItem %in% items_intersect,]
+  
+  #Aggregation to magpie objects
+  VoP_kcr_aggregated<-speed_aggregate(VoP_All[,,items_intersect],rel=mappingFAO,from="ProductionItem",to="k",weight=NULL,dim=3)
+
+  years<-intersect(getYears(VoP_kcr_aggregated),getYears(VoP_Total))
+
+  x<-if(output=="fraction") VoP_kcr_aggregated[,years,]/VoP_Total[,years,] else VoP_kcr_aggregated
+
+  x[!is.finite(x)]<-0
+  
+   
+  if (units=="USD05" & output == "absolute") {# Conversions assuming a 4% interest rate
+    x<-x/(1+0.04)^15
+  }else if (units =="USD15" & output == "absolute") {
+     x<- x/(1+0.04)^5
+     } 
+  
+  
+  if (output == "absolute"){
+    weight <- NULL
+  }else if (output == "fraction"){
+    weight <- x
+    weight[,,] <- 1
+    weight[weight == 0] <- 0
+  }else {
+    stop("Output not supported")
+  }
+  
+ return(list(x=x,
+                weight=weight,
+                mixed_aggregation=NULL,
+                unit=units,
+                description=" Value of production for individual crops"))
+}
+

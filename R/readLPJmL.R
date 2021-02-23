@@ -23,21 +23,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
     folder      <- unlist(subtype)[1]
     subtype     <- unlist(subtype)[2]
     
-  } else {
-    
-    natveg <- c("soilc", "soilc_layer", "litc", "vegc", "alitterfallc", 
-    "transpiration", "discharge", "runoff", "evaporation")
-
-    if (subtype %in% natveg) {
-    
-      folder <- "LPJmL4/CRU_4"  
-    } else {
-      
-      folder <- "LPJmL5/CRU_4"
-    }
-      
-    cat(paste0("Set input folder to default climate data set: ", folder))
-  }
+  } else {stop("readLPJmL needs version and climatetype information")}
   
   files <- c(soilc              = "soilc_natveg.bin",
              soilc_layer        = "soilc_layer_natveg.bin",
@@ -95,7 +81,7 @@ readLPJmL <- function(subtype="LPJmL5:CRU4p02.soilc"){
 
   unit_transform <- 0.01               # Transformation factor gC/m^2 --> t/ha
 
-  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype)) {
+  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype) & subtype!="soilc_layer") {
     start_year  <- start_year           # Start year of data set
     years       <- years                # Vector of years that should be exported
     nbands      <- 1                    # Number of bands in the .bin file

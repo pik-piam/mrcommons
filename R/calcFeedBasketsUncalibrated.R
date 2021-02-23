@@ -24,44 +24,67 @@ calcFeedBasketsUncalibrated <- function() {
   #central_feed_shr <- add_columns(central_feed_shr,addnm = missing)
   #central_feed_shr[,,missing] = 0.5 ## its held constant anyhow
   
-  fbask_sys <- setYears(calcOutput("FeedBasketsSysPast", aggregate = FALSE)[,calib_year,],NULL)
-  getSets(fbask_sys) = c("iso","year","sys","kall")
+  fbask_raw = calcOutput("FeedBasketsSysPast", aggregate = FALSE)
+  getSets(fbask_raw) = c("iso","year","sys","kall")
+  fbask_sys <- setYears(fbask_raw[,calib_year,],NULL)
   
   # make sure there are no NANs
   fbask_sys_tmp=fbask_sys 
   fbask_sys_tmp[,,list(sys = c("sys_beef","sys_dairy"), kall = c("maiz","pasture"))] = fbask_sys[,,list(sys=c("sys_beef","sys_dairy"),kall=c("maiz","pasture"))]+10^-10 
   fbask_sys_tmp[,,list(sys = c("sys_pig"), kall = c("maiz","foddr"))] = fbask_sys[,,list(sys = c("sys_pig"), kall = c("maiz","foddr"))] + 10^-10 
   
+  kli <- findset("kli")
+  
   compose_ideal_feed<-function(
-    main_shr,
-    anit_shr,
+    main,
+    anti,
+    const,
     sys
   ){
-    composition_main = fbask_sys_tmp[,,main_shr][,,sys]/dimSums(fbask_sys_tmp[,,main_shr][,,sys],dim = "kall")
-    composition_anti = fbask_sys_tmp[,,anit_shr][,,sys]/dimSums(fbask_sys_tmp[,,anit_shr][,,sys],dim = "kall")
-    main_bask = out_eff[,,sys] * central_feed_shr[,,sys] * composition_main
-    anti_bask = out_eff[,,sys] * (1-central_feed_shr[,,sys]) * composition_anti
-    bask <- mbind(main_bask,anti_bask)
+    if(anyDuplicated(c(main,const,anti))!=0) {stop("duplicates in main, anti and const")}
+    if(!all(c(main,const,anti)%in%getNames(fbask_sys_tmp,dim="kall"))){
+      stop("not all feed items assigned to main,const,anti")
+    }
+    
+    # esitmate the composition of the sub-baskets
+    composition_main = fbask_sys_tmp[,,main][,,sys]/dimSums(fbask_sys_tmp[,,main][,,sys],dim = "kall")
+    composition_anti = fbask_sys_tmp[,,anti][,,sys]/dimSums(fbask_sys_tmp[,,anti][,,sys],dim = "kall")
+    constant = fbask_sys_tmp[,,const][,,sys]
+    constant_sum = dimSums(constant[,,sys],dim="kall")
+    
+    # compose the value chain
+    main_bask = out_eff[,,sys] * central_feed_shr[,,sys] 
+    anti_bask = (out_eff[,,sys] * (1-central_feed_shr[,,sys])) - constant_sum
+    anti_bask[anti_bask<0] = 0
+    main_bask = main_bask * composition_main
+    anti_bask = anti_bask * composition_anti
+    constant = (central_feed_shr[,,sys]*0+1) * constant# the first term just extends the time dimension
+    bask <- mbind(main_bask,anti_bask,constant)
     return(bask)
   }
   
   ### Ruminants
-  main_shr_rum = c("res_cereals","res_fibrous","res_nonfibrous","pasture")
+  main_rum = c("res_cereals","res_fibrous","res_nonfibrous","pasture")
+  const_rum = c("brans",findset("kap"),"potato","puls_pro","sugr_beet","sugr_cane","groundnut")
   bask_rum = compose_ideal_feed(
-    main_shr = main_shr_rum,
-    anit_shr = setdiff(getNames(fbask_sys,dim = "kall"),main_shr_rum),
+    main = main_rum,
+    anti = setdiff(getNames(fbask_sys,dim = "kall"),c(main_rum,const_rum)),
+    const = const_rum,
     sys = c("sys_beef","sys_dairy")
   )
   
   ### Pigs
-  anit_shr_pig    <- c("tece","trce","maiz","rice_pro",
+  const_pig =  c(findset("kap"),"potato","puls_pro","sugr_beet","sugr_cane","groundnut")
+  anti_pig    <- c("tece","trce","maiz","rice_pro",
                        "others","potato","cassav_sp","puls_pro",         
                        "soybean","rapeseed","groundnut","sunflower","oilpalm","cottn_pro",    
                        "sugr_beet","sugr_cane",
                        "livst_rum","livst_pig","livst_chick","livst_egg","livst_milk", "fish")
+  anti_pig = setdiff(anti_pig,const_pig)
   bask_pig = compose_ideal_feed(
-    main_shr = setdiff(getNames(fbask_sys,dim = "kall"), anit_shr_pig),
-    anit_shr = anit_shr_pig,
+    main = setdiff(getNames(fbask_sys,dim = "kall"), c(anti_pig,const_pig)),
+    anti = anti_pig,
+    const =  const_pig,
     sys = c("sys_pig")
   )
   
@@ -75,8 +98,17 @@ calcFeedBasketsUncalibrated <- function() {
     bask_pig,
     bask_chick
   )
+
   out <- round(out,3)
   
+  if(any(out[,,"sys_dairy"][,,"livst_milk"] >= 1 )){
+    stop("more livestock products in feed basket than being produced") 
+  }
+  if(any(out[,,"sys_hen"][,,"livst_egg"] >= 1 )){
+    stop("more livestock products in feed basket than being produced") 
+  }
+  
+
   #use livestock production as weight
   kli <- findset("kli")
   weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"])

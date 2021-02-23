@@ -15,7 +15,7 @@
 #' 
 #' @importFrom magclass getNames
 
-calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products="kall", future=TRUE){
+calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products="kall", future="constant"){
   
   products2<-findset(products,noset="orignal")
   
@@ -92,11 +92,14 @@ calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products=
     FeedBalanceflow  <- add_columns(FeedBalanceflow, addnm = NewItems, dim=3.2)
     FeedBalanceflow[,,NewItems] <- 0
     
-    if(future){
+    if(future==TRUE){
       FeedBalanceflow  <- toolHoldConstantBeyondEnd(FeedBalanceflow)
       # fading out the balanceflow until 2050.
       # Has to be the same as the SlaugherBalanceflow outfade!
       FeedBalanceflow  <- convergence(origin = FeedBalanceflow, aim = 0, start_year = "y2010", end_year = "y2050", type = "s")
+    } else if (future=="constant"){
+      FeedBalanceflow  <- toolHoldConstantBeyondEnd(FeedBalanceflow)
+      # Has to be the same as the SlaugherBalanceflow outfade!
     }
     
     weight <- NULL

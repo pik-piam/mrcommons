@@ -21,78 +21,160 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   if(stage%in%c("raw","smoothed")){
     
-    readin_name <- paste0(version,":",climatetype,".",subtype)  
-    LPJmL_input <- readSource("LPJmL", subtype=readin_name, convert="onlycorrect")
+    if(subtype%in%c("transpiration|discharge|runoff|evaporation|evap_lake")){
+      subtype_in <- paste0("m",subtype) } else { subtype_in <- subtype}
+    
+    readin_name <- paste0(version,":",climatetype,":",subtype_in)  
+    
+    ########## PLUG HIST + FUTURE ##########
+   
+    if(!grepl("historical", climatetype)){
+      
+      #For climate scenarios historical data has to be read in from a different file
+      readin_hist <- toolSplitSubtype(readin_name, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))
+      readin_hist <- paste(gsub(readin_hist$scenario,"historical",readin_hist), collapse = ":")
+      
+      x     <- mbind(readSource("LPJmL", subtype=readin_hist, convert="onlycorrect"),
+                     readSource("LPJmL", subtype=readin_name, convert="onlycorrect"))
+      
+      years <- getYears(x, as.integer = TRUE)
+      x     <- x[,years[years >= 1980],]
+
+    } else {
+      
+       x     <- readSource("LPJmL", subtype=readin_name, convert="onlycorrect")
+       years <- getYears(x, as.integer = TRUE)
+       x     <- x[,years[years >= 1930],]
+    }
+    ########## PLUG HIST + FUTURE ##########
     
     if(!is.null(subdata)){
-      if(!all(subdata %in% getNames(LPJmL_input))) stop(paste0("Subdata items '", subdata,"' are not part of selected LPJmL subtype!"))
-      LPJmL_input <- LPJmL_input[,,subdata]
+      if(!all(subdata %in% getNames(x))) stop(paste0("Subdata items '", subdata,"' are not part of selected LPJmL subtype!"))
+      x <- x[,,subdata]
     }
     
-    if("y2099" %in% (y <- getYears(LPJmL_input))){
-      LPJmL_input <- LPJmL_input[,tail(y, length(1980:2099)),] #crop GCM data to shorter time periods
-    } else {
-      LPJmL_input <- LPJmL_input[,1931:as.numeric(substring(tail(y,1),2)),] #crop CRU data to shorter time periods
-    }
+    ########## UNIT TRANSFORMATION ###############
+    
+    if (grepl("soilc|soilc_layer|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype)) {
+      
+      unit_transform <- 0.01
+      x <- x*unit_transform
+      units <- c(soilc              = "tC/ha",
+                 soilc_layer        = "tC/ha",
+                 litc               = "tC/ha",
+                 vegc               = "tC/ha",
+                 alitfallc          = "tC/ha",
+                 alitfalln          = "tN/ha",
+                 vegc_grass         = "tC/ha",
+                 litc_grass         = "tC/ha",
+                 soilc_grass        = "tC/ha"
+      )
+      
+      unit <- toolSubtypeSelect(subtype,units)
+      
+    } else if(grepl("*date*", subtype)){
+      
+      unit <- "day of the year"
+      
+    } else if (grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)) {
+      
+      # unit transformation
+      if (grepl("transpiration", subtype)) { 
+        # Transform units: liter/m^2 -> m^3/ha
+        transp_unit_transform <- 10
+        x <- x*transp_unit_transform
+        
+      } else if (grepl("discharge", subtype)) {
+        # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
+        # Transform units of discharge: mio. m^3/day -> mio. m^3/month
+        month_days <- c(31,28,31,30,31,30,31,31,30,31,30,31)
+        names(month_days) <- dimnames(x)[[3]]
+        for(month in names(month_days)) {
+          x[,,month,] <- x[,,month,]*month_days[month]
+        }
+        
+      } else if (grepl("runoff|evap_lake", subtype)) {
+        # In LPJmL: (monthly) runoff given in LPJmL: mm/month
+        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
+        cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        class(x) <- "array"
+        x <- as.magpie(x, spatial=1)
+        # Transform units: liter/m^2 -> liter
+        x <- x*cell_area
+        
+        # Transform units: liter -> mio. m^3
+        x <- x/(1000*1000000)
+        
+      } else if (grepl("evaporation", subtype)) { 
+        # Transform units: liter/m^2 -> m^3/ha
+        evap_unit_transform <- 10
+        x <- x*evap_unit_transform
+        
+      }
+      
+      # Annual value (total over all month)
+      if(!grepl("^m", subtype)){
+        x <- dimSums(x, dim=3.2)  
+      }
+      
+      units <- c(transpiration      = "m^3/ha",
+                 discharge          = "mio. m^3",
+                 runoff             = "mio. m^3",
+                 evaporation        = "m^3/ha",
+                 evap_lake          = "mio. m^3",
+                 mevap_lake         = "mio. m^3",
+                 mtranspiration     = "m^3/ha",
+                 mdischarge         = "mio. m^3", 
+                 mrunoff            = "mio. m^3", 
+                 mevaporation       = "m^3/ha")
+      
+      unit <- toolSubtypeSelect(subtype,units)
+      
+    } else if(grepl("*harvest*", subtype)){
+      
+      yield_transform <- 0.01/0.45
+      x <- x*yield_transform
+      unit <- "tDM/ha"
+      
+    } else if(grepl("irrig|cwater_b", subtype)){ 
+      
+      irrig_transform  <- 10
+      x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per year
+      unit             <- "m^3/ha"
+      
+    } else if(grepl("input_lake", subtype)){
+      
+      unit <- "mio. m^3"
+      
+    } else {stop(paste0("subtype ",subtype," is not existing"))}
+    
+    ########## UNIT TRANSFORMATION ###############
     
     if(stage=="smoothed"){
-      LPJmL_input <- toolSmooth(LPJmL_input)
-      if("y2099" %in%getYears(LPJmL_input)){
-        LPJmL_input <- toolFillYears(LPJmL_input, c(getYears(LPJmL_input, as.integer=TRUE)[1]:2100))
-      }
+      out <- toolSmooth(x)
     }
     
-  } else if(stage=="harmonized"){
+  } else if(stage %in% c("harmonized","harmonized2020")){
     
     #read in historical data for subtype
     x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
-    Baseline    <- calcOutput("LPJmL_new", version=version, climatetype="CRU_4",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
-    #harmonize to baseline
-    LPJmL_input <- toolHarmonize2Baseline(x, Baseline)
+    
+    if(stage=="harmonized"){
+      
+      Baseline    <- calcOutput("LPJmL_new", version=version, climatetype="GSWP3-W5E5:historical",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+      out <- toolHarmonize2Baseline(x, Baseline, ref_year="y2010")
+      
+    } else if(stage=="harmonized2020"){
+      
+      Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype="GFDL-ESM4:ssp370:co2", subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
+      out <- toolHarmonize2Baseline(x, Baseline2020, ref_year="2020")
+    }
     
   } else { stop("Stage argument not supported!") }
   
-  # unit table for subtypes from readLPJmL
-  units <- c(soilc              = "tC/ha",
-             soilc_layer        = "tC/ha",
-             litc               = "tC/ha",
-             vegc               = "tC/ha",
-             alitfallc          = "tC/ha",
-             alitfalln          = "tN/ha",
-             harvest            = "tDM/ha",
-             irrig              = "m^3/ha",
-             irrig_lpjcell      = "m^3/ha",
-             cwater_b           = "m^3/ha",
-             cwater_b_lpjcell   = "m^3/ha",
-             sdate              = "day of the year",
-             hdate              = "day of the year",
-             transpiration      = "m^3/ha",
-             discharge          = "mio. m^3",
-             discharge_lpjcell  = "mio. m^3",
-             runoff             = "mio. m^3",
-             runoff_lpjcell     = "mio. m^3",
-             evaporation        = "m^3/ha",
-             evap_lake          = "mio. m^3",
-             evap_lake_lpjcell  = "mio. m^3",
-             mevap_lake         = "mio. m^3",
-             mevap_lake_lpjcell = "mio. m^3",
-             input_lake         = "mio. m^3",
-             input_lake_lpjcell = "mio. m^3",
-             mtranspiration     = "m^3/ha",
-             mdischarge         = "mio. m^3", 
-             mdischarge_lpjcell = "mio. m^3", 
-             mrunoff            = "mio. m^3", 
-             mrunoff_lpjcell    = "mio. m^3", 
-             mevaporation       = "m^3/ha",
-             vegc_grass         = "tC/ha",
-             litc_grass         = "tC/ha",
-             soilc_grass        = "tC/ha"
-  )
-  
-  unit <- toolSubtypeSelect(subtype,units)
   
   return(list(
-    x=LPJmL_input,
+    x=out,
     weight=NULL,
     unit=unit, 
     description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
