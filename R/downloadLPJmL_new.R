@@ -13,39 +13,40 @@
 #' }
 #'
 
-downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:historical:soilc") {
+downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
   
   x     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))
-  files <- c(soilc              = "soilc_natveg.clm",
-             soilc_layer        = "soilc_layer_natveg.clm",
-             litc               = "litc_natveg.clm",
-             vegc               = "vegc_natveg.clm",
-             alitfallc          = "alitfallc_natveg.clm",
-             alitterfallc       = "alitterfallc_natveg.clm",
-             alitfalln          = "alitfalln_natveg.clm",
-             harvest            = "pft_harvest.pft.clm",
-             irrig              = "cft_airrig.pft.clm",
-             cwater_b           = "cft_consump_water_b.pft.clm",
-             sdate              = "sdate.clm",
-             hdate              = "hdate.clm",
-             mevap_lake         = "mevap_lake.clm",
-             input_lake         = "input_lake.clm",
-             mtranspiration     = "mtransp_natveg.clm",
-             mdischarge         = "mdischarge_natveg.clm",
-             mrunoff            = "mrunoff_natveg.clm",
-             mevaporation       = "mevap_natveg.clm",
-             vegc_grass         = "mean_vegc_mangrass.clm",
-             litc_grass         = "litc_mangrass.clm",
-             soilc_grass        = "soilc_mangrass.clm"
+  files <- c(soilc              = "soilc_natveg",
+             soilc_layer        = "soilc_layer_natveg",
+             litc               = "litc_natveg",
+             vegc               = "vegc_natveg",
+             alitfallc          = "alitfallc_natveg",
+             alitterfallc       = "alitterfallc_natveg",
+             alitfalln          = "alitfalln_natveg",
+             harvest            = "pft_harvest.pft",
+             irrig              = "cft_airrig.pft",
+             cwater_b           = "cft_consump_water_b.pft",
+             sdate              = "sdate",
+             hdate              = "hdate",
+             mevap_lake         = "mevap_lake",
+             input_lake         = "input_lake",
+             mtranspiration     = "mtransp_natveg",
+             mdischarge         = "mdischarge_natveg",
+             mrunoff            = "mrunoff_natveg",
+             mevaporation       = "mevap_natveg",
+             vegc_grass         = "mean_vegc_mangrass",
+             litc_grass         = "litc_mangrass",
+             soilc_grass        = "soilc_mangrass"
   )
   
-  file_name <- toolSubtypeSelect(x$variable, files)
-  file_path <- paste0(x$version, x$climatemodel, gsub("_", "/", x$scenario), file_name, sep = "/")
-  storage   <- "/p/projects/cmueller/"
+  storage   <- "/p/projects/landuse/users/cmueller/"
+  path      <- paste(x$version, x$climatemodel, gsub("_", "/", x$scenario), sep = "/")
+  file      <- grep(toolSubtypeSelect(x$variable, files), list.files(paste0(storage,path)), value=TRUE)
+  file_path <- paste0(storage, path, "/", file)
   
-  if(file.exists(paste0(storage,file_path))){  
-    file.copy(paste0(storage, file_path), file_name)
-    file.copy(paste0(storage, "lpjml_log.out"), "lpjml_log.out")
+  if(file.exists(file_path)){  
+    file.copy(file_path, file)
+    file.copy(paste0(storage, path, "/lpjml_log.out"), "lpjml_log.out")
   } else {
     stop("Data is not available so far!")
   }
