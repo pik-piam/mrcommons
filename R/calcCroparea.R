@@ -11,9 +11,9 @@
 #' @return areas of individual crops from FAOSTAT and weight
 #' @author Ulrich Kreidenweis, Kristine Karstens, Felicitas Beier
 #' @importFrom utils read.csv
-#' @importFrom magclass fulldim setNames getCells
-#' @importFrom magpiesets findset
-#' @importFrom madrat toolAggregate
+#' @importFrom magclass fulldim setNames getCells collapseDim
+#' @importFrom magpiesets findset addLocation
+#' @importFrom madrat toolAggregate toolGetMapping
 
 
 calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="magpiecell", irrigation=FALSE) {
@@ -100,31 +100,25 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       
       if(cells=="lpjcell"){
         LUHcroparea <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
-        org_seq   <- getCells(LUHcroparea)
-        dummy     <- new.magpie(getCells(LUHcroparea[c("XNL","KO-"),,]),getYears(LUHcroparea),getNames(LUHweights,dim=2)) 
-        dummy[,,] <- 0
-        LUHcroparea <- LUHcroparea[getCells(LUHcroparea[c("XNL","KO-"),,]),,invert=T]
+        LUHcroparea <- addLocation(LUHcroparea)
+        LUHcroparea <- collapseDim(LUHcroparea, dim=c("N", "cell"))
+        
+        map                   <- toolGetMappingCoord2Country()
+        LUHcroparea           <- LUHcroparea[map$coords,,]
+        getCells(LUHcroparea) <- paste(map$iso, 1:67420, sep=".") 
+        
       } else if(cells=="magpiecell"){
         LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
       }
+      
       LUHcroparea      <- LUHcroparea[,,LUHcroptypes]
+      
       if(irrigation==TRUE){
         LUHcroparea <- LUHcroparea[,,"total",invert=TRUE] #if "total" is also reported magpie object grows too big (>1.3GB)
       }
       
       LUH2MAG          <- LUHcroparea * toolIso2CellCountries(LUHweights,cells=cells)
       MAGcroparea      <- dimSums(LUH2MAG, dim=3.1)
-      
-      if(cells=="lpjcell"){
-        if(irrigation==TRUE){
-          getNames(dummy)     <- paste("irrigated",getNames(dummy),sep=".")
-          getSets(dummy)[4:5] <- c("irrigation","MAG")
-          tmp                 <- dummy
-          getNames(tmp)       <- gsub("irrigated","rainfed",getNames(tmp))
-          dummy               <- mbind(dummy,tmp)
-        }
-        MAGcroparea <- mbind(MAGcroparea,dummy)[org_seq,,]
-      }
       
       data             <- collapseNames(MAGcroparea)
       
