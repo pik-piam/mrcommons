@@ -45,6 +45,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:his
   
   if(file.exists(paste0(storage,file_path))){  
     file.copy(paste0(storage, file_path), file_name)
+    file.copy(paste0(storage, "lpjml_log.out"), "lpjml_log.out")
   } else {
     stop("Data is not available so far!")
   }

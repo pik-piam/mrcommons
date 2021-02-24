@@ -14,6 +14,7 @@
 #' @import madrat
 #' @importFrom magpiesets addLocation
 #' @importFrom lpjclass readLPJ
+#' @importFrom stringr str_subset str_trim str_split
 
 readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
 
@@ -21,17 +22,33 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
   
   .prepareLPJ <- function(datatype = numeric(),
                           bytes    = 4,
-                          monthly  = FALSE) {
+                          monthly  = FALSE,
+                          nbands   = NULL) { # nbands will be overwritten for clm data
     
-    file_name   <- Sys.glob("*.clm")
-    filedata    <- file(description = file_name, open = "rb", blocking = TRUE,encoding = getOption("encoding"))
-    seek(filedata, where=15, origin="start")
-    in_header   <- as.numeric(readBin(filedata,what=integer(),size=4,n=5,endian=.Platform$endian))
-    start_year  <- in_header[1] 
-    nyear       <- in_header[2] 
-    nbands      <- in_header[5] 
-    years       <- seq(start_year,start_year+nyear-1,1)
-    headlines   <- 51 # generation clm 3
+    file_name   <- Sys.glob(c("*.bin","*.clm"))
+    file_type   <- tail(unlist(strsplit(file_name,'\\.')),1)
+    
+    if(file_type=="clm"){
+      
+      filedata    <- file(description = file_name, open = "rb", blocking = TRUE,encoding = getOption("encoding"))
+      seek(filedata, where=15, origin="start")
+      in_header   <- as.numeric(readBin(filedata,what=integer(),size=4,n=5,endian=.Platform$endian))
+      start_year  <- in_header[1] 
+      nyear       <- in_header[2] 
+      nbands      <- in_header[5]            # nbands will be overwritten for clm data
+      years       <- seq(start_year,start_year+nyear-1,1)
+      headlines   <- 51                      # generation clm 3
+      
+    } else if(file_type=="bin"){
+      
+      out        <- readLines("lpjml_log.out")
+      start_year <- str_trim(unlist(str_split(str_subset(out,'Output written in year:'),":")))[2]
+      end_year   <- str_trim(unlist(str_split(str_subset(out,'Last year:'),":")))[2]
+      years      <- seq(start_year,end_year,1)
+      headlines  <- 0
+      
+    } else {stop("File format of LPJmL input data unknown. Please provide .clm or .bin file format.")}
+
     
     x <- readLPJ(
       file_name       = file_name,
