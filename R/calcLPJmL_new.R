@@ -103,11 +103,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       } else if (grepl("runoff|evap_lake", subtype)) {
         # In LPJmL: (monthly) runoff given in LPJmL: mm/month
         cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
-        cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
         class(x) <- "array"
         x <- as.magpie(x, spatial=1)
         # Transform units: liter/m^2 -> liter
-        x <- x*cell_area
+        x <- x*landarea
         
         # Transform units: liter -> mio. m^3
         x <- x/(1000*1000000)
