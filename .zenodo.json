@@ -1,6 +1,6 @@
 {
   "title": "mrcommons: MadRat commons Input Data Library",
-  "version": "0.30.0",
+  "version": "0.30.1",
   "description": "<p>Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND\n    of model input data.<\/p>",
   "creators": [
     {
