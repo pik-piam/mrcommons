@@ -22,8 +22,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   ##### CONFIG #####
   baseline_hist <- "GSWP3-W5E5:historical"
   ref_year_hist <- "y2010"
-  baseline_gcm  <- "GFDL-ESM4:ssp370:co2"
-  rey_year_gcm  <- "y2020"
+  baseline_gcm  <- "GFDL-ESM4:ssp370"
+  ref_year_gcm  <- "y2020"
   ##### CONFIG #####
   
   if(stage%in%c("raw","smoothed")){
@@ -86,38 +86,28 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if (grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)) {
       
       # unit transformation
-      if (grepl("transpiration", subtype)) { 
+      if (grepl("transpiration|evaporation", subtype)) { 
         # Transform units: liter/m^2 -> m^3/ha
-        transp_unit_transform <- 10
-        x <- x*transp_unit_transform
+        unit_transform <- 10
+        x <- x * unit_transform
         
       } else if (grepl("discharge", subtype)) {
         # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
         # Transform units of discharge: mio. m^3/day -> mio. m^3/month
-        month_days <- c(31,28,31,30,31,30,31,31,30,31,30,31)
-        names(month_days) <- dimnames(x)[[3]]
-        for(month in names(month_days)) {
-          x[,,month,] <- x[,,month,]*month_days[month]
-        }
+        dayofmonths <- as.magpie(c(jan=31,feb=28,mar=31,apr=30,may=31,jun=30,jul=31,aug=31,sep=30,oct=31,nov=30,dec=31))
+        x           <- x * dayofmonths 
         
       } else if (grepl("runoff|evap_lake", subtype)) {
         # In LPJmL: (monthly) runoff given in LPJmL: mm/month
-        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
         landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
-        class(x) <- "array"
-        x <- as.magpie(x, spatial=1)
+
         # Transform units: liter/m^2 -> liter
-        x <- x*landarea
+        x <- x * landarea
         
         # Transform units: liter -> mio. m^3
-        x <- x/(1000*1000000)
+        x <- x / (1000*1000000)
         
-      } else if (grepl("evaporation", subtype)) { 
-        # Transform units: liter/m^2 -> m^3/ha
-        evap_unit_transform <- 10
-        x <- x*evap_unit_transform
-        
-      }
+      } 
       
       # Annual value (total over all month)
       if(!grepl("^m", subtype)){
@@ -146,7 +136,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if(grepl("irrig|cwater_b", subtype)){ 
       
       irrig_transform  <- 10
-      x[,,"irrigated"] <- x[,,"irrigated"]*irrig_transform # units are now: m^3 per ha per year
+      x[,,"irrigated"] <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
       unit             <- "m^3/ha"
       
     } else if(grepl("input_lake", subtype)){
@@ -178,7 +168,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if((stage=="harmonized2020") & (climatetype != baseline_gcm)){
       
       Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
-      out <- toolHarmonize2Baseline(x, Baseline2020, ref_year=ref_year_hist)
+      out <- toolHarmonize2Baseline(x, Baseline2020, ref_year=ref_year_gcm)
       
     } else if((stage=="harmonized2020") & (climatetype == baseline_gcm)){
       # no need for harmonization
