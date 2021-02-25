@@ -62,22 +62,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     
     ########## UNIT TRANSFORMATION ###############
     
-    if (grepl("soilc|soilc_layer|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype)) {
+    if (grepl("soilc|soilc_layer|litc|vegc|alitfallc|alitterfallc|vegc_grass|litc_grass|soilc_grass", subtype)) {
       
       unit_transform <- 0.01
       x <- x*unit_transform
-      units <- c(soilc              = "tC/ha",
-                 soilc_layer        = "tC/ha",
-                 litc               = "tC/ha",
-                 vegc               = "tC/ha",
-                 alitfallc          = "tC/ha",
-                 alitfalln          = "tN/ha",
-                 vegc_grass         = "tC/ha",
-                 litc_grass         = "tC/ha",
-                 soilc_grass        = "tC/ha"
-      )
-      
-      unit <- toolSubtypeSelect(subtype,units)
+      unit <- "tC/ha"
       
     } else if(grepl("*date*", subtype)){
       
