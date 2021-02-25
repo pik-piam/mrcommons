@@ -28,8 +28,16 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   if(stage%in%c("raw","smoothed")){
     
-    if(subtype%in%c("transpiration|discharge|runoff|evaporation|evap_lake")){
-      subtype_in <- paste0("m",subtype) } else { subtype_in <- subtype}
+    if (subtype%in%c("discharge|runoff|lake_evap|input_lake")) {
+      # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes 
+      readinmap <- c(lake_evap    = "mpet",  # mpet_natveg    lake_evap  = pet   * lake_shr * cell_area
+                     input_lake   = "aprec", # aprec_natveg   input_lake = aprec * lake_shr * cell_area
+                     discharge    = "mdischarge",
+                     runoff       = "mrunoff")
+
+       subtype_in <- toolSubtypeSelect(subtype, readinmap)
+        
+    } else { subtype_in <- subtype}
     
     readin_name <- paste0(version,":",climatetype,":",subtype_in)  
     
@@ -72,13 +80,14 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       
       unit <- "day of the year"
       
-    } else if (grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)) {
+    } else if (grepl("aet|discharge|runoff|lake_evap|input_lake", subtype)) {
       
       # unit transformation
-      if (grepl("transpiration|evaporation", subtype)) { 
+      if (grepl("aet", subtype)) { 
+        # Annual evapotranspiration (evaporation + transpiration + interception) given in liter/m^2
         # Transform units: liter/m^2 -> m^3/ha
         unit_transform <- 10
-        x <- x * unit_transform
+        x              <- x * unit_transform
         
       } else if (grepl("discharge", subtype)) {
         # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
@@ -86,13 +95,23 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         dayofmonths <- as.magpie(c(jan=31,feb=28,mar=31,apr=30,may=31,jun=30,jul=31,aug=31,sep=30,oct=31,nov=30,dec=31))
         x           <- x * dayofmonths 
         
-      } else if (grepl("runoff|evap_lake", subtype)) {
+      } else if (grepl("runoff", subtype)) {
         # In LPJmL: (monthly) runoff given in LPJmL: mm/month
         landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
-
         # Transform units: liter/m^2 -> liter
         x <- x * landarea
+        # Transform units: liter -> mio. m^3
+        x <- x / (1000*1000000)
         
+      } else if (grepl("lake_evap|input_lake", subtype)) {
+        # In LPJmL: given in mm (=liter/m^2)
+        # Multiply by lake share
+        lake_share <- readLPJmLInputs(subtype="lakeshare")
+        x          <- x * lake_share
+        # Transform units: liter/m^2 -> liter
+        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", type="cell")
+        cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        x         <- x * cell_area
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
@@ -103,18 +122,16 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         x <- dimSums(x, dim=3.2)  
       }
       
-      units <- c(transpiration      = "m^3/ha",
-                 discharge          = "mio. m^3",
-                 runoff             = "mio. m^3",
-                 evaporation        = "m^3/ha",
-                 evap_lake          = "mio. m^3",
-                 mevap_lake         = "mio. m^3",
-                 mtranspiration     = "m^3/ha",
-                 mdischarge         = "mio. m^3", 
-                 mrunoff            = "mio. m^3", 
-                 mevaporation       = "m^3/ha")
+      units <- c(evapotranspiration  = "m^3/ha",
+                 discharge           = "mio. m^3",
+                 runoff              = "mio. m^3",
+                 evap_lake           = "mio. m^3",
+                 mevap_lake          = "mio. m^3",
+                 mevapotranspiration = "m^3/ha",
+                 mdischarge          = "mio. m^3", 
+                 mrunoff             = "mio. m^3")
       
-      unit <- toolSubtypeSelect(subtype,units)
+      unit <- toolSubtypeSelect(subtype, units)
       
     } else if(grepl("*harvest*", subtype)){
       

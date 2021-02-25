@@ -72,8 +72,8 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
   }
   
   
-  if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "alitfalln",
-                  "vegc_grass", "litc_grass", "soilc_grass", "input_lake")){
+  if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "aet",
+                  "vegc_grass", "litc_grass", "soilc_grass", "aprec")){
 
     x <- .prepareLPJ(nbands = 1)
    
@@ -85,7 +85,7 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
 
     x <- .prepareLPJ(nbands = 5)
 
-  } else if(grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)){
+  } else if(grepl("mdischarge|mrunoff|mpet", subtype)){
     
     x <- .prepareLPJ(monthly = TRUE)
 
