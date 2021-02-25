@@ -23,8 +23,8 @@ calcPlantEstablishCalib <- function(){
   mapping[mapping$RegionCode == "LAM",]$value = 1.8
   mapping[mapping$RegionCode == "OAS",]$value = 3.0
   mapping[mapping$RegionCode == "SSA",]$value = 1.5
-  mapping[mapping$RegionCode == "MEA",]$value = 0.8
-  mapping[mapping$RegionCode == "IND",]$value = 2
+  mapping[mapping$RegionCode == "MEA",]$value = 0.5
+  mapping[mapping$RegionCode == "IND",]$value = 0.4
 
   weight <- x <- setNames(as.magpie(mapping[,c(-1,-3)],spatial = "CountryCode",temporal = NULL),NULL)
   weight[weight >= 0] <- 1
