@@ -55,10 +55,17 @@ calcFeedBasketsUncalibrated <- function() {
     # compose the value chain
     main_bask = out_eff[,,sys] * central_feed_shr[,,sys] 
     anti_bask = (out_eff[,,sys] * (1-central_feed_shr[,,sys])) - constant_sum
+    
+    reduce_constant = anti_bask
+    reduce_constant[reduce_constant>0]=0
+    reduction_factor_constant=(constant_sum+reduce_constant)/constant_sum
+
     anti_bask[anti_bask<0] = 0
     main_bask = main_bask * composition_main
     anti_bask = anti_bask * composition_anti
-    constant = (central_feed_shr[,,sys]*0+1) * constant# the first term just extends the time dimension
+    
+    constant = (central_feed_shr[,,sys]*0+1) * constant * reduction_factor_constant# the first term just extends the time dimension
+    
     bask <- mbind(main_bask,anti_bask,constant)
     return(bask)
   }

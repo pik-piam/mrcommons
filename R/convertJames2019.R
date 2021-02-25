@@ -40,5 +40,7 @@ convertJames2019 <- function(x,subtype) {
   x[c("CHN","HKG","MAC"),getYears(x1),] <- x1/pop[c("CHN","HKG","MAC"),,]
   x[c("HKG","MAC"),1950:1959,] <- setYears(x[c("HKG","MAC"),1960,],NULL)
   
+  #reset set name of year to Year
+  getSets(x)[2] <- "Year"
   return(x)
 }  

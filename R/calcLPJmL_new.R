@@ -5,7 +5,7 @@
 #' @param climatetype Switch between different climate scenarios (default: "CRU_4")
 #' @param subtype Switch between different lpjml input as specified in readLPJmL
 #' @param subdata Switch between data dimension subitems
-#' @param stage Degree of processing: raw, smoothed, harmonized
+#' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
 #' 
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens, Felicitas Beier
@@ -17,7 +17,14 @@
 #' calcOutput("LPJmL_new", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
 #' }
 
-calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, stage="harmonized"){
+calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, stage="harmonized2020"){
+  
+  ##### CONFIG #####
+  baseline_hist <- "GSWP3-W5E5:historical"
+  ref_year_hist <- "y2010"
+  baseline_gcm  <- "GFDL-ESM4:ssp370:co2"
+  rey_year_gcm  <- "y2020"
+  ##### CONFIG #####
   
   if(stage%in%c("raw","smoothed")){
     
@@ -96,11 +103,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       } else if (grepl("runoff|evap_lake", subtype)) {
         # In LPJmL: (monthly) runoff given in LPJmL: mm/month
         cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
-        cell_area <- (111e3*0.5)*(111e3*0.5)*cos(cb$lat/180*pi)
+        landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
         class(x) <- "array"
         x <- as.magpie(x, spatial=1)
         # Transform units: liter/m^2 -> liter
-        x <- x*cell_area
+        x <- x*landarea
         
         # Transform units: liter -> mio. m^3
         x <- x/(1000*1000000)
@@ -159,15 +166,24 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     #read in historical data for subtype
     x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
     
-    if(stage=="harmonized"){
+    if(climatetype == baseline_hist){
       
-      Baseline    <- calcOutput("LPJmL_new", version=version, climatetype="GSWP3-W5E5:historical",     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
-      out <- toolHarmonize2Baseline(x, Baseline, ref_year="y2010")
+      stop("You can not harmonize the historical baseline.")
       
-    } else if(stage=="harmonized2020"){
+    } else if(stage=="harmonized"){
       
-      Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype="GFDL-ESM4:ssp370:co2", subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
-      out <- toolHarmonize2Baseline(x, Baseline2020, ref_year="2020")
+      Baseline    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_hist,     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+      out         <- toolHarmonize2Baseline(x, Baseline, ref_year=ref_year_hist)
+      
+    } else if((stage=="harmonized2020") & (climatetype != baseline_gcm)){
+      
+      Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
+      out <- toolHarmonize2Baseline(x, Baseline2020, ref_year=ref_year_hist)
+      
+    } else if((stage=="harmonized2020") & (climatetype == baseline_gcm)){
+      # no need for harmonization
+      out <- x
+    
     }
     
   } else { stop("Stage argument not supported!") }
