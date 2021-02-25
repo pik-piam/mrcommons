@@ -157,29 +157,26 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       out <- toolSmooth(x)
     }
     
-  } else if(stage %in% c("harmonized","harmonized2020")){
+  } else if(stage=="harmonized"){
+    
+    if(climatetype == baseline_hist) stop("You can not harmonize the historical baseline.")
+    
+    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    Baseline    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_hist,     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    out         <- toolHarmonize2Baseline(x, Baseline, ref_year=ref_year_hist)
+    
+  } else if(stage=="harmonized2020"){
     
     #read in historical data for subtype
-    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
     
-    if(climatetype == baseline_hist){
+    if(climatetype == baseline_gcm){
+      out <- Baseline2020
       
-      stop("You can not harmonize the historical baseline.")
+    } else {
       
-    } else if(stage=="harmonized"){
-      
-      Baseline    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_hist,     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
-      out         <- toolHarmonize2Baseline(x, Baseline, ref_year=ref_year_hist)
-      
-    } else if((stage=="harmonized2020") & (climatetype != baseline_gcm)){
-      
-      Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
+      x   <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
       out <- toolHarmonize2Baseline(x, Baseline2020, ref_year=ref_year_gcm)
-      
-    } else if((stage=="harmonized2020") & (climatetype == baseline_gcm)){
-      # no need for harmonization
-      out <- x
-    
     }
     
   } else { stop("Stage argument not supported!") }

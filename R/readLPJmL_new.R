@@ -20,7 +20,7 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
 
   subtype     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))$variable
   
-  .prepareLPJ <- function(datatype = numeric(),
+   .prepareLPJ <- function(datatype = numeric(),
                           bytes    = 4,
                           monthly  = FALSE,
                           nbands   = NULL) { # nbands will be overwritten for clm data
@@ -38,6 +38,7 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
       nbands      <- in_header[5]            # nbands will be overwritten for clm data
       years       <- seq(start_year,start_year+nyear-1,1)
       headlines   <- 51                      # generation clm 3
+      close(filedata)
       
     } else if(file_type=="bin"){
       
@@ -66,8 +67,8 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
     
     class(x) <- "array"
     x        <- collapseNames(as.magpie(x, spatial=1))
-    x        <- addLocation(x)
-    
+    x        <- collapseDim(addLocation(x), dim="N")
+  
     return(x)
   }
   
