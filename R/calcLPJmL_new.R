@@ -76,7 +76,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       x <- x*unit_transform
       unit <- "tC/ha"
       
-    } else if(grepl("*date*", subtype)){
+    } else if (grepl("*date*", subtype)) {
       
       unit <- "day of the year"
       
@@ -95,6 +95,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         dayofmonths <- as.magpie(c(jan=31,feb=28,mar=31,apr=30,may=31,jun=30,jul=31,aug=31,sep=30,oct=31,nov=30,dec=31))
         x           <- x * dayofmonths 
         
+        # Annual value (total over all month)
+        if (!grepl("^m", subtype)) {
+          x <- dimSums(x, dim=3.2)  
+        }
+        
       } else if (grepl("runoff", subtype)) {
         # In LPJmL: (monthly) runoff given in LPJmL: mm/month
         landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
@@ -102,6 +107,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         x <- x * landarea
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
+        
+        # Annual value (total over all month)
+        if (!grepl("^m", subtype)) {
+          x <- dimSums(x, dim=3.2)  
+        }
         
       } else if (grepl("lake_evap|input_lake", subtype)) {
         # In LPJmL: given in mm (=liter/m^2)
@@ -115,12 +125,11 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
+        # Annual value (total over all month)
+        if (grepl ("lake_evap", subtype)) {
+          x <- dimSums(x, dim=3.2)  
+        }
       } 
-      
-      # Annual value (total over all month)
-      if(!grepl("^m", subtype)){
-        x <- dimSums(x, dim=3.2)  
-      }
       
       units <- c(evapotranspiration  = "m^3/ha",
                  discharge           = "mio. m^3",
