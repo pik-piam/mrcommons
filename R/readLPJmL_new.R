@@ -68,6 +68,7 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
     class(x) <- "array"
     x        <- collapseNames(as.magpie(x, spatial=1))
     x        <- collapseDim(addLocation(x), dim="N")
+    x        <- clean_magpie(x)
   
     return(x)
   }

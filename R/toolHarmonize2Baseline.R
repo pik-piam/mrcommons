@@ -34,9 +34,8 @@ toolHarmonize2Baseline <- function(x, base, ref_year="y2015", limited=TRUE, hard
   if(!setequal(getCells(x),getCells(base)) | !setequal(getNames(x),getNames(base))) stop("Dimensions of the MAgPIE objects do not match!")
   
   # create new magpie object with full time horizon
-  full <- new.magpie(getCells(x), years, getNames(x))
-  
-  # convert to arrays to speed up performance
+  full <- new.magpie(getCells(x), years, getNames(x), sets=getSets(x))
+
   full <- as.array(full)
   x    <- as.array(x)
   base <- as.array(base)
