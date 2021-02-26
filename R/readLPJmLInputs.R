@@ -25,17 +25,16 @@ readLPJmLInputs <- function(subtype="lakeshare") {
   # Data settings
   if (subtype%in%c("lakeshare")) {
   
-       unit_transform <- 0.01
-       ncells         <- 67420
-       wyears          = NULL
-       syear           = NULL
-       averaging_range = NULL
-       file_type       = "bin"
-       bands           = 1
-       datatype        = integer()
-       bytes           = 1
-       monthly         = FALSE
-  
+       unit_transform  <- 0.01
+       ncells          <- 67420
+       wyears          <- 1
+       syear           <- 1
+       averaging_range <- NULL
+       file_type       <- "bin"
+       bands           <- 1
+       datatype        <- integer()
+       bytes           <- 1
+       monthly         <- FALSE
   }
 
   # Read in the data
@@ -59,6 +58,7 @@ readLPJmLInputs <- function(subtype="lakeshare") {
    class(x) <- "array"
    x        <- collapseNames(as.magpie(x, spatial=1))
    x        <- addLocation(x)
+   x        <- collapseDim(addLocation(x), dim="N")
    
    return(x)
 }  
