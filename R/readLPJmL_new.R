@@ -43,8 +43,8 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
     } else if(file_type=="bin"){
       
       out        <- readLines("lpjml_log.out")
-      start_year <- str_trim(unlist(str_split(str_subset(out,'Output written in year:'),":")))[2]
-      end_year   <- str_trim(unlist(str_split(str_subset(out,'Last year:'),":")))[2]
+      start_year <- as.numeric(str_trim(unlist(str_split(str_subset(out,'Output written in year:'),":")))[2])
+      end_year   <- as.numeric(str_trim(unlist(str_split(str_subset(out,'Last year:'),":")))[2])
       years      <- seq(start_year,end_year,1)
       headlines  <- 0
       
