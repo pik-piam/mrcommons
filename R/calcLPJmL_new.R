@@ -161,15 +161,23 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     
     if(climatetype == baseline_hist) stop("You can not harmonize the historical baseline.")
     
-    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
+    x           <- calcOutput("LPJmL_new", version=version, climatetype=climatetype, subtype=subtype, subdata=subdata, stage="smoothed", 
+                              aggregate=FALSE, supplementary=TRUE)
+    unit        <- x$unit
+    x           <- x$x
+    
     Baseline    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_hist,     subtype=subtype, subdata=subdata, stage="smoothed", aggregate=FALSE)
     out         <- toolHarmonize2Baseline(x, Baseline, ref_year=ref_year_hist)
     
   } else if(stage=="harmonized2020"){
     
     #read in historical data for subtype
-    Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", aggregate=FALSE)
-    
+    Baseline2020    <- calcOutput("LPJmL_new", version=version, climatetype=baseline_gcm, subtype=subtype, subdata=subdata, stage="harmonized", 
+                                  aggregate=FALSE, supplementary=TRUE)
+   
+    unit            <- Baseline2020$unit
+    Baseline2020    <- Baseline2020$x
+     
     if(climatetype == baseline_gcm){
       out <- Baseline2020
       
