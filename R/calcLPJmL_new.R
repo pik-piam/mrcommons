@@ -57,7 +57,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
 
     } else {
       
-       x     <- readSource("LPJmL", subtype=readin_name, convert="onlycorrect")
+       x     <- readSource("LPJmL_new", subtype=readin_name, convert="onlycorrect")
        years <- getYears(x, as.integer = TRUE)
        x     <- x[,years[years >= 1930],]
     }
