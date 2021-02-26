@@ -10,7 +10,7 @@
 #' @examples
 #' 
 #' \dontrun{ 
-#' readSource("LPJmLInputs", subtype="lakeshare")
+#' readSource("LPJmLInputs", subtype="lakeshare", convert=FALSE)
 #' }
 #'
 #' @importFrom magclass as.magpie collapseNames
