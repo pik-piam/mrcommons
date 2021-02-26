@@ -11,6 +11,9 @@
 #'   readSource("LPJmL", convert="onlycorrect")
 #' }
 #'
+#' @importFrom madrat toolConditionalReplace
+#'
+
 
 correctLPJmL_new <- function(x){
 

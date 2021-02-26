@@ -6,8 +6,8 @@
 #' @author Kristine Karstens, Felicitas Beier
 #' @seealso
 #' \code{\link{correctLPJmL}}
+#' 
 #' @examples
-#'
 #' \dontrun{
 #' readSource("LPJmL", subtype="soilc", convert="onlycorrect")
 #' }

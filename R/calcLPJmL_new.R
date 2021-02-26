@@ -106,7 +106,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       } else if (grepl("lake_evap|input_lake", subtype)) {
         # In LPJmL: given in mm (=liter/m^2)
         # Multiply by lake share
-        lake_share <- readSource("LPJmLInputs", subtype="lakeshare", convert=FALSE)
+        lake_share <- readSource("LPJmLInputs", subtype="lakeshare", convert="onlycorrect")
         x          <- x * lake_share
         # Transform units: liter/m^2 -> liter
         cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", type="cell")

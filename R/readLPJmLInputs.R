@@ -58,7 +58,7 @@ readLPJmLInputs <- function(subtype="lakeshare") {
    class(x) <- "array"
    x        <- collapseNames(as.magpie(x, spatial=1))
    x        <- addLocation(x)
-   x        <- collapseDim(addLocation(x), dim="N")
+   x        <- collapseDim(x, dim="N")
    
    return(x)
 }  
