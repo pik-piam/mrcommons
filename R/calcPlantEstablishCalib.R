@@ -17,13 +17,14 @@ calcPlantEstablishCalib <- function(){
   ## Call mapping file
   mapping <- toolMappingFile(type = "regional",name = "h12.csv",readcsv = TRUE)
   mapping$value <- 1
+  mapping[mapping$RegionCode == "LAM",]$value = 2.0
+  mapping[mapping$RegionCode == "OAS",]$value = 3.3
+  mapping[mapping$RegionCode == "SSA",]$value = 0.5
   mapping[mapping$RegionCode == "EUR",]$value = 1
+  mapping[mapping$RegionCode == "MEA",]$value = 0.5
   mapping[mapping$RegionCode == "REF",]$value = 3
   mapping[mapping$RegionCode == "CAZ",]$value = 0.8
-  mapping[mapping$RegionCode == "LAM",]$value = 1.8
-  mapping[mapping$RegionCode == "OAS",]$value = 3.0
-  mapping[mapping$RegionCode == "SSA",]$value = 1.5
-  mapping[mapping$RegionCode == "MEA",]$value = 0.5
+  mapping[mapping$RegionCode == "CHA",]$value = 1.2
   mapping[mapping$RegionCode == "IND",]$value = 0.4
 
   weight <- x <- setNames(as.magpie(mapping[,c(-1,-3)],spatial = "CountryCode",temporal = NULL),NULL)
