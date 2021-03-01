@@ -16,7 +16,7 @@
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split
 
-readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
+readLPJmL_new <- function(subtype="LPJmL5:CRU_4:soilc"){
 
   subtype     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))$variable
   

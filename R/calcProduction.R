@@ -18,6 +18,7 @@
 #' }
 #' 
 #' @importFrom magclass getSets magpie_expand
+#' @importFrom magpiesets findset
 
 
 calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attributes="all", irrigation=FALSE){
@@ -42,7 +43,9 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ### crop production celluluar ###
       #################################
       
-      LPJYields      <- calcOutput("LPJmL", version="LPJmL5", climatetype="CRU_4", subtype="harvest", time="average", averaging_range=8, aggregate=FALSE, years=selectyears)
+      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_72c185fa", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
+      # reduce to 59199 cells and rename
+      LPJYields      <- toolCoord2Isocell(LPJYields)
       
       CountryToCell  <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
       MAGtoLPJ       <- toolMappingFile(type="sectoral",name = "MAgPIE_LPJmL.csv",readcsv = TRUE)

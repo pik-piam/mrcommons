@@ -21,8 +21,8 @@
 #' }
 #' @import madrat
 #' @importFrom magclass setNames new.magpie
-#' @import nleqslv
 #' @importFrom nleqslv nleqslv
+#' 
 #' @export
 
 calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", track = TRUE, cells = "magpiecell") {
@@ -34,27 +34,30 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", trac
   totalarea <- dimSums(LUH2v2_init, dim = c(1, 3))
 
   if (cells == "lpjcell") {
-    mapping <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", type = "cell")
-    colnames(mapping)[colnames(mapping) == "ISO"] <- "iso"
-    mapping <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
-    countries <- unique(mapping$iso)
-    countries <- countries[!grepl("XNL", countries) & !grepl("KO-", countries)]
-
-    cellvegc <- calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "vegc_lpjcell", time = "average", averaging_range = 8, aggregate = FALSE, years = getYears(countrydata))
+    mapping   <- toolGetMappingCoord2Country()
+    cellvegc  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage="smoothed", aggregate = FALSE)[,getYears(countrydata),]
+    countries <- unique(gsub("[^A-Z]","", getCells(cellvegc)))
+    getCells(LUH2v2_init) <-  paste(c(1:67420), gsub("[^A-Z]","", getCells(cellvegc)), sep=".")
+    getCells(cellvegc)    <-  paste(c(1:67420), gsub("[^A-Z]","", getCells(cellvegc)), sep=".")
+    names(dimnames(LUH2v2_init))[1] <- "celliso"
+    names(dimnames(cellvegc))[1]    <- "celliso"
+    mapping   <- data.frame(mapping, celliso= paste(c(1:67420), gsub("[^A-Z]","", getCells(cellvegc)), sep="."), stringsAsFactors = F)
   } else {
-    mapping <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
+    mapping   <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
     countries <- unique(mapping$iso)
 
-    cellvegc <- calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "vegc", time = "average", averaging_range = 8, aggregate = FALSE, years = getYears(countrydata))
+    cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage="smoothed", aggregate = FALSE)[,getYears(countrydata),]
+    # reduce to 59199 cells and rename cells
+    cellvegc <- toolCoord2Isocell(cellvegc)
   }
 
   forests <- c("primforest", "secdforest", "forestry")
-  nature <- c(forests, "other")
+  nature  <- c(forests, "other")
   landuse <- c(nature, "urban", "crop", "past")
 
   # reduce, if nessessary to FAO
   reduce <- increase <- round(countrydata - toolCountryFill(toolAggregate(LUH2v2_init, rel = mapping, from = "celliso", to = "iso", partrel = TRUE), fill = 0), 8)
-  reduce[reduce > 0] <- 0
+  reduce[reduce > 0]     <- 0
   increase[increase < 0] <- 0
 
   LUH2v2_init <- add_columns(LUH2v2_init, "to_be_allocated", dim = 3.1)

@@ -131,7 +131,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         }
       } 
       
-      units <- c(evapotranspiration  = "m^3/ha",
+      units <- c(aet                 = "m^3/ha",
                  discharge           = "mio. m^3",
                  runoff              = "mio. m^3",
                  evap_lake           = "mio. m^3",
