@@ -49,15 +49,15 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       readin_hist <- toolSplitSubtype(readin_name, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))
       readin_hist <- paste(gsub(readin_hist$scenario,"historical",readin_hist), collapse = ":")
       
-      x     <- mbind(readSource("LPJmL_new", subtype=readin_hist, convert="onlycorrect"),
-                     readSource("LPJmL_new", subtype=readin_name, convert="onlycorrect"))
+      x     <- mbind(readSource("LPJmL_new", subtype=readin_hist, convert=FALSE),
+                     readSource("LPJmL_new", subtype=readin_name, convert=FALSE))
       
       years <- getYears(x, as.integer = TRUE)
       x     <- x[,years[years >= 1980],]
 
     } else {
       
-       x     <- readSource("LPJmL_new", subtype=readin_name, convert="onlycorrect")
+       x     <- readSource("LPJmL_new", subtype=readin_name, convert=FALSE)
        years <- getYears(x, as.integer = TRUE)
        x     <- x[,years[years >= 1930],]
     }
