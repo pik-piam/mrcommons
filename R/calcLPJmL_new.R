@@ -164,6 +164,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     
     if(stage=="smoothed"){
       out <- toolSmooth(x)
+    } else {
+      out <- x
     }
     
   } else if(stage=="harmonized"){
