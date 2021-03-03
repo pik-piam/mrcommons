@@ -8,7 +8,7 @@
 #' @examples
 #'
 #' \dontrun{
-#' readSource("LPJmL_new", subtype="LPJmL5:CRU4p02.soilc", convert="onlycorrect")
+#' readSource("LPJmL_new", convert=FALSE)
 #' }
 #'
 #' @import madrat
@@ -16,7 +16,7 @@
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split
 
-readLPJmL_new <- function(subtype="LPJmL5:CRU_4:soilc"){
+readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc"){
 
   subtype     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))$variable
   
@@ -72,7 +72,6 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4:soilc"){
   
     return(x)
   }
-  
   
   if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "aet",
                   "vegc_grass", "litc_grass", "soilc_grass", "aprec")){

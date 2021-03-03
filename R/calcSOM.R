@@ -35,7 +35,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock"){
   soilc     <-       calcOutput("LPJmlCarbon", climatetype=climatetype, landtype="nat_veg", subtype="soilc_0-30", selectyears="past_all", aggregate=FALSE)
   soilc     <- mbind(calcOutput("LPJmlCarbon", climatetype=climatetype, landtype="nat_veg", subtype="soilc_0-30", selectyears=spinup,     aggregate=FALSE), soilc)
   
-  states    <- toolCell2isoCell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])
+  states    <- toolCoord2Isocell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])
   
   #states  <- calcOutput("Croparea", sectoral="kcr", physical=TRUE, cellular=TRUE, irrigation=FALSE, aggregate=FALSE) 
   

@@ -33,7 +33,7 @@ calcSOM2 <- function(climatetype = "historical", subtype = "stock"){
   soilc      <- toolCoord2Isocell(soilc)
   soilc      <- setNames(soilc[,,1] + 1/3 * soilc[,,2], "soilc")
   
-  states       <- toolCell2isoCell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])
+  states       <- toolCoord2Isocell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])
   crops        <- c("c3ann","c4ann","c3per","c4per","c3nfx")
   crop_area    <- dimSums(states[,,crops],dim=3)
   noncrop_area <- dimSums(states,dim=3)-crop_area

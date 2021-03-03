@@ -101,10 +101,10 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         }
         
       } else if (grepl("runoff", subtype)) {
-        # In LPJmL: (monthly) runoff given in LPJmL: mm/month
-        landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
+        ## In LPJmL: (monthly) runoff given in LPJmL: mm/month
         # Transform units: liter/m^2 -> liter
-        x <- x * landarea
+        landarea <- collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3))
+        x        <- x * landarea
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
@@ -114,7 +114,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         }
         
       } else if (grepl("lake_evap|input_lake", subtype)) {
-        # In LPJmL: given in mm (=liter/m^2)
+        ## In LPJmL: given in mm (=liter/m^2)
         # Multiply by lake share
         lake_share <- readSource("LPJmLInputs", subtype="lakeshare", convert="onlycorrect")
         x          <- x * lake_share

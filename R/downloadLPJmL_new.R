@@ -9,7 +9,7 @@
 #' @examples
 #' 
 #' \dontrun{
-#' readSource("LPJmL_new", convert="onlycorrect")
+#' readSource("LPJmL_new", convert=FALSE)
 #' }
 #'
 
