@@ -35,9 +35,6 @@ stocks <- -1*stocks
 mins <- magpply(stocks, min, c(1,3))
 stocks <- stocks - mins
 
-#old implementation
-# mins <- magpply(stocks, min, c(1,3))
-# stocks1 <- stocks + mins
 
 
 description <- "stock level based on FAO harmonized stock_variation assuming lowest stock change is 0"
