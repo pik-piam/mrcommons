@@ -13,17 +13,16 @@
 #' @export
 
 
-toolIso2CellCountries <- function(x,cells="magpiecell",absolute=NULL){
+toolIso2CellCountries <- function(x, cells="magpiecell", absolute=NULL){
   
   if(cells=="magpiecell"){
-    CellToCellIso <- toolGetMapping("CountryToCellMapping.csv",type="cell")
+    CellToCellIso  <- toolGetMapping("CountryToCellMapping.csv",type="cell")
     IsoCellCountry <- unique(CellToCellIso$iso)
   } else if(cells=="lpjcell"){
-    CellToCellIso  <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",type="cell")
-    IsoCellCountry <- unique(CellToCellIso$ISO)
-    IsoCellCountry <- IsoCellCountry[-c(grep("XNL",IsoCellCountry),grep("KO-",IsoCellCountry))]
+    map            <- toolGetMappingCoord2Country()
+    IsoCellCountry <- unique(map$iso)
   }
-  y              <- x[IsoCellCountry,,]
+  y <- x[IsoCellCountry,,]
   
   if(isTRUE(absolute)) {
     total          <- dimSums(dimSums(x, dim=c(2,3)), dim=1)

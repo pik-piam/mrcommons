@@ -10,7 +10,7 @@ correctLUH2v2<-function(x,subtype){
     x[x<0]<-0
   }
 
-  if (length(getCells(x))==59199){
+  if (length(getCells(x))==59199) {
     #rename old "AFR.1"-style in new "GLO.1"-style
     getCells(x) <- paste0("GLO",substring(getCells(x),4))
     x     <- toolCell2isoCell(x)
@@ -23,6 +23,15 @@ correctLUH2v2<-function(x,subtype){
         x["JPN",bugged_years,c("pastr","range")]=x["JPN",bugged_years,c("pastr","range")] + setYears(pasture,NULL)
       } else {stop("it seems the Japan bug in LUH2v2 has been removed. Please remove the bugfix in correct LUH2v2 before proceeding!")}
     }
+  } else if (length(getCells(x))==67420) {
+    # rename to new cell name standard x.y.iso
+    x <- addLocation(x)
+    x <- collapseDim(x, dim=c("N", "cell"))
+    map         <- toolGetMappingCoord2Country()
+    x           <- x[map$coords,,]
+    getCells(x) <- paste(map$coords, map$iso, sep=".") 
+    names(dimnames(x))[1] <- "x.y.iso"
   }
+  
   return(x)
 }  

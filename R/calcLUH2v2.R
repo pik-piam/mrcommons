@@ -103,6 +103,13 @@ calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cell
     vcat(verbositiy=1,"non-existant landuse_types")
   }
   
+  # Return correct cell format for further calculations
+  
+  #### INCLUDE WHEN READ IS READY (then also include @importFrom mrcommons toolGetMappingCoord2Country)
+ # map                   <- toolGetMappingCoord2Country()
+ # LUHcroparea           <- LUHcroparea[map$coords,,]
+ # getCells(LUHcroparea) <- paste(map$iso, 1:67420, sep=".") 
+  
   return(list(
     x=x,
     weight=NULL,
