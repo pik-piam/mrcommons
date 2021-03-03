@@ -28,7 +28,9 @@ calcSOM2 <- function(climatetype = "historical", subtype = "stock"){
   
   years   <- seq(1951,2010,1)
   
-  soilc      <- calcOutput("LPJmL_new", version="LPJmL4", climatetype="CRU_4", subtype="soilc_layer", stage="raw", aggregate=FALSE, years=years)
+  soilc      <- calcOutput("LPJmL_new", version="LPJmL4_for_MAgPIE_84a69edd", climatetype="GSWP3-W5E5:historical", subtype="soilc_layer", stage="raw", aggregate=FALSE, years=years)
+  # reduce to 59199 cells and rename
+  soilc      <- toolCoord2Isocell(soilc)
   soilc      <- setNames(soilc[,,1] + 1/3 * soilc[,,2], "soilc")
   
   states       <- toolCell2isoCell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])

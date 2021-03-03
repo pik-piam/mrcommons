@@ -22,7 +22,7 @@
 
 readProductAttributes <- function(subtype="Products") {
   
-  folder <- "Version_2020/"
+  folder <- "Version_2021_03_02/"
   
   if(!is.null(tmp <- getOption("prodatt_folder"))) folder <- tmp
   

@@ -98,18 +98,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       LUHweights       <- calcOutput("LUH2MAgPIE", share = "MAGofLUH", missing="fill", aggregate = FALSE) 
       LUHcroptypes     <- c("c3ann","c4ann","c3per","c4per","c3nfx")
       
-      if(cells=="lpjcell"){
-        LUHcroparea <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
-        LUHcroparea <- addLocation(LUHcroparea)
-        LUHcroparea <- collapseDim(LUHcroparea, dim=c("N", "cell"))
-        
-        map                   <- toolGetMappingCoord2Country()
-        LUHcroparea           <- LUHcroparea[map$coords,,]
-        getCells(LUHcroparea) <- paste(map$iso, 1:67420, sep=".") 
-        
-      } else if(cells=="magpiecell"){
-        LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"),cells=cells)
-      }
+      LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"), cells=cells)
       
       LUHcroparea      <- LUHcroparea[,,LUHcroptypes]
       

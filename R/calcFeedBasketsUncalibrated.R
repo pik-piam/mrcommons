@@ -49,6 +49,7 @@ calcFeedBasketsUncalibrated <- function() {
     # esitmate the composition of the sub-baskets
     composition_main = fbask_sys_tmp[,,main][,,sys]/dimSums(fbask_sys_tmp[,,main][,,sys],dim = "kall")
     composition_anti = fbask_sys_tmp[,,anti][,,sys]/dimSums(fbask_sys_tmp[,,anti][,,sys],dim = "kall")
+    
     constant = fbask_sys_tmp[,,const][,,sys]
     constant_sum = dimSums(constant[,,sys],dim="kall")
     
@@ -58,7 +59,7 @@ calcFeedBasketsUncalibrated <- function() {
     
     reduce_constant = anti_bask
     reduce_constant[reduce_constant>0]=0
-    reduction_factor_constant=(constant_sum+reduce_constant)/constant_sum
+    reduction_factor_constant=toolConditionalReplace((constant_sum+reduce_constant)/constant_sum, "is.na()", 1)
 
     anti_bask[anti_bask<0] = 0
     main_bask = main_bask * composition_main

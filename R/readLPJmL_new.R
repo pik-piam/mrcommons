@@ -16,11 +16,11 @@
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split
 
-readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
+readLPJmL_new <- function(subtype="LPJmL5:CRU_4:soilc"){
 
   subtype     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))$variable
   
-  .prepareLPJ <- function(datatype = numeric(),
+   .prepareLPJ <- function(datatype = numeric(),
                           bytes    = 4,
                           monthly  = FALSE,
                           nbands   = NULL) { # nbands will be overwritten for clm data
@@ -38,12 +38,13 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
       nbands      <- in_header[5]            # nbands will be overwritten for clm data
       years       <- seq(start_year,start_year+nyear-1,1)
       headlines   <- 51                      # generation clm 3
+      close(filedata)
       
     } else if(file_type=="bin"){
       
       out        <- readLines("lpjml_log.out")
-      start_year <- str_trim(unlist(str_split(str_subset(out,'Output written in year:'),":")))[2]
-      end_year   <- str_trim(unlist(str_split(str_subset(out,'Last year:'),":")))[2]
+      start_year <- as.numeric(str_trim(unlist(str_split(str_subset(out,'Output written in year:'),":")))[2])
+      end_year   <- as.numeric(str_trim(unlist(str_split(str_subset(out,'Last year:'),":")))[2])
       years      <- seq(start_year,end_year,1)
       headlines  <- 0
       
@@ -66,14 +67,15 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
     
     class(x) <- "array"
     x        <- collapseNames(as.magpie(x, spatial=1))
-    x        <- addLocation(x)
-    
+    x        <- collapseDim(addLocation(x), dim="N")
+    x        <- clean_magpie(x)
+  
     return(x)
   }
   
   
-  if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "alitfalln",
-                  "vegc_grass", "litc_grass", "soilc_grass", "input_lake")){
+  if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "aet",
+                  "vegc_grass", "litc_grass", "soilc_grass", "aprec")){
 
     x <- .prepareLPJ(nbands = 1)
    
@@ -85,7 +87,7 @@ readLPJmL_new <- function(subtype="LPJmL5:CRU_4.soilc"){
 
     x <- .prepareLPJ(nbands = 5)
 
-  } else if(grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)){
+  } else if(grepl("mdischarge|mrunoff|mpet", subtype)){
     
     x <- .prepareLPJ(monthly = TRUE)
 

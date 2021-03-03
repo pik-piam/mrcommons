@@ -83,11 +83,12 @@ calcExcretion<-function(cellular=FALSE, attributes="npk"){
     CNratio            <- collapseNames(readSource("IPCC", subtype="manure_table5p5c", convert=FALSE)[,,"cn_ratio"])
     Excretion          <- add_columns(Excretion, addnm="c", dim=3.3)
     Excretion[,,"c"]   <- Excretion[,,"nr"]*CNratio
-  }
+    unit <- "Mt Nr, P, K , C"
+  } else {unit <- "Mt Nr, P, K"}
   
   return(list(x=Excretion,
               weight=NULL,
-              unit="Mt Nr, P, K (, C)",
+              unit=unit,
               min=0,
               description="Excreted nutrients per animal type and animal waste system",
               isocountries=!cellular)

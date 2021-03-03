@@ -11,27 +11,28 @@
 #' calcOutput("NitrogenFixationRateNatural")
 #' }
 #' 
-#' @importFrom magclass getRegionList<-
-#' @importFrom magclass getRegionList
+#' @importFrom madrat calcOutput
+#' @importFrom magclass collapseNames dimSums setYears
 #' @importFrom magpiesets findset
 
 calcNitrogenFixationRateNatural<-function(){
   
   years <- findset("past")
   
-  e_rate <- readSource(type = "LPJmL", subtype="LPJmL4:CRU_4.evaporation", convert="onlycorrect")[,years,]
-  t_rate <- readSource(type = "LPJmL", subtype="LPJmL4:CRU_4.transpiration", convert="onlycorrect")[,years,]
-  et_rate= dimSums(e_rate+t_rate,dim=3)
-  start_year="y1965"
+  # evapotranspiration (in m^3 per ha)
+  et_rate    <- collapseNames(calcOutput("LPJmL_new", version="LPJmL4_for_MAgPIE_84a69edd", climatetype="GSWP3-W5E5:historical", subtype="aet", stage="smoothed", aggregate=FALSE)[,years,])
+  # reduce to 59199 cells and rename cells
+  et_rate    <- toolCoord2Isocell(et_rate)
+  start_year <-"y1965"
   
-  land <- dimSums(setYears(calcOutput("LanduseInitialisation",aggregate = FALSE,cellular=TRUE)[,start_year,],NULL),dim=3)
-  et=et_rate*land
+  land <- dimSums(setYears(calcOutput("LanduseInitialisation", aggregate = FALSE, cellular=TRUE)[,start_year,],NULL), dim=3)
+  et   <- et_rate * land
   
   # calibration to global total of 58 Tg from Vitousek et al 2013,
   # assuming linear relation to evapotranspiration from Cleveland et al 1999
-  bnf=58/dimSums(setYears(et[,start_year,],NULL),dim=c(1,3))*et
-  bnf_rate=bnf/land
-  bnf_rate[is.na(bnf_rate)]=0
+  bnf <- 58 / dimSums(setYears(et[,start_year,],NULL), dim=c(1,3)) * et
+  bnf_rate                  <- bnf / land
+  bnf_rate[is.na(bnf_rate)] <- 0
   
   # in case we also have ET for pasture, we could also first calibrate with natveg and the apply to ET rates of pastures. however pasture productivtiy very uncertain
   

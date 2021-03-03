@@ -11,10 +11,13 @@
 #'   readSource("LPJmL", convert="onlycorrect")
 #' }
 #'
+#' @importFrom madrat toolConditionalReplace
+#'
+
 
 correctLPJmL_new <- function(x){
 
-  x <- toolConditionalReplace(x, conditions = c("is.na()","<0"), replaceby = 0)
+  x <- toolConditionalReplace(x, conditions = c("is.na()", "<0"), replaceby = 0)
   
   return(x)
 }

@@ -163,16 +163,11 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       LUH2v2 <- toolCell2isoCell(LUH2v2, cells = cells)
 
       if (cells == "lpjcell") {
-        mapping <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", type = "cell")
-        colnames(mapping)[colnames(mapping) == "ISO"] <- "iso"
-        mapping <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
+        mapping   <- toolGetMappingCoord2Country()
+        mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
-
-        tmp <- countrydata
-        countrydata <- new.magpie(cells_and_regions = countries, years = getYears(countrydata), names = getNames(countrydata), fill = 0)
-        countrydata[countries[!grepl("XNL", countries) & !grepl("KO-", countries)], , ] <- tmp[countries[!grepl("XNL", countries) & !grepl("KO-", countries)], , ]
       } else {
-        mapping <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
+        mapping   <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
         countries <- unique(mapping$iso)
       }
       if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")

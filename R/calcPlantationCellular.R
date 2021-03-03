@@ -3,6 +3,9 @@
 #' 
 #' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
 #' @author Abhijeet Mishra
+#' 
+#' @importFrom magclass setYears getRegions dimSums mbind
+#' 
 #' @examples
 #'
 #' \dontrun{
@@ -11,16 +14,19 @@
 
 calcPlantationCellular <- function(){
   planted_area <- readSource("FRA2020","forest_area")[,,"plantedForest"]
-  planted_area <- time_interpolate(dataset = planted_area,interpolated_year = "y1995",integrate_interpolated_years = TRUE,extrapolation_type = "linear")
+  planted_area <- time_interpolate(dataset = planted_area, interpolated_year = "y1995", integrate_interpolated_years = TRUE, extrapolation_type = "linear")
   ## VegC
-  cellvegc <- calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "vegc", time = "average", averaging_range = 8, aggregate = FALSE, years = "y1995")
+  cellvegc   <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage="smoothed", aggregate = FALSE)[,"y1995",]
+  # reduce to 59199 cells and rename cells
+  cellvegc   <- toolCoord2Isocell(cellvegc)
+  
   dist_share <- NULL
   for (reg in getRegions(cellvegc)) {
-    temp <- cellvegc[reg,,]/dimSums(cellvegc[reg,,],dim=1)
-    dist_share <- mbind(dist_share,temp)
+    temp       <- cellvegc[reg,,] / dimSums(cellvegc[reg,,], dim=1)
+    dist_share <- mbind(dist_share, temp)
   }
   planted_cell <- planted_area[getRegions(dist_share),,] * dist_share
-  out <- setYears(planted_cell[,"y1995",],NULL)
+  out          <- setYears(planted_cell[,"y1995",],NULL)
 
   return(list(
     x = out,
