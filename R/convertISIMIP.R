@@ -19,7 +19,7 @@
 
 convertISIMIP <- function(x, subtype){
   if (grepl("^airww", subtype)) {
-    landarea <- collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3))
+    landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3)), NULL)
     landarea <- collapseDim(landarea, dim="iso")
     weight   <- landarea
   } else stop("Aggregation rule for given subtype \"",subtype,"\" not defined!")
