@@ -37,8 +37,6 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes 
       readinmap <- c(lake_evap    = "mpet",  # mpet_natveg    lake_evap  = pet   * lake_shr * cell_area
                      input_lake   = "aprec", # aprec_natveg   input_lake = aprec * lake_shr * cell_area
-                     mdischarge   = "mdischarge",
-                     mrunoff      = "mrunoff",
                      discharge    = "mdischarge",
                      runoff       = "mrunoff")
 
