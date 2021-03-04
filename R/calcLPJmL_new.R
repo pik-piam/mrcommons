@@ -102,7 +102,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         
         # Annual value (total over all month)
         if (!grepl("^m", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
         
       } else if (grepl("runoff", subtype)) {
@@ -115,7 +115,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         
         # Annual value (total over all month)
         if (!grepl("^m", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
         
       } else if (grepl("lake_evap|input_lake", subtype)) {
@@ -132,7 +132,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         
         # Annual value (total over all month)
         if (grepl ("lake_evap", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
       } 
       
