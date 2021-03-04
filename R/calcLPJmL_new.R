@@ -8,7 +8,12 @@
 #' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
 #' 
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
+#' 
 #' @author Kristine Karstens, Felicitas Beier
+#' 
+#' @importFrom madrat calcOutput readSource toolSubtypeSelect toolSplitSubtype
+#' @importFrom magclass dimSums getYears setYears
+#' 
 #' @seealso
 #' \code{\link{readLPJmL}}
 #' @examples
@@ -32,10 +37,12 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes 
       readinmap <- c(lake_evap    = "mpet",  # mpet_natveg    lake_evap  = pet   * lake_shr * cell_area
                      input_lake   = "aprec", # aprec_natveg   input_lake = aprec * lake_shr * cell_area
+                     mdischarge   = "mdischarge",
+                     mrunoff      = "mrunoff",
                      discharge    = "mdischarge",
                      runoff       = "mrunoff")
 
-       subtype_in <- toolSubtypeSelect(subtype, readinmap)
+      subtype_in <- toolSubtypeSelect(subtype, readinmap)
         
     } else { subtype_in <- subtype}
     
@@ -133,11 +140,10 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       
       units <- c(aet                 = "m^3/ha",
                  discharge           = "mio. m^3",
-                 runoff              = "mio. m^3",
-                 evap_lake           = "mio. m^3",
-                 mevap_lake          = "mio. m^3",
-                 mevapotranspiration = "m^3/ha",
                  mdischarge          = "mio. m^3", 
+                 lake_evap           = "mio. m^3",
+                 input_lake          = "mio. m^3",
+                 runoff              = "mio. m^3",
                  mrunoff             = "mio. m^3")
       
       unit <- toolSubtypeSelect(subtype, units)
