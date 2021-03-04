@@ -92,7 +92,7 @@ calcLUH2v2 <- function(landuse_types="magpie", irrigation=FALSE, cellular=FALSE,
   }
   
   # Return correct cell format for further calculations
-  x <- toolCoord2Isocell(x, cells=cells)
+  if(cellular) x <- toolCoord2Isocell(x, cells=cells)
   
   #### INCLUDE WHEN READ IS READY (then also include @importFrom mrcommons toolGetMappingCoord2Country)
   # map                   <- toolGetMappingCoord2Country()
