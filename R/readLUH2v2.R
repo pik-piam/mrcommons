@@ -69,7 +69,7 @@ readLUH2v2 <- function(subtype) {
     extent(carea) <- c(-180,180,-90,90)
     
     x  <- NULL
-    for(item in data){
+    for(item in data_man){
       shr    <- subset(brick(f_states, varname=data[data[,1]==item,2]), time_sel-offset)
       ir_shr <- subset(brick(f_man,    varname=item)                  , time_sel-offset)
       #grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
