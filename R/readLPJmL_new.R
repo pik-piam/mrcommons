@@ -96,5 +96,5 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
     
   } else {stop(paste0("subtype ",subtype," is not existing"))}
 
-  return(x)
+  return(round(x, digits=10))
 }
