@@ -108,8 +108,9 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       } else if (grepl("runoff", subtype)) {
         ## In LPJmL: (monthly) runoff given in LPJmL: mm/month
         # Transform units: liter/m^2 -> liter
+        # landarea in mio. ha
         landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3)), NULL)
-        x        <- x * landarea
+        x        <- x * landarea * 1e10
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
