@@ -79,7 +79,8 @@ convertMAgPIE <- function(x, subtype) {
     
     # calculate share in agricultural land area of countries relative to MAgPIE regions
     # get agricultural land for iso-countries in 2010 from FAO
-    AgrLandIso <- calcOutput("FAOLand", aggregate = F)[,"y2010","6610|Agricultural area.area"]
+    # 6610 = "6610|Agricultural area.area" or "6610|Agricultural land.Area_(1000_ha)"
+    AgrLandIso <- calcOutput("FAOLand", aggregate = F)[,"y2010",][,,"6610",pmatch=TRUE]  
     # aggregate agricultural land to regions in regionmapping
     AgrLandReg <- toolAggregate(AgrLandIso, mapping)
     

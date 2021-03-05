@@ -22,7 +22,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
   options(magclass_sizeLimit=1e+10)
   on.exit(options(magclass_sizeLimit=sizelimit))
   
-  selectyears<-findset("past")
+  selectyears <- findset("past")
   
   if(!cellular){
     
@@ -78,7 +78,8 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     
     # use the share of the single crops to calculate their "physical" area
     if (physical) {
-      cropland        <- setNames(collapseNames(calcOutput("FAOLand", aggregate=FALSE)[,,"6620|Arable land and Permanent crops"]), "crop")
+      #6620  = (6620|Arable land and Permanent crops or  6620|Cropland)
+      cropland        <- setNames(collapseNames(calcOutput("FAOLand", aggregate=FALSE)[,,"6620", pmatch=TRUE]), "crop") 
       harvested_share <- data/dimSums(data, dim=3.1)
       commonyears     <- intersect(getYears(cropland),getYears(harvested_share))
       data            <- collapseNames(cropland[,commonyears,]*harvested_share[,commonyears,])
@@ -101,7 +102,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"), cells=cells)
       
       LUHcroparea      <- LUHcroparea[,,LUHcroptypes]
-      
+
       if(irrigation==TRUE){
         LUHcroparea <- LUHcroparea[,,"total",invert=TRUE] #if "total" is also reported magpie object grows too big (>1.3GB)
       }
