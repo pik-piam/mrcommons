@@ -115,7 +115,7 @@ calcPriceAgriculture <- function(datasource="IMPACT3.2.2World_Price"){
     isocountries <- TRUE
   } 
   else if(datasource=="FAO"){
-    out <- readSource("FAO", "PricesProducerAnnual", convert=TRUE)
+    out <- readSource("FAO_online", "PricesProducerAnnual", convert=TRUE)
     aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
     
     qprod <- collapseNames(calcOutput("FAOharmonized", aggregate=FALSE)[,,"production"])
