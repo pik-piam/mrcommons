@@ -155,7 +155,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if(grepl("irrig|cwater_b", subtype)){ 
       
       irrig_transform  <- 10
-      x[,,"irrigated"] <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
+      # select only irrigated 
+      x                <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
       unit             <- "m^3/ha"
       
     } else if(grepl("input_lake", subtype)){
