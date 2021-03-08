@@ -81,6 +81,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       x <- x*unit_transform
       unit <- "tC/ha"
       
+      if(grepl("litc", subtype)) x <- toolConditionalReplace(x, "<0", 0) 
+      
     } else if (grepl("*date*", subtype)) {
       
       unit <- "day of the year"
@@ -208,9 +210,10 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   
   return(list(
-    x=out,
-    weight=NULL,
-    unit=unit, 
-    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
-    isocountries=FALSE))
+    x            = out,
+    weight       = NULL,
+    unit         = unit, 
+    min          = 0,
+    description  = paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
+    isocountries = FALSE))
 }
