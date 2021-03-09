@@ -19,7 +19,7 @@
 #' @importFrom utils read.csv
 #' @importFrom madrat madlapply
 
-calcFAOmassbalance_pre4 <- function(years = paste0("y", seq(1965, 2010, 5))) {
+calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   #### Data input: FAO Commodity Balance ####
   CBC          <- calcOutput(type = "FAOharmonized", aggregate = FALSE)
   getSets(CBC) <- c("region", "year", "ItemCodeItem.ElementShort")
