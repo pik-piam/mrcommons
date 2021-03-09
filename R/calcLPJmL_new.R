@@ -8,7 +8,12 @@
 #' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
 #' 
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
+#' 
 #' @author Kristine Karstens, Felicitas Beier
+#' 
+#' @importFrom madrat calcOutput readSource toolSubtypeSelect toolSplitSubtype
+#' @importFrom magclass dimSums getYears setYears
+#' 
 #' @seealso
 #' \code{\link{readLPJmL}}
 #' @examples
@@ -28,14 +33,14 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   if(stage%in%c("raw","smoothed")){
     
-    if (subtype%in%c("discharge|runoff|lake_evap|input_lake")) {
+    if (subtype%in%c("discharge","runoff","lake_evap","input_lake")) {
       # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes 
       readinmap <- c(lake_evap    = "mpet",  # mpet_natveg    lake_evap  = pet   * lake_shr * cell_area
                      input_lake   = "aprec", # aprec_natveg   input_lake = aprec * lake_shr * cell_area
                      discharge    = "mdischarge",
                      runoff       = "mrunoff")
 
-       subtype_in <- toolSubtypeSelect(subtype, readinmap)
+      subtype_in <- toolSubtypeSelect(subtype, readinmap)
         
     } else { subtype_in <- subtype}
     
@@ -76,6 +81,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       x <- x*unit_transform
       unit <- "tC/ha"
       
+      if(grepl("litc", subtype)) x <- toolConditionalReplace(x, "<0", 0) 
+      
     } else if (grepl("*date*", subtype)) {
       
       unit <- "day of the year"
@@ -97,24 +104,25 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         
         # Annual value (total over all month)
         if (!grepl("^m", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
         
       } else if (grepl("runoff", subtype)) {
-        # In LPJmL: (monthly) runoff given in LPJmL: mm/month
-        landarea <- dimSums(calcOutput("LUH2v2", landuse_types="magpie", aggregate=FALSE, cellular=TRUE, cells="lpjcell", irrigation=FALSE, years="y1995"), dim=3)
+        ## In LPJmL: (monthly) runoff given in LPJmL: mm/month
         # Transform units: liter/m^2 -> liter
-        x <- x * landarea
+        # landarea in mio. ha
+        landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3)), NULL)
+        x        <- x * landarea * 1e10
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
         # Annual value (total over all month)
         if (!grepl("^m", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
         
       } else if (grepl("lake_evap|input_lake", subtype)) {
-        # In LPJmL: given in mm (=liter/m^2)
+        ## In LPJmL: given in mm (=liter/m^2)
         # Multiply by lake share
         lake_share <- readSource("LPJmLInputs", subtype="lakeshare", convert="onlycorrect")
         x          <- x * lake_share
@@ -127,17 +135,16 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
         
         # Annual value (total over all month)
         if (grepl ("lake_evap", subtype)) {
-          x <- dimSums(x, dim=3.2)  
+          x <- dimSums(x, dim=3)  
         }
       } 
       
       units <- c(aet                 = "m^3/ha",
                  discharge           = "mio. m^3",
-                 runoff              = "mio. m^3",
-                 evap_lake           = "mio. m^3",
-                 mevap_lake          = "mio. m^3",
-                 mevapotranspiration = "m^3/ha",
                  mdischarge          = "mio. m^3", 
+                 lake_evap           = "mio. m^3",
+                 input_lake          = "mio. m^3",
+                 runoff              = "mio. m^3",
                  mrunoff             = "mio. m^3")
       
       unit <- toolSubtypeSelect(subtype, units)
@@ -151,7 +158,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if(grepl("irrig|cwater_b", subtype)){ 
       
       irrig_transform  <- 10
-      x[,,"irrigated"] <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
+      # select only irrigated 
+      x                <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
       unit             <- "m^3/ha"
       
     } else if(grepl("input_lake", subtype)){
@@ -202,9 +210,10 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   
   return(list(
-    x=out,
-    weight=NULL,
-    unit=unit, 
-    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
-    isocountries=FALSE))
+    x            = out,
+    weight       = NULL,
+    unit         = unit, 
+    min          = 0,
+    description  = paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
+    isocountries = FALSE))
 }

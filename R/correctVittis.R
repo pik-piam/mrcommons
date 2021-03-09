@@ -17,9 +17,9 @@ correctVittis <- function(x) {
 
   # machinery costs for sorghum, rice, groundnut are not available, and therefore
   # Vittis provides machinery costs for crops the are assumed to have similar costs
-  x[, , list("sorg", "ME")] <- x[, , list("oats", "ME")]
-  x[, , list("rice", "ME")] <- x[, , list("barl", "ME")]
-  x[, , list("grou", "ME")] <- x[, , list("rape", "ME")]
+  x[, , list("sorg", "Machinery")] <- x[, , list("oats", "Machinery")]
+  x[, , list("rice", "Machinery")] <- x[, , list("barl", "Machinery")]
+  x[, , list("grou", "Machinery")] <- x[, , list("rape", "Machinery")]
 
   # remove obsolete crop categories
   x <- x[, , c("wheat", "bar", "potato", "corn", "oats", "rape"), invert = TRUE]

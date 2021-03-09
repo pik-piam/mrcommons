@@ -19,28 +19,17 @@
 #' @importFrom magclass getNames
 #' @importFrom magpiesets findset
 
-calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cells="magpiecell",selectyears="past"){
+calcLUH2v2 <- function(landuse_types="magpie", irrigation=FALSE, cellular=FALSE, cells="magpiecell", selectyears="past") {
   
   
   selectyears <- sort(findset(selectyears,noset = "original"))
   
   if (cellular){
-    if (cells=="lpjcell"){
-      x <- readSource("LUH2v2",subtype = "states_lpjcell",convert="onlycorrect")[,selectyears,]
-      getSets(x) <- c("iso","cell","t","landuse")   
-    } else if(cells=="magpiecell"){
-      x <- readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,selectyears,]
-      getSets(x) <- c("fake","lpjcell","t","landuse")   
-    }
-    
+    x <- readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,selectyears,]
+    getSets(x, fulldim = FALSE) <- gsub("data","landuse",getSets(x, fulldim = FALSE))   
     if (irrigation){
-      if (cells=="lpjcell"){
-        y<-readSource("LUH2v2",subtype="irrigation_lpjcell",convert="onlycorrect")[,selectyears,]
-      } else if(cells=="magpiecell"){
-        y<-readSource("LUH2v2",subtype="irrigation",convert="onlycorrect")[,selectyears,]
-      }
+      y <- readSource("LUH2v2",subtype="irrigation",convert="onlycorrect")[,selectyears,]
     }
-    
   } else {
     x <- readSource("LUH2v2",subtype = "states",convert=TRUE)[,selectyears,]
     getSets(x) <- c("iso","t","landuse")
@@ -48,7 +37,6 @@ calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cell
       y <- readSource("LUH2v2",subtype="irrigation",convert=TRUE)[,selectyears,]
     }
   }
-  
   
   if (irrigation){
     if(is.null(selectyears)){vcat(verbosity = 3,"too many years may lead to memory problems if irrigation=T")}
@@ -73,7 +61,7 @@ calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cell
     # assign to y
     y[,,"irrig_c3ann"] <- y[,,"flood"]+(1-y[,,"flood"])*frac_irrig
     y[,,paste0("irrig_",cropsWOc3ann)] <- frac_irrig
-
+    
     y<-y[,,c("irrig_c3ann","irrig_c3per" ,"irrig_c4ann","irrig_c4per","irrig_c3nfx")]
     getNames(y)<-substring(getNames(y),7)
     x<-add_dimension(x,dim = 3.2,add = "irrigation",nm = "total")
@@ -104,11 +92,12 @@ calcLUH2v2<-function(landuse_types="magpie",irrigation=FALSE,cellular=FALSE,cell
   }
   
   # Return correct cell format for further calculations
+  if(cellular) x <- toolCoord2Isocell(x, cells=cells)
   
   #### INCLUDE WHEN READ IS READY (then also include @importFrom mrcommons toolGetMappingCoord2Country)
- # map                   <- toolGetMappingCoord2Country()
- # LUHcroparea           <- LUHcroparea[map$coords,,]
- # getCells(LUHcroparea) <- paste(map$iso, 1:67420, sep=".") 
+  # map                   <- toolGetMappingCoord2Country()
+  # LUHcroparea           <- LUHcroparea[map$coords,,]
+  # getCells(LUHcroparea) <- paste(map$iso, 1:67420, sep=".") 
   
   return(list(
     x=x,
