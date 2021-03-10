@@ -57,7 +57,7 @@ calcFoodSupplyPast<-function(per_capita=TRUE, products=NULL, product_aggr=FALSE,
     if (populationweight=="PopulationPast"){
       weight=collapseNames(calcOutput("PopulationPast",aggregate = FALSE))
     }else if (populationweight=="FAO"){
-      weight <- collapseNames(readSource(type="FAO",subtype = "Pop",convert = T)[,getYears(kcal),"population"])/1000000
+      weight <- collapseNames(readSource(type="FAO_online",subtype = "Pop",convert = T)[,getYears(kcal),"Total_Population_Both_sexes_(persons)"])/1000000
     }
     weight<-weight[,getYears(kcal),]
     out=kcal/weight/365*1000000
