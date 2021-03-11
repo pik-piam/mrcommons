@@ -167,9 +167,9 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     
     # move from "from" to "process" and clear "from"
     if (from != process) {
-      object[, , list(process, goods_in)] <- object[, , list(from, goods_in)]
+      object[, , list(goods_in, process)] <- object[, , list(goods_in, from)]
     }
-    object[, , list(from, goods_in)] <- 0  # if from == process it is "intermediate" which is to be cleared as well
+    object[, , list(goods_in, from)] <- 0  # if from == process it is "intermediate" which is to be cleared as well
     
     return(object)
   }
@@ -200,7 +200,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     if (length(from) > 1 || length(report_as) > 1 || length(good_in) > 1 || length(good_out) > 1) {
       stop("please only use one item each for \"from\", \"report_as\", \"good_in\", and \"good_out\"" )
     }
-    if (any(object[, , good_in][, , c(report_as, residual)] != 0)) {
+    if (any(object[, , list(good_in, c(report_as, residual))] != 0)) {
       warning("Output flows already exist!")
     }
     
@@ -208,7 +208,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     attr_no_wm <- setdiff(attribute_types, "wm")
     
     # calculating possible extraction quantity per attribute
-    attributes_from   <- dimSums(object[, , list(from, good_in), drop = T], dim = "region") / dimSums(object[, , list(from, good_in, extraction_attribute), drop = TRUE], dim = c("region"))
+    attributes_from   <- dimSums(object[, , list(good_in, from), drop = T], dim = "region") / dimSums(object[, , list(good_in, from, extraction_attribute), drop = TRUE], dim = c("region"))
     attributes_to     <- prod_attributes[, , good_out, drop = T] / prod_attributes[, , list(good_out, extraction_attribute), drop = TRUE]
     extraction_factor <- attributes_from[, , attr_no_wm] / attributes_to[, , attr_no_wm]
     
@@ -221,13 +221,13 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     }
     
     # calculate outputs
-    extracted <- object[, , list(from, good_in, extraction_attribute), drop = TRUE] * extraction_quantity * attributes_to
+    extracted <- object[, , list(good_in, from, extraction_attribute), drop = TRUE] * extraction_quantity * attributes_to
     losses    <- dimSums(object[, , list(good_in, from)], dim = "ElementShort") - extracted
     
     object[, , list(good_in, report_as)] <- extracted
     object[, , list(good_in, residual)]  <- losses
     
-    object[, , list("production_estimated", good_out)] <- object[, , list("production_estimated", good_out)] + extracted
+    object[, , list(good_out, "production_estimated")] <- object[, , list(good_out, "production_estimated")] + extracted
     
     # check results and clear processed position
     object <- .check_and_clear(object, good_in, from, process, report_as, residual, attr_no_wm) 
@@ -258,7 +258,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
       stop("Output flows already exist.")
     }
     
-    # attributes relevant for checking massbalance and conv_factor´
+    # attributes relevant for checking massbalance and conv_factor
     relevant_attributes <- setdiff(attribute_types, "wm")
     
     # calculate global conversion factor per attributes
@@ -272,8 +272,8 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     
     # estimate outputs
     .estim_outputs <- function(j) {
-      object[, , list(report_as[j], goods_in)] <<- dimSums(object[, , list(goods_in, from)], dim = "ElementShort") * conv_factor[, , goods_out[j], drop = TRUE]
-      object[, , list("production_estimated", goods_out[j])] <<- dimSums(object[, , list(report_as[j], goods_in)], dim = c("ElementShort", "ItemCodeItem"))
+      object[, , list(goods_in, report_as[j])] <<- dimSums(object[, , list(goods_in, from)], dim = "ElementShort") * conv_factor[, , goods_out[j], drop = TRUE]
+      object[, , list(goods_out[j], "production_estimated")] <<- dimSums(object[, , list(goods_in, report_as[j])], dim = c("ElementShort", "ItemCodeItem"))
     }
     
     invisible(lapply(c(1:length(goods_out)), .estim_outputs))
@@ -295,7 +295,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   # ratio of bran to full cereal as given by Feedipedia.
   .cereal_milling_global <- function(object) {
     
-    cereals<-c("2511|Wheat and products", 
+    cereals <- c("2511|Wheat and products", 
                  "2513|Barley and products", 
                  "2514|Maize and products",
                  "2515|Rye and products", 
@@ -310,7 +310,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     flour   <- "flour1"
     process <- "milling"
     
-    if (any(object[, , cereals][, , c(flour, "brans1", "branoil1")] != 0)) {
+    if (any(object[, , list(cereals, c(flour, "brans1", "branoil1"))] != 0)) {
       stop("Output flows already exist.")
     }
     
@@ -331,18 +331,18 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     
     # bran estimation
     bran_estimated <- bran_ratio * dimSums(object[, , list(cereals, milled)][, , "dm"], dim = "attributes") * bran_attributes
-    object[, , list("brans1", cereals)]             <- dimSums(bran_estimated[, , cereals], dim = c("ElementShort"))
-    object[, , list("production_estimated", brans)] <- dimSums(bran_estimated[, , cereals], dim = c("ItemCodeItem", "ElementShort"))
-    object[, , list(flour, cereals)]                <- object[, , list(milled, cereals)] - bran_estimated
+    object[, , list(cereals, "brans1")]             <- dimSums(bran_estimated[, , cereals], dim = c("ElementShort"))
+    object[, , list(brans, "production_estimated")] <- dimSums(bran_estimated[, , cereals], dim = c("ItemCodeItem", "ElementShort"))
+    object[, , list(cereals, flour)]                <- object[, , list(cereals, milled)] - bran_estimated
     
     # branoil estimation
     .branoil1_production <- function(object, branoilItem, cropItem) {
       branoil_ratio <- (dimSums(object[, , list(branoilItem, "production")], dim = c("region", "ItemCodeItem", "ElementShort"))  
                         / dimSums(milled_global[, , cropItem], dim = "ItemCodeItem"))
       estimated_branoil <- object[, , list(cropItem, milled)] * branoil_ratio
-      object[, , list("branoil1", cropItem)]                <- dimSums(estimated_branoil[, , cropItem], dim = c("ElementShort"))
-      object[, , list("production_estimated", branoilItem)] <- dimSums(estimated_branoil[, , cropItem], dim = c("ItemCodeItem", "ElementShort"))
-      object[, , list(flour, cropItem)]                     <- object[, , list(flour, cropItem)] - estimated_branoil
+      object[, , list(cropItem, "branoil1")]                <- dimSums(estimated_branoil[, , cropItem], dim = c("ElementShort"))
+      object[, , list(branoilItem, "production_estimated")] <- dimSums(estimated_branoil[, , cropItem], dim = c("ItemCodeItem", "ElementShort"))
+      object[, , list(cropItem, flour)]                     <- object[, , list(cropItem, flour)] - estimated_branoil
       return(object)
     }
     
@@ -384,7 +384,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     Balat M and Balat H 2009 Recent trends in global production and utilization of bio-ethanol fuel Applied Energy 86 2273-82
     "
     
-    # Wheat instead of tece would be more correct, but we need to have homogenous products
+    # Wheat instead of tece would be more correct, but we need to have homogeneous products
     tece <- relationmatrix[relationmatrix[, 2] == "tece", 1]
     tece_maize <- c(tece, "2514|Maize and products")
     
@@ -398,7 +398,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     extraction_quantity_tece_maize         <- 0.789 * ethanol_yield_liter_per_ton_tece_maize / 1000
     extraction_quantity_sugarcane          <- 0.789 * ethanol_yield_liter_per_ton_sugarcane / 1000
     
-    # ethanol processing from tece and maize (ethanol1, distilles_grain, and distillingloss)
+    # ethanol processing from tece and maize (ethanol1, distillers_grain, and distillingloss)
     .extract_grain_loss <- function(j) {
       object <<- .extract_good_from_flow(object = object,
                                          good_in = tece_maize[j],
@@ -635,8 +635,8 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     cakes_out <- list("2593|Rape and Mustard Cake", "2596|Copra Cake", "2597|Sesameseed Cake","2598|Oilseed Cakes, Other")
     
     .harmonize1 <- function(from) {
-      factor <- dimSums(CBCflows[, , unlist(goods_in)][, , from], dim = c(1, 3.1, 3.2)) / dimSums(CBCflows[, , unlist(goods_in)][, , "extracting"], dim = c(1, 3.1, 3.2))
-      CBCflows[, , unlist(goods_in)][, , from] <<- dimSums(CBCflows[, , unlist(goods_in)][, , "extracting"], dim = 3.2) * factor
+      factor <- dimSums(CBCflows[, , list(unlist(goods_in), from)], dim = c(1, 3.1, 3.2)) / dimSums(CBCflows[, , list(unlist(goods_in), "extracting")], dim = c(1, 3.1, 3.2))
+      CBCflows[, , list(unlist(goods_in), from)] <<- dimSums(CBCflows[, , list(unlist(goods_in), "extracting")], dim = 3.2) * factor
     }
     
     invisible(lapply(c("oil1", "oilcakes1", "extractionloss"), .harmonize1))
