@@ -7,6 +7,7 @@
 #' are mapped to MAgpIE crop types using mappingLUH2cropsToMAgPIEcrops.csv. Harvested areas of FAO weight area within a specific LUH crop type to devide into MAgPIE crop types.
 #' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param irrigation if true, the cellular areas are returned sperated by irrigated and rainfed. More about irrigation setup in calcLUH2v2 
+#' @param years years to be estimated.
 #'
 #' @return areas of individual crops from FAOSTAT and weight
 #' @author Ulrich Kreidenweis, Kristine Karstens, Felicitas Beier
@@ -15,8 +16,7 @@
 #' @importFrom magpiesets findset addLocation
 #' @importFrom madrat toolAggregate toolGetMapping
 
-
-calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="magpiecell", irrigation=FALSE) {
+calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="magpiecell", irrigation=FALSE, years=NULL) {
   
   sizelimit <- getOption("magclass_sizeLimit")
   options(magclass_sizeLimit=1e+10)
@@ -33,8 +33,8 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     #################################
     
     if (!is.null(sectoral) & !(sectoral=="lpj")) {
-      CropPrim <- readSource("FAO", "Crop")[,selectyears,"area_harvested"]
-      Fodder <- readSource("FAO", "Fodder")[,selectyears,"area_harvested"]
+      CropPrim <- readSource("FAO_online", "Crop")[,,"area_harvested"]
+      Fodder   <- readSource("FAO", "Fodder")[,,"area_harvested"]
 
       data <- toolFAOcombine(CropPrim, Fodder)
       data <- data[,,"(Total)", pmatch=TRUE, invert=TRUE]
