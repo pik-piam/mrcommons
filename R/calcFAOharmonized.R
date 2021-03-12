@@ -1,57 +1,43 @@
-## old concept:
-# take Production values from ProdSTAT, and substitute CB values by these if they more or less agree. This is not done anymore.
-
-## newer concept:
-# All values are based on CB
-# Only harvested areas are taken from ProdSTAT
-
-
-
-
-#' Calculate harmonized FAO Commodity Balance and Food Supply data
+#' @title calcFAOharmonized
+#' @description Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas are taken from ProdSTAT. 
+#'              This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 #' 
-#' This functions adds the CBCrop, CBLive, FSCrop and FSLive data together
-#' 
-#' 
-#' @return FAO harmonized data, weight as NULL, and a description as as a list
-#' of MAgPIE objects
-#' @author Ulrich Kreidenweis
-#' @seealso \code{\link{calcOutput}}
+#' @return FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
+#' @author Ulrich Kreidenweis, David Chen, Kristine Karstens
 #' @examples
 #' 
 #' \dontrun{ 
 #' a <- calcOutput("FAOharmonized")
 #' 
 #' }
-#' @importFrom utils read.csv
+#' 
 #' @importFrom magclass fulldim
 
 calcFAOharmonized <- function () {
   
 
   # input data: Commodity Balance (Crops Primary + Livestock Primary), Food Supply (Crops Primary + Livestock Primary)
-  CBCrop <- readSource("FAO", "CBCrop")
-  CBLive <- readSource("FAO", "CBLive")
-  FSCrop <- readSource("FAO", "FSCrop")
-  FSLive <- readSource("FAO", "FSLive")
-      
+  CBCrop <- readSource("FAO_online", "CBCrop")
+  CBLive <- readSource("FAO_online", "CBLive")
+  FSCrop <- readSource("FAO_online", "FSCrop")
+  FSLive <- readSource("FAO_online", "FSLive")
+  
   CB <- toolFAOcombine(CBLive,CBCrop, combine="Item")
   FS <- toolFAOcombine(FSLive,FSCrop, combine="Item")
   rm(CBCrop, CBLive, FSCrop, FSLive)
   
   FAOdata <- mbind(CB, FS)
-  rm(CB, FS); gc()
   
-  
-  ## in addition harvested area from Crops Primary
+   ## in addition harvested area from Crops Primary
 
-  Prod <- readSource("FAO", "Crop", convert=TRUE)
+  Prod <- readSource("FAO_online", "Crop", convert=TRUE)
 
   ## aggregate Prod to CB units
 
-  aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
-  
-  Prod <- Prod[,,"(Total)", pmatch=T, invert=T]
+  aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where="mappingfolder")
+  #remove  aggregate categories   
+  remove <- setdiff(getNames(Prod, dim=1), aggregation$ProductionItem)
+  Prod <- Prod[,,remove,invert=T]
   
   area_harvested <- toolAggregate(Prod, rel=aggregation, from="ProductionItem", to="FoodBalanceItem", dim=3.1, partrel=T)[,,"area_harvested"]
 
@@ -70,9 +56,14 @@ calcFAOharmonized <- function () {
   Fodder <- readSource("FAO", "Fodder")
   Fodder <- add_columns(x = Fodder,addnm = "domestic_supply",dim = 3.2)
   Fodder[,,"domestic_supply"]<-Fodder[,,"feed"]
-  Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem", to="FoodBalanceItem", dim=3.1, partrel=T)
+  Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem", 
+                                    to="FoodBalanceItem", dim=3.1, partrel=T)
 
-  FAOdata <- mbind(FAOdata, Fodderaggregated)
+newyears <- setdiff(getYears(FAOdata),getYears(Fodderaggregated))
+  
+Fodderaggregated <- toolHoldConstant(Fodderaggregated, years=newyears)  
+
+FAOdata <- mbind(FAOdata, Fodderaggregated)
   
   rm(Fodder, Fodderaggregated); gc()
   
