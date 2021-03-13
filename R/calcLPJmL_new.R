@@ -81,7 +81,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       x <- x*unit_transform
       unit <- "tC/ha"
       
-      if(grepl("litc", subtype)) x <- toolConditionalReplace(x, "<0", 0) 
+      if(grepl("litc|soilc_layerl", subtype)) x <- toolConditionalReplace(x, "<0", 0) 
       
     } else if (grepl("*date*", subtype)) {
       
