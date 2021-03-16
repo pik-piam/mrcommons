@@ -44,7 +44,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
   if (!grep("Pasture", x$version, ignore.case = T)){
     storage   <- "/p/projects/landuse/users/cmueller/"
   } else {
-    storage   <- "C:/magpie_inputdata/sources/LPJML/"
+    storage   <- "/p/projects/rd3mod/inputdata/sources/LPJmL/"
   }
   
   
