@@ -2,16 +2,17 @@
 #' @description Download LPJmL content by version, climate model and scenario
 #' 
 #' @param subtype Switch between different input
-#' It consists of LPJmL version, climate model, scenario and variable 
-#' (e.g. 'LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:historical:soilc')
+#' It consists of LPJmL version, climate model, scenario and variable. 
+#' For pasture lpjml runs, the scenario variable is used to navigate the output folder structure 
+#' (e.g. 'LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:historical:soilc' or "LPJmL5.2_Pasture:IPSL_CM6A_LR:ssp126_co2_limN_00:soilc_past_hist")
 #' @return metadata entry
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Marcos Alves
 #' @examples
 #' 
 #' \dontrun{
 #' readSource("LPJmL_new", convert=FALSE)
 #' }
-#'
+#' @importFrom utils head
 
 downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
   
@@ -34,21 +35,30 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
              mrunoff            = "mrunoff_natveg",
              vegc_grass         = "mean_vegc_mangrass",
              litc_grass         = "litc_mangrass",
-             soilc_grass        = "soilc_mangrass"
+             soilc_grass        = "soilc_mangrass",
+             soilc_past_hist    = "soilc_hist",
+             soilc_past_scen    = "soilc_scen"
   )
   
-  storage   <- "/p/projects/landuse/users/cmueller/"
-  path      <- paste(x$version, x$climatemodel, gsub("_", "/", x$scenario), sep = "/")
-  file      <- grep(toolSubtypeSelect(x$variable, files), list.files(paste0(storage,path)), value=TRUE)
-  file_path <- paste0(storage, path, "/", file)
+  # handling the separate sources of grass runs
+  if (!grep("Pasture", x$version, ignore.case = T)){
+    storage   <- "/p/projects/landuse/users/cmueller/"
+  } else {
+    storage   <- "C:/magpie_inputdata/sources/LPJML/"
+  }
+  
+  
+  path        <- paste(x$version, x$climatemodel, gsub("_", "/", x$scenario), sep = "/")
+  list_files  <- list.files(paste0(storage,path))
+  file        <- grep(toolSubtypeSelect(x$variable, files), list_files, value=TRUE)
+  file_path   <- paste0(storage, path, "/", file)
   
   if(file.exists(file_path)){  
     file.copy(file_path, file)
-    file.copy(paste0(storage, path, "/lpjml_log.out"), "lpjml_log.out")
+    file.copy(paste0(storage, path,"/",head(grep(".out", list_files, value = T), n = 1)), "lpjml_log.out")
   } else {
     stop("Data is not available so far!")
   }
-  
   
   .getMetadata <- function(dataset, version) {
     out <- list(doi = NULL, version = NULL, title = NULL, description = NULL)
@@ -61,7 +71,8 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
               doi           = NULL,
               title         = x$version,
               author        = list(person("Christoph", "Mueller", email = "cmueller@pik-potsdam.de"),
-                                   person("Jens",      "Heinke", email = "heinke@pik-potsdam.de")),
+                                   person("Jens",      "Heinke", email = "heinke@pik-potsdam.de"),
+                                   person("Stephen",   "Writh",  email = "wirth@pik-potsdam.de")),
               version       = x$version,
               release_date  = NULL,
               description   = NULL,
