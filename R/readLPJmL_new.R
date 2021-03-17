@@ -42,8 +42,8 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
       close(filedata)
 
     } else if(file_type=="bin"){
-
-      out        <- readLines("lpjml_log.out")
+      outfile    <- grep(".out", list.files(), value = T) %>% head(1)
+      out        <- readLines(outfile)
       start_year <- out %>% str_subset('Output written in year:') %>% str_split(":") %>% unlist() %>%  str_trim() %>% subset(c(F,T)) %>% as.numeric()
       end_year   <- out %>% str_subset('Last year:') %>% str_split(":") %>% unlist() %>% str_trim() %>% subset(c(F,T)) %>% as.numeric()
       years      <- seq(start_year,end_year,1)
