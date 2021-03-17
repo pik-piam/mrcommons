@@ -16,7 +16,6 @@
 #' @importFrom stringr str_detect
 
 downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
-  subtype = "LPJmL5.2_Pasture:IPSL_CM6A_LR:ssp126_co2_limN_00:soilc_past_hist"
   x     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))
   files <- c(soilc              = "soilc_natveg",
              soilc_layer        = "soilc_layer_natveg",
@@ -46,7 +45,6 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
     storage   <- "/p/projects/landuse/users/cmueller/"
   } else {
     storage   <- "/p/projects/rd3mod/inputdata/sources/LPJmL/"
-    storage   <- "C:/magpie_inputdata/sources/LPJML/"
   }
   
   path        <- paste(x$version, x$climatemodel, gsub("_", "/", x$scenario), sep = "/")
