@@ -33,7 +33,7 @@ calcFractionInputsUSDA <- function(products = "kcr") {
   crop_prod_vop <- VoP_All[, , "2041|Crops (PIN).Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"] # mio.ton. VoP for crops
   lvst_prod_vop <- VoP_All[, , "2044|Livestock (PIN).Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"] # mio. ton. VoP for livestock
   
-  # costs devision between crops and livestock
+  # costs division between crops and livestock
   shared_input <- c("Machinery", "AG_Labour", "revenue") # factors that convene livestock and crops production
   crop_only <- c("AG_Land", "Materials_Crops") # inputs assumed to be dedicated specifically to crop production
   lvst_only <- c("Materials_Animals") # inputs assumed to be dedicated specifically to livestock production
