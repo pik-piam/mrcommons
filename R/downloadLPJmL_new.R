@@ -56,7 +56,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
     output_files <- grep(".out", list_files, value = T)
     files_out <- file.path(storage, path, output_files)
     x <- sapply(files_out, readLines)
-    out <- sapply(x, function(x) any(str_detect(x, file)))
+    out <- sapply(x, function(x) any(stringr::str_detect(x, file)))
     return(output_files[out])
   }
   
