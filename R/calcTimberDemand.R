@@ -40,6 +40,47 @@ calcTimberDemand <- function(){
   ## Rename "Particle board and OSB (1961-1994)" to "Particle board and OSB"
   getNames(x,dim="ItemCodeItem") <- gsub(pattern = "Particle board and OSB \\(1961-1994\\)",replacement = "Particle board and OSB",x = getNames(x,dim="ItemCodeItem"))
   
+  ## Pulpwood category is strangely split in data because it'll be a miracle if FAO could stick to consistent naming
+  ## we now merge this in one
+  pulpwood_names <- grep(pattern = "Pulpwood",x = getNames(x,dim=1),value = TRUE)
+  
+  ## isolate all pulpwood data
+  pulpwood_data <- x[,,pulpwood_names]
+  
+  ## Repitition of export, import data and unnecessary split has been made in three categories
+  ## "Pulpwood and particles (1961-1997).export_m3" and "Pulpwood, round and split, all species (export/import, 1961-1989).export_m3"
+  ## report the same data. We can just use "Pulpwood and particles (1961-1997).export_m3"
+  pulpwood_export <- pulpwood_data[,,"Pulpwood and particles (1961-1997).export_m3"]
+  pulpwood_import <- pulpwood_data[,,"Pulpwood and particles (1961-1997).import_m3"]
+  ## Merge production data
+  pulpwood_production <- pulpwood_data[,,"Pulpwood and particles (1961-1997).production"] + setNames(pulpwood_data[,,"Pulpwood, round and split, all species (production).production"],NULL)
+  
+  ## Corrected pulpwood data
+  pulpwood <- mbind(pulpwood_production,pulpwood_export,pulpwood_import)
+  getNames(pulpwood,dim=1) <- "Pulpwood"
+  
+  ## Pulpwood export and import data is not available after 1989 (from 1990)
+  last_share_export <- collapseNames(pulpwood[,1989,"export_m3"]/pulpwood[,1989,"production"])
+  last_share_export[is.na(last_share_export)] <- 0
+  last_share_export[last_share_export>1] <- 1 ## COG exports more than production??
+  
+  last_share_import <- collapseNames(pulpwood[,1989,"import_m3"]/pulpwood[,1989,"production"])
+  last_share_import[is.na(last_share_import)] <- 0
+  last_share_import[last_share_import>1] <- 1 
+  
+  pulpwood[,1990:2019,"export_m3"] <- pulpwood[,1990:2019,"production"] * last_share_export
+  pulpwood[,1990:2019,"import_m3"] <- pulpwood[,1990:2019,"production"] * last_share_import
+  ## Pulpwood export import data is not reported 
+  
+  ## remove pulpwood data fom raw data momentarily
+  x <- x[,,pulpwood_names,invert=TRUE]
+  
+  ## Add back pulpwood
+  x <- mbind(x,pulpwood)
+  
+  # Sort naming
+  x <- x[,,sort(getNames(x,dim=1))]
+  
   ## Extract variables we need and only choose variables which which have data for all three categories:
   ## Production in m3
   ## Import in m3
@@ -48,7 +89,7 @@ calcTimberDemand <- function(){
   
   variables_needed <- c("Roundwood",
                         "Industrial roundwood","Wood fuel",
-                        "Other industrial roundwood","Pulpwood, round and split, all species (production)",
+                        "Other industrial roundwood","Pulpwood",
                         "Sawlogs and veneer logs","Fibreboard","Particle board and OSB",
                         "Wood pulp","Sawnwood","Plywood","Veneer sheets","Wood-based panels")
   
@@ -65,14 +106,11 @@ calcTimberDemand <- function(){
   import     <- timber_fao[,,grep(pattern = "import"    ,x = getNames(timber_fao,dim = "ElementShort"),value = TRUE)]
   export     <- timber_fao[,,grep(pattern = "export"    ,x = getNames(timber_fao,dim = "ElementShort"),value = TRUE)]
   
-  ## Now we get rid of big name string of pulpwood
-  getNames(production) <- gsub(x = getNames(production),pattern = "Pulpwood, round and split, all species \\(production)",replacement = "Pulpwood")
+  ## Next step is to convert wood pulp from t to m3
   
-  ## Next step is to convert wood pulp from mio t to m3
-  
-  production[,,"Wood pulp"] <- production[,,"Wood pulp"] * 1000000 * 1000 / 450  ## 10^6 * 10^3 for mio t to kg. 450 for kg to m3
-  import[,,"Wood pulp"] <- import[,,"Wood pulp"] * 1000000 * 1000 / 450  ## 10^6 * 10^3 for mio t to kg. 450 for kg to m3
-  export[,,"Wood pulp"] <- export[,,"Wood pulp"] * 1000000 * 1000 / 450  ## 10^6 * 10^3 for mio t to kg. 450 for kg to m3
+  production[,,"Wood pulp"] <- production[,,"Wood pulp"] * 1000 / 450  ## 10^3 for t to kg. 450 for kg to m3
+  import[,,"Wood pulp"] <- import[,,"Wood pulp"] * 1000 / 450  ## 10^3 for t to kg. 450 for kg to m3
+  export[,,"Wood pulp"] <- export[,,"Wood pulp"] * 1000 / 450  ## 10^3 for t to kg. 450 for kg to m3
   
   ## Remove all units as now everything is converted to m3
   getNames(production,dim="ElementShort") <- gsub(pattern = "_m3",replacement = "",x = getNames(production,dim="ElementShort"))
