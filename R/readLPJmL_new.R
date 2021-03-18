@@ -91,7 +91,7 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
 
     x <- .prepareLPJ(monthly = TRUE)
 
-  } else if(grepl("harvest|irrig|cwater_b", subtype)){
+  } else if(grepl("harvest|irrig|cwater_b|grass_pft", subtype)){
 
     x <- .prepareLPJ(nbands = 32)
 
