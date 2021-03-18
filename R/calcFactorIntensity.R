@@ -38,21 +38,19 @@ calcFactorIntensity <- function(output="intensities", method = "USDA") {
       VoP_perTon[!is.finite(VoP_perTon)]<-0
       
       #Fraction of each capital and labour input in overall value of production
-      fraction_capital<-calcOutput("FractionInputsUSDA",aggregate = FALSE)[,,"Capital"]
-      fraction_labor<-calcOutput("FractionInputsUSDA",aggregate = FALSE)[,,"Labor"]
+      fraction_inputs<-calcOutput("FractionInputsUSDA",aggregate = FALSE)[,,c("Capital","Labor")]
       
-      fyears<-intersect(getYears(fraction_capital),getYears(VoP_perTon))
+      fyears<-intersect(getYears(fraction_inputs),getYears(VoP_perTon))
     
       
       #Calculation of capital and labor intensities, and Capital share between the two
-      Capital_Intensity <- fraction_capital[,fyears,]*VoP_perTon[,fyears,]
-      Labour_Intensity <- fraction_labor[,fyears,]*VoP_perTon[,fyears,]
-      Share_Capital <- Capital_Intensity / (Capital_Intensity + Labour_Intensity )
+      Intensity <- fraction_inputs[,fyears,]*VoP_perTon[,fyears,]
+      Share_Capital <- fraction_inputs[,,"Capital"] / dimSums(fraction_inputs,dim=3.1)
     
 
     
        #assuming a 4% interest rate and 5% depreciation
-       x <- if (output == "intensities") magpiesort(mbind(Capital_Intensity,Labour_Intensity)) else if (output == "requirements") Capital_Intensity/(0.04+0.05) else if (output == "CapitalShare") Share_Capital else stop("Output not supported")
+       x <- if (output == "intensities") Intensity else if (output == "requirements") Intensity[,,"Capital"]/(0.04+0.05) else if (output == "CapitalShare") Share_Capital else stop("Output not supported")
        x["PHL",,]<-0 #inconsistent data in Philippines
        
        weight <- x
