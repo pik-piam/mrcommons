@@ -37,7 +37,9 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
              litc_grass         = "litc_mangrass",
              soilc_grass        = "soilc_mangrass",
              soilc_past_hist    = "soilc_hist",
-             soilc_past_scen    = "soilc_scen"
+             soilc_past_scen    = "soilc_scen",
+             grass_pft_hist     = "pft_harvest_hist.pft",
+             grass_pft_scen     = "pft_harvest_scen.pft"
   )
   
   # handling the separate sources of grass runs
@@ -59,7 +61,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
     out <- sapply(x, function(x) any(stringr::str_detect(x, file)))
     return(output_files[out])
   }
-  
+
   if (file.exists(file_path)) {
     file.copy(file_path, file)
     if (grep("Pasture", x$version, ignore.case = T)) {
