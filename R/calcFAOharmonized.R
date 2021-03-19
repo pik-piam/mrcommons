@@ -58,13 +58,8 @@ calcFAOharmonized <- function () {
   Fodder[,,"domestic_supply"]<-Fodder[,,"feed"]
   Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem", 
                                     to="FoodBalanceItem", dim=3.1, partrel=T)
-
-newyears <- setdiff(getYears(FAOdata),getYears(Fodderaggregated))
-  
-Fodderaggregated <- toolHoldConstant(Fodderaggregated, years=newyears)  
-
-FAOdata <- mbind(FAOdata, Fodderaggregated)
-  
+  Fodderaggregated <- toolExtrapolateFodder(Fodderaggregated) # has to be revised!!!
+  FAOdata <- mbind(FAOdata, Fodderaggregated)
   rm(Fodder, Fodderaggregated); gc()
   
   FAOdata[is.na(FAOdata)] <- 0

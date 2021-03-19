@@ -34,36 +34,32 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     
     if (!is.null(sectoral) & !(sectoral=="lpj")) {
       CropPrim <- readSource("FAO_online", "Crop")[,,"area_harvested"]
+      #use linear_interpolate
       Fodder   <- readSource("FAO", "Fodder")[,,"area_harvested"]
-
-      data <- toolFAOcombine(CropPrim, Fodder)
-      data <- data[,,"(Total)", pmatch=TRUE, invert=TRUE]
-      data <- data/10^6 # convert to Mha
-            
-      if (sectoral=="FoodBalanceItem") {
-
-        aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
-        data <- toolAggregate(data, rel=aggregation, from="ProductionItem", to="FoodBalanceItem", dim=3.1, partrel=T)
+      Fodder   <- toolExtrapolateFodder(Fodder)
+      data     <- toolFAOcombine(CropPrim, Fodder)/10^6 # convert to Mha
+      
+      if (sectoral%in%c("FoodBalanceItem","kcr")) {
         
-      } else if (sectoral=="kcr") {
-
-        aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
-        data <- toolAggregate(data, rel=aggregation, from="ProductionItem", to="k", dim=3.1, partrel=T)
-        
-        # add bioenergy with 0 values
-        data <- add_columns(x = data,addnm = c("betr","begr"),dim = 3.1)
-        data[,,c("betr","begr")] <- 0
-        
-        # remove all non kcr items
-        kcr <- findset("kcr")
-        remove <- setdiff(fulldim(data)[[2]][[3]],kcr)
-        if(length(remove)>0){
-          remain_area <- mean( dimSums(data[,,"remaining.area_harvested"], dim=1)/dimSums(dimSums(data[,,"area_harvested"], dim=3), dim=1) )
-          if (remain_area > 0.02) vcat(1,"Aggregation created a 'remaining' category. The area harvested is", round(remain_area,digits = 3)*100, "% of total \n")
-          vcat(2, paste0("Data for the following items removed: ", remove))
-          data <- data[,,kcr]
+        aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where="mappingfolder")
+        remove      <- setdiff(getNames(data, dim=1), aggregation$ProductionItem)
+        data        <- data[,,remove, invert=TRUE]
+        data        <- toolAggregate(data, rel=aggregation, from="ProductionItem", 
+                                     to=ifelse("kcr","k", sectoral), dim=3.1, partrel=TRUE)
+        if (sectoral=="kcr") {
+          # add bioenergy with 0 values
+          data <- add_columns(x = data,addnm = c("betr","begr"),dim = 3.1)
+          data[,,c("betr","begr")] <- 0
+          # remove all non kcr items
+          kcr <- findset("kcr")
+          remove <- setdiff(fulldim(data)[[2]][[3]],kcr)
+          if(length(remove)>0){
+            remain_area <- mean( dimSums(data[,,"remaining.area_harvested"], dim=1)/dimSums(dimSums(data[,,"area_harvested"], dim=3), dim=1) )
+            if (remain_area > 0.02) vcat(1,"Aggregation created a 'remaining' category. The area harvested is", round(remain_area,digits = 3)*100, "% of total \n")
+            vcat(2, paste0("Data for the following items removed: ", remove))
+            data <- data[,,kcr]
+          }
         }
-        
       } else if(sectoral!="ProductionItem"){stop("Sectoral aggregation not supported")}
       
     } else if(sectoral=="lpj"){
@@ -102,7 +98,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"), cells=cells)
       
       LUHcroparea      <- LUHcroparea[,,LUHcroptypes]
-
+      
       if(irrigation==TRUE){
         LUHcroparea <- LUHcroparea[,,"total",invert=TRUE] #if "total" is also reported magpie object grows too big (>1.3GB)
       }
@@ -141,4 +137,3 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
               description = "harvested crop areas from FAOSTAT",
               isocountries=!cellular))
 }
-
