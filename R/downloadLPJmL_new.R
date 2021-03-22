@@ -55,7 +55,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
   file_path   <- paste0(storage, path, "/", file)
   
   find_file <- function(storage, path, list_files, file) {
-    output_files <- grep(".out", list_files, value = T)
+    output_files <- grep(".out", list_files, value = TRUE)
     files_out <- file.path(storage, path, output_files)
     x <- sapply(files_out, readLines)
     out <- sapply(x, function(x) any(stringr::str_detect(x, file)))
@@ -64,7 +64,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
 
   if (file.exists(file_path)) {
     file.copy(file_path, file)
-    if (grep("Pasture", x$version, ignore.case = T)) {
+    if (grepl("Pasture", x$version, ignore.case = TRUE)) {
       files2copy <- find_file(storage, path, list_files, file)
       file.copy(file.path(storage,path,files2copy),files2copy, overwrite=T)
     } else {
