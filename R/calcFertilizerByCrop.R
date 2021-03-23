@@ -25,7 +25,7 @@ calcFertilizerByCrop<-function(indicator="total",deposition="Nsurplus2",cellular
   
   withdrawal=calcOutput("NitrogenWithdrawalByCrop",cellular=cellular,aggregate=FALSE,indicator="total")
   withdrawal=dimSums(withdrawal,dim=3.1)
-  inputs<-nb[,,c("fertilizer","som","deposition","manure","bg_recycling","ag_recycling","ag_ash","fixation_freeliving")]  
+  inputs<-nb[,,c("fertilizer","som","deposition","manure_conf","bg_recycling","ag_recycling","ag_ash","fixation_freeliving")]  
   
   inputs_per_crop=inputs/dimSums(withdrawal,dim=3.1)*withdrawal
   if (indicator=="by_physical_area"){
