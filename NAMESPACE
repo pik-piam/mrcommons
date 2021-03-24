@@ -2,6 +2,7 @@
 
 export(calc1stBioenergyPast)
 export(calcBodyHeight)
+export(calcConstructionWoodDemand)
 export(calcDemography)
 export(calcFAOForestRelocate)
 export(calcForestArea)
