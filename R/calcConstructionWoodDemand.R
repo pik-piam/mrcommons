@@ -58,14 +58,17 @@ calcConstructionWoodDemand <- function() {
   if (length(setdiff(getNames(population), getNames(urban_share))) != 0) stop("Unable to find matching names for population and urban share data. Stopping here to avoid incorrect calculations")
 
   ## Absolute Urban population living in cities
-  urban_population <- population * urban_share/100
+  urban_population <- population * urban_share / 100
 
   ## harmonize till 2020
   urban_population[, paste0("y", seq(1995, 2020, 5)), ] <- urban_population[, paste0("y", seq(1995, 2020, 5)), "SSP2"]
 
   ## Correct SSP sequence
   urban_population <- urban_population[, , paste0("SSP", 1:5)]
-  
+
+  max_urban_pop <- urban_population[, 1, ]
+  max_urban_pop[max_urban_pop != 0] <- 0
+  getYears(max_urban_pop) <- NULL
 
   ## Calculate additional wood demand based on Churkina et al 2020
   ## https://doi.org/10.1038/s41893-019-0462-4
@@ -79,7 +82,7 @@ calcConstructionWoodDemand <- function() {
   ## Using Mean values
   MwC <- data.frame(var = c("prim_timber", "encl_timber", "encl_wood_fiber"), val = c(5942.50, 1104.53, 391.98))
   MwC <- as.magpie(MwC)
-  
+
   ## Create CW i.e. Kg C per Kg of wood
   ## See: Martin, A. R., Doraisami, M. & Thomas, S. C. Global patterns in wood carbon concentration across the world’s trees and forests. Nature Geoscience 11, 915-920 (2018).
   ## Using global average of 0.476 +- 0.04
@@ -91,28 +94,79 @@ calcConstructionWoodDemand <- function() {
 
   ## We now start filling values from 2020 onward
   demand_years <- paste0("y", seq(2015, 2100, 5))
-  
+
   ## Demand Urban population change between 2100 and 2080
   building_wood_demand <- NULL
-  share <- 1/(as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[length(demand_years)]-as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[2])
-  for (i in 2:length(demand_years)) {
-   temp_demand <- urban_population[, demand_years[i], ] * share * dimSums(MwC,dim=3) * CW * PR ## Millio Cap * kg / cap  * C * PR = Million Kg
-   building_wood_demand <- mbind(building_wood_demand, temp_demand)
-  }
+  # share <- 1/(as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[length(demand_years)]-as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[2])
+  # for (i in 2:length(demand_years)) {
+  #  temp_demand <- urban_population[, demand_years[i], ] * share * dimSums(MwC,dim=3) * CW * PR ## Millio Cap * kg / cap  * C * PR = Million Kg
+  #  building_wood_demand <- mbind(building_wood_demand, temp_demand)
+  # }
+  all_annual_years <- paste0("y", seq(1995, 2100, 1))
+  urban_population_annual <- time_interpolate(
+    dataset = urban_population,
+    interpolated_year = setdiff(all_annual_years, getYears(urban_population)),
+    integrate_interpolated_years = TRUE,
+    extrapolation_type = "constant"
+  )
+
+  ## Non-zero-urban pop countries
+  valid_countries <- unique(where(urban_population>0)$true$regions)
   
+  for (i in valid_countries) {
+    cat(i,"\n")
+    ssp_temp_demand <- NULL
+    for (j in paste0("SSP", 1:5)) {
+      max_pop <- max(urban_population[i, , j][,paste0("y",seq(1995,2015,5)),,invert=TRUE])
+      pop_diff <- setYears(max_pop - urban_population[i, "y2020", j], NULL)
+        peak_year <- as.numeric(gsub(pattern = "y", replacement = "", x = as.character(where(urban_population[i, , j] == max_pop)$true$years)))
+        distribution_length <- peak_year - 2020
+        peak_building_demand <- pop_diff * dimSums(MwC, dim = 3) * CW * PR ## Million Cap * kg / cap  * C * PR = Million kg C
+        
+        share_df <- data.frame(
+          region = i,
+          year = 2021:(2021 + distribution_length - 1),
+          share = (1:distribution_length) / sum(1:distribution_length))
+        
+        dist_share_magpie <- collapseNames(as.magpie(share_df, spatial = , temporal = "year"))
+        
+        temp_demand <- peak_building_demand * dist_share_magpie 
+        
+        if (peak_year < 2100) {
+          remaining_years <- seq(peak_year + 1, 2100, 1)
+          temp_df <- data.frame(
+            region = i,
+            year = remaining_years,
+            val = 0
+          )
+          temp2 <- setNames(as.magpie(temp_df, temporal = 2), j)
+          temp2 <- add_dimension(x = temp2, dim = 3.2, nm = getNames(temp_demand, dim = 2))
+          temp2[,remaining_years,] <- temp_demand[,peak_year,]
+          if(as.numeric(pop_diff)==0){
+            temp_demand <- temp2
+            temp_demand[temp_demand!=0] <- 0
+          } else temp_demand <- mbind(temp_demand, temp2)
+        }
+        ssp_temp_demand <- mbind(ssp_temp_demand,temp_demand)
+    }
+    building_wood_demand <- mbind(building_wood_demand, ssp_temp_demand)
+  }
+
   ## Convert to Million tC
-  building_wood_demand <- building_wood_demand/1e3
+  building_wood_demand <- building_wood_demand / 1e3
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
   ## Convert to Million tDM <---- Instead of doing this step one can simple skip multiplication with CW inside the loop
-  ## We also multiply by 2 as Churkina et al 2020 state that you can assume 50% harvest loss so for every ton of material 
+  ## We also multiply by 2 as Churkina et al 2020 state that you can assume 50% harvest loss so for every ton of material
   ## in wood we'd actually harvest 2 tons. This is already an extreme scenario as we don't have this much harvest losses.
-  
-  building_wood_demand <- 2*building_wood_demand/CW
-  # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
-        
-  out <- building_wood_demand
 
-    return(list(
+  building_wood_demand <- 2 * building_wood_demand / CW
+  # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
+
+  ## Distribute shock over time
+
+  out <- toolCountryFill(x = building_wood_demand[,intersect(getYears(urban_population),getYears(building_wood_demand)),],fill = 0)
+
+  return(list(
     x = out,
     weight = NULL,
     min = 0,
