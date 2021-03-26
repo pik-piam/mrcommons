@@ -81,6 +81,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       x <- x*unit_transform
       unit <- "tC/ha"
       
+      if(grepl("litc|soilc_layer", subtype)) x <- toolConditionalReplace(x, "<0", 0) 
+      
     } else if (grepl("*date*", subtype)) {
       
       unit <- "day of the year"
@@ -108,8 +110,9 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
       } else if (grepl("runoff", subtype)) {
         ## In LPJmL: (monthly) runoff given in LPJmL: mm/month
         # Transform units: liter/m^2 -> liter
+        # landarea in mio. ha
         landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype="states", convert="onlycorrect")[,"y1995",], dim=3)), NULL)
-        x        <- x * landarea
+        x        <- x * landarea * 1e10
         # Transform units: liter -> mio. m^3
         x <- x / (1000*1000000)
         
@@ -155,7 +158,8 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     } else if(grepl("irrig|cwater_b", subtype)){ 
       
       irrig_transform  <- 10
-      x[,,"irrigated"] <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
+      # select only irrigated 
+      x                <- x[,,"irrigated"] * irrig_transform # units are now: m^3 per ha per year
       unit             <- "m^3/ha"
       
     } else if(grepl("input_lake", subtype)){
@@ -206,9 +210,10 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
   
   
   return(list(
-    x=out,
-    weight=NULL,
-    unit=unit, 
-    description=paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
-    isocountries=FALSE))
+    x            = out,
+    weight       = NULL,
+    unit         = unit, 
+    min          = 0,
+    description  = paste0("Carbon output from LPJmL (",subtype,") for ", version, " and ", climatetype, " at stage: ", stage, "."),
+    isocountries = FALSE))
 }

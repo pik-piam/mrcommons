@@ -43,7 +43,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ### crop production celluluar ###
       #################################
       
-      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_72c185fa", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
+      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
       

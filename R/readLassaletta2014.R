@@ -51,7 +51,7 @@ readLassaletta2014<-function(subtype="budget"){
     out<-setNames(out[,,c(
       "Prod_kgN/ha","Fert_adjusted_grass_kgN/ha","Manure_kgN/ha","Fixing_kgN/ha","Dep_arable_kgN"
     )],c(
-      "harvest","fertilizer","manure","fixation_crops","deposition"
+      "harvest","fertilizer","manure_conf","fixation_crops","deposition"
     ))
     out<-out/10^9
   } else if (subtype=="fert_to_cropland"){

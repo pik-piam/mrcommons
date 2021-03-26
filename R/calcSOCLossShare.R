@@ -55,7 +55,7 @@ calcSOCLossShare <- function(subsystems=FALSE, rate="change", ipcc="guide2006"){
     stop(paste(rate,"is unknown as 'rate' parameter specification."))
   }
 
-  weight <- dimSums(calcOutput("LanduseInitialisation", aggregate=FALSE, cellular=TRUE, land="fao", input_magpie=TRUE, years="y1995", round=6), dim=3)
+  weight <- dimSums(calcOutput("LanduseInitialisation", aggregate=FALSE, cellular=TRUE, input_magpie = FALSE, years="y1995", round=6), dim=3)
 
   return(list(
     x            = SOCLossShare ,

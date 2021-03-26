@@ -55,8 +55,8 @@ calcNitrogenBudgetCropland<-function(cellular=FALSE,deposition="CEDS",include_fe
   
   inputs<-mbind(
     setNames(fixation[,,"fixation_freeliving"],"fixation_freeliving"),
-    setNames(manure,"manure"),
-    setNames(manure_cropland_grazing,"grazing"),
+    setNames(manure,"manure_conf"),
+    setNames(manure_cropland_grazing,"manure_stubble_grazing"),
     setNames(collapseNames(ag[,,"recycle"]),"ag_recycling"),
     setNames(bg,"bg_recycling"),
     setNames(collapseNames(ag[,,"ash"]),"ag_ash"),

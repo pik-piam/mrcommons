@@ -26,7 +26,7 @@ calcVoP_crops <- function(output="absolute",units="USD05") {
   VoP_AFF<-calcOutput("VoP_AFF",aggregate=FALSE) 
   VoP_Total<-dimSums(VoP_AFF,dim = 3) #mio. current USD
 
-  # Value of production of indiviual ites
+  # Value of production of indiviual items
   VoP_All<-readSource("FAO_online","ValueOfProd")[,,"Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"]*(1+0.04)^5
   getNames(VoP_All)<-gsub("\\..*","",getNames(VoP_All))
   getNames(VoP_All)[getNames(VoP_All) == "257|Oil, palm"] <- "257|Oil palm"
@@ -37,10 +37,11 @@ calcVoP_crops <- function(output="absolute",units="USD05") {
   mappingFAO<-mappingFAO[mappingFAO$ProductionItem %in% items_intersect,]
   
   #Aggregation to magpie objects
-  VoP_kcr_aggregated<-speed_aggregate(VoP_All[,,items_intersect],rel=mappingFAO,from="ProductionItem",to="k",weight=NULL,dim=3)
+  VoP_kcr_aggregated<-toolAggregate(VoP_All[,,items_intersect],rel=mappingFAO,from="ProductionItem",to="k",weight=NULL,dim=3)
 
   years<-intersect(getYears(VoP_kcr_aggregated),getYears(VoP_Total))
-
+  
+  # if desired output is fraction over overall value of production (Agriculture, forestry, fishery) or absolute value
   x<-if(output=="fraction") VoP_kcr_aggregated[,years,]/VoP_Total[,years,] else VoP_kcr_aggregated
 
   x[!is.finite(x)]<-0
@@ -56,12 +57,18 @@ calcVoP_crops <- function(output="absolute",units="USD05") {
   if (output == "absolute"){
     weight <- NULL
   }else if (output == "fraction"){
-    weight <- x
-    weight[,,] <- 1
-    weight[weight == 0] <- 0
+    Production <- collapseNames(calcOutput("Production",aggregate = FALSE,products="kcr",attributes="dm"))
+    years<-intersect(getYears(Production),getYears(x))
+    names<- intersect(getNames(Production),getNames(x))  
+    
+    weight <- Production[,years,names]
+    x<-x[,years,names]
+    weight[x == 0] <- 0
+    
   }else {
     stop("Output not supported")
   }
+  
   
  return(list(x=x,
                 weight=weight,
