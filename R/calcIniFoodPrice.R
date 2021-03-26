@@ -82,7 +82,7 @@ calcIniFoodPrice <- function(datasource="FAO", year="y2005", products="kfo"){
      #out[,,"fish"]      <- 2067.626632 # OECD/FAO price of fish food traded in 2005
      out[,,"fish"]      <- 1400        # FAO FIGIS database, export value divided by export volume in 2005, rounded
      out[,,"oilpalm"]   <- 100         # palmoilpoint.blogspot.de (527 malaysian ringgit = 118 USD rounded to 100)
-     out[,,"oilcakes"]   <- 300        # https://www.indexmundi.com/commodities/?commodity=soybean-meal&months=180
+     out[,,"oilcakes"]  <- 300        # https://www.indexmundi.com/commodities/?commodity=soybean-meal&months=180
      out[,,"brans"]     <- 100         # quick google search
      out[,,"distillers_grain"] <- 200  # quick google search
      out[,,"ethanol"]   <- 900         # quick google search
@@ -95,11 +95,10 @@ calcIniFoodPrice <- function(datasource="FAO", year="y2005", products="kfo"){
      out[,,"res_cereals"]      <- 50   # quick google search
      out[,,"res_fibrous"]      <- 50   # quick google search
      out[,,"res_nonfibrous"]   <- 50   # quick google search
-     out[,,"pasture"]      <- 50       # quick google search
-     out[,,"scp"]      <- 1500         # using upper end prices similar to fishmeal
+     out[,,"pasture"]   <- 50       # quick google search
+     out[,,"scp"]       <- 1500         # using upper end prices similar to fishmeal
+     out[,,"foddr"]     <- 50           # quick google search
      
-    # foddr price seems unrealistic low
-
     # correct the prices from online sources for dry matter values  
      out <- out/dm
 
