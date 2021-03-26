@@ -45,7 +45,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
         remove      <- setdiff(getNames(data, dim=1), aggregation$ProductionItem)
         data        <- data[,,remove, invert=TRUE]
         data        <- toolAggregate(data, rel=aggregation, from="ProductionItem", 
-                                     to=ifelse("kcr","k", sectoral), dim=3.1, partrel=TRUE)
+                                     to=ifelse(sectoral=="kcr","k", sectoral), dim=3.1, partrel=TRUE)
         if (sectoral=="kcr") {
           # add bioenergy with 0 values
           data <- add_columns(x = data,addnm = c("betr","begr"),dim = 3.1)
