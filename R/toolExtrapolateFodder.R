@@ -1,8 +1,8 @@
 #' @title       toolExtrapolateFodder
 #' @description Extrapolate fodder data, based on two time steps (5-averages around this years)
-#' 
+#' @param x input data
 #' @param exyears two years 
-#'
+#' @param average the averaging_range in toolTimeInterpolate  
 #' @return magpie object including extrapolated years
 #' @author Kristine Karstens
 #' 
