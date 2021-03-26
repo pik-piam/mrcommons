@@ -2,11 +2,11 @@
 #' @description Transforms an object with coordinate spatial data (on half-degree) to isocell (59199) standard
 #' 
 #' @param x object to be transformed from coordinates to (old) magpie isocell standard
-#'
+#' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
+#' 
 #' @return magpie object with 59199 cells in isocell naming
 #' @author Kristine Karstens, Felicitas Beier
 #' 
-#' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @importFrom magpiesets addLocation
 #' @importFrom madrat toolOrderCells
 #' @importFrom magclass collapseDim
@@ -30,7 +30,7 @@ toolCoord2Isocell <- function(x, cells="magpiecell") {
                                         Please first expand your object to cover all needed cells.")
   } else if(cells=="lpjcell"){
     
-    getItems(x, dim = "cell",   maindim = 1) <- 1:67420
+    getItems(x, dim = "cell", maindim = 1) <- 1:67420
     x <- collapseDim(x, dim = c("x","y"))
     
   } else {stop("Unknown cells argument.")}

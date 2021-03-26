@@ -17,15 +17,19 @@
 
 readFishstatJ_FAO <- function(subtype="Production") {
 
+  #Files generated using the FishstatJ app
   files <- c(exportsValue       = "FAOSTAT_data_1-26-2021_FishesTradeUSD.csv",
              exportsQuantity    = "FAOSTAT_data_1-26-2021_FishesTradeTonns.csv",
              Production         = "FAOSTAT_data_1-26-2021_FishesProduction.csv" )
-
+  
+  #Subsetting based on type of requested output
   file <- toolSubtypeSelect(subtype,files)
   isocode_FAO<-toolGetMapping("FAOiso_faocode.csv", where="mrcommons")
-
+  
+  #Reads data 
   data <- read.csv(file=paste(path.package("mrcommons"),paste0("/extdata/sectoral/",file),sep="")) 
-
+  
+  #Function to clean-up the data 
   fao_cleaning <- function(data = data, mapping = isocode_FAO, subsetvar = "Unit..Name.", UnitVar= "Tonnes - live weight", Value = "Production"){
 
     years_stats     <- paste0("X.",1984:2018,".") #wide format
@@ -55,7 +59,7 @@ readFishstatJ_FAO <- function(subtype="Production") {
   }
 
 
-
+ #Cleaning based on output subtype selected
   if (subtype == "Production") {
 
   x <- fao_cleaning(data = data, mapping = isocode_FAO, subsetvar = "Unit..Name.", UnitVar = "Tonnes - live weight", Value = "Production")

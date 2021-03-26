@@ -23,5 +23,9 @@ readVittis <- function() {
   getSets(data)[3] <- "CostElement.CropType"
   data <- complete_magpie(data)
   
+  getNames(data, dim = 1) <- c("Infrastructure", "Machinery", "PlantProtection",
+                               "Seeds", "Financing", "Fuel_Lubricant", "Fertiliser",
+                               "Irrigation", "Labor")
+  
   return(data)
 }

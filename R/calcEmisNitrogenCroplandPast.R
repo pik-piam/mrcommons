@@ -32,7 +32,7 @@ calcEmisNitrogenCroplandPast<-function(method="IPCC"){
     
     out<-new.magpie(getRegions(budget),getYears(budget),getNames(ef))
     out[,,"inorg_fert"]=collapseNames(budget[,,"fertilizer"])*ef[,,"inorg_fert"]
-    out[,,"man_crop"]=collapseNames(budget[,,"manure"])*ef[,,"man_crop"]
+    out[,,"man_crop"]=collapseNames(budget[,,"manure_conf"])*ef[,,"man_crop"]
     out[,,"resid"]=dimSums(budget[,,c("ag_recycling","bg_recycling")],dim=3.1)*ef[,,"resid"]
     out[,,"som"]=collapseNames(budget[,,"som"])*ef[,,"som"]
     out[,,"rice"]=fert_rice*ef[,,"rice"]

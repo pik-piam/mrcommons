@@ -21,23 +21,29 @@ calcMulticropping <- function(selectyears="time") {
   past<-findset("past")
   
   if (selectyears[[1]]%in%c("time","past")) {
-    selection<-past
+    selection <- past
   } else if (selectyears[[1]]%in%c("past_all")){
-    selection<-paste0("y",1961:2011)
+    selection <- paste0("y",1961:2011)
   } else {selection = selectyears}
   
   #6620  = (6620|Arable land and Permanent crops or  6620|Cropland)
-  phys <- collapseNames(calcOutput("FAOLand", aggregate=FALSE)[,,"6620", pmatch=TRUE])[,selection,]
-  area <- collapseNames(dimSums(calcOutput("Croparea", physical=FALSE, aggregate=FALSE, sectoral="kcr"),dim=3.1)[,selection,])
-  
+  phys <- collapseNames(calcOutput("FAOLand", aggregate=FALSE)[,,"6620", pmatch=TRUE])
+  area <- collapseNames(dimSums(calcOutput("Croparea", physical=FALSE, aggregate=FALSE, sectoral="kcr"),dim=3.1))
+  phys <- phys[,intersect(getYears(phys),getYears(area)),]
+  area <- area[,intersect(getYears(phys),getYears(area)),]
 
   multi <- area/phys
   multi[is.na(multi)]<-0
   multi[multi==Inf]<-0
+  
+  if(selection!=NULL){
+    multi <- multi[,selection,]
+    phys  <- phys[,selection,]
+  }
 
   if (selectyears[[1]]=="time"){
-    multi<-toolHoldConstantBeyondEnd(multi)
-    phys<-toolHoldConstantBeyondEnd(phys)
+    multi <- toolHoldConstantBeyondEnd(multi)
+    phys  <- toolHoldConstantBeyondEnd(phys)
   }
   
   return(list(x=multi,

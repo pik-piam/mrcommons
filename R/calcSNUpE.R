@@ -29,7 +29,7 @@ calcSNUpE<-function(max_snupe=0.85,cellular=FALSE,rev=0.1){
   inputs<-c(
     "fixation_freeliving",
     "som","fertilizer","deposition",
-    "manure","grazing",
+    "manure_conf","manure_stubble_grazing",
     "bg_recycling","ag_recycling",
     "ag_ash","balanceflow")
   outputs<-dimSums(a[,,outputs],dim=3.1)
