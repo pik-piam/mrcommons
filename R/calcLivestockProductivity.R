@@ -19,17 +19,17 @@
 #' @importFrom magclass getNames clean_magpie add_dimension
 #' @importFrom luscale rename_dimnames
 
-calcLivestockProductivity<- function(future=TRUE) {
+calcLivestockProductivity <- function(future=TRUE) {
 
   past<-findset("past")
   
-  stock <- readSource("FAO", subtype="LiveHead")[,past,]
-  prim  <- readSource("FAO", subtype="LivePrim")[,past,]
+  stock <- readSource("FAO_online", subtype="LiveHead")[,past,]
+  prim  <- readSource("FAO_online", subtype="LivePrim")[,past,]
   
   # separate FAO variable number
   getNames(stock) <- gsub("\\|",".",getNames(stock))
   getNames(prim)  <- gsub("\\|",".",getNames(prim))
-  
+
   # calculate stock_yield
   types <- c("Pigs","Cattle","Chickens")
   names(types) <- c("Meat, pig","Meat, cattle","Meat, chicken")
