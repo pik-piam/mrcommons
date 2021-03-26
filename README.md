@@ -39,11 +39,10 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **mrcommons** in publications use:
 
-Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic
-M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A,
-Levesque A, Klein D, Araujo E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina
-Bacca E, von Jeetze P, Martinelli E, Schreyer F, Dietrich J (2021). _mrcommons:
-MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL:
+Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N,
+Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Beier
+F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von Jeetze P, Martinelli E, Schreyer F, Dietrich J
+(2021). _mrcommons: MadRat commons Input Data Library_. doi: 10.5281/zenodo.3822009 (URL:
 https://doi.org/10.5281/zenodo.3822009), R package version 0.37.9, <URL:
 https://github.com/pik-piam/mrcommons>.
 

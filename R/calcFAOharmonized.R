@@ -59,7 +59,8 @@ calcFAOharmonized <- function () {
   Fodder[,,"domestic_supply"]<-Fodder[,,"feed"]
   Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem", 
                                     to="FoodBalanceItem", dim=3.1, partrel=T)
-  FAOdata <- mbind(FAOdata, Fodderaggregated)
+  cyears <- intersect(getYears(FAOdata),getYears(Fodderaggregated))
+  FAOdata <- mbind(FAOdata[,cyears,], Fodderaggregated[,cyears,])
   rm(Fodder, Fodderaggregated); gc()
   
   FAOdata[is.na(FAOdata)] <- 0
