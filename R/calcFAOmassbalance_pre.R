@@ -91,7 +91,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   prod_attributes <- prod_attributes[, , remove_prod, invert = TRUE]
   
   # Sectoral mapping for FAO items 
-  relationmatrix <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
+  relationmatrix <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
   relationmatrix <- relationmatrix[, c("FoodBalanceItem", "k")]
   relationmatrix <- relationmatrix[!duplicated(relationmatrix[, "FoodBalanceItem"]), ]
   
