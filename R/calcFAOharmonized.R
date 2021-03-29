@@ -54,7 +54,7 @@ calcFAOharmonized <- function () {
   ### add Fodder data ###
   
   Fodder <- readSource("FAO", "Fodder")
-  Fodder <- toolExtrapolateFodder(Fodder) # has to be revised!!!
+  Fodder <- toolExtrapolateFodder(Fodder)
   Fodder <- add_columns(x = Fodder,addnm = "domestic_supply",dim = 3.2)
   Fodder[,,"domestic_supply"]<-Fodder[,,"feed"]
   Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem", 
