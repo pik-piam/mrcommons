@@ -20,8 +20,8 @@
 #' }
 #' 
 calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,attributes="all",scenario="default") {
-  
-
+  #newly added cyears
+  cyears <- findset("past")
   MAGcroptypes   <- findset("kcr")
   
   # memory problems for cellular data
@@ -33,7 +33,9 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
   } else if(plantparts %in% c("ag","bg")){
     
     # read in area harvested
-    HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, cellular=cellular, irrigation=irrigation, aggregate=FALSE)
+    HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, 
+                                 cellular=cellular, irrigation=irrigation, aggregate=FALSE)[,cyears,]
+    #cyears here above
     CropProduction <- collapseNames(calcOutput("Production", products="kcr", cellular=cellular,attributes="dm", irrigation=irrigation, aggregate = FALSE))
     HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
     
