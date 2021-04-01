@@ -679,7 +679,7 @@ calcFAOmassbalance_pre <- function(years = NULL) {
   # estimate processing flows
   current_limit <- getOption("magclass_sizeLimit")
   on.exit(options(magclass_sizeLimit = current_limit))
-  options(magclass_sizeLimit = 2e8) # in case all years of CBC are calculated this is needed
+  options(magclass_sizeLimit = 1e10) # in case all years of CBC are calculated this is needed
   
   massbalance <- .massbalance(years)
   
