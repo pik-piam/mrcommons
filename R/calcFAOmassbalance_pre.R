@@ -2,7 +2,7 @@
 #' @description Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that convert one type of product into another. 
 #' Includes processes like milling, distilling, extraction etc. Adds certain byproducts like distillers grains or ethanol.
 #'
-#' @param years years to be estimated.
+#' @param years years to be estimated, if null, then all years in FAOharmonized are returned
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' This is an intermediary result, which is used e.g. for estimating the feed baskets. For most uses, it is more appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
@@ -19,7 +19,7 @@
 #' @importFrom utils read.csv
 #' @importFrom madrat madlapply
 
-calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
+calcFAOmassbalance_pre <- function(years = NULL) {
   #### Data input: FAO Commodity Balance ####
   CBC          <- calcOutput(type = "FAOharmonized", aggregate = FALSE)
   getSets(CBC) <- c("region", "year", "ItemCodeItem.ElementShort")
