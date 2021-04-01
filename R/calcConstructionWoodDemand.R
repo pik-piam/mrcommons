@@ -66,10 +66,6 @@ calcConstructionWoodDemand <- function() {
   ## Correct SSP sequence
   urban_population <- urban_population[, , paste0("SSP", 1:5)]
 
-  max_urban_pop <- urban_population[, 1, ]
-  max_urban_pop[max_urban_pop != 0] <- 0
-  getYears(max_urban_pop) <- NULL
-
   ## Calculate additional wood demand based on Churkina et al 2020
   ## https://doi.org/10.1038/s41893-019-0462-4
   ## See SI page 8, part on "Calculations of carbon storage in timber buildings and respective demand for timber"
@@ -97,11 +93,8 @@ calcConstructionWoodDemand <- function() {
 
   ## Demand Urban population change between 2100 and 2080
   building_wood_demand <- NULL
-  # share <- 1/(as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[length(demand_years)]-as.numeric(gsub(pattern = "y",x = demand_years,replacement = ""))[2])
-  # for (i in 2:length(demand_years)) {
-  #  temp_demand <- urban_population[, demand_years[i], ] * share * dimSums(MwC,dim=3) * CW * PR ## Millio Cap * kg / cap  * C * PR = Million Kg
-  #  building_wood_demand <- mbind(building_wood_demand, temp_demand)
-  # }
+  
+  ## Generate Annual year values
   all_annual_years <- paste0("y", seq(1995, 2100, 1))
   urban_population_annual <- time_interpolate(
     dataset = urban_population,
@@ -114,7 +107,8 @@ calcConstructionWoodDemand <- function() {
   valid_countries <- unique(where(urban_population>0)$true$regions)
   
   for (i in valid_countries) {
-    cat(i,"\n")
+    ## Set SSP dummy demand to NULL after every loop
+
     ssp_temp_demand <- NULL
     for (j in paste0("SSP", 1:5)) {
       max_pop <- max(urban_population[i, , j][,paste0("y",seq(1995,2015,5)),,invert=TRUE])
@@ -155,10 +149,10 @@ calcConstructionWoodDemand <- function() {
   ## Convert to Million tC
   building_wood_demand <- building_wood_demand / 1e3
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
+  
   ## Convert to Million tDM <---- Instead of doing this step one can simple skip multiplication with CW inside the loop
   ## We also multiply by 2 as Churkina et al 2020 state that you can assume 50% harvest loss so for every ton of material
   ## in wood we'd actually harvest 2 tons. This is already an extreme scenario as we don't have this much harvest losses.
-
   building_wood_demand <- 2 * building_wood_demand / CW
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
 
@@ -170,7 +164,7 @@ calcConstructionWoodDemand <- function() {
     x = out,
     weight = NULL,
     min = 0,
-    unit = "mio m3",
+    unit = "mio tDM",
     description = "Calculates the wood demand based on historical FAO data"
   ))
 }
