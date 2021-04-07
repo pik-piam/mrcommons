@@ -17,7 +17,6 @@
 #' @importFrom graphics plot
 #' @importFrom magclass getSets as.magpie fulldim complete_magpie
 #' @importFrom utils read.csv
-#' @importFrom madrat madlapply
 
 calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   #### Data input: FAO Commodity Balance ####
