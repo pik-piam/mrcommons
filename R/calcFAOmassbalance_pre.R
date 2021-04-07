@@ -349,7 +349,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
     object <- .branoil1_production(object, "2581|Ricebran Oil", "2804|Rice (Paddy Equivalent)")
     
     # check results and clear processed position
-    object <- .check_and_clear(object, cereals, milled, process, c("brans1", "branoil1"), flour)
+    object <- .check_and_clear(object, goods_in = cereals, from = milled, process = process, report_as = c("brans1", "branoil1"), residual = flour)
     
     ### Fooduse in brans is included in the commodity balance sheets, but not reflected in calories.
     # We subtract bran consumption from cereal consumption in the respective countries.
@@ -595,7 +595,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
       "milling", "brans1", "branoil1", "flour1",
       "refining", "sugar1", "molasses1", "refiningloss",
       "extracting", "oil1", "oil2", "oilcakes1", "extractionloss",
-      "fermentation", "alcohol1", "alcohol2", "alcohol3", "brewers_grain1", "alcoholloss",
+      "fermentation", "alcohol1", "alcohol2", "alcohol3", "alcohol4", "brewers_grain1", "alcoholloss",
       "distilling", "ethanol1", "distillers_grain1", "distillingloss",
       "intermediate",
       "households"
@@ -653,8 +653,8 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
                                    goods_in  = crops_alcohol,
                                    from      = "processed",
                                    process   = "fermentation",
-                                   goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic"),
-                                   report_as = c("alcohol1", "alcohol2", "alcohol3"),
+                                   goods_out = c("2655|Wine", "2657|Beverages, Fermented", "2658|Beverages, Alcoholic", "2659|Alcohol, Non-Food"),
+                                   report_as = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"),
                                    residual  = "alcoholloss")
     
     return(CBCflows)

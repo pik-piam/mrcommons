@@ -33,7 +33,7 @@ calcFAOmassbalance<-function(){
     "refining", "sugar1","molasses1",         
     "extracting", "oil1","oil2","oilcakes1",
     "fermentation","alcohol1",
-    "alcohol2","alcohol3","brewers_grain1",
+    "alcohol2","alcohol3", "alcohol4", "brewers_grain1",
     "distilling","ethanol1","distillers_grain1",
     "distillingloss",
     "households")]  
