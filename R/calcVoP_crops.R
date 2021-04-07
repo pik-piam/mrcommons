@@ -27,7 +27,7 @@ calcVoP_crops <- function(output="absolute",units="USD05") {
   VoP_Total<-dimSums(VoP_AFF,dim = 3) #mio. current USD
 
   # Value of production of indiviual items
-  VoP_All<-readSource("FAO_online","ValueOfProd")[,,"Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"]*(1+0.04)^5
+  VoP_All<-readSource("FAO_online","ValueOfProd")[,,"Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"]/1000*(1+0.04)^5
   getNames(VoP_All)<-gsub("\\..*","",getNames(VoP_All))
   getNames(VoP_All)[getNames(VoP_All) == "257|Oil, palm"] <- "257|Oil palm"
 
