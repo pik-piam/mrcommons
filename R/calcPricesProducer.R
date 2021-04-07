@@ -84,10 +84,12 @@ calcPricesProducer <- function(products="kcr") {
   x <- x[,years,names]
   
   }
+  
+  units<-"USD/tDM"
 
   return(list(x=x,
               weight=weight,
               mixed_aggregation=NULL,
               unit=units,
-              description=" Value of production for individual crops"))
+              description="Value of production for individual crops"))
 }
