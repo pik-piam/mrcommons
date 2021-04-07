@@ -60,7 +60,7 @@ calcPricesProducer <- function(products="kcr") {
   }else if(products == "kli"){
   
   #  
-  mappingFAO<-toolGetMapping("FAOitems.csv", type = "sectoral", where = "mrcommons") #Reads mapping
+  mappingFAO<-toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder") #Reads mapping
   kli<-findset("kli")  
   items_intersect<-intersect(getNames(prices_prod_FAO),unique(mappingFAO$ProductionItem))# Kli items in mapping
   
