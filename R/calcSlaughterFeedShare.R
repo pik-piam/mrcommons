@@ -1,4 +1,5 @@
 #' @importFrom magclass dimOrder
+#' @importFrom magpiesets findset
 
 calcSlaughterFeedShare<-function(balanceflow=TRUE){
   
@@ -7,7 +8,7 @@ calcSlaughterFeedShare<-function(balanceflow=TRUE){
   attributes             <- calcOutput("Attributes", aggregate = FALSE)
   fbask                  <- dimSums(fbask * attributes, dim=3.2)
   getNames(fbask, dim=1) <- substring(getNames(fbask, dim=1),7)
-  k                      <- getNames(fbask, dim=1)
+  kli                      <- findset("kli")
   
   
   if(balanceflow==TRUE){
@@ -15,14 +16,14 @@ calcSlaughterFeedShare<-function(balanceflow=TRUE){
     fbaskbalance <- calcOutput("FeedBalanceflow", aggregate = FALSE, per_livestock_unit=TRUE)
     fbaskbalance <- dimSums(fbaskbalance*attributes, dim=3.2)
   
-    fbask        <- fbask + fbaskbalance[,,k]
+    fbask        <- fbask + fbaskbalance[,,kli]
     
     # set overcorrected negative values to zero
     fbask[which(fbask<0)] <- 0
   }
   
-  slaughter_factor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor", aggregate = F))[,,k]
-  attributes_living_animals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = F)[,,k]
+  slaughter_factor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor", aggregate = F))[,,kli]
+  attributes_living_animals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = F)[,,kli]
   
   weight <- fbask
   SlaughterFeedShare <- slaughter_factor * attributes_living_animals / weight
