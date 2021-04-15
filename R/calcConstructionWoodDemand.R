@@ -42,7 +42,7 @@ calcConstructionWoodDemand <- function() {
   urban_share <- collapseNames(urban_share)
 
 
-  ## use population datata
+  ## use population data
   population <- ssp_data[, , "Population"]
 
   ## Extract data using pattern (the same as we used in urban share) - For consistency
@@ -93,7 +93,7 @@ calcConstructionWoodDemand <- function() {
 
   ## Demand Urban population change between 2100 and 2080
   building_wood_demand <- NULL
-  
+
   ## Generate Annual year values
   all_annual_years <- paste0("y", seq(1995, 2100, 1))
   urban_population_annual <- time_interpolate(
@@ -104,67 +104,91 @@ calcConstructionWoodDemand <- function() {
   )
 
   ## Non-zero-urban pop countries
-  valid_countries <- unique(where(urban_population>0)$true$regions)
-  
+  valid_countries <- unique(where(urban_population > 0)$true$regions)
+
   for (i in valid_countries) {
     ## Set SSP dummy demand to NULL after every loop
 
     ssp_temp_demand <- NULL
     for (j in paste0("SSP", 1:5)) {
-      max_pop <- max(urban_population[i, , j][,paste0("y",seq(1995,2015,5)),,invert=TRUE])
+      ## Check the max population for whole duration. 
+      ## Remember - We don't need to build more wooden buildings than would be needed by peak urban population
+      max_pop <- max(urban_population[i, , j][, paste0("y", seq(1995, 2015, 5)), , invert = TRUE])
+      
+      ## Check the difference between current (2020) urban population with peak urban population
       pop_diff <- setYears(max_pop - urban_population[i, "y2020", j], NULL)
-        peak_year <- as.numeric(gsub(pattern = "y", replacement = "", x = as.character(where(urban_population[i, , j] == max_pop)$true$years)))
-        distribution_length <- peak_year - 2020
-        peak_building_demand <- pop_diff * dimSums(MwC, dim = 3) * CW * PR ## Million Cap * kg / cap  * C * PR = Million kg C
-        
-        share_df <- data.frame(
+      
+      ## Find the peak year
+      peak_year <- as.numeric(gsub(pattern = "y", replacement = "", x = as.character(where(urban_population[i, , j] == max_pop)$true$years)))
+      
+      ## Calculate the time frame between peak urban population and current time period (2020)
+      distribution_length <- peak_year - 2020
+      
+      ## Check what would be the demand at peak. Remember that population is a stock resource. 
+      ## Also keep in mind that this is the demand we calculate for new people moving in cities not overall population
+      peak_building_demand <- pop_diff * dimSums(MwC, dim = 3) * CW * PR ## Million Cap * kg / cap  * C * PR = Million kg C
+      
+      ## Calculate how the distribution share should look like. Higher weight to later years
+      ## This distribution is a linear 45 degree line
+      share_df <- data.frame(
+        region = i,
+        year = 2021:(2021 + distribution_length - 1),
+        share = (1:distribution_length) / sum(1:distribution_length)
+      )
+      
+      ## Create magpie object for share
+      dist_share_magpie <- collapseNames(as.magpie(share_df, spatial = , temporal = "year"))
+      
+      ## Distribute the peak demand to annual numbers
+      temp_demand <- peak_building_demand * dist_share_magpie
+      
+      #### Additional checks for correct calculations :
+      
+      ## If peak appears before 2100, no more building wood is to be demanded
+
+      if (peak_year < 2100) {
+        ## Find out how many years left
+        remaining_years <- seq(peak_year + 1, 2100, 1)
+        temp_df <- data.frame(
           region = i,
-          year = 2021:(2021 + distribution_length - 1),
-          share = (1:distribution_length) / sum(1:distribution_length))
-        
-        dist_share_magpie <- collapseNames(as.magpie(share_df, spatial = , temporal = "year"))
-        
-        temp_demand <- peak_building_demand * dist_share_magpie 
-        
-        if (peak_year < 2100) {
-          remaining_years <- seq(peak_year + 1, 2100, 1)
-          temp_df <- data.frame(
-            region = i,
-            year = remaining_years,
-            val = 0
-          )
-          temp2 <- setNames(as.magpie(temp_df, temporal = 2), j)
-          temp2 <- add_dimension(x = temp2, dim = 3.2, nm = getNames(temp_demand, dim = 2))
-          temp2[,remaining_years,] <- temp_demand[,peak_year,]
-          if(as.numeric(pop_diff)==0){
-            temp_demand <- temp2
-            temp_demand[temp_demand!=0] <- 0
-          } else temp_demand <- mbind(temp_demand, temp2)
+          year = remaining_years,
+          val = 0
+        )
+        ## Create magpie object for this region
+        temp2 <- setNames(as.magpie(temp_df, temporal = 2), j)
+        ## Create demand scenarios
+        temp2 <- add_dimension(x = temp2, dim = 3.2, nm = getNames(temp_demand, dim = 2))
+        ## Fill remaining years with peak demand numbers
+        temp2[, remaining_years, ] <- temp_demand[, peak_year, ]
+        if (as.numeric(pop_diff) == 0) { ## If peak occurred in 2020 then no new buildings needed (?)
+          temp_demand <- temp2
+          temp_demand[temp_demand != 0] <- 0
+        } else {
+          temp_demand <- mbind(temp_demand, temp2) ## 
         }
-        ssp_temp_demand <- mbind(ssp_temp_demand,temp_demand)
+      }
+      ssp_temp_demand <- mbind(ssp_temp_demand, temp_demand) ## Merge demands together -- SSP specific, one region, looped over all SSPS
     }
-    building_wood_demand <- mbind(building_wood_demand, ssp_temp_demand)
+    building_wood_demand <- mbind(building_wood_demand, ssp_temp_demand) ## All SSPs for each country at this stage, looped over all countries
   }
 
-  ## Convert to Million tC
+  ## Convert to Million tC from Million kgC (coming from loop)
   building_wood_demand <- building_wood_demand / 1e3
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
-  
+
   ## Convert to Million tDM <---- Instead of doing this step one can simple skip multiplication with CW inside the loop
   ## We also multiply by 2 as Churkina et al 2020 state that you can assume 50% harvest loss so for every ton of material
   ## in wood we'd actually harvest 2 tons. This is already an extreme scenario as we don't have this much harvest losses.
   building_wood_demand <- 2 * building_wood_demand / CW
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
 
-  ## Distribute shock over time
-
-  out <- toolCountryFill(x = building_wood_demand[,intersect(getYears(urban_population),getYears(building_wood_demand)),],fill = 0)
+  out <- suppressMessages(toolCountryFill(x = building_wood_demand[, intersect(getYears(urban_population), getYears(building_wood_demand)), ], fill = 0))
 
   return(list(
     x = out,
     weight = NULL,
     min = 0,
     unit = "mio tDM",
-    description = "Calculates the wood demand based on historical FAO data"
+    description = "Calculates the construction wood demand for a certain share of NEW urban settlers based on SSP urban population and Churkina et al 2020. Calculated based on current urban population and peak urban population."
   ))
 }
