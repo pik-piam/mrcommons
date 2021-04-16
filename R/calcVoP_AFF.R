@@ -18,11 +18,11 @@
 calcVoP_AFF <- function() {
 
 #### Value of production for Agriculture (crops and livestock)
-  Ag<-c("2041|Crops (PIN).Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)",
-        "2044|Livestock (PIN).Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)")
+  Ag<-c("2041|Crops.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)",
+        "2044|Livestock.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)")
  
    #factor converts from mio. 05 USD to current USD
-  VoP_agriculture<-dimSums(readSource("FAO_online","ValueOfProd")[,,Ag],dim=3)*(1+0.04)^5 
+  VoP_agriculture<-dimSums(readSource("FAO_online","ValueOfProd")[,,Ag]/1000,dim=3)*(1+0.04)^5 
   getNames(VoP_agriculture)<-"Agriculture"
   
 

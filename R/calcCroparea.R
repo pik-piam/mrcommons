@@ -89,26 +89,26 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     ### Croparea on cellular level ###
     ##################################
     
-    if (sectoral=="kcr"){
+    if (sectoral=="kcr") {
       
       #LUH related data input on cell level
       LUHweights       <- calcOutput("LUH2MAgPIE", share = "MAGofLUH", missing="fill", aggregate = FALSE) 
       LUHcroptypes     <- c("c3ann","c4ann","c3per","c4per","c3nfx")
       
-      LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2",landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"), cells=cells)
+      LUHcroparea      <- toolCell2isoCell(calcOutput("LUH2v2", landuse_types="LUH2v2", cells=cells, aggregate = FALSE, irrigation=irrigation, cellular=TRUE, selectyears="past"), cells=cells)
       
       LUHcroparea      <- LUHcroparea[,,LUHcroptypes]
       
-      if(irrigation==TRUE){
+      if (irrigation==TRUE) {
         LUHcroparea <- LUHcroparea[,,"total",invert=TRUE] #if "total" is also reported magpie object grows too big (>1.3GB)
       }
       
-      LUH2MAG          <- LUHcroparea * toolIso2CellCountries(LUHweights,cells=cells)
+      LUH2MAG          <- LUHcroparea * toolIso2CellCountries(LUHweights, cells=cells)
       MAGcroparea      <- dimSums(LUH2MAG, dim=3.1)
       
       data             <- collapseNames(MAGcroparea)
       
-    } else if(sectoral=="lpj"){
+    } else if(sectoral=="lpj") {
       
       MAGcroparea   <- calcOutput("Croparea", sectoral="kcr", physical=physical, cellular=TRUE, irrigation=irrigation, cells=cells, aggregate=FALSE)
       MAGtoLPJ      <- read.csv(toolMappingFile("sectoral","MAgPIE_LPJmL.csv"))
@@ -119,11 +119,11 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       
     } else { stop("Not possible (for now) for the given item set (sectoral)!")}
     
-    if(!physical){
+    if (!physical) {
       
       MultiCropping <- calcOutput("Multicropping", selectyears = "past", aggregate = FALSE)
       
-      data          <- data[,selectyears,] * toolIso2CellCountries(MultiCropping) 
+      data          <- data[,selectyears,] * toolIso2CellCountries(MultiCropping, cells=cells) 
       
     }
     

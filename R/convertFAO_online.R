@@ -124,23 +124,12 @@ convertFAO_online <- function(x,subtype) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
   }
 
-  ## if there is information for CHN (China) and XCN (China, mainland) and at least one of the regions
-  ## HKG (China, Hong Kong SAR), TWN (China, Taiwan Province of), or MAC (China, Macao SAR)
-  ## then replace CHN information by XCN, otherwise discard XCN
-  if(any(getRegions(x)=="CHN") & any(getRegions(x)=="XCN") & any(getRegions(x) %in% c("HKG","TWN","MAC"))){
-    China_mainland <- x["XCN",,]
-    getRegions(China_mainland) <- "CHN"
-    x["CHN",,] <- China_mainland
-    x <- x["XCN",,,invert=T]
-  } else if (any(getRegions(x) == "XCN") & subtype == "CapitalStock") { #turns XCN into CHN
-    China_mainland <- x["XCN",,]
-    getRegions(China_mainland) <- "CHN"
-    x <- mbind(x,China_mainland)
-    x <- x["XCN",,,invert=T]
-  }else if (any(getRegions(x) == "XCN") & subtype != "CapitalStock") {
-    x <- x["XCN",,,invert=T]
+  ## if XCN exists, replace CHN with XCN. 
+  if ("XCN" %in% getRegions(x)) {
+    if ("CHN" %in% getRegions(x)) x <- x["CHN",,,invert=TRUE]
+      getItems(x, dim=1)[getItems(x, dim=1)=="XCN"] <- "CHN"
   }
-
+  
   ## data for the Netherlands Antilles is currently removed because currently no
   ## information for its successors SXM, CUW, ABW is available as input for toolISOhistorical
   if(any(getRegions(x) == "ANT")) {

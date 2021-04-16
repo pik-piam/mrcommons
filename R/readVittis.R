@@ -24,7 +24,7 @@ readVittis <- function() {
   data <- complete_magpie(data)
   
   getNames(data, dim = 1) <- c("Infrastructure", "Machinery", "PlantProtection",
-                               "Seeds", "Financing", "Fuel_Lubricant", "Fertiliser",
+                               "Seeds", "Financing", "Fuel_Lubricant", "Fertilizer",
                                "Irrigation", "Labor")
   
   return(data)
