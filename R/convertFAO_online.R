@@ -28,7 +28,7 @@ convertFAO_online <- function(x,subtype) {
 
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
-                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs")
+                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs", "FbsHistoric")
 
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
@@ -173,7 +173,7 @@ convertFAO_online <- function(x,subtype) {
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    if(subtype!="Fbs") {x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)}
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]], value=TRUE),collapse=" "), "\n" , "and would need a different treatment of NAs in convertFAO")
 
