@@ -74,8 +74,9 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
     return(x)
   }
 
-  if(subtype%in%c("soilc","litc", "vegc", "alitfallc","alitterfallc", "aet",
-                  "vegc_grass", "litc_grass", "soilc_grass", "aprec", "soilc_past_hist", "soilc_past_scen")){
+  if(subtype%in%c("soilc","litc", "vegc", "alitfallc", "aet",
+                  "vegc_grass", "litc_grass", "soilc_grass", "aprec", "soilc_past_hist", "soilc_past_scen") |
+     grepl("alitter", subtype)){
 
     x <- .prepareLPJ(nbands = 1)
 

@@ -147,7 +147,8 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ####################################
       
       PastureArea    <- toolCell2isoCell(collapseNames(calcOutput("LanduseInitialisation", cellular=TRUE, aggregate = FALSE)[,selectyears,"past"]))
-      PastureYields  <- toolCell2isoCell(collapseNames(readSource("LPJmL", subtype="LPJmL5:CRU_4.harvest", convert="onlycorrect")[,selectyears,"mgrass"][,,"rainfed"]))
+      PastureYields  <- toolCell2isoCell(collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_irrig-is-rainf", climatetype="GSWP3-W5E5:historical", 
+                                                                  subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears)[,,"mgrass.rainfed"]))
       CountryToCell  <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
       
       if(calibrated==TRUE){
