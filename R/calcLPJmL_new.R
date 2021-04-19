@@ -2,7 +2,7 @@
 #' @description Handle LPJmL data and its time behaviour (smoothing and harmonizing to baseline)
 #' 
 #' @param version Switch between LPJmL versions
-#' @param climatetype Switch between different climate scenarios (default: "CRU_4")
+#' @param climatetype Switch between different climate scenarios
 #' @param subtype Switch between different lpjml input as specified in readLPJmL
 #' @param subdata Switch between data dimension subitems
 #' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
@@ -19,10 +19,10 @@
 #' @examples
 #' 
 #' \dontrun{ 
-#' calcOutput("LPJmL_new", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
+#' calcOutput("LPJmL_new", subtype="soilc", aggregate=FALSE)
 #' }
 
-calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc", subdata=NULL, stage="harmonized2020"){
+calcLPJmL_new <- function(version="LPJmL4_for_MAgPIE_84a69edd", climatetype="GFDL-ESM4:ssp370", subtype="soilc", subdata=NULL, stage="harmonized2020"){
   
   ##### CONFIG #####
   baseline_hist <- "GSWP3-W5E5:historical"
@@ -75,7 +75,7 @@ calcLPJmL_new <- function(version="LPJmL4", climatetype="CRU_4", subtype="soilc"
     
     ########## UNIT TRANSFORMATION ###############
     
-    if (grepl("soilc|soilc_layer|litc|vegc|alitfallc|alitterfallc|vegc_grass|litc_grass|soilc_grass", subtype)) {
+    if (grepl("soilc|soilc_layer|litc|vegc|alitfallc|alitter|vegc_grass|litc_grass|soilc_grass", subtype)) {
       
       unit_transform <- 0.01
       x <- x*unit_transform
