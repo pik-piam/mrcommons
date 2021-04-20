@@ -24,7 +24,7 @@
 #' 
 #' @export
 
-calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell") {
+calcFAOForestRelocate2 <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell") {
 
   # Load cellular and country data
   countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "seven", fao_corr = TRUE, selectyears = selectyears, cellular = FALSE)
@@ -42,7 +42,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
     names(dimnames(cellvegc))[1]    <- "celliso"
     mapping   <- data.frame(mapping, celliso= paste(c(1:67420), gsub("[^A-Z]","", getCells(cellvegc)), sep="."), stringsAsFactors = F)
   } else {
-    mapping   <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
+    mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     countries <- unique(mapping$iso)
 
     cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage="smoothed", aggregate = FALSE)[,getYears(countrydata),]
@@ -91,8 +91,6 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
 
         # check if area has to be cleared
         if (any(catreduce != 0)) {
-
-          t <- (catreduce != 0) 
           
           # check for one cell countries
           if (dim(cellvegc_n)[1] == 1) {
@@ -106,13 +104,26 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
               cellweight <- (1 - 10^-16 - cellvegc_n)
             }
             
-            # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
-            p <- nleqslv(rep(1,nyears(luiso)), findweight, cellarea = t(as.array(luiso)[, , cat]), isoreduction = catreduce, cellweight = cellweight)$x
-            names(p) <- rownames(cellweight)
-            if (any(p[t] < 0)) stop(verbosity = 2, paste0("Negative weight of p=", p, " for: ", cat, " ", iso, " ", t))
-            remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+            # check for edge case in which all land of that category must be removed and treat it separately
+            fullremoval <- (round(dimSums(luiso,dim = 1)[,,cat] + catreduce,2) == 0)
+            if (any(fullremoval)) {
+              luiso[, fullremoval , "to_be_allocated"] <- luiso[, fullremoval , "to_be_allocated"] + setNames(luiso[, fullremoval, cat], NULL)
+              luiso[, fullremoval, cat] <- 0
+              catreduce[fullremoval] <- 0
+            }
+            
+            t <- (catreduce != 0) 
+            if(any(t)) {
+              # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
+              p <- nleqslv(rep(1,nyears(luiso)), findweight, cellarea = t(as.array(luiso)[, , cat]), isoreduction = catreduce, cellweight = cellweight)$x
+              names(p) <- rownames(cellweight)
+              if (any(p[t] < 0)) stop(verbosity = 2, paste0("Negative weight of p=", p, " for: ", cat, " ", iso, " ", t))
+              remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+              remove[,!t,] <- 0
+            } else {
+              remove <- 0
+            }
           }
-          remove[,!t,] <- 0
 
           # remove area from cells and put to "to_be_allocated" area
           luiso[, , cat] <- luiso[, , cat] - remove
