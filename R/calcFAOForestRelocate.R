@@ -24,7 +24,7 @@
 #' 
 #' @export
 
-calcFAOForestRelocate2 <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell") {
+calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell") {
 
   # Load cellular and country data
   countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "seven", fao_corr = TRUE, selectyears = selectyears, cellular = FALSE)
