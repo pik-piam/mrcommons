@@ -88,8 +88,8 @@ calcLanduseIntensity <- function(sectoral="kcr", rescale = TRUE) {
     CountryToCell <- toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv = TRUE)
     
     #Load LPJ yields and area on cell level
-    LPJYields           <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_irrig-is-rainf", climatetype="GSWP3-W5E5:historical", 
-                                      subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears)[,,"mgrass.rainfed"]
+    LPJYields           <- toolCoord2Isocell(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_irrig-is-rainf", climatetype="GSWP3-W5E5:historical", 
+                                      subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears))[,,"mgrass.rainfed"]
     MAGPasturearea      <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[,,"past"]
     getNames(LPJYields) <- getNames(MAGPasturearea) <- "pasture"
  
