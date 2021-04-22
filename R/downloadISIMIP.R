@@ -82,7 +82,7 @@ if (grepl("yields",subtype)) {
   for (crop in c("mai", "ri1", "ri2", "swh", "soy")){
     for (irr in c("firr", "noirr")) {
       paths <- c(yields = paste0(x$model,"/phase",x$version,"/",x$gcm,"/",x$scen, "/", crop, "/",
-                                 tolower(x$model),"_",tolower(x$gcm),"_w5e5_", x$scen, "_2015soc_",x$co2, "_yield-", crop, "-",irr, "_global_annual", years,".nc4"))
+                                 tolower(x$model),"_",tolower(x$gcm),"_w5e5_", x$scen, "_2015soc_",x$co2, "_yield-", crop, "-",irr, "_global_annual_", years,".nc4"))
       
       path <- toolSubtypeSelect(x$dataset,paths)
       if (file.exists(paste0("/p/projects/macmit/data/GGCMI/AgMIP.output/",path))) {  
