@@ -15,6 +15,8 @@
 
 downloadISIMIP <- function(subtype) {
   
+  if (grepl("airww",subtype)) {
+    
   x <- toolSplitSubtype(subtype, list(dataset = "airww", 
                                       model   = c("CLM45", "CLM50", "CWatM", "DBH", "H08", "JULES-W1", "LPJmL", "MATSIRO", "MPI-HM", "ORCHIDEE", "ORCHIDEE-DGVM", "PCR-GLOBWB", "WaterGAP2"),
                                       gcm     = c("gfdl-esm2m","hadgem2-es","ipsl-cm5a-lr","miroc5"),
@@ -61,4 +63,38 @@ downloadISIMIP <- function(subtype) {
               license       = meta2$license,
               reference     = meta2$citation)
   )
+  
 }
+
+if (grepl("yields",subtype)) {
+  
+  
+  x <- toolSplitSubtype(subtype, list(dataset = "yields",
+                                      model   = c("LPJmL", "EPIC-IIASA", "pDSSAT", "CYGMA1p74"),
+                                      gcm     = c("gfdl-esm4", "ipsl-cm6a-lr", "mpi-esm1-2-hr", "mri-esm2-0", "ukesm1-0-ll"),
+                                      scen    = c("historical", "ssp126", "ssp370", "ssp585"),
+                                      co2     = c("default", "2015co2"),
+                                      version = c("2a","2b","3a","3b")))
+  
+  if (x$scen == "historical") {
+    years <- "1861_2005"} else {years <- "2015_2100"}
+  
+  for (crop in c("mai", "ri1", "ri2", "swh", "soy")){
+    for (irr in c("firr", "noirr")) {
+      paths <- c(yields = paste0(x$model,"/phase",x$version,"/",x$gcm,"/",x$scen, "/", crop, "/",
+                                 tolower(x$model),"_",tolower(x$gcm),"_w5e5_", x$scen, "_2015soc_",x$co2, "_yield-", crop, "-",irr, "_global_annual", years,".nc4"))
+      
+      path <- toolSubtypeSelect(x$dataset,paths)
+      if (file.exists(paste0("/p/projects/macmit/data/GGCMI/AgMIP.output/",path))) {  
+        storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"
+        file.copy(paste0(storage,path), basename(path))
+      } else {
+        stop("Data for requested subtype \"",subtype,"\" could not be found!")
+      }
+    }}
+}
+
+  }
+  
+  
+
