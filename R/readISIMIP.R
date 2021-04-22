@@ -16,10 +16,12 @@
 #'
 #' @import madrat
 #' @importFrom magclass getCoords
-#' @importFrom raster brick subset
+#' @importFrom raster brick subset stack
 #' @importFrom abind abind
 
 readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
+
+  if  (grepl("airww",subtype)) {
 
   .timevector <- function(start,end) {
     years      <- paste0("y",c(start:end))
@@ -37,6 +39,33 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
 
   x <- as.magpie(r, temporal=1)
   getSets(x,fulldim = FALSE)[2] <- "year.month"  
+  }
+
+  
+  if (grepl("yield", subtype)){
+    files <- Sys.glob("*.nc")
+    years <- tail(strsplit(sub("\\..*$","",files),split="_")[[1]],2)
+    
+    r <- stack(files)
+    names(r) <- sub("^(.*)\\.(.*)$","\\2..\\1",names(r))
+    
+    #subset to year 1961 (1849+112) for faster processing
+    if (grepl("historical", subtype)){
+      r <- subset(r, which(as.numeric(gsub("\\D+","", names(r))) > 111))
+      offset <- 1849
+    } else { offset <- 2014 }
+    
+    x <- as.magpie(r)
+    
+  getYears(x) <- getYears(x, as.integer=TRUE) + offset
+  getNames(x) <- gsub("yield\\.", "", getNames(x))
+  getNames(x) <- gsub("(\\.)(irr)", "\\2", getNames(x))
+  
+  map <- toolGetMappingCoord2Country()
+  missing_cells <- setdiff(map$coords, getItems(x, dim=1))
+  fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(x), names=getNames(x),  fill=0)
+  x <- mbind(x, fill)
+  }
   
   return(x)
 }

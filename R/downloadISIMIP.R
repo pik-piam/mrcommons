@@ -7,7 +7,14 @@
 #' model ("cwatm","h08","lpjml","matsiro","mpi-hm","pcr-globwb"),
 #' GCM ("ipsl-cm5a-lr","gfdl-esm2m","miroc5","hadgem2-es")  
 #' and database version ("2a","2b","3a","3b"), separated by ":"
-#' (e.g. "airww:LPJmL:gfdl-esm2m:2b")
+#' (e.g. "airww:LPJmL:gfdl-esm2m:2b"). 
+#' Similaryly for ISIMIP GGCMI phase3b data,  with scenarios and CO2 fert setting, downloads for all crops and irrigation settings
+#' models ("LPJmL", "EPIC-IIASA", "pDSSAT", "CYGMA1p74"),
+#' gcms ("gfdl-esm4", "ipsl-cm6a-lr", "mpi-esm1-2-hr", "mri-esm2-0", "ukesm1-0-ll"),
+#' scenarios  ("historical", "ssp126", "ssp370", "ssp585"),
+#' co2 ("default", "2015co2"),
+#' version c("2a","2b","3a","3b")))
+#' Example of yield subtype : "yields:EPIC-IIASA:ukesm1-0-ll:ssp585:default:3b"
 #' @author Jan Philipp Dietrich
 #' @importFrom utils download.file unzip person
 #' @importFrom XML xmlToDataFrame
@@ -77,7 +84,7 @@ if (grepl("yields",subtype)) {
                                       version = c("2a","2b","3a","3b")))
   
   if (x$scen == "historical") {
-    years <- "1861_2005"} else {years <- "2015_2100"}
+    years <- "1850_2014"} else {years <- "2015_2100"}
   
   for (crop in c("mai", "ri1", "ri2", "swh", "soy")){
     for (irr in c("firr", "noirr")) {
