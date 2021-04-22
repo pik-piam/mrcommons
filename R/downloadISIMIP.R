@@ -86,7 +86,7 @@ if (grepl("yields",subtype)) {
   if (x$scen == "historical") {
     years <- "1850_2014"} else {years <- "2015_2100"}
   
-  for (crop in c("mai", "ri1", "ri2", "swh", "soy")){
+  for (crop in c("mai", "ri1", "ri2", "swh", "wwh", "soy")){
     for (irr in c("firr", "noirr")) {
       paths <- c(yields = paste0(x$model,"/phase",x$version,"/",x$gcm,"/",x$scen, "/", crop, "/",
                                  tolower(x$model),"_",tolower(x$gcm),"_w5e5_", x$scen, "_2015soc_",x$co2, "_yield-", crop, "-",irr, "_global_annual_", years,".nc"))
