@@ -27,7 +27,8 @@ calcFactorIntensity <- function(output="intensities", method = "USDA") {
       crop_prod_dm_All  <- collapseDim(calcOutput("Production",products="kcr", aggregate = FALSE, attributes="dm"))# Production of crops. mio. ton
 
       VoP_crops<-calcOutput("VoP_crops",output="absolute",units="USD05",aggregate=FALSE) #mio. USD05
-    
+      getNames(VoP_crops)[getNames(VoP_crops) == "oilpalm_fruit"] <- "oilpalm"
+      
       gnames<-intersect(getNames(VoP_crops),getNames(crop_prod_dm_All))
       gyears<-intersect(getYears(VoP_crops),getYears(crop_prod_dm_All))
       gcells<-intersect(getCells(VoP_crops),getCells(crop_prod_dm_All))
