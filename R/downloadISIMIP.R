@@ -96,7 +96,7 @@ if (grepl("yields",subtype)) {
           storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"
           file.copy(paste0(storage,path), basename(path))
          } else {
-          vcat("Data for requested subtype \"",path,"\" could not be found!")}
+          vcat(1, paste0("Data for requested subtype \"",path,"\" could not be found!"))}
     }}
   
   
