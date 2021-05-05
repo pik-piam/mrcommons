@@ -93,15 +93,16 @@ if (grepl("yields",subtype)) {
       
       path <- toolSubtypeSelect(x$dataset,paths)
       if (file.exists(paste0("/p/projects/macmit/data/GGCMI/AgMIP.output/",path))) {  
-        storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"
-        file.copy(paste0(storage,path), basename(path))
-      } else {
-        stop("Data for requested subtype \"",subtype,"\" could not be found!")
-      }
+          storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"
+          file.copy(paste0(storage,path), basename(path))
+         } else {
+          vcat("Data for requested subtype \"",path,"\" could not be found!")}
     }}
-}
-
+  
+  
   }
+
+}
   
   
 
