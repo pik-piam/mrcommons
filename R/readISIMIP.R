@@ -70,8 +70,8 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     } else { offset <- 2014 }
 
     x <- as.magpie(r)
-    
-  getYears(x) <- getYears(x, as.integer=TRUE) + offset
+    getNames(x) <- tolower(getNames(x))
+   getYears(x) <- getYears(x, as.integer=TRUE) + offset
  
 
   map <- toolGetMappingCoord2Country()
