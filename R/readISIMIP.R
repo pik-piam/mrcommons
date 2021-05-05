@@ -58,6 +58,7 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     names(r) <- gsub("yield\\.", "", names(r))
     names(r) <- gsub("(\\.)(irr)", "\\2", names(r))
     names(r) <- gsub("(\\.)(wheat)", "\\2", names(r))
+    names(r) <- gsub("(_wheat)", "wheat", names(r))
     names(r) <- gsub("rice1", "riceA", names(r))  
     names(r) <- gsub("rice2", "riceB", names(r))
 
