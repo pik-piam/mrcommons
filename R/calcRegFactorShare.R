@@ -89,6 +89,6 @@ calcRegFactorShare <- function(datasource="USDA",factor="cap") {
   
   return(list(x=res,
               weight=NULL,
-              unit=NULL, 
+              unit="Share", 
               description="Regression parameters for factor share (capital or labout) calculation based on log10(GDPpc)"))
 }
