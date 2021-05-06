@@ -12,7 +12,7 @@
 #' 
 #' @examples
 #' \dontrun{
-#' calcOutput("calcRegFactorCapShare")
+#' calcOutput("calcRegFactorShare")
 #' }
 #' 
 #' 
@@ -77,7 +77,7 @@ calcRegFactorShare <- function(datasource="USDA",factor="cap") {
     }
     
     # create magclass object
-    res <- new.magpie(names = c("slope", "intercept"))
+    res <- new.magpie(names = c("slope", "intercept"),sets = c("Region", "Year", "coefficients"))
     res[,,"slope"] <- as.numeric(res1[["coefficients"]][2])
     res[,,"intercept"] <- as.numeric(res1[["coefficients"]][1])
 
