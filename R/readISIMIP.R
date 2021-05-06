@@ -59,8 +59,8 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     names(r) <- gsub("(\\.)(irr)", "\\2", names(r))
     names(r) <- gsub("(\\.)(wheat)", "\\2", names(r))
     names(r) <- gsub("(_wheat)", "wheat", names(r))
-    names(r) <- gsub("rice1", "riceA", names(r))  
-    names(r) <- gsub("rice2", "riceB", names(r))
+    names(r) <- gsub("rice1", "riceA", names(r), ignore.case=TRUE)  
+    names(r) <- gsub("rice2", "riceB", names(r), ignore.case=TRUE)
 
         
     #subset to year 1961 (1849+112) for faster processing
@@ -71,9 +71,9 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
 
     x <- as.magpie(r)
     getNames(x) <- tolower(getNames(x))
-   getYears(x) <- getYears(x, as.integer=TRUE) + offset
+    getYears(x) <- getYears(x, as.integer=TRUE) + offset
  
-
+#fill missing cells with 0
   map <- toolGetMappingCoord2Country()
   missing_cells <- setdiff(map$coords, getItems(x, dim=1))
   fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(x), names=getNames(x),  fill=0)
