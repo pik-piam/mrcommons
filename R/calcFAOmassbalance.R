@@ -26,7 +26,7 @@ calcFAOmassbalance<-function(){
   
   
   mb<-calcOutput("FAOmassbalance_pre",aggregate = FALSE)
-  past<-findset("past")
+  #past<-findset("past")
   mb1<-add_columns(mb,dim = 3.2,addnm = "bioenergy")
   mb1[,,"bioenergy"]<-0
   mb1<-mb1[,,
@@ -52,7 +52,7 @@ calcFAOmassbalance<-function(){
   getNames(feed,dim=1)<-paste0("feed_",substring(getNames(feed,dim=1),7))
   feed<-as.magpie(aperm(unwrap(feed),c(1,2,4,3,5)))
   
-  balanceflow<-calcOutput("FeedBalanceflow",aggregate = FALSE)[,past,]
+  balanceflow<-calcOutput("FeedBalanceflow",aggregate = FALSE)
   getNames(balanceflow,dim=1)<-paste0("feed_",getNames(balanceflow,dim=1))
   balanceflow<-balanceflow*calcOutput("Attributes",aggregate = FALSE)
   balanceflow<-as.magpie(aperm(unwrap(balanceflow),c(1,2,4,3,5)))  

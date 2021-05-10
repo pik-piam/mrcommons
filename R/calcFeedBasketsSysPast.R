@@ -16,10 +16,13 @@
 #' @importFrom luscale rename_dimnames
 
 calcFeedBasketsSysPast <- function() {
-  mag_years_past <- findset("past")
-  
+
   #read in system-specific feed basket data (for sys_dairy,sys_beef,sys_pig,sys_hen,sys_chicken)
   fbask_sys <-  readSource(type="FeedModel",subtype="FeedBaskets")
+  
+  #Interpolate for yearly data
+  
+  
   
   #expand dim=3.2 to kall (add products like wood and woodfuel)
   kdiff         <- setdiff(findset("kall"),getNames(fbask_sys,dim=2))
@@ -37,6 +40,13 @@ calcFeedBasketsSysPast <- function() {
     stringsAsFactors = FALSE)
   
   weight<-rename_dimnames(weight,dim = 3,query = mapping,from = "kli", to="sys")
+  
+  #interpolate for yearly data, keeping ends constant to not have negatives
+  iyears <- getYears(weight)
+  fbask_sys <- time_interpolate(fbask_sys, interpolated_year = iyears, integrate_interpolated_years = TRUE)
+  fbask_sys[,c(1961:1964),] <- setYears(fbask_sys[,1965,],NULL)
+  fbask_sys[,c(2011:getYears(fbask_sys, as.integer = TRUE)[length(getYears(fbask_sys))]),] <- setYears(fbask_sys[,2010,],NULL)
+  
   
   # remove datasets with NAs in weight/data
   fbask_sys<-toolNAreplace(x=fbask_sys,weight=weight,replaceby=0)

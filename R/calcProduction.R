@@ -33,7 +33,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
     
     if(!cellular){
       if(irrigation){stop("Irrigation not yet implemented for this resolution")}
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,"production"][,selectyears,MAGcroptypes])
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,"production"][,,MAGcroptypes])
       MAGProduction <- add_columns(MAGProduction,addnm = missing,dim = 3.1)
       MAGProduction[,,missing]<-0
       
@@ -138,7 +138,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
     if(irrigation){stop("Irrigation not yet implemented for this Product group")}
     if(!cellular){
       
-      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate=FALSE)[,,"production"][,selectyears,"pasture"])
+      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate=FALSE)[,,"production"][,,"pasture"])
       
     } else {
       
@@ -211,7 +211,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
     if(irrigation){stop("Irrigation not yet implemented for this Product group")}
     if(!cellular){
       
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,selectyears,Livestocktypes][,,"production"])
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,Livestocktypes][,,"production"])
       
     } else {
       
