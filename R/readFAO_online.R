@@ -42,7 +42,6 @@
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
-#' @importFrom tibble as_tibble
 
 readFAO_online <- function(subtype) {
 
@@ -138,7 +137,7 @@ readFAO_online <- function(subtype) {
   if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
 
   FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
-  FAO <- as_tibble(FAO)
+  FAO <- as.data.frame(FAO)
   # from wide to long (move years from individual columns into one column)
   if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
   # subtype 'PricesProducerAnnual' contains annual and seasonal data. Select annual data only and delete 'Months' column afterwards
