@@ -51,11 +51,12 @@ calcLUH2v2 <- function(landuse_types="magpie", irrigation=FALSE, cellular=FALSE,
     # calculate non-flooded cropland
     cl_nonflooded <- x[,,"c3ann"]*(1-y[,,"flood"])
     cl_nonflooded <- cl_nonflooded + dimSums(x[,,cropsWOc3ann],dim=3)
-    # claculate irrigated cropland
+    # calculate irrigated cropland
     cl_irrig <- x[,,"c3ann"]*y[,,"irrig_c3ann"]
     cl_irrig <- cl_irrig+dimSums(y[,,paste0("irrig_",cropsWOc3ann)]*x[,,cropsWOc3ann], dim=3)
     # fraction of non-flooded cropland under irrigation
-    frac_irrig <- ifelse(cl_nonflooded>0, cl_irrig/cl_nonflooded, 0)
+    frac_irrig <- cl_irrig/cl_nonflooded
+    frac_irrig[cl_nonflooded==0] <- 0
     frac_irrig <- pmin(frac_irrig, 1) # just to be sure
     frac_irrig <- collapseNames(frac_irrig)
     # assign to y
