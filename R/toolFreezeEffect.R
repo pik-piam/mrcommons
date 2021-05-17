@@ -26,10 +26,10 @@ toolFreezeEffect <- function(x, year, constrain=FALSE) {
       ncells <- length(getCells(x)) 
       ndata  <- length(getNames(x)) 
       nyears <- length(getYears(x))
-      first_value[] <- x[(ncells*nyears)*(rep(1:ndata, each=ncells)-1) + ncells*(first_use-1) + rep(1:ncells, times=ndata)]
+      first_value[] <- x[as.array((ncells*nyears)*(rep(1:ndata, each=ncells)-1) + ncells*(first_use-1) + rep(1:ncells, times=ndata))]
      
       # set value of first usage for all later appearing later non-zero values
-      out[out==0 & x!=0] <- first_value[,rep(1, length(getYears(x))),][out==0 & x!=0]
+      out[as.array(out==0 & x!=0)] <- first_value[,rep(1, nyears(x)),][as.array(out==0 & x!=0)]
     }
 
   return(out)

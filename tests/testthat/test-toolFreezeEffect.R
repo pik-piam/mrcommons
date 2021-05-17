@@ -1,7 +1,6 @@
 context("Freezing values on fix year or first non-zero values")
 
-data("population_magpie")
-
+population_magpie <- magclass::maxample("pop")
 
 test_that("Expect last year after freezing to first year to be equivalent to first year", {
   p_first       <- population_magpie[,1,]
