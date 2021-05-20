@@ -109,7 +109,8 @@ readGFED <- function() {
 
 	emission_factors <- emission_factors %>%
 		filter(.data$species %in% emissions_considered) %>%
-		pivot_longer(-.data$species, names_to = "partition", values_to = "emission_factor")
+		pivot_longer(-.data$species, names_to = "partition", values_to = "emission_factor") %>%
+	    mutate(species = as.character(.data$species))
 
 	# g X per kg X to Mt X per Mt X
 	emission_factors <- emission_factors %>%
