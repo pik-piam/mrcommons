@@ -34,7 +34,7 @@ calcIntakeBodyweight <- function(bodyweight,bodyheight=NULL,inactivity,tmean=NUL
     
     requirement = readSource("HHS_USDA",convert=FALSE)
     weight=requirement*0+1
-    mapping=toolMappingFile(type = "sectoral",readcsv = T,name = "HHS_USDA2hic.csv")
+    mapping=toolGetMapping(type = "sectoral", name = "HHS_USDA2hic.csv")
     requirement=speed_aggregate(x = requirement,rel = mapping,weight=weight,from = "HHS_USDA",to = "hic",dim = 3.2)
     
     standardized_requirement = collapseNames(requirement[,,"Sedentary"])*inactivity+collapseNames(requirement[,,"Active"])*(1-inactivity)

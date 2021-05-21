@@ -20,7 +20,7 @@ convertIEA <- function(x,subtype) {
     # convert electricity outputs (unit conversion between ktoe and GWh)
     x[,,c("ELOUTPUT","ELMAINE","ELAUTOE","ELMAINC","ELAUTOC")] <- x[,,c("ELOUTPUT","ELMAINE","ELAUTOE","ELMAINC","ELAUTOC")] * 0.0859845
     # disaggregating Other Africa (IAF), Other non-OECD Americas (ILA) and Other non-OECD Asia (IAS) regions to countries
-    mappingfile <- toolMappingFile("regional","regionmappingIEA.csv")
+    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA.csv", returnPathOnly = TRUE)
     mapping <- read.csv2(mappingfile)
     wp <- calcOutput("Population",aggregate=F,FiveYearSteps = F)[as.vector(mapping[[1]]),2010,"pop_SSP2"]
     wg <- calcOutput("GDPppp",aggregate=F,FiveYearSteps = F)[as.vector(mapping[[1]]),2010,"gdp_SSP2"]

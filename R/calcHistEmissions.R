@@ -38,7 +38,9 @@ calcHistEmissions <- function(subtype="sector"){
     emi_ot <- mbind(ch4[,y,],co2[,y,],n2o[,y,])/ 1000 # kt -> Mt
     if (any(!emi_ot[,,"6B_Other-not-in-total"]==0)) cat("CEDS59 sector 6B_Other-not-in-total was removed although it contains data! Please check CEDS source files.\n")
     emi_ot <- emi_ot[,,"6B_Other-not-in-total",invert=TRUE]
-    map_CEDS59_to_Sec  <- read.csv2(toolMappingFile("sectoral", "mappingCEDS59toSECTOR17.csv"), stringsAsFactors=FALSE)
+    map_CEDS59_to_Sec  <- read.csv2(toolGetMapping(type = "sectoral", name = "mappingCEDS59toSECTOR17.csv",
+                                                   returnPathOnly = TRUE),
+                                    stringsAsFactors=FALSE)
     emi_ot <- toolAggregate(x=emi_ot,weight = NULL, dim=3.1, rel = map_CEDS59_to_Sec, from="CEDS59",to="SECTOR")
     #add cdr-process and indirect-process
     tmp <- emi_ot[,,c("bunkers-energy","power-energy")] * 0
@@ -79,7 +81,9 @@ calcHistEmissions <- function(subtype="sector"){
     ch4 <- ch4[,,"6B_Other-not-in-total",invert=TRUE]
     co2 <- co2[,,"6B_Other-not-in-total",invert=TRUE]
     n2o <- n2o[,,"6B_Other-not-in-total",invert=TRUE]
-    map_CEDS59_to_MAC  <- read.csv2(toolMappingFile("sectoral", "mappingCEDS59toMACperGas.csv"), stringsAsFactors=FALSE)
+    map_CEDS59_to_MAC  <- read.csv2(toolGetMapping(type = "sectoral", name = "mappingCEDS59toMACperGas.csv",
+                                                   returnPathOnly = TRUE),
+                                    stringsAsFactors= FALSE)
     ch4 <- toolAggregate(x=ch4,weight = NULL, dim=3.1, rel = map_CEDS59_to_MAC, from="CEDS59",to="MAC.ch4")
     co2 <- toolAggregate(x=co2,weight = NULL, dim=3.1, rel = map_CEDS59_to_MAC, from="CEDS59",to="MAC.co2")
     n2o <- toolAggregate(x=n2o,weight = NULL, dim=3.1, rel = map_CEDS59_to_MAC, from="CEDS59",to="MAC.n20")

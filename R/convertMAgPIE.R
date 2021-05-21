@@ -30,25 +30,25 @@ convertMAgPIE <- function(x, subtype) {
     ap <- mbind(bc[,y,],ch4[,y,],co[,y,],nh3[,y,],nox[,y,],nmvoc[,y,],oc[,y,],so2[,y,])
     
     # convert to sectoral mapping
-    map  <- toolMappingFile("sectoral", "mappingCEDS59toSectors.csv", readcsv = TRUE)
+    map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toSectors.csv")
     
     ap <- toolAggregate(ap, map, dim=3.1, from = "CEDS59", to = "Sectors")
     
     weight <- dimSums(ap[,,c("agriculture", "luc")], dim = 3)
     
-    mappingfile <- toolMappingFile("regional","regionmappingMAgPIE.csv")
+    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingMAgPIE.csv", returnPathOnly = TRUE)
     mapping <- read.csv2(mappingfile)
     
   } else if (subtype == "macBase") {
     
-    mappingfile <- toolMappingFile("regional","regionmappingMAgPIE.csv")
+    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingMAgPIE.csv", returnPathOnly = TRUE)
     mapping <- read.csv2(mappingfile)
     primap <- readSource("PRIMAPhist", subtype ="hist")
     weight <- dimSums(primap[,"y2005",c("CAT4", "CAT5")][,,c("n2o_n", "ch4")], dim = 3)
     
   } else if (subtype %in% c("co2tax","macBaseCO2luc")) {
     
-    mapping <- toolMappingFile("regional","regionmappingH12.csv")
+    mapping <- toolGetMapping(type = "regional", name = "regionmappingH12.csv", returnPathOnly = TRUE)
     # use total land area as weight
     weight <- calcOutput("LanduseInitialisation",aggregate=FALSE)[,2005,] 
     # sum over 3.dimension
@@ -72,7 +72,7 @@ convertMAgPIE <- function(x, subtype) {
     # Note: This disaggregation does not work if iso-countries cover more than one MAgPIE region. For this case, this needs to be reworked!
 
     # regionmapping of input MAgPIE data, needs to be changed if MAgPIE data changes regionmapping
-    mapping <- toolMappingFile("regional","regionmappingH12.csv", readcsv = T)
+    mapping <- toolGetMapping(type = "regional", name = "regionmappingH12.csv")
     
     # aggregate to from regions to iso-countries -> just copies regional values to countries
     y <- toolAggregate(x, mapping, weight = NULL)
@@ -107,7 +107,7 @@ convertMAgPIE <- function(x, subtype) {
     x <- x["GLO",,,invert=TRUE]
     
     # currently the MAgPIE data is only available in H12 resolution
-    mapping <- toolMappingFile("regional","regionmappingH12.csv")
+    mapping <- toolGetMapping(type = "regional", name = "regionmappingH12.csv", returnPathOnly = TRUE)
     
     # use total land area as weight for regional disaggregation
     weight <- calcOutput("LanduseInitialisation",aggregate=FALSE)[,2005,] 

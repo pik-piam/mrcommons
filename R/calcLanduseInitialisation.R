@@ -167,7 +167,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
       } else {
-        mapping   <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
+        mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
         countries <- unique(mapping$iso)
       }
       if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")

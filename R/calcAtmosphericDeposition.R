@@ -41,7 +41,7 @@ calcAtmosphericDeposition<-function(datasource="ACCMIP",glo_incl_oceans=FALSE,ce
       out<-ACCMIP2
     }
     if ((cellular==FALSE)&(glo_incl_oceans==FALSE)){
-      mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)  
+      mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")  
       out<-groupAggregate(out,query = mapping, dim = 1,from="celliso",to="iso")
       out  <- toolCountryFill(out,fill=0,verbosity = 2) 
     }
@@ -70,7 +70,7 @@ calcAtmosphericDeposition<-function(datasource="ACCMIP",glo_incl_oceans=FALSE,ce
     out<-add_dimension(out,dim =3.3,nm = "deposition")
     
     if (cellular==FALSE){
-      mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)  
+      mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")  
       out<-groupAggregate(out,query = mapping, dim = 1,from="celliso",to="iso")
       out  <- toolCountryFill(out,fill=0)
     }
@@ -90,7 +90,7 @@ calcAtmosphericDeposition<-function(datasource="ACCMIP",glo_incl_oceans=FALSE,ce
       out<-dimOrder(out,perm = c(2,1))
       if(cellular) {
         weight = calcOutput("AtmosphericDeposition",datasource="ACCMIP",glo=FALSE,cellular=TRUE,emission=FALSE,scenario=NULL,aggregate = FALSE)
-        mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
+        mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
         mapping <- mapping[which(mapping$iso%in%getRegions(weight)),]
         
         warning("the following section can be removed when toolAggregate is bugfixed")

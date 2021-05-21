@@ -55,7 +55,7 @@ calcNitrogenBudgetPasture<-function(cellular=FALSE,include_fertilizer=TRUE,depos
     #if(cellular){
     #  iso           <- calcOutput("NitrogenBudgetPasture", cellular=FALSE, include_fertilizer=include_fertilizer, 
     #                                                        deposition=deposition, max_nue=max_nue, aggregate = FALSE)[,,"balanceflow"]
-    #  CountryToCell <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+    #  CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     #  balanceflow   <- toolAggregate(x=toolIso2CellCountries(iso), rel=CountryToCell, weight = balanceflow, from="iso", to="celliso")
     #}
     

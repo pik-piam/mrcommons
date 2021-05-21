@@ -22,7 +22,7 @@ convertIFA <- function(x) {
   # delete dots in names as they cause problems with dimensions
   getNames(x) <- gsub("\\.","",getNames(x))
 
-  mapping<-toolMappingFile(type="regional",name = "transition_mapping_IFA.csv",readcsv = T)
+  mapping<-toolGetMapping(type = "regional", name = "transition_mapping_IFA.csv")
   
   # add 0 for azerbaijan in 1990, 
   vcat(verbosity = 1,"azerbaijan is set to 0 in 1990 to allow for toolISOhistorical")

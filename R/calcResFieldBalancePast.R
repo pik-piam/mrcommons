@@ -51,7 +51,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       # use nr for removalshare decision
       removalshare<-collapseNames((fieldbalance[,,"removal"]/(fieldbalance[,,"biomass"]-fieldbalance[,,"burned"]-fieldbalance[,,"ash"]))[,,"nr"])
       removalshare[is.nan(removalshare)]<-1
-      CellToCellIso  <- toolMappingFile("cell","CountryToCellMapping.csv",readcsv = TRUE)
+      CellToCellIso <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
       removalshare<-toolAggregate(x=removalshare,rel=CellToCellIso,from = "iso",to="celliso",partrel=T)
       removal <- (production-burn-ash)*removalshare
     } else {

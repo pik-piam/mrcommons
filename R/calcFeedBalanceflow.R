@@ -73,7 +73,7 @@ calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products=
     
     if(cellular){
       
-      CountryToCell    <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+      CountryToCell    <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
       MAGFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE, cellular = TRUE, aggregate = FALSE,nutrients="dm",products=products)
       MAGFeedCell      <- MAGFeedCell[,,commonproducts]
       MAGFeedCountry   <- toolAggregate(MAGFeedCell, rel=CountryToCell, from="celliso", to="iso", dim=1, partrel = TRUE)

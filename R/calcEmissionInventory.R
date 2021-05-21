@@ -169,7 +169,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     joint_years <- intersect(getYears(ceds), getYears(primap))
     
     # aggregate ceds categories to primap categories
-    map  <- toolMappingFile("sectoral", "mappingCEDS59toPRIMAP.csv", readcsv = TRUE)
+    map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toPRIMAP.csv")
 
     ceds_agg <- toolAggregate(ceds, map, dim = 3.1)
     getSets(primap) <- getSets(ceds)
@@ -189,7 +189,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
   
   if(!is.null(mapping)){
     # aggregate and rename CEDS59 sectors to CEDS16 sectors      
-    map  <- toolMappingFile("sectoral", mapping,readcsv = TRUE)
+    map  <- toolGetMapping(type = "sectoral", name = mapping)
     
     # reduce ceds to available categories
     out<-out[,,getNames(out,dim=1)[getNames(out,dim=1)%in%map[,1]]]
