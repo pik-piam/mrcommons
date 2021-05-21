@@ -230,7 +230,7 @@ calcLandEmissions <- function(datasource="CEDS") {
 
     GFED_emissions <- readSource("GFED")
 
-    if(!all(getItems(GFED_emissions)$Partition.Species == c("AGRI.CH4", "AGRI.NO2", "AGRI.N2O", "AGRI.NH3")))
+    if(!all(getItems(GFED_emissions)$Partition.Species %in% c("AGRI.CH4", "AGRI.NO2", "AGRI.N2O", "AGRI.NH3")))
     {
       stop("CalcLandEmissions: Unhandled emissions have been added to the GFED validation dataset.")
     }
