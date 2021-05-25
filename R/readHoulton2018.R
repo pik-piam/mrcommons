@@ -36,20 +36,6 @@ missing_cells <- setdiff(map$coords, getItems(out, dim=1))
 fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(out), names=getNames(out),  fill=0)
 out <- mbind(out, fill)
 
-#aggregate to global  scale based on LUH
-out <- toolCoord2Isocell(out)
-
-landuse <- calcOutput("LanduseInitialisation", cellular=TRUE, nclasses="six", fao_corr=TRUE, selectyears="past", input_magpie=FALSE, aggregate=F)
-landuse_shr <- landuse/dimSums(landuse,dim=3)
-
-#make past years - hold constant
-getYears(out) <- 1965
-out <- time_interpolate(out, interpolated_year=getYears(landuse), integrate_interpolated_years = TRUE)
-
-#split among landuse shares
-out <- out*landuse_shr
-#aggregate
-out <- dimSums(out, dim=1,na.rm=T)
 
 return(out)
 
