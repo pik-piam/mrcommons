@@ -25,7 +25,7 @@ out <- x*landuse_shr
 out[is.na(out)] <- 0
 rel  <- toolGetMapping("CountryToCellMapping.csv",type="cell")
 out <- toolAggregate(out,rel=rel, from="celliso", to="iso")
-
+out <- toolCountryFill(out, fill=0)
 return(list(x=out,
             weight=NULL,
             unit="Mt N/year",
