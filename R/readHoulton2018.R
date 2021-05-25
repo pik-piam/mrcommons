@@ -15,6 +15,7 @@ readHoulton2018 <- function(){
 
 rockn <- raster("Ncw_BestEst2_Model1A_longlat_lr-bil_kgkm2.nc")
 names(rockn) <- gsub("\\.\\..|\\.", "_", names(rockn))
+rockn_name <- names(rockn)
 
 mag_ext <- extent(-180, 180, -90, 90)
 mag_res <- 0.5
@@ -26,7 +27,7 @@ rockn <- resample(rockn,mag_r, "ngb" )
 rockn <- rockn*area(rockn)
 #covnert to Mt
 rockn <- rockn/10^9
-
+names(rockn) <- rockn_name
 out <- as.magpie(rockn)
 
 #some magpie coords missing from rockn .nc, fill with0s
