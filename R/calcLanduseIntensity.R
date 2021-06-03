@@ -31,7 +31,7 @@ calcLanduseIntensity <- function(sectoral="kcr", rescale = TRUE) {
     MAGcroptypes  <- findset("kcr")
     MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
     MAGtoLPJ      <- MAGtoLPJ[MAGtoLPJ$MAgPIE%in%MAGcroptypes,]
-    LPJCroptypes  <- levels(droplevels(MAGtoLPJ$LPJmL))
+    LPJCroptypes  <- levels(droplevels(factor(MAGtoLPJ$LPJmL)))
     CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #Load LPJ yields and area on cell level
