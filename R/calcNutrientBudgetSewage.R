@@ -32,7 +32,7 @@ calcNutrientBudgetSewage<-function(historic=TRUE){
     drecht[,,"SSP5"]<-drecht[,,"GO"]
     drecht<-drecht[,,ssps]
     drecht<-collapseNames(time_interpolate(drecht,interpolated_year = findset("time"),integrate_interpolated_years = FALSE,extrapolation_type = "constant"))
-    population<-collapseNames(calcOutput("Population",naming="indicator.scenario",PopulationFuture="SSP",aggregate = FALSE))
+    population<-collapseNames(calcOutput("Population",naming="indicator.scenario",PopulationFuture="SSP",aggregate = FALSE)[,,ssps])
   }
   
   detergent=population*drecht[,,"det_p_pp"]
