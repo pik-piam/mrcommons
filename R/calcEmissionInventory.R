@@ -97,6 +97,18 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     ceds[,,"no2_n"]=ceds[,,"no2_n"]/46*14
     #ceds[,,"co2_c"]=ceds[,,"co2_c"]/44*12
     out<-ceds
+  } else if (datasource=="CEDS2021"){
+      
+      # read CEDS emissions data from sources
+      ceds    <- readSource("CEDS2021")
+
+      ceds <- ceds[,paste0("y",1960:2019),]
+      
+      # add nitrate leaching with zeros (to keeep a unique format with other sources)
+      ceds<-add_columns(ceds[,,],addnm = "no3_n",dim=3.2)
+      ceds[,,"no3_n"]<-0
+
+      out<-ceds
   } else if (datasource%in%c("combined_CEDS_IPCC")){
 
     ceds<-calcOutput("EmissionInventory",
@@ -145,6 +157,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     joint_emissions<-intersect(getNames(ipcc,dim=2),getNames(ceds,dim=2))
     ceds[,,"3B_Manure-management"][,,joint_emissions]<-collapseNames(ipcc[,,"awms"][,,joint_emissions])
     ceds[,,"3D_Soil-emissions"][,,joint_emissions]<-dimSums(ipcc[,,c("cropland_soils","pasture_soils")][,,joint_emissions],dim=3.1)
+    
     out<-ceds
     
   } else if (datasource%in%c("IPCC","Nsurplus","Nsurplus2")){
@@ -192,9 +205,10 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     map  <- toolMappingFile("sectoral", mapping,readcsv = TRUE)
     
     # reduce ceds to available categories
-    out<-out[,,getNames(out,dim=1)[getNames(out,dim=1)%in%map[,1]]]
+    out<-out[,,getNames(out,dim=1)[getNames(out,dim=1)%in%map[,which(names(map)==from)]]]
     
     out<-groupAggregate(data=out,dim=3.1,query = map, from=from, to=to)
+    
   }
   
   return(list(x=out,
