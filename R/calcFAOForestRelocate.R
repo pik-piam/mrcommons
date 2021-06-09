@@ -1,8 +1,6 @@
 #' @title calcFAOForestRelocate
 #' @description Calculates the cellular MAgPIE forest and other land area correction based on FAO forestry data and LUH2v2.
 #'
-#'
-#'
 #' @param selectyears default on "past"
 #' @param nclasses options are either "six", "seven" or "nine".
 #' \itemize{
@@ -190,7 +188,8 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
   }
 
   if (nclasses == "nine") {
-    LUH2v2_nocorr <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE, cellular = TRUE, selectyears = selectyears, round = 8)
+    LUH2v2_nocorr <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE, 
+                                cellular = TRUE, selectyears = selectyears, cells = cells, round = 8)
 
     # calculate shares of primary and secondary non-forest vegetation
     totother_luh <- dimSums(LUH2v2_nocorr[, , c("primn", "secdn")], dim = 3)
