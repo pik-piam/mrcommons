@@ -21,7 +21,7 @@ calcCentralFeedshares <- function(){
   #2. feed share regression coefficients a,b
   #3. livestock productivity x
   koeppen <- readSource("Koeppen") # read Koeppen
-  map <- toolMappingFile(type="sectoral", readcsv=T, name="KoeppenFeedbasketsmapping.csv") # read mapping to Climate regions
+  map <- toolGetMapping(type = "sectoral", name = "KoeppenFeedbasketsmapping.csv") # read mapping to Climate regions
   map$Koeppen <- paste0("kg_p_", map$Koeppen)
   koeppen <- koeppen[,,map$Koeppen]
   koeppen[is.na(koeppen)] <- 0 # set NAs to 0

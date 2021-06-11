@@ -31,7 +31,7 @@ calcIntake <- function(convert=TRUE,modelinput=FALSE,standardize=FALSE,method="F
     }
     
     if (convert==FALSE){  # still adjust the format
-      mapping<-toolMappingFile(type = "sectoral",name = "NCDrisc2Lutz.csv",readcsv = TRUE)
+      mapping <- toolGetMapping(type = "sectoral", name = "NCDrisc2Lutz.csv")
       tmp<-new.magpie(cells_and_regions = getRegions(BMI),years = getYears(BMI),names = c(paste0(unique(mapping$lutz),".M"),paste0(unique(mapping$lutz),".F")))
       for(i in getNames(tmp,dim=1)){
         item<-mapping$NCDrisc[mapping$lutz==i]

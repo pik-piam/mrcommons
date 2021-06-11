@@ -22,7 +22,7 @@ convertSSPResults<- function(x){
   x=x[,c(2005,2010+(0:9)*10),]
   
   # region-to-ISO-country mapping for regional disaggregation
-  mappingFile <- toolMappingFile("regional","regionmappingSSP.csv",error.missing=TRUE,readcsv = T)
+  mappingFile <- toolGetMapping(type = "regional", name = "regionmappingSSP.csv")
 
   # ---- Population ----
   

@@ -30,7 +30,7 @@ calcEF3prp<-function(select_years="y2005"){
   emis[,,cpp]<-excretion[,,cpp]*ef3prp_cpp
   emis[,,so]<-excretion[,,so]*ef3prp_so
   
-  relationmatrix <- read.csv(toolMappingFile("sectoral","IPCCitems.csv")) 
+  relationmatrix <- read.csv(toolGetMapping(type = "sectoral", name = "IPCCitems.csv", returnPathOnly = TRUE)) 
   emis<-toolAggregate(x = emis,rel =relationmatrix,dim = 3.1,from = "ipcc",to = "magpie", partrel=TRUE)
   excretion<-toolAggregate(x = excretion,rel =relationmatrix,dim = 3.1,from = "ipcc",to = "magpie", partrel=TRUE)
   

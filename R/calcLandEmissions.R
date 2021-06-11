@@ -198,7 +198,7 @@ calcLandEmissions <- function(datasource="CEDS") {
   } else if (datasource=="FAO_EmisAg") {
 
     total   <- readSource("FAO_online", subtype = "EmisAgTotal")
-    mapping <- toolMappingFile(type = "sectoral", name = "FAO_online_emissionsMapping.csv", readcsv = T)
+    mapping <- toolGetMapping(type = "sectoral", name = "FAO_online_emissionsMapping.csv")
 
     .calculateEmissions <- function(FAO_name, magpie_name)
     {

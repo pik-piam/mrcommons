@@ -34,7 +34,8 @@ calcIniFoodPrice <- function(datasource="FAO", year="y2005", products="kfo"){
     out <- collapseNames(out[,year,"SSP2-NoCC-NoCC-379"])
     out <- setYears(out, NULL)
     # get the mapping 
-    mapping <- read.csv(toolMappingFile("sectoral","impact2magpie.csv"), na.strings="")
+    mapping <- read.csv(toolGetMapping(type = "sectoral", name = "impact2magpie.csv", returnPathOnly = TRUE),
+                        na.strings = "")
     mapping <- mapping[1:nlevels(mapping$MAgPIE),]
     out <- toolAggregate(out, rel=mapping, from="IMPACT", to="MAgPIE", dim=3.1, partrel=TRUE)
     

@@ -58,7 +58,7 @@ calcPriceAgriculture <- function(datasource="IMPACT3.2.2World_Price"){
     x <- calcOutput("WBGEM",aggregate = FALSE)
 
     #sectoral mappings
-    mapping <- toolMappingFile("sectoral","mappingWBGEM2MAgPIEnew.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "mappingWBGEM2MAgPIEnew.csv")
     mapping <- mapping[mapping$wbgem %in% getNames(x),]
 
     x <- x[,,mapping$wbgem]

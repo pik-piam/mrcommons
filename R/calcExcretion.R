@@ -73,7 +73,7 @@ calcExcretion<-function(cellular=FALSE, attributes="npk"){
     
     
     
-    mapping <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     mapping <- mapping[which(mapping$iso%in%getRegions(LivestockProduction)),]
     Excretion<-toolAggregate(Excretion[getRegions(LivestockProduction),,], rel = mapping, weight = ProductionWeights, from = "iso", to="celliso", dim=1)
   }

@@ -9,13 +9,13 @@
 #' \dontrun{ 
 #' calcOutput("PlantEstablishCalib",aggregate=TRUE)
 #' }
-#' @importFrom madrat toolMappingFile
+#' @importFrom madrat toolGetMapping
 #' @export
 
 calcPlantEstablishCalib <- function(){
   
   ## Call mapping file
-  mapping <- toolMappingFile(type = "regional",name = "h12.csv",readcsv = TRUE)
+  mapping <- toolGetMapping(type = "regional", name = "h12.csv")
   mapping$value <- 1
   mapping[mapping$RegionCode == "LAM",]$value = 2.0
   mapping[mapping$RegionCode == "OAS",]$value = 1.5

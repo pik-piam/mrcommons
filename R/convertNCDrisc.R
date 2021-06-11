@@ -24,7 +24,7 @@ convertNCDrisc <- function(x, subtype)
     
     out<-x
   } else if (subtype=="BMI"){
-    mapping<-toolMappingFile(type = "sectoral",name = "NCDrisc2Lutz.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "NCDrisc2Lutz.csv")
     BMI<-new.magpie(cells_and_regions = getRegions(x),years = getYears(x),names = c(paste0(unique(mapping$lutz),".M"),paste0(unique(mapping$lutz),".F")))
     for(i in getNames(BMI,dim=1)){
       item<-mapping$NCDrisc[mapping$lutz==i]
@@ -42,7 +42,7 @@ convertNCDrisc <- function(x, subtype)
     stop("use calcBMI_shr instead")
     #x<-readSource("NCDrisc",subtype = "BMI_shr",convert=FALSE)
     
-    mapping<-toolMappingFile(type = "sectoral",name = "NCDriscBMIshr2Lutz.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "NCDriscBMIshr2Lutz.csv")
     BMI<-toolAggregate(x,rel = mapping,from = "NCDrisc",to = "lutz",dim = 3.1)
     
     withdata <- getRegions(BMI)
@@ -56,7 +56,7 @@ convertNCDrisc <- function(x, subtype)
     bmi_regr=collapseNames(regression[,,"intercept"]+regression[,,"saturation"]*gdp_pc/(regression[,,"halfsaturation"]+gdp_pc))
     bmi_regr=time_interpolate(bmi_regr,interpolated_year = getYears(BMI2),integrate_interpolated_years = FALSE)
     
-    mapping<-toolMappingFile(type = "sectoral",name = "Lutz2agegroups.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "Lutz2agegroups.csv")
     retired=mapping[mapping$agegroups=="retired",1]
     working=mapping[mapping$agegroups=="working",1]
     
@@ -97,7 +97,7 @@ convertNCDrisc <- function(x, subtype)
     stop("use calcBMI_shr instead")
     #x<-readSource("NCDrisc",subtype = "BMI_shr_underaged",convert=FALSE)
     
-    mapping<-toolMappingFile(type = "sectoral",name = "NCDriscBMIshrunderaged2Lutz.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "NCDriscBMIshrunderaged2Lutz.csv")
     names<-sort(apply(expand.grid(unique(mapping$lutz),getNames(x,dim="sex"),getNames(x,dim="BMI_shr")), 1, paste, collapse = ".", sep = "")) 
     BMI<-new.magpie(cells_and_regions = getRegions(x),years = getYears(x),names = names)
     for(i in getNames(BMI,dim=1)){
@@ -116,7 +116,7 @@ convertNCDrisc <- function(x, subtype)
     bmi_regr=collapseNames(regression[,,"intercept"]+regression[,,"saturation"]*gdp_pc/(regression[,,"halfsaturation"]+gdp_pc))
     bmi_regr=time_interpolate(bmi_regr,interpolated_year = getYears(BMI2),integrate_interpolated_years = FALSE)
     
-    mapping<-toolMappingFile(type = "sectoral",name = "Lutz2agegroups.csv",readcsv = TRUE)
+    mapping <- toolGetMapping(type = "sectoral", name = "Lutz2agegroups.csv")
     
     BMI2<-BMI2*NA
     BMI2[,,"BMI_minus2sd"] =     bmi_regr[,,"underaged"][,,"low"] * bmi_regr[,,"underaged"][,,"lowsplit"]

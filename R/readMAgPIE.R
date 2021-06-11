@@ -71,7 +71,7 @@ readMAgPIE<- function(subtype) {
     }
 
   } else if (subtype == "supplyCurve_magpie_40") {
-    regcode <- regionscode(toolMappingFile("regional",getConfig("regionmapping")))
+    regcode <- regionscode(toolGetMapping(type = "regional", name = getConfig("regionmapping"), returnPathOnly = TRUE))
     
     # !!! ATTENTION !!! 
     # Please update scenario names in calcBiomassPrice.R if necessary
