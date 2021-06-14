@@ -42,7 +42,8 @@ calcNitrogenFixationPast<-function(fixation_types="both",sum_plantparts=TRUE,cel
   if (fixation_types%in%c("both","fixation_freeliving")){
     area <- collapseNames(calcOutput("Croparea",cellular=cellular, aggregate=F, sectoral="kcr",physical=TRUE,irrigation=irrigation))
     freeliving <- setYears(readSource("Herridge",subtype = "freeliving",convert=FALSE),NULL)
-    freeliving<-area[,past,]*freeliving
+    freeliving<-area*freeliving
+    freeliving <- freeliving[,getYears(fix_biomass),]
     fix_freeliving<-add_dimension(freeliving,dim = 3.1,nm = "fixation_freeliving")
   }
 
