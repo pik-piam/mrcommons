@@ -52,7 +52,7 @@ calcFAOmassbalance<-function(){
   getNames(feed,dim=1)<-paste0("feed_",substring(getNames(feed,dim=1),7))
   feed<-as.magpie(aperm(unwrap(feed),c(1,2,4,3,5)))
   
-  balanceflow<-calcOutput("FeedBalanceflow",aggregate = FALSE)
+  balanceflow<-calcOutput("FeedBalanceflow",aggregate = FALSE, future=FALSE)
   getNames(balanceflow,dim=1)<-paste0("feed_",getNames(balanceflow,dim=1))
   balanceflow<-balanceflow*calcOutput("Attributes",aggregate = FALSE)
   balanceflow<-as.magpie(aperm(unwrap(balanceflow),c(1,2,4,3,5)))  

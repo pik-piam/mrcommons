@@ -58,7 +58,7 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
       ResWithProduction     <- CropProduction * collapseNames(HarvestIndex[,,"slope"])                         
       ResWithHarvestedArea  <- HarvestedArea  * collapseNames(HarvestIndex[,,"intercept"])                     
       
-      AboveGroundResidues   <- (ResWithProduction   + ResWithHarvestedArea) 
+      AboveGroundResidues   <- (ResWithProduction[,cyears,]   + ResWithHarvestedArea[,cyears]) 
       # read in residues attributes
       AttributesAboveGround <- readSource("ProductAttributes", subtype = "AgResidues")[,,MAGcroptypes]
       if(!all(attributes%in%"all")){# for problems with memory size
