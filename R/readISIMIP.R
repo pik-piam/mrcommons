@@ -1,9 +1,9 @@
 #' @title readISIMIP
 #' @description Reads in ISIMIP data
-#' @param subtype Type of ISIMIP data that should be read. 
-#' It consists of variable ("airrww"), 
+#' @param subtype Type of ISIMIP data that should be read.
+#' It consists of variable ("airrww"),
 #' model ("cwatm","h08","lpjml","matsiro","mpi-hm","pcr-globwb"),
-#' GCM ("ipsl-cm5a-lr","gfdl-esm2m","miroc5","hadgem2-es")  
+#' GCM ("ipsl-cm5a-lr","gfdl-esm2m","miroc5","hadgem2-es")
 #' and database version ("2a","2b","3a","3b"), separated by ":"
 #' (e.g. "airww:LPJmL:gfdl-esm2m:2b")
 #' #' Similaryly for ISIMIP GGCMI phase3b data,  with scenarios and CO2 fert setting, downloads for all crops and irrigation settings
@@ -24,7 +24,6 @@
 #' @import madrat
 #' @importFrom magclass getCoords
 #' @importFrom raster brick subset stack
-#' @importFrom abind abind
 
 readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
 
@@ -39,30 +38,30 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
   file <- Sys.glob("*.nc4")
   if(length(file)!=1) stop("Not able to identify input file!")
   years <- tail(strsplit(sub("\\..*$","",file),split="_")[[1]],2)
-  
+
   r        <- brick(file)
   names(r) <- .timevector(years[1],years[2])
   r        <- subset(r,.timevector(max(years[1],1961),years[2]))
 
   x <- as.magpie(r, temporal=1)
-  getSets(x,fulldim = FALSE)[2] <- "year.month"  
+  getSets(x,fulldim = FALSE)[2] <- "year.month"
   }
 
-  
+
   if (grepl("yield", subtype)){
     files <- Sys.glob("*.nc")
     r <- stack(files)
-    
+
     names(r) <- sub("^(.*)\\.(.*)$","\\2..\\1",names(r))
     names(r) <- gsub("X", "y", names(r))
     names(r) <- gsub("yield\\.", "", names(r))
     names(r) <- gsub("(\\.)(irr)", "\\2", names(r))
     names(r) <- gsub("(\\.)(wheat)", "\\2", names(r))
     names(r) <- gsub("(_wheat)", "wheat", names(r))
-    names(r) <- gsub("rice1", "riceA", names(r), ignore.case=TRUE)  
+    names(r) <- gsub("rice1", "riceA", names(r), ignore.case=TRUE)
     names(r) <- gsub("rice2", "riceB", names(r), ignore.case=TRUE)
 
-        
+
     #subset to year 1961 (1849+112) for faster processing
     if (grepl("historical", subtype)){
       r <- subset(r, which(as.numeric(gsub("\\D+","", names(r))) > 111))
@@ -72,13 +71,13 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     x <- as.magpie(r)
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer=TRUE) + offset
- 
+
 #fill missing cells with 0
   map <- toolGetMappingCoord2Country()
   missing_cells <- setdiff(map$coords, getItems(x, dim=1))
   fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(x), names=getNames(x),  fill=0)
   x <- mbind(x, fill)
   }
-  
+
   return(x)
 }

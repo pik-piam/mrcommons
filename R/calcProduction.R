@@ -43,12 +43,12 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ### crop production celluluar ###
       #################################
       
-      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
+      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
       
-      CountryToCell  <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
-      MAGtoLPJ       <- toolMappingFile(type="sectoral",name = "MAgPIE_LPJmL.csv",readcsv = TRUE)
+      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      MAGtoLPJ       <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
       MAGtoLPJ       <- MAGtoLPJ[which(MAGtoLPJ$MAgPIE %in% MAGcroptypes),]
       
       MAGYields      <- toolAggregate(x = LPJYields, rel = MAGtoLPJ, from = "LPJmL", to="MAgPIE", dim = 3.1, partrel = TRUE)
@@ -147,9 +147,9 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ####################################
       
       PastureArea    <- toolCell2isoCell(collapseNames(calcOutput("LanduseInitialisation", cellular=TRUE, aggregate = FALSE)[,selectyears,"past"]))
-      PastureYields  <- toolCoord2Isocell(collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_irrig-is-rainf", climatetype="GSWP3-W5E5:historical", 
+      PastureYields  <- toolCoord2Isocell(collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical", 
                                                                   subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears)[,,"mgrass.rainfed"]))
-      CountryToCell  <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
       
       if(calibrated==TRUE){
         

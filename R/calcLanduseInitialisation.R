@@ -11,6 +11,7 @@
 #' @param fao_corr if TRUE forest area is corrected with FAO data.
 #' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #' @param input_magpie applies area fix (set cell with zero area to minimal value to not distrube aggregating to clusters)
+#' @param country_level Whether output shall be returned at country level, requires cellular = TRUE
 #' @param selectyears default on "past"
 #' @return List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
@@ -22,7 +23,7 @@
 #' @importFrom magclass setNames
 
 
-calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", selectyears = "past", input_magpie = FALSE) {
+calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", country_level=FALSE, selectyears = "past", input_magpie = FALSE) {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
   if (cellular == FALSE) {
@@ -167,7 +168,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
       } else {
-        mapping   <- toolMappingFile(type = "cell", name = "CountryToCellMapping.csv", readcsv = TRUE)
+        mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
         countries <- unique(mapping$iso)
       }
       if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")
@@ -235,6 +236,17 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     out[, , "other"] <- temp
   }
 
+  if (country_level){
+    if (cells == "lpjcell") {
+      getCells(out) <- toolGetMappingCoord2Country()[,"coords"]
+      out <- toolAggregateCell2Country(out, fill = 0)
+    }else{
+      mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      out <- toolAggregate(out, mapping, from = "celliso", to="iso")
+      out <- toolCountryFill(out, fill = 0)
+    }
+  }
+  
   return(list(
     x = out,
     weight = NULL,

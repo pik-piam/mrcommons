@@ -75,7 +75,7 @@ calcNitrogenBudgetCropland<-function(cellular=FALSE,deposition="CEDS",include_fe
     #if(cellular){
     #  iso           <- calcOutput("NitrogenBudgetCropland", cellular=FALSE, include_fertilizer=include_fertilizer, 
     #                              deposition=deposition, max_snupe=max_snupe, aggregate = FALSE)[,,"balanceflow"]
-    #  CountryToCell <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+    #  CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     #  balanceflow   <- toolAggregate(x=toolIso2CellCountries(iso), rel=CountryToCell, weight = balanceflow, from="iso", to="celliso")
     #}
     

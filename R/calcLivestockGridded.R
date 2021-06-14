@@ -16,7 +16,7 @@ calcLivestockGridded <- function(details=FALSE){
   
   selectyears <- findset("past")
   
-  CountryToCell       <- toolMappingFile(type="cell",name = "CountryToCellMapping.csv",readcsv = TRUE)
+  CountryToCell       <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
   LivestockProduction <- calcOutput("FAOmassbalance", aggregate=FALSE)[,selectyears,"production"]
   
   ### Ruminents

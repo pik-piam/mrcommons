@@ -13,13 +13,13 @@
 #' calcOutput("1stBioenergyPast")
 #' }
 #' @importFrom magclass getNames<- as.magpie
-#' @importFrom madrat toolMappingFile
+#' @importFrom madrat toolGetMapping
 #' @export
 
 calc1stBioenergyPast <- function(){
   df <- toolCalcIEAfromStructureMappingPEFE(
     readSource("IEA",subtype="EnergyBalances"),
-    toolMappingFile("sectoral","structuremappingPE.csv"),
+    toolGetMapping(type = "sectoral", name = "structuremappingPE.csv", returnPathOnly = TRUE),
     subtype="magpie")
   
   #Unit conversion from ktoe to PJ

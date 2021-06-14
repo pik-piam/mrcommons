@@ -21,7 +21,7 @@ calcNitrogenBNF<-function(cellular=FALSE){
   bnf[,,c("crop","urban")]<-0
   
   if(!cellular){
-    mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)  
+    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")  
     bnf <- groupAggregate(data = bnf,query = mapping,from="celliso",to="iso",dim=1)
     bnf  <- toolCountryFill(bnf,fill=0)
   } else {

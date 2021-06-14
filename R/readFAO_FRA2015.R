@@ -47,7 +47,7 @@ readFAO_FRA2015 <- function(subtype){
     data$Country <- as.character(data$Country)
     
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
+    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
 
     #See how many countries are available in the mapping file
     map_iso <- sort(unique(mapping$iso))
@@ -116,7 +116,7 @@ readFAO_FRA2015 <- function(subtype){
     data$Country <- as.character(data$Country)
     
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
+    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #See how many countries are available in the mapping file
     map_iso <- sort(unique(mapping$iso))
@@ -185,7 +185,7 @@ readFAO_FRA2015 <- function(subtype){
     data$Country <- as.character(data$Country)
     
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
+    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #See how many countries are available in the mapping file
     map_iso <- sort(unique(mapping$iso))
@@ -254,7 +254,7 @@ readFAO_FRA2015 <- function(subtype){
     data$Country <- as.character(data$Country)
     
     ## Now we want to make sure that the mapping we have can be applied to the dataset in hand
-    mapping<-toolMappingFile(type="cell",name="CountryToCellMapping.csv",readcsv=TRUE)
+    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #See how many countries are available in the mapping file
     map_iso <- sort(unique(mapping$iso))

@@ -1,4 +1,4 @@
-#' calcYield
+#' @title calcFAOYield
 #' 
 #' @description calculates the yield based on FAO data
 #' @param physical physical area or havested area
@@ -10,7 +10,7 @@
 #' @author Debbora Leip, Jan Philipp Dietrich
 #' @importFrom stats quantile
 
-calcYield <- function(physical = TRUE, attributes="dm", irrigation=FALSE, cellular=FALSE, cut=FALSE){
+calcFAOYield <- function(physical = TRUE, attributes="dm", irrigation=FALSE, cellular=FALSE, cut=FALSE){
   
   years <- findset("past")
   

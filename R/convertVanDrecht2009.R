@@ -14,7 +14,7 @@
 #' 
 #' @importFrom reshape2 melt
 convertVanDrecht2009 <- function(x){
-  mapping<-toolMappingFile(type="regional",name="regionmappingVanDrecht.csv",readcsv = T)
+  mapping <- toolGetMapping(type = "regional", name = "regionmappingVanDrecht.csv")
   x<-x[,,"pop",invert=TRUE]
   x<-toolAggregate(x = x,rel = mapping,from="RegionCode",to="CountryCode")
   x[,,c("hum_n_pp","hum_p_pp","det_p_pp" )]=x[,,c("hum_n_pp","hum_p_pp","det_p_pp" )]/1000

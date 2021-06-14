@@ -101,7 +101,7 @@ readACCMIP <- function(subtype=NULL)
     f<-add_columns(e,dim=3.1,addnm = "area")
     f[,,"area"]<-d[,,"area"]/10^12*100 # transform from square km to ha
     
-    map <- toolMappingFile(type="cell", readcsv=T, name="CountrytoCellMapping.csv")
+    map <- toolGetMapping(type = "cell", name = "CountrytoCellMapping.csv")
     getCells(f)<-map$celliso
     out<-clean_magpie(f)
     

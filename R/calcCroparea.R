@@ -65,7 +65,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     } else if(sectoral=="lpj"){
       
       MAGcroparea <- calcOutput("Croparea", sectoral="kcr", physical=physical, cellular=FALSE, irrigation=FALSE, aggregate=FALSE)
-      MAGtoLPJ    <- read.csv(toolMappingFile("sectoral","MAgPIE_LPJmL.csv"))
+      MAGtoLPJ    <- toolGetMapping(type = "sectoral", name ="MAgPIE_LPJmL.csv")
       MAGtoLPJ    <- MAGtoLPJ[!(MAGtoLPJ$MAgPIE=="pasture"),]
       LPJcroparea <- toolAggregate(MAGcroparea, rel=MAGtoLPJ, from="MAgPIE", to="LPJmL", dim=3.1)
       data        <- LPJcroparea
@@ -111,7 +111,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
     } else if(sectoral=="lpj") {
       
       MAGcroparea   <- calcOutput("Croparea", sectoral="kcr", physical=physical, cellular=TRUE, irrigation=irrigation, cells=cells, aggregate=FALSE)
-      MAGtoLPJ      <- read.csv(toolMappingFile("sectoral","MAgPIE_LPJmL.csv"))
+      MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
       MAGtoLPJ      <- MAGtoLPJ[!(MAGtoLPJ$MAgPIE=="pasture"),]
       LPJcroparea   <- toolAggregate(MAGcroparea, rel=MAGtoLPJ, from="MAgPIE", to="LPJmL", dim="MAG")
       data          <- LPJcroparea
