@@ -119,8 +119,8 @@ calcFeedBasketsUncalibrated <- function() {
 
   #use livestock production as weight
   kli <- findset("kli")
-  weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"])
-  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
+  weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"][,past,])
+  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)[,past,]
   
   weight_sys <- dimSums(weight_kli*prod_sys_ratio,dim="ItemCodeItem")
   weight_sys <- toolHoldConstantBeyondEnd(weight_sys)
