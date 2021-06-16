@@ -24,7 +24,6 @@
 #' 
 #' }
 #' @importFrom utils read.csv
-#' @importFrom magclass fulldim
 
 calcFAOharmonized <- function () {
   
@@ -82,7 +81,7 @@ calcFAOharmonized <- function () {
   
   ## what to do? In case there is data these dimensions should not be deleted
   
-  if(any(fulldim(FAOdata)[[2]][[3]]=="")) {
+  if(any(getItems(FAOdata, dim=3.1)=="")) {
     if (sum(FAOdata[,,""]) == 0) {
       FAOdata <- FAOdata[,,"", invert=T]
     } else  {

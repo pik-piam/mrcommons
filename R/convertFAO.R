@@ -17,7 +17,7 @@
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
-#' @importFrom magclass magpiesort
+#' @importFrom magclass magpiesort getItems dimExists
 #' 
 
 
@@ -203,7 +203,7 @@ convertFAO <- function(x,subtype) {
   
   # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
   } else if (substring(subtype,1,6)=="EmisAg" | substring(subtype,1,6)=="EmisLu") {
-    if (any(grepl("Implied_emission_factor", fulldim(x)[[2]][[4]]))) {
+    if (any(grepl("Implied_emission_factor", getItems(x, dim=3.2)))) {
       x <- x[,,"Implied_emission_factor", pmatch=T, invert=T]
     }
      x[is.na(x)] <- 0
@@ -257,8 +257,8 @@ convertFAO <- function(x,subtype) {
   
   ### set negative values (except stock variation) to 0
   
-  if(length(fulldim(x)[[2]])>3){
-    novar <- setdiff(fulldim(x)[[2]][[4]], "stock_variation")
+  if (dimExists(3.2, x)){
+    novar <- setdiff(getItems(x, dim = 3.2), "stock_variation")
     x[,,novar][x[,,novar]<0] <- 0
   }
   

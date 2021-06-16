@@ -11,7 +11,7 @@
 #' @return areas of individual crops from FAOSTAT and weight
 #' @author Ulrich Kreidenweis, Kristine Karstens, Felicitas Beier
 #' @importFrom utils read.csv
-#' @importFrom magclass fulldim setNames getCells collapseDim
+#' @importFrom magclass setNames getCells collapseDim
 #' @importFrom magpiesets findset addLocation
 #' @importFrom madrat toolAggregate toolGetMapping
 
@@ -56,7 +56,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
         
         # remove all non kcr items
         kcr <- findset("kcr")
-        remove <- setdiff(fulldim(data)[[2]][[3]],kcr)
+        remove <- setdiff(getItems(data, dim=3.1),kcr)
         if(length(remove)>0){
           remain_area <- mean( dimSums(data[,,"remaining.area_harvested"], dim=1)/dimSums(dimSums(data[,,"area_harvested"], dim=3), dim=1) )
           if (remain_area > 0.02) vcat(1,"Aggregation created a 'remaining' category. The area harvested is", round(remain_area,digits = 3)*100, "% of total \n")
