@@ -35,7 +35,7 @@ calcLanduseIntensity <- function(sectoral="kcr", rescale = TRUE) {
     CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #Load LPJ yields and area on cell level
-    LPJYields      <- collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical",
+    LPJYields      <- collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_9ca735cb", climatetype="GSWP3-W5E5:historical",
                                                subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,LPJCroptypes])
     LPJYields      <- toolCoord2Isocell(LPJYields)
     if(sectoral=="kcr") LPJYields  <- toolAggregate(LPJYields, rel=MAGtoLPJ, from="LPJmL", to="MAgPIE", dim=3.1)
@@ -88,7 +88,7 @@ calcLanduseIntensity <- function(sectoral="kcr", rescale = TRUE) {
     CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     
     #Load LPJ yields and area on cell level
-    LPJYields           <- toolCoord2Isocell(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical", 
+    LPJYields           <- toolCoord2Isocell(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_9ca735cb", climatetype="GSWP3-W5E5:historical", 
                                       subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears))[,,"mgrass.rainfed"]
     MAGPasturearea      <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[,,"past"]
     getNames(LPJYields) <- getNames(MAGPasturearea) <- "pasture"

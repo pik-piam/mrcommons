@@ -43,7 +43,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ### crop production celluluar ###
       #################################
       
-      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
+      LPJYields      <- calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_9ca735cb", climatetype="GSWP3-W5E5:historical", subtype="harvest", stage="smoothed", aggregate=FALSE)[,selectyears,]
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
       
@@ -147,7 +147,7 @@ calcProduction<-function(products="kcr", cellular=FALSE, calibrated=TRUE, attrib
       ####################################
       
       PastureArea    <- toolCell2isoCell(collapseNames(calcOutput("LanduseInitialisation", cellular=TRUE, aggregate = FALSE)[,selectyears,"past"]))
-      PastureYields  <- toolCoord2Isocell(collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_fbed5c8b_newparam", climatetype="GSWP3-W5E5:historical", 
+      PastureYields  <- toolCoord2Isocell(collapseNames(calcOutput("LPJmL_new", version="ggcmi_phase3_nchecks_9ca735cb", climatetype="GSWP3-W5E5:historical", 
                                                                   subtype="harvest", stage="smoothed", aggregate=FALSE, years=selectyears)[,,"mgrass.rainfed"]))
       CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
       

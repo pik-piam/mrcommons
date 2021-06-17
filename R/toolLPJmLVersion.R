@@ -19,16 +19,17 @@ toolLPJmLVersion <- function(version, climatetype){
   ##### DEFAULT CONFIG #####
   cfg$baseline_hist <- "GSWP3-W5E5:historical"
   cfg$ref_year_hist <- "y2010"
-  cfg$baseline_gcm  <- "GFDL-ESM4:ssp370"
+  cfg$baseline_gcm  <- "MRI-ESM2-0:ssp370"
   cfg$ref_year_gcm  <- "y2020"
   ##### DEFAULT CONFIG #####
   
   ##### ADDON CONFIG #####
   # overwrite default settings and LPJmL version for add-on tag in version argument
   # implemented add-ons:
-  # * `+oldGSWP3`              - use older LPJmL version for GSWP3 
+  # * `+oldGSWP3`               - use older LPJmL version for GSWP3 
   #                               as long as new GSWP3 is not available
-  # * `+baseline_gcm<GCM:RCP>` - use another baseline for 2010--2020
+  # * `+baseline_gcm<GCM:RCP>`  - use another baseline for 2010--2020
+  # * `+baseline_hist<GCM:RCP>` - use another baseline for 1965--2010
   
   if(grepl("\\+", version)){
     
@@ -44,6 +45,10 @@ toolLPJmLVersion <- function(version, climatetype){
       } else if( grepl("baseline_gcm", i) ){
         
         cfg$baseline_gcm  <- gsub("baseline_gcm","",i) 
+        
+      } else if( grepl("baseline_hist", i) ){
+        
+        cfg$baseline_hist <- gsub("baseline_hist","",i)
         
       } else {
         
