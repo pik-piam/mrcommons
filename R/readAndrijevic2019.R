@@ -1,10 +1,8 @@
 #' @title readAndrijevic2019
 #' @description read in governance index data from Andrijevic et al. 2019
-#' @return governance index data at iso-country resolution
+#' @return governance index data at iso-country level
 #'
-#' @param subtype data to be returned:
-#'                "historical" for observed data until 2015
-#'                "projected" for projected SSP scenario data from 2015 to 2099
+#' @param subtype data used from governance2019 repository
 #'
 #' @author Felicitas Beier
 #'
@@ -15,35 +13,53 @@
 #' }
 #'
 #' @importFrom utils read.csv
-#' @importFrom magclass getSets as.magpie collapseNames
-
+#' @importFrom magclass getSets as.magpie collapseNames new.magpie getRegions getYears getNames clean_magpie
+#' @importFrom madrat toolCountryFill
 
 readAndrijevic2019 <- function(subtype) {
 
   # read in data:
-  file <- file.path("governance_obs_project/governance_obs_project.csv")
+  file <- paste(subtype, "csv", sep = ".")
   data <- read.csv(file, header = TRUE, dec = ".", sep = ",")[, -1]
 
   # remove NAs:
   data <- data[!is.na(data$year), ]
 
+  if (subtype == "master_proj_obs") {
+    data <- data.frame(countrycode = data$countrycode,
+                       scenario = data$scenario,
+                       year = data$year,
+                       governance = data$governance,
+                       goveff = data$gov.eff,
+                       corrcont = data$corr.cont,
+                       readiness = data$readiness)
+  }
+
   # format data for transformation to magpie object
   data$year <- paste0("y", data$year)
 
-  if (subtype == "historical") {
-    # historical observed data
-    data <- data[data$scenario == "Observed", ]
-    data <- collapseNames(as.magpie(data))
-  } else if (subtype == "projected") {
-    # projected scenario data
-    data <- data[data$scenario != "Observed", ]
-    data <- collapseNames(as.magpie(data))
-  } else {
-    stop("Please specify subtype: historical or projected")
-  }
+  # historical observed data
+  histData <- data[data$scenario == "Observed", ]
+  histData <- collapseNames(as.magpie(histData))
+  histData <- toolCountryFill(histData, fill = NA)
 
-  getSets(data)[1] <- "iso"
-  data             <- clean_magpie(data)
+  # projected scenario data
+  projData <- data[data$scenario != "Observed", ]
+  projData <- collapseNames(as.magpie(projData))
+  projData <- toolCountryFill(projData, fill = NA)
 
-  return(data)
+  # merge historical and projected data into one object
+  histData <- histData[, intersect(getYears(histData), getYears(projData)), , invert = T]
+
+  out <- new.magpie(cells_and_regions = getRegions(histData),
+                    years = c(getYears(histData), getYears(projData)),
+                    names = getNames(projData),
+                    fill = NA)
+  out[, getYears(histData), ] <- histData
+  out[, getYears(projData), ] <- projData
+
+  getSets(out)[1] <- "iso"
+  out             <- clean_magpie(out)
+
+  return(out)
 }

@@ -19,19 +19,22 @@
 
 downloadAndrijevic2019 <- function(subtype = "governance_obs_project") {
 
-  link  <- "https://github.com/marina-andrijevic/governance2019/tree/master/data"
-  files <- c(gdp_ssp_5year          = "gdp_ssp_5year.csv",
-             governance_obs_project = "governance_obs_project.csv",
-             master_proj_obs        = "master_proj_obs.csv",
-             ndgain_readiness       = "ndgain_readiness.csv",
-             observed_yr            = "observed_yr.csv",
-             pop_size               = "pop_size.csv",
-             projections_yr         = "projections_yr.csv",
-             pwt70                  = "pwt70.csv",
-             wgidataset             = "wgidataset.csv",
-             wic_eduatt             = "wic_eduatt.csv",
-             wic_mys_gap            = "wic_mys_gap.csv")
+  link  <- "https://raw.githubusercontent.com/marina-andrijevic/governance2019/master/data/"
+  files <- c(governance_obs_project = "governance_obs_project.csv",
+             master_proj_obs        = "master_proj_obs.csv")
   file  <- toolSubtypeSelect(subtype, files)
 
-  download.file(url = link, destfile = file, mode = "wb")
+  download.file(url = paste0(link, file), destfile = file, mode = "wb")
+
+  return(list(url           = "https://github.com/marina-andrijevic/governance2019",
+              doi           = "10.1038/s41893-019-0405-0",
+              title         = "Governance in socioeconomic pathways and its role for future adaptive capacity",
+              author        = "Marina Andrijevic, marina.andrijevic@hu-berlin.de",
+              version       = "not available",
+              release_date  = "not available",
+              description   = "not available",
+              license       = "not available",
+              reference     = "not available",
+              unit          = "Index")
+  )
 }
