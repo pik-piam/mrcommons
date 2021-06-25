@@ -51,7 +51,11 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       # For climate scenarios historical data has to be read in from a different file
       readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
                                                       scenario = NULL, variable = NULL))
-      readinHist <- paste(gsub(readinHist$scenario, "historical", readinHist), collapse = ":")
+      if (grepl("withlu", readinHist$scenario)) {
+        readinHist <- paste(gsub(readinHist$scenario, "historicalwithlu", readinHist), collapse = ":")
+      } else {
+        readinHist <- paste(gsub(readinHist$scenario, "historical", readinHist), collapse = ":")
+      }
 
       x     <- mbind(readSource("LPJmL_new", subtype = readinHist, convert = FALSE),
                      readSource("LPJmL_new", subtype = readinName, convert = FALSE))
