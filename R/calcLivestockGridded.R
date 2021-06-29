@@ -41,7 +41,7 @@ calcLivestockGridded <- function(details=FALSE){
   ExtensiveRuminentCell <- toolAggregate(toolIso2CellCountries(ExtensiveRuminent), rel=CountryToCell, weight=PastureProduction, from="iso", to="celliso", dim=1) 
 
   #calculate intensive ruminent production per cell from cropland share
-  CropProduction        <- dimSums(collapseNames(toolCell2isoCell(calcOutput("Production", products="kcr", cellular=TRUE, aggregate=FALSE))[,,"dm"][,,c("betr","begr"),invert=TRUE]),dim=3)
+  CropProduction        <- dimSums(collapseNames(toolCell2isoCell(calcOutput("Production", products="kcr", cellular=TRUE, aggregate=FALSE))[,selectyears,"dm"][,,c("betr","begr"),invert=TRUE]),dim=3)
   IntensiveRuminentCell <- toolAggregate(toolIso2CellCountries(IntensiveRuminent), rel=CountryToCell, weight=CropProduction, from="iso", to="celliso", dim=1)
 
   RuminantProdCell      <- ExtensiveRuminentCell + IntensiveRuminentCell

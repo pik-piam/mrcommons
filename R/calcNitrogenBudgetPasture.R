@@ -18,7 +18,7 @@
 calcNitrogenBudgetPasture<-function(cellular=FALSE,include_fertilizer=TRUE,deposition="CEDS",max_nue=0.9){
   past<-findset("past")
   
-  harvest<-collapseNames(calcOutput("Production",products="pasture",cellular=cellular,aggregate = FALSE)[,,"nr"])
+  harvest<-collapseNames(calcOutput("Production",products="pasture",cellular=cellular,aggregate = FALSE)[,past,"nr"])
   excretion<-collapseNames(dimSums(calcOutput("Excretion",cellular=cellular,aggregate = FALSE)[,,"grazing"][,,"nr"],dim=3.2))
   fixation<-collapseNames(calcOutput("NitrogenBNF",cellular=cellular,aggregate = FALSE)[,,"past"])
   if(include_fertilizer==TRUE){
