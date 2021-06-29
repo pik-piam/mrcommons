@@ -15,12 +15,13 @@
 
 calcProdSysRatioPast <- function() {
 
+  past <- findset("past")
   #read in data
   prodsysratio <-  readSource(type="FeedModel",subtype="ProdSysRatio")
   
   #use livestock production as weight
   kli<-findset("kli")
-  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,past,]
   weight <- collapseNames(massbalance[,,kli][,,"dm"][,,"production"])
   
   mapping<-data.frame(
@@ -30,13 +31,6 @@ calcProdSysRatioPast <- function() {
   
   weight<-rename_dimnames(weight,dim = 3,query = mapping,from = "kli", to="sys")
   
-  
-  #interpolate for yearly data, keeping ends constant to not have negatives
-  
-  iyears <- getYears(weight)
-  prodsysratio <- time_interpolate(prodsysratio, interpolated_year = iyears, integrate_interpolated_years = TRUE)
-  prodsysratio[,c(1961:1964),] <- setYears(prodsysratio[,1965,],NULL)
-  prodsysratio[,c(2011:getYears(prodsysratio, as.integer = TRUE)[length(getYears(prodsysratio))]),] <- setYears(prodsysratio[,2010,],NULL)
   
   # remove datasets with NAs in weight/data
   prodsysratio<-toolNAreplace(x=prodsysratio,weight=weight,replaceby=0)
