@@ -2,7 +2,7 @@
 calcFoodWasteAndSewage<-function(historic=TRUE){
   past<-findset("past") 
   mb<-calcOutput("FAOmassbalance",aggregate = FALSE)
-  demand<-collapseNames(mb[,,"households"][,,c("nr")])
+  demand<-collapseNames(mb[,,"households"][,past,c("nr")])
   getSets(demand)[[3]]<-"ItemCodeItem"
   
   # food waste should be estimated without using demand projections
