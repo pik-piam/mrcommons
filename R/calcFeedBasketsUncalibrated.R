@@ -24,7 +24,7 @@ calcFeedBasketsUncalibrated <- function() {
   #central_feed_shr <- add_columns(central_feed_shr,addnm = missing)
   #central_feed_shr[,,missing] = 0.5 ## its held constant anyhow
   
-  fbask_raw = calcOutput("FeedBasketsSysPast", aggregate = FALSE)
+  fbask_raw = calcOutput("FeedBasketsSysPast", aggregate = FALSE)[,past,]
   getSets(fbask_raw) = c("iso","year","sys","kall")
   fbask_sys <- setYears(fbask_raw[,calib_year,],NULL)
   
