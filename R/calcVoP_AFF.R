@@ -72,8 +72,9 @@ calcVoP_AFF <- function() {
   price_forestry <- price_forestry[, years, ] * GDP_con
   price_forestry[!is.finite(price_forestry)] <- 0
   
+  years<-intersect(getYears(price_forestry),getYears(VoP_forestry_data))
   # mio. current USD
-  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, , "Roundwood.Production_(m3)"] * price_forestry, fill = 0)
+  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] * price_forestry[, years, ], fill = 0)
   getNames(VoP_forestry) <- "Forestry"
 
 ################
