@@ -213,6 +213,9 @@ calcCroparea <- function(sectoral = "kcr", physical = TRUE,
 
   data <- collapseNames(data)
 
+  # not more precision than 1 ha needed. very small areas can make problems in some weighting scripts
+  data <- round(data,6)
+  
   return(list(x            = data,
               weight       = NULL,
               unit         = "million ha",
