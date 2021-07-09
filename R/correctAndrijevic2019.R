@@ -19,7 +19,11 @@ correctAndrijevic2019 <- function(x, subtype) {
   
   #fill NA values
   pop <- calcOutput("Population",aggregate=FALSE)
-  x <- toolFillWithRegionAvg(x,weight = pop[,2010,1])
+  z <- NULL
+  for (i in getNames(x)) {
+    y <- toolFillWithRegionAvg(x[,,i],weight = pop[,2010,1])
+    z <- mbind(z,y)
+  }
   
-  return(x)
+  return(z)
 }
