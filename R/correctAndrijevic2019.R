@@ -20,7 +20,7 @@ correctAndrijevic2019 <- function(x, subtype) {
   #fill NA values
   pop <- calcOutput("Population",aggregate=FALSE)[,2010,1]
   getYears(pop) <- NULL
-  pop2 <- new.magpie(x,x)
+  pop2 <- new.magpie(getCells(x),getYears(x))
   pop2[,,] <- pop
   
   z <- NULL
