@@ -20,10 +20,12 @@ correctAndrijevic2019 <- function(x, subtype) {
   #fill NA values
   pop <- calcOutput("Population",aggregate=FALSE)[,2010,1]
   getYears(pop) <- NULL
+  pop2 <- new.magpie(x,x)
+  pop2[,,] <- pop
   
   z <- NULL
   for (i in getNames(x)) {
-    y <- toolFillWithRegionAvg(x[,,i],weight = pop)
+    y <- toolFillWithRegionAvg(x[,,i],weight = pop2)
     z <- mbind(z,y)
   }
   
