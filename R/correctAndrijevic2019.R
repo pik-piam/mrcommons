@@ -16,6 +16,10 @@
 correctAndrijevic2019 <- function(x, subtype) {
 
   x <- toolCountryFill(x, fill = NA)
-
+  
+  #fill NA values
+  pop <- calcOutput("Population",aggregate=FALSE)
+  x <- toolFillWithRegionAvg(x,weight = pop[,2010,1])
+  
   return(x)
 }
