@@ -18,10 +18,12 @@ correctAndrijevic2019 <- function(x, subtype) {
   x <- toolCountryFill(x, fill = NA)
   
   #fill NA values
-  pop <- calcOutput("Population",aggregate=FALSE)
+  pop <- calcOutput("Population",aggregate=FALSE)[,2010,1]
+  getYears(pop) <- NULL
+  
   z <- NULL
   for (i in getNames(x)) {
-    y <- toolFillWithRegionAvg(x[,,i],weight = pop[,2010,1])
+    y <- toolFillWithRegionAvg(x[,,i],weight = pop)
     z <- mbind(z,y)
   }
   
