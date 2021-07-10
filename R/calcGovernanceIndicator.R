@@ -21,8 +21,12 @@ calcGovernanceIndicator <- function() {
   # fill missing years
   out <- toolFillYears(x, years = c(getYears(x, as.integer = TRUE)[1]:2100))
 
+  pop <- calcOutput("Population",aggregate=FALSE)[,2010,1]
+  getYears(pop) <- NULL
+  getNames(pop) <- NULL
+  
   return(list(x            = out,
-              weight       = NULL,
+              weight       = pop,
               unit         = "index",
               description  = "Governance Index in range from 0 to 1",
               isocountries = TRUE))
