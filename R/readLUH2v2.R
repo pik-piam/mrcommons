@@ -10,7 +10,7 @@
 #' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
 #' @importFrom magclass as.magpie mbind
 #' @importFrom madrat getConfig
-#' @importFrom stringr str_match
+#' @importFrom stringr str_match str_count
 
 readLUH2v2 <- function(subtype) {
 
@@ -27,6 +27,7 @@ readLUH2v2 <- function(subtype) {
   # File to process
   f_states <- "states.nc"
   f_man    <- "management.nc"
+  f_trans  <- "transitions.nc"
 
   ### Define dimensions
   map      <- toolGetMappingCoord2Country(pretty = TRUE)
@@ -55,6 +56,51 @@ readLUH2v2 <- function(subtype) {
     # Convert from km^2 to Mha
     x <- x / 10000
 
+  } else  if (grepl("transition", subtype)) {
+    
+    # Open file and process information
+    nc_file <- nc_open(f_trans)
+    luTrans <- setdiff(names(nc_file$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
+    luTrans <- grep("to", luTrans, value = TRUE)
+    luTrans <- luTrans[str_count(luTrans, "c[3/4]") == 1]
+    fromCrop <- grep("^c", luTrans, value = TRUE)
+    toCrop   <- setdiff(luTrans, fromCrop)
+    
+    # Land area
+    carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
+    extent(carea) <- c(-180, 180, -90, 90)
+    
+    lucToCrop   <- NULL
+    lucFromCrop <- NULL
+    
+    for (item in toCrop) {
+      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1)
+      mag <- aggregate(shr * carea, fact = 2, fun = sum)
+      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      getNames(mag) <- item
+      getCells(mag) <- paste(map$coords, map$iso, sep = ".")
+      getYears(mag) <- time_sel
+      getSets(mag)  <- c("x.y.iso", "t", "data")
+      lucToCrop     <- collapseNames(lucToCrop + mag)
+    }
+    
+    for (item in fromCrop) {
+      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1)
+      mag <- aggregate(shr * carea, fact = 2, fun = sum)
+      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      getNames(mag) <- item
+      getCells(mag) <- paste(map$coords, map$iso, sep = ".")
+      getYears(mag) <- time_sel
+      getSets(mag)  <- c("x.y.iso", "t", "data")
+      lucFromCrop   <- collapseNames(lucFromCrop + mag)
+    }
+    
+    x <- mbind(setNames(lucFromCrop, "from_crop"),
+               setNames(lucToCrop,   "to_crop"))
+    
+    # Convert from km^2 to Mha
+    x <- x / 10000
+    
   } else if (grepl("irrigation", subtype)) {
 
     # Mapping between states and management_irrigation

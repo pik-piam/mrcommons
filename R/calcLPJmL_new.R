@@ -53,6 +53,8 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
                                                       scenario = NULL, variable = NULL))
       if (grepl("withlu", readinHist$scenario)) {
         readinHist <- paste(gsub(readinHist$scenario, "historicalwithlu", readinHist), collapse = ":")
+      } else if (grepl("_gsadapt", readinHist$scenario)) {
+        readinHist <- paste(gsub(readinHist$scenario, "historical_gsadapt", readinHist), collapse = ":")
       } else {
         readinHist <- paste(gsub(readinHist$scenario, "historical", readinHist), collapse = ":")
       }
@@ -176,6 +178,10 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- "mio. m^3"
 
+    } else if (grepl("cshift", subtype)) {
+      
+      unit <- "C/C"
+      
     } else {
       stop(paste0("subtype ", subtype, " is not existing"))
     }
