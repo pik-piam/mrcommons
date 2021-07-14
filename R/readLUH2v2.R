@@ -70,8 +70,8 @@ readLUH2v2 <- function(subtype) {
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
     
-    lucToCrop   <- NULL
-    lucFromCrop <- NULL
+    lucToCrop   <- new.magpie(fill = 0)
+    lucFromCrop <- new.magpie(fill = 0)
     
     for (item in toCrop) {
       shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1)
