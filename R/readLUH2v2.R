@@ -85,7 +85,7 @@ readLUH2v2 <- function(subtype) {
     }
     
     for (item in fromCrop) {
-      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1)
+      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1) #This attributes LUC to the year resulting from it
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
