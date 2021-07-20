@@ -16,6 +16,7 @@
 #' @importFrom utils read.table
 #' @importFrom magclass as.magpie getSets
 #' @importFrom stringr str_split
+#' @importFrom dplyr arrange_
 
 readILOSTAT <- function(subtype) {
 
@@ -47,6 +48,7 @@ readILOSTAT <- function(subtype) {
   if (length(grep("^X[0-9]", ilo[, "ref_area"])) > 0) ilo <- ilo[-grep("^X[0-9]", ilo[, "ref_area"]), ]
 
   # transform table to magclass object
+  ilo <- arrange_(ilo, "time")
   ilo <- as.magpie(ilo, temporal = "time", spatial = "ref_area")
   getSets(ilo)[1:2] <- c("region", "year")
 
