@@ -36,16 +36,8 @@ calcResDemand<-function(cellular = FALSE, scenario="dafault"){
   biomass1       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_cereals]),dim=3.1), add = "kres", nm = "res_cereals")
   biomass2       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_fibrous]),dim=3.1), add = "kres", nm = "res_fibrous")
   biomass3       <- add_dimension(dimSums(collapseNames(calcOutput("ResBiomass", cellular= cellular, plantparts="ag", aggregate = FALSE, scenario=scenario)[,,res_nonfibrous]),dim=3.1), add = "kres", nm = "res_nonfibrous")
-  biomass        <- mbind(biomass1,biomass2,biomass3)
-  
-  #interpolate for yearly data, keeping ends constant to not have negatives
-  
-  iyears <- getYears(biomass)
-  dev_state_past <- time_interpolate(dev_state_past, interpolated_year = iyears, integrate_interpolated_years = TRUE)
-  dev_state_past[,c(1961:1964),] <- setYears(dev_state_past[,1965,],NULL)
-  dev_state_past[,c(2011:getYears(dev_state_past, as.integer = TRUE)[length(getYears(dev_state_past))]),] <- setYears(dev_state_past[,2010,],NULL)
-  
-  
+  biomass        <- mbind(biomass1,biomass2,biomass3)[,past,]
+
   material       <- mbind(biomass[,,"res_cereals"] * (dev_state_past*0 + ( 1 - dev_state_past ) * 0.05) , biomass[,,c("res_fibrous","res_nonfibrous")] * 0)
   bioenergy      <- biomass * (dev_state_past * 0 + ( 1 - dev_state_past ) * 0.1)
   

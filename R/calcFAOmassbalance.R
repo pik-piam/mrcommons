@@ -23,10 +23,10 @@ calcFAOmassbalance<-function(){
   sizelimit <- getOption("magclass_sizeLimit")
   options(magclass_sizeLimit=1e+12)
   on.exit(options(magclass_sizeLimit=sizelimit))
+  past<-findset("past")
   
   
-  mb<-calcOutput("FAOmassbalance_pre",aggregate = FALSE)
-  #past<-findset("past")
+  mb<-calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,past,]
   mb1<-add_columns(mb,dim = 3.2,addnm = "bioenergy")
   mb1[,,"bioenergy"]<-0
   mb1<-mb1[,,
