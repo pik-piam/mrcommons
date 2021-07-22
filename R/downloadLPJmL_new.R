@@ -16,6 +16,7 @@
 #' @importFrom stringr str_detect
 
 downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
+
   x     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))
   files <- c(soilc              = "soilc_natveg",
              soilc_layer        = "soilc_layer_natveg",
@@ -42,8 +43,9 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
              soilc_past_hist    = "soilc_hist",
              soilc_past_scen    = "soilc_scen",
              grass_pft_hist     = "pft_harvest_hist.pft",
-             grass_pft_scen     = "pft_harvest_scen.pft"
-  )
+             grass_pft_scen     = "pft_harvest_scen.pft",
+             cshift_fast        = "cshift_fast_natveg",
+             cshift_slow        = "cshift_slow_natveg")
 
   # handling the separate sources of grass runs
   if (!grepl("Pasture", x$version, ignore.case = T)){

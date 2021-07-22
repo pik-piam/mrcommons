@@ -84,7 +84,7 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
 
     x <- .prepareLPJ(nbands = 24, datatype = integer(), bytes = 2)
 
-  } else if(subtype%in%c("soilc_layer")){
+  } else if(subtype%in%c("soilc_layer", "cshift_slow", "cshift_fast")){
 
     x <- .prepareLPJ(nbands = 5)
 

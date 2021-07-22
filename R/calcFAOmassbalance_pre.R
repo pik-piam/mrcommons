@@ -15,7 +15,7 @@
 #' calcOutput("FAOmassbalance_pre")
 #' }
 #' @importFrom graphics plot
-#' @importFrom magclass getSets as.magpie fulldim complete_magpie
+#' @importFrom magclass getSets as.magpie complete_magpie
 #' @importFrom utils read.csv
 
 calcFAOmassbalance_pre <- function(years = NULL) {
