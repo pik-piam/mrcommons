@@ -1,5 +1,5 @@
 #' @title calcVoP_AFF
-#' @description Calculates the overall value of production of the agriculture, 
+#' @description Calculates the overall value of production of the agriculture,
 #' forestry and fisheries sectors. Forestry and Fisheries are calculated from exports values.
 #'
 #'
@@ -17,7 +17,7 @@
 calcVoP_AFF <- function() {
 
 #### GDP
-  GDP <- calcOutput("GDPppp", aggregate = FALSE,FiveYearSteps = FALSE)[,, "gdp_SSP2"]
+  GDP <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
   GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
 
 #### Value of production for Agriculture (crops and livestock)
@@ -30,7 +30,7 @@ calcVoP_AFF <- function() {
 
 
 #### Value of production fisheries
-  
+
 
   # export value and quantity of fish and other aquatic products
   export_fish_value <- readSource("FishstatJ_FAO", subtype = "exportsValue") # 1000 current USD
@@ -40,19 +40,20 @@ calcVoP_AFF <- function() {
               "2960|Fish, Seafood + (Total).production")
 
   production_fish_tonNet <- dimSums(readSource("FAO", "CBLive")[, , Fish_Cat], dim = 3.1) # ton net
-  
+
 
   # common years
-  years_fish <- intersect(intersect(getYears(export_fish_value), 
+  years_fish <- intersect(intersect(getYears(export_fish_value),
                                     getYears((export_fish_tonNet))), getYears(production_fish_tonNet))
-  cells_fish <- intersect(intersect(getCells(export_fish_value), 
+  cells_fish <- intersect(intersect(getCells(export_fish_value),
                                     getCells((export_fish_tonNet))), getCells(production_fish_tonNet))
 
-  #Base year change 
+  # Base year change
   GDP_con <- setYears(GDP[, 2005, ] / GDP[, years_fish, ], years_fish)
-  
+
   # Value of production for fish and aquatic products -> Production*export_price
-  VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] * production_fish_tonNet[cells_fish, years_fish, ] / 1000 *GDP_con # mio. 2005 USD
+  VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
+               production_fish_tonNet[cells_fish, years_fish, ] / 1000 * GDP_con # mio. 2005 USD
   VoP_fish[!is.finite(VoP_fish)] <- 0
   getNames(VoP_fish) <- "Fisheries"
 
@@ -65,21 +66,23 @@ calcVoP_AFF <- function() {
 
   VoP_forestry_data <- readSource("FAO", "ForestProdTrade")[, , Forest_cat]
 
-  price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] / VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
+  price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] / 
+                VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
 
-  
-  #Base year change for exports value
+
+  # Base year change for exports value
   years <- getYears(price_forestry)
   years <- intersect(getYears(GDP), years)
-  
+
   GDP_con <- setYears(GDP[, 2005, ] / GDP[, years, ], years)
 
   price_forestry <- price_forestry[, years, ] * GDP_con
   price_forestry[!is.finite(price_forestry)] <- 0
-  
-  years<-intersect(getYears(price_forestry),getYears(VoP_forestry_data))
+
+  years <- intersect(getYears(price_forestry), getYears(VoP_forestry_data))
   # mio. current USD
-  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] * price_forestry[, years, ], fill = 0)
+  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] * 
+                                    price_forestry[, years, ], fill = 0)
   getNames(VoP_forestry) <- "Forestry"
 
 ################
@@ -88,7 +91,7 @@ calcVoP_AFF <- function() {
   years_VoP <- intersect(intersect(getYears(VoP_agriculture), getYears((VoP_fish))), getYears(VoP_forestry))
   cells_VoP <- intersect(intersect(getCells(VoP_agriculture), getCells((VoP_fish))), getCells(VoP_forestry))
 
-  x <- mbind(VoP_agriculture[cells_VoP, years_VoP, ], VoP_fish[cells_VoP, years_VoP, ], 
+  x <- mbind(VoP_agriculture[cells_VoP, years_VoP, ], VoP_fish[cells_VoP, years_VoP, ],
              VoP_forestry[cells_VoP, years_VoP, ])
 
 

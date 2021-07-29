@@ -1,11 +1,11 @@
 #' @title calcVoP_crops
-#' @description Calculates the value of production of individual production items or 
+#' @description Calculates the value of production of individual production items or
 #' its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
 #'
 #'
 #'
 #'
-#' @param output defines if output should be given as an "absolute" value or 
+#' @param output defines if output should be given as an "absolute" value or
 #' as a "fraction" of the overall value of production.
 #' @return magpie object. in mio. USD05
 #' @author Edna J. Molina Bacca
@@ -22,7 +22,7 @@
 calcVoP_crops <- function(output = "absolute") {
 
   #### GDP
-  GDP <- calcOutput("GDPppp", aggregate = FALSE,FiveYearSteps = FALSE)[, , "gdp_SSP2"]
+  GDP <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
   GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
 
   # Value of production for Agriculture, forestry and fishes
@@ -30,7 +30,7 @@ calcVoP_crops <- function(output = "absolute") {
   VoP_Total <- dimSums(VoP_AFF, dim = 3) # mio. current USD
 
   # Value of production of indiviual items
-  VoP_All <- readSource("FAO_online", "ValueOfProd")[, ,"Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"] / 1000 * GDP_con
+  VoP_All <- readSource("FAO_online", "ValueOfProd")[, , "Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"] / 1000 * GDP_con
   getNames(VoP_All) <- gsub("\\..*", "", getNames(VoP_All))
   getNames(VoP_All)[getNames(VoP_All) == "257|Oil, palm"] <- "257|Oil palm"
 
