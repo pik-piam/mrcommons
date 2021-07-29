@@ -28,7 +28,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
     # Production of crops. mio. ton
       crop_prod_dm_All  <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm")) 
 
-      VoP_crops <- calcOutput("VoP_crops", output = "absolute", units = "USD05", aggregate = FALSE) # mio. USD05
+      VoP_crops <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE) # mio. USD05
       getNames(VoP_crops)[getNames(VoP_crops) == "oilpalm_fruit"] <- "oilpalm"
 
       gnames <- intersect(getNames(VoP_crops), getNames(crop_prod_dm_All))
@@ -67,7 +67,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
 
           # GDP for units conversio
-          GDP <- calcOutput("GDPppp", aggregate = FALSE)[, c(2005, 2015), "gdp_SSP2"]
+          GDP <- calcOutput("GDPppp", aggregate = FALSE,FiveYearSteps = FALSE)[,, "gdp_SSP2"]
           GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
 
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
@@ -124,5 +124,5 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
                weight = weight,
                mixed_aggregation = NULL,
                unit = units,
-               description = "Factor Intensities or capital requirements for different crops in USD05 per ton"))
+               description = "Factor Intensities or capital requirements for different crops in USD05 per ton or fraction"))
 }

@@ -7,8 +7,7 @@
 #'
 #' @param output defines if output should be given as an "absolute" value or 
 #' as a "fraction" of the overall value of production.
-#' @param units if output units should be in mio. "USD05", mio. of "USD15", "current" or NULL for output "fraction" type
-#' @return magpie object. in current mio. USD units, in mio. USD05, current USD or NULL (fraction).
+#' @return magpie object. in mio. USD05
 #' @author Edna J. Molina Bacca
 #' @importFrom dplyr mutate
 #' @importFrom luscale speed_aggregate
@@ -20,11 +19,11 @@
 #' a <- calcOutput("VoP_crops")
 #' }
 #'
-calcVoP_crops <- function(output = "absolute", units = "USD05") {
+calcVoP_crops <- function(output = "absolute") {
 
   #### GDP
-  GDP <- calcOutput("GDPppp", aggregate = FALSE)[, c(2020, 2015, 2005), "gdp_SSP2"]
-  GDP_con <- setNames(setYears((GDP[, 2020, ] / GDP[, 2015, ]), NULL), NULL)
+  GDP <- calcOutput("GDPppp", aggregate = FALSE,FiveYearSteps = FALSE)[, , "gdp_SSP2"]
+  GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
 
   # Value of production for Agriculture, forestry and fishes
   VoP_AFF <- calcOutput("VoP_AFF", aggregate = FALSE)
@@ -51,18 +50,6 @@ calcVoP_crops <- function(output = "absolute", units = "USD05") {
 
   x[!is.finite(x)] <- 0
 
-
-  if (units == "USD05" & output == "absolute") {
-    GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2020, ]), NULL), NULL)
-  } else if (units == "USD15" & output == "absolute") {
-    GDP_con <- setNames(setYears((GDP[, 2015, ] / GDP[, 2020, ]), NULL), NULL)
-  } else if (units == "current" | units == NULL) {
-    GDP_con <- 1
-  } else {
-       stop("Not a valid unit")
-     }
-
-  x <- x * GDP_con
 
   if (output == "absolute") {
     weight <- NULL

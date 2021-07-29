@@ -46,15 +46,6 @@ readFishstatJ_FAO <- function(subtype="Production") {
     x <- toolCountryFill(x = x,fill = 0) # fill with zeros
     getNames(x) <- Value
     
-    if(Value == "exportsValue"){
-      
-      for (i in getYears(x,as.integer = TRUE)){
-        x[,i,] <- x[,i,]*(1+0.04)^(2020-i) 
-      }
-      
-    } # brings values to present usd for exports value
-    
-    
     return(x)
   }
 
