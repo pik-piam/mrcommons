@@ -13,7 +13,6 @@
 #' \dontrun{
 #'   downloadSource("ILOSTAT", "AgEmpl")
 #' }
-#' @importFrom Rilostat get_ilostat label_ilostat get_ilostat_toc
 #' @importFrom dplyr select all_of
 #' @importFrom stringr str_extract
 #' @importFrom utils write.table
@@ -29,15 +28,15 @@ downloadILOSTAT <- function(subtype) {
   indicatorID <- toolSubtypeSelect(subtype, indicatorIDs)
 
   # download and save data
-  res <- get_ilostat(indicatorID, cache = FALSE)
+  res <- Rilostat::get_ilostat(indicatorID, cache = FALSE)
   remove <- intersect(c("source", "indicator", "obs_status", "note_indicator", "note_source", "note_classif"),
                       colnames(res))
   res <- select(res, -all_of(remove))
-  res[, -1] <- label_ilostat(res[, -1])
+  res[, -1] <- Rilostat::label_ilostat(res[, -1])
   write.table(res, paste0(indicatorID, ".csv"), row.names = FALSE)
 
   # get meta data
-  toc <- get_ilostat_toc()
+  toc <- Rilostat::get_ilostat_toc()
   toc <- toc[toc[, "id"] == indicatorID, ]
   unit <- gsub("[()]", "", str_extract(toc$indicator.label, "\\([^)]*\\)$"))
   if (is.na(unit)) unit <- ""
