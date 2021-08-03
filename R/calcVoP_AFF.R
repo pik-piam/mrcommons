@@ -4,7 +4,7 @@
 #'
 #'
 #'
-#' @return magpie object. in mio. 05USD units
+#' @return magpie object. in mio. 05USD ppp units
 #' @author Edna J. Molina Bacca
 #' @importFrom dplyr intersect
 #' @importFrom magclass dimSums
@@ -17,8 +17,9 @@
 calcVoP_AFF <- function() {
 
 #### GDP
-  GDP <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
-  GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
+  GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
+  GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
+  GDP_con <- setNames(setYears((GDP_ppp[, 2005, ] / GDP_ppp[, 2015, ]), NULL), NULL)
 
 #### Value of production for Agriculture (crops and livestock)
   Ag <- c("2041|Crops.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)",
@@ -48,8 +49,9 @@ calcVoP_AFF <- function() {
   cells_fish <- intersect(intersect(getCells(export_fish_value),
                                     getCells((export_fish_tonNet))), getCells(production_fish_tonNet))
 
-  # Base year change
-  GDP_con <- setYears(GDP[, 2005, ] / GDP[, years_fish, ], years_fish)
+  # Base year and USD type change
+  GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years_fish, ], years_fish)
+  GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
 
   # Value of production for fish and aquatic products -> Production*export_price
   VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
@@ -72,10 +74,10 @@ calcVoP_AFF <- function() {
 
   # Base year change for exports value
   years <- getYears(price_forestry)
-  years <- intersect(getYears(GDP), years)
-
-  GDP_con <- setYears(GDP[, 2005, ] / GDP[, years, ], years)
-
+  
+  GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years, ], years)
+  GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
+  
   price_forestry <- price_forestry[, years, ] * GDP_con
   price_forestry[!is.finite(price_forestry)] <- 0
 
@@ -93,6 +95,7 @@ calcVoP_AFF <- function() {
 
   x <- mbind(VoP_agriculture[cells_VoP, years_VoP, ], VoP_fish[cells_VoP, years_VoP, ],
              VoP_forestry[cells_VoP, years_VoP, ])
+  x[!is.finite(x)] <- 0
 
 
   return(list(x = x,

@@ -68,8 +68,9 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
 
           # GDP for units conversio
-          GDP <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
-          GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
+          GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
+          GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
+          GDP_con <- setNames(setYears((GDP_ppp[, 2005, ] / GDP_mer[, 2015, ]), NULL), NULL)
 
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
           fraction_VoP_crop <- calcOutput("VoP_crops", output = "fraction", aggregate = FALSE)
@@ -127,5 +128,6 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
                weight = weight,
                mixed_aggregation = NULL,
                unit = units,
-               description = "Factor Intensities or capital requirements for different crops in USD05 per ton or fraction"))
+               description = "Factor Intensities or capital requirements for different 
+                            crops in USD05 per ton or fraction"))
 }

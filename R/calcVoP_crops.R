@@ -7,7 +7,7 @@
 #'
 #' @param output defines if output should be given as an "absolute" value or
 #' as a "fraction" of the overall value of production.
-#' @return magpie object. in mio. USD05
+#' @return magpie object. in mio. USD05 ppp or fraction
 #' @author Edna J. Molina Bacca
 #' @importFrom dplyr mutate
 #' @importFrom luscale speed_aggregate
@@ -27,7 +27,7 @@ calcVoP_crops <- function(output = "absolute") {
 
   # Value of production for Agriculture, forestry and fishes
   VoP_AFF <- calcOutput("VoP_AFF", aggregate = FALSE)
-  VoP_Total <- dimSums(VoP_AFF, dim = 3) # mio. current USD
+  VoP_Total <- dimSums(VoP_AFF, dim = 3) # mio. 05USD ppp
 
   # Value of production of indiviual items
   VoP_All <- readSource("FAO_online", "ValueOfProd")[, , "Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"] / 1000 * GDP_con
