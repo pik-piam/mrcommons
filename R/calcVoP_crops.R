@@ -32,16 +32,16 @@ calcVoP_crops <- function(output = "absolute") {
   # Value of production of indiviual items
   VoP_All <- readSource("FAO_online", "ValueOfProd")[, , "Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"] / 1000 * GDP_con
   getNames(VoP_All) <- gsub("\\..*", "", getNames(VoP_All))
-  getNames(VoP_All)[getNames(VoP_All) == "257|Oil, palm"] <- "257|Oil palm"
+  getNames(VoP_All)[getNames(VoP_All) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
 
   # items for aggregation
-  mappingFAO <- toolGetMapping("FAO_VoP_kcr.csv", type = "sectoral")
+  mappingFAO <- toolGetMapping("FAO2LUH2MAG_croptypes.csv", type = "sectoral", where = "mrcommons")
   items_intersect <- intersect(getNames(VoP_All), unique(mappingFAO$ProductionItem))
   mappingFAO <- mappingFAO[mappingFAO$ProductionItem %in% items_intersect, ]
 
   # Aggregation to magpie objects
   VoP_kcr_aggregated <- toolAggregate(VoP_All[, , items_intersect], rel = mappingFAO, from = "ProductionItem",
-                                      to = "k", weight = NULL, dim = 3)
+                                      to = "kcr", weight = NULL, dim = 3)
 
   years <- intersect(getYears(VoP_kcr_aggregated), getYears(VoP_Total))
 
@@ -53,6 +53,7 @@ calcVoP_crops <- function(output = "absolute") {
 
   if (output == "absolute") {
     weight <- NULL
+    units <- "USD05 ppp"
   } else if (output == "fraction") {
     Production <- collapseNames(calcOutput("Production", aggregate = FALSE, products = "kcr", attributes = "dm"))
     years <- intersect(getYears(Production), getYears(x))
@@ -61,12 +62,14 @@ calcVoP_crops <- function(output = "absolute") {
     weight <- Production[, years, names]
     x <- x[, years, names]
     weight[x == 0] <- 0
+    units <- "fraction"
 
   } else {
     stop("Output not supported")
   }
 
 
+   
  return(list(x = x,
                 weight = weight,
                 mixed_aggregation = NULL,
