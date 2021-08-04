@@ -49,20 +49,28 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
       # Calculation of capital and labor intensities, and Capital share between the two
       Intensity <- fraction_inputs[, fyears, ] * VoP_perTon[, fyears, ]
-      Share_Capital <- fraction_inputs[, , "Capital"] / dimSums(fraction_inputs, dim = 3.1)
+      Share_Capital <- fraction_inputs[, fyears, c("Capital")] / dimSums(fraction_inputs[, fyears, ], dim = 3.1)
 
 
 
        # assuming a 4% interest rate and 5% depreciation
-       x <- if (output == "intensities") Intensity else if (output == "requirements") Intensity[, , "Capital"] /
+       x <- if (output == "intensities") Intensity else if (output == "requirements") Intensity[, , c("Capital", "Labor")] /
          (0.04 + 0.05) else if (output == "CapitalShare") Share_Capital else stop("Output not supported")
        x["PHL", , ] <- 0 # inconsistent data in Philippines
-
+       x[!is.finite(x)] <- 0
        weight <- x
+
+       if (output != "CapitalShare") {
        weight[, , "Capital"] <- crop_prod_dm_All[, fyears, gnames]
        weight[, , "Labor"] <- crop_prod_dm_All[, fyears, gnames]
        weight[!is.finite(x)] <- 0
        weight[x == 0] <- 0
+       } else {
+         weight[, , "Capital"] <- dimSums(crop_prod_dm_All[, fyears, ], dim = 3)
+         weight[!is.finite(x)] <- 0
+         weight[x == 0] <- 0
+
+       }
 
 
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
@@ -109,7 +117,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
           x <- if (output == "intensities") x * (0.04 + 0.05) else if (output == "requirements") x
           x["PHL", , ] <- 0
-
+          getNames(x) <- paste0("Capital", getNames(x))
 
           weight <- x
           weight[, , ] <- Production[, getYears(x), getNames(x)]

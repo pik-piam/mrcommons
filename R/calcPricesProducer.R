@@ -18,7 +18,7 @@
 #' a <- calcOutput("PricesProducer")
 #' }
 #'
-calcPricesProducer2 <- function(products = "kcr", calculation = "VoP") {
+calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
 
   ## Conversion of current USD MER to 05USDppp
   GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
@@ -68,6 +68,7 @@ calcPricesProducer2 <- function(products = "kcr", calculation = "VoP") {
 
     weight <- weight[, years, names]
     x <- x[, years, names]
+
   } else if (calculation == "VoP") {
 
     # Value of production already in 05USD ppp
@@ -85,7 +86,7 @@ calcPricesProducer2 <- function(products = "kcr", calculation = "VoP") {
 
     weight <- Production[, years, getNames(Prices)]
     weight[Prices == 0] <- 0
-    x <- Prices[, years, names]
+    x <- Prices[, years, ]
 
   } else {
    stop("Type not valid")
