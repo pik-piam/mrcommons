@@ -21,7 +21,7 @@
 #'
 calcVoP_crops <- function(output = "absolute") {
 
-  #### GDP
+  #### GDP-based conversion factor from 2005 to 2015 ppp
   GDP <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
   GDP_con <- setNames(setYears((GDP[, 2005, ] / GDP[, 2015, ]), NULL), NULL)
 
@@ -30,7 +30,8 @@ calcVoP_crops <- function(output = "absolute") {
   VoP_Total <- dimSums(VoP_AFF, dim = 3) # mio. 05USD ppp
 
   # Value of production of indiviual items
-  VoP_All <- readSource("FAO_online", "ValueOfProd")[, , "Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"] / 1000 * GDP_con
+  item <- "Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)"
+  VoP_All <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 * GDP_con
   getNames(VoP_All) <- gsub("\\..*", "", getNames(VoP_All))
   getNames(VoP_All)[getNames(VoP_All) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
 
@@ -69,10 +70,10 @@ calcVoP_crops <- function(output = "absolute") {
   }
 
 
-   
+
  return(list(x = x,
                 weight = weight,
                 mixed_aggregation = NULL,
                 unit = units,
-                description = " Value of production for individual crops"))
+                description = " Value of production for individual crops in 05USDppp"))
 }

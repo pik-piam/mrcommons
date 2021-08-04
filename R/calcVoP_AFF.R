@@ -16,7 +16,7 @@
 #'
 calcVoP_AFF <- function() {
 
-#### GDP
+#### GDP conversion factor from MER to ppp
   GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
   GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
   GDP_con <- setNames(setYears((GDP_ppp[, 2005, ] / GDP_ppp[, 2015, ]), NULL), NULL)
@@ -49,13 +49,13 @@ calcVoP_AFF <- function() {
   cells_fish <- intersect(intersect(getCells(export_fish_value),
                                     getCells((export_fish_tonNet))), getCells(production_fish_tonNet))
 
-  # Base year and USD type change
+  # Base year and USD type conversion
   GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years_fish, ], years_fish)
   GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
 
   # Value of production for fish and aquatic products -> Production*export_price
   VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
-               production_fish_tonNet[cells_fish, years_fish, ] / 1000 * GDP_con # mio. 2005 USD
+             production_fish_tonNet[cells_fish, years_fish, ] / 1000 * GDP_con[cells_fish, years_fish, ] # mio. 05USDpp
   VoP_fish[!is.finite(VoP_fish)] <- 0
   getNames(VoP_fish) <- "Fisheries"
 
@@ -68,22 +68,22 @@ calcVoP_AFF <- function() {
 
   VoP_forestry_data <- readSource("FAO", "ForestProdTrade")[, , Forest_cat]
 
-  price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] / 
+  price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] /
                 VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
 
 
   # Base year change for exports value
   years <- getYears(price_forestry)
-  
+
   GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years, ], years)
   GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
-  
-  price_forestry <- price_forestry[, years, ] * GDP_con
+
+  price_forestry <- price_forestry[, years, ] * GDP_con [, , ]
   price_forestry[!is.finite(price_forestry)] <- 0
 
   years <- intersect(getYears(price_forestry), getYears(VoP_forestry_data))
   # mio. current USD
-  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] * 
+  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] *
                                     price_forestry[, years, ], fill = 0)
   getNames(VoP_forestry) <- "Forestry"
 
@@ -101,6 +101,6 @@ calcVoP_AFF <- function() {
   return(list(x = x,
          weight = NULL,
          mixed_aggregation = NULL,
-         unit = "mio. current USD units",
+         unit = "mio. 05USDppp units",
          description = " Value of production for the agriculture, forestry and fisheries sector"))
 }
