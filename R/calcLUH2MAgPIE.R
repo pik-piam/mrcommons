@@ -21,6 +21,8 @@
 
 calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflooded",
                            selectyears = "past", missing = "ignore") {
+  
+  past <- findset("past")
 
   if (share == "total") {
 
@@ -29,7 +31,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
     }
 
     FAOdata     <- calcOutput("Croparea", sectoral = "ProductionItem",
-                              physical = FALSE, aggregate = FALSE)
+                              physical = FALSE, aggregate = FALSE)[,past,]
 
     if (rice == "nonflooded") {
       # Rice areas are pre-determined by areas reported as flooded in LUH.
@@ -39,7 +41,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
     }
 
     kcr         <- findset("kcr")
-    mapping     <- toolGetMapping("FAO2LUH2MAG_croptypes.csv", type = "sectoral", where = "mrcommons")
+    mapping     <- toolGetMapping("FAO2LUH2MAG_croptypes_online.csv", type = "sectoral", where = "mrcommons")
 
     aggregation <- toolAggregate(FAOdata, rel = mapping, from = "ProductionItem",
                                  to = "LUH2kcr", dim = 3.1, partrel = TRUE)
