@@ -21,6 +21,7 @@
 
 calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflooded",
                            selectyears = "past", missing = "ignore") {
+  past <- findset("past")
 
   if (share == "total") {
 
@@ -29,7 +30,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
     }
 
     FAOdata     <- calcOutput("Croparea", sectoral = "ProductionItem",
-                              physical = FALSE, aggregate = FALSE)
+                              physical = FALSE, aggregate = FALSE)[,past,]
 
     if (rice == "nonflooded") {
       # Rice areas are pre-determined by areas reported as flooded in LUH.
