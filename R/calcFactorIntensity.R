@@ -117,7 +117,6 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
           x <- if (output == "intensities") x * (0.04 + 0.05) else if (output == "requirements") x
           x["PHL", , ] <- 0
-          getNames(x) <- paste0("Capital", getNames(x))
 
           weight <- x
           weight[, , ] <- Production[, getYears(x), getNames(x)]
