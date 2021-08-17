@@ -75,3 +75,4 @@ Suggests:
     covr,
     Rilostat
 VignetteBuilder: knitr
+Remotes: hhoeflin/hdf5r
