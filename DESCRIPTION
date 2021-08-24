@@ -35,7 +35,7 @@ Description: Provides useful functions and a common structure to all the input d
 Depends:
     R(>= 2.10.0),
     magclass(>= 3.17),
-    madrat(>= 1.30),
+    madrat(>= 2.2.1),
 Imports:
   SPEI,
   WDI,
