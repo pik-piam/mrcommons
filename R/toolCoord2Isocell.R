@@ -10,6 +10,7 @@
 #' @importFrom magpiesets addLocation
 #' @importFrom madrat toolOrderCells
 #' @importFrom magclass collapseDim
+#' @importFrom utils packageVersion
 #'
 #' @export
 
@@ -21,7 +22,11 @@ toolCoord2Isocell <- function(x, cells = "magpiecell") {
     x <- collapseDim(x, dim = removedim)
     x <- addLocation(x)
     x <- collapseDim(x, dim = c("x", "y"))
-    getItems(x, dim = 1.2)[getItems(x, dim = 1.2) == "0"] <- "NA"
+    if (packageVersion("magclass") < 6) {
+      x <- x["NA", , , invert = TRUE]
+    } else {
+      getItems(x, dim = 1.2)[getItems(x, dim = 1.2) == "0"] <- "NA"
+    }
     x <- toolOrderCells(x, na.rm = TRUE)
     if (length(getCells(x)) != 59199) warning("Some cells out of the 59199 standard cells are missing.")
 
