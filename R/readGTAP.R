@@ -13,7 +13,6 @@
 #' }
 #' @importFrom reshape2 melt
 #' @importFrom magclass as.magpie
-#' @importFrom HARr read_har
 
 readGTAP <- function(subtype) {
 
@@ -24,7 +23,12 @@ readGTAP <- function(subtype) {
   # function to load variable from one GTAP8.1 dataset (either 2004 or 2007)
   .readDataset <- function(file, subtype, year) {
     # load data
-    GTAP <- read_har(paste0("GTAP81/FilesGTAP81y", year, "/", file, ".har"))[subtype]
+    if (requireNamespace("HARr", quietly = TRUE)) {
+      GTAP <- HARr::read_har(paste0("GTAP81/FilesGTAP81y", year, "/", file, ".har"))[subtype]
+    } else {
+      stop(paste("HARr is needed to read data from GTAP. You can install the package via",
+                 "devtools::install_git('https://github.com/USDA-ERS/MTED-HARr.git')"))
+    }
 
     GTAP <- melt(GTAP)
     GTAP$REG <- toupper(GTAP$REG)
@@ -46,7 +50,7 @@ readGTAP <- function(subtype) {
 
   if (subtype == "VTTS") { # trade time series covering years 1995 - 2009, identical for both GTAP 8.1 baseyears
     GTAP <- .readDataset(file = file, subtype = subtype, year = 2007)
-  } else { # all other variables only report one year, 2004 or 2007 depending on baseyear, which we combine here
+  } else {# all other variables only report one year, 2004 or 2007 depending on baseyear, which we combine here
     GTAP04 <- setYears(.readDataset(file = file, subtype = subtype, year = 2004), "y2004")
     GTAP07 <- setYears(.readDataset(file = file, subtype = subtype, year = 2007), "y2007")
     GTAP <- mbind(GTAP04, GTAP07)
