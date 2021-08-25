@@ -7,6 +7,8 @@
 #' @author Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
 #'
 #' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
+#' @param fillMissing if NULL cells missing from the total 59199 are just being ignore. If set to a value
+#' missing cells will be added with this value (e.g. all set to 0 if fillMissing is 0)
 #' @importFrom magpiesets addLocation
 #' @importFrom madrat toolOrderCells
 #' @importFrom magclass collapseDim
@@ -14,30 +16,19 @@
 #'
 #' @export
 
-toolCoord2Isocell <- function(x, cells = "magpiecell") {
-
+toolCoord2Isocell <- function(x, cells = "magpiecell", fillMissing = NULL) {
   if (cells == "magpiecell") {
-
     removedim <- setdiff(unlist(strsplit(names(getItems(x))[1], "\\.")), c("x", "y"))
     x <- collapseDim(x, dim = removedim)
-    x <- addLocation(x)
+    x <- addLocation(x, fillMissing = fillMissing, naCellNumber = "NA")
     x <- collapseDim(x, dim = c("x", "y"))
-    if (packageVersion("magclass") < 6) {
-      x <- x["NA", , , invert = TRUE]
-    } else {
-      getItems(x, dim = 1.2)[getItems(x, dim = 1.2) == "0"] <- "NA"
-    }
     x <- toolOrderCells(x, na.rm = TRUE)
     if (length(getCells(x)) != 59199) warning("Some cells out of the 59199 standard cells are missing.")
-
   } else if (cells == "lpjcell") {
-
     getItems(x, dim = "cell",   maindim = 1) <- 1:67420
     x <- collapseDim(x, dim = c("x", "y"))
-
   } else {
-stop("Unknown cells argument.")
-}
-
+    stop("Unknown cells argument.")
+  }
   return(x)
 }
