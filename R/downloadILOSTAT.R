@@ -13,6 +13,8 @@
 #' series (thousands) | Monthly"
 #' \item \code{EmplByActivityAndStatus}: "Employment by sex, status in employment and economic activity
 #' (thousands) | Annual"
+#' \item \code{WeeklyHoursByActivityMonthly}: "Mean weekly hours actually worked per employee by sex and economic
+#'  activity | Monthly"
 #' }
 #' @return metadata entry
 #' @author Debbora Leip
@@ -28,12 +30,13 @@ downloadILOSTAT <- function(subtype) {
 
   # get indicator ID of dataset
   indicatorIDs <- c(
-    EmplByActivityModelled     = "EMP_2EMP_SEX_ECO_NB_A",
-    WeeklyHoursByActivity      = "HOW_TEMP_SEX_ECO_NB_A",
-    HourlyLaborCostsByActivity = "LAC_4HRL_ECO_CUR_NB_A",
-    EmplByActivityMonthly      = "EMP_TEMP_SEX_ECO_NB_M",
-    EmplByActivityMonthlyAdj   = "EMP_TEM1_SEX_ECO_NB_M",
-    EmplByActivityAndStatus    = "EMP_TEMP_SEX_STE_ECO_NB_A"
+    EmplByActivityModelled       = "EMP_2EMP_SEX_ECO_NB_A",
+    WeeklyHoursByActivity        = "HOW_TEMP_SEX_ECO_NB_A",
+    HourlyLaborCostsByActivity   = "LAC_4HRL_ECO_CUR_NB_A",
+    EmplByActivityMonthly        = "EMP_TEMP_SEX_ECO_NB_M",
+    EmplByActivityMonthlyAdj     = "EMP_TEM1_SEX_ECO_NB_M",
+    EmplByActivityAndStatus      = "EMP_TEMP_SEX_STE_ECO_NB_A",
+    WeeklyHoursByActivityMonthly = "HOW_XEES_SEX_ECO_NB_M"
   )
   indicatorID <- toolSubtypeSelect(subtype, indicatorIDs)
 

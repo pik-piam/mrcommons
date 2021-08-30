@@ -1,20 +1,20 @@
-#' @title readGTAP
+#' @title readGTAP81
 #' @description Read in data from GTAP 8.1 baseyears 2007 and 2004. All values in mio. current US$MER.
 #'
 #' @param subtype GTAP header that should be read. Available headers are listed in the contents_xxx.csv in the
-#' GTAP/GTAP81 source folder for each GTAP file (BaseData.har, BaseRate.har, BaseView.har, CO2.har, gsdvole.har,
+#' GTAP81 source folder for each GTAP file (BaseData.har, BaseRate.har, BaseView.har, CO2.har, gsdvole.har,
 #' GTAPSam.har, Sets.har, TStrade.har, and Default.prm - file is determined based on the header via a mapping
 #' and does not need to be specified).
 #' @return GTAP data as MAgPIE object
 #' @author Debbora Leip
 #' @examples
 #' \dontrun{
-#' readSource("GTAP", subtype = "SF01")
+#' readSource("GTAP81", subtype = "SF01")
 #' }
 #' @importFrom reshape2 melt
 #' @importFrom magclass as.magpie
 
-readGTAP <- function(subtype) {
+readGTAP81 <- function(subtype) {
 
   # maps headers (variables) in BaseData, BaseRate, BaseView, TStrade, gsdvole, GTAPSam and CO2 to respective files
   fileMapping <- toolGetMapping("GTAP81Header2File.csv", where = "mrcommons")

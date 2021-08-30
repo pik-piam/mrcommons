@@ -1,4 +1,4 @@
-#' @title convertGTAP
+#' @title convertGTAP81
 #' @description disaggregates country groups from GTAP according to GDP share
 #' @param x unconverted magpie object from read-script
 #' @param subtype GTAP header that should be read
@@ -6,10 +6,10 @@
 #' @author Debbora Leip
 #' @examples
 #' \dontrun{
-#' a <- readSource("GTAP", "SF01", convert = TRUE)
+#' a <- readSource("GTAP81", "SF01", convert = TRUE)
 #' }
 #'
-convertGTAP <- function(x, subtype) {
+convertGTAP81 <- function(x, subtype) {
 
   # optimally GDP would be converted from constant 2005 US$MER to current US$MER, but as it is used as weight
   # this shouldn't have a big impact
