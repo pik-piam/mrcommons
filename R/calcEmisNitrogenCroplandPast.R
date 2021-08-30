@@ -20,15 +20,8 @@ calcEmisNitrogenCroplandPast<-function(method="IPCC"){
     budget<-calcOutput("NitrogenBudgetCropland",aggregate=FALSE,deposition="CEDS")
     
     fert_rice<-collapseNames(calcOutput("FertilizerByCrop",deposition="CEDS",aggregate = FALSE)[,,"fertilizer"][,,"rice_pro"])
-    ef<-setYears(readSource("IPCC","efnsoil",convert=FALSE),NULL)
     
-    #replace leaching emission factor by more precise estimate
-    fracLeach<-collapseNames(calcOutput("IPCCfracLeach",aggregate = FALSE,cellular=FALSE)[,,"crop"])
-    tmp<-fracLeach*ef
-    tmp[,,]<-ef
-    tmp[,,"no3_n"]<-fracLeach
-    tmp[,,"no3_n"][,,"rice"]<-0
-    ef<-tmp
+    ef<-calcOutput("IPCCefNSoil", aggregate=FALSE)
     
     out<-new.magpie(getRegions(budget),getYears(budget),getNames(ef))
     out[,,"inorg_fert"]=collapseNames(budget[,,"fertilizer"])*ef[,,"inorg_fert"]
