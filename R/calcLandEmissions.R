@@ -230,26 +230,21 @@ calcLandEmissions <- function(datasource="CEDS") {
 
     GFED_emissions <- readSource("GFED")
 
-    if(!all(getItems(GFED_emissions)$Partition.Species %in% c("AGRI.CH4", "AGRI.NO2", "AGRI.N2O", "AGRI.NH3")))
-    {
-      stop("CalcLandEmissions: Unhandled emissions have been added to the GFED validation dataset.")
-    }
-
     CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
 
-    CH4 <- GFED_emissions[,,"AGRI.CH4"]
+    CH4 <- GFED_emissions[,,"AGRI.ch4"]
     CH4 <- toolAggregate(CH4, rel = CountryToCell, from = "celliso", to = "iso")
     getNames(CH4) <- "Emissions|CH4|Land|Biomass Burning|+|Burning of Crop Residues (Mt CH4/yr)"
 
-    NO2 <- GFED_emissions[,,"AGRI.NO2"]
+    NO2 <- GFED_emissions[,,"AGRI.no2"]
     NO2 <- toolAggregate(NO2, rel = CountryToCell, from = "celliso", to = "iso")
     getNames(NO2) <- "Emissions|NO2|Land|Biomass Burning|+|Burning of Crop Residues (Mt NO2/yr)"
 
-    N2O <- GFED_emissions[,,"AGRI.N2O"]
+    N2O <- GFED_emissions[,,"AGRI.n2o"]
     N2O <- toolAggregate(N2O, rel = CountryToCell, from = "celliso", to = "iso")
     getNames(N2O) <- "Emissions|N2O|Land|Biomass Burning|+|Burning of Crop Residues (Mt N2O/yr)"
 
-    NH3 <- GFED_emissions[,,"AGRI.NH3"]
+    NH3 <- GFED_emissions[,,"AGRI.nh3"]
     NH3 <- toolAggregate(NH3, rel = CountryToCell, from = "celliso", to = "iso")
     getNames(NH3) <- "Emissions|NH3|Land|Biomass Burning|+|Burning of Crop Residues (Mt NH3/yr)"
 

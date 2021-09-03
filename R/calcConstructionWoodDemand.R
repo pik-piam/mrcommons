@@ -8,7 +8,6 @@
 #' @seealso
 #' \code{\link{calcFAOmassbalance_pre}}
 #' @examples
-#'
 #' \dontrun{
 #' calcOutput("ConstructionWoodDemand")
 #' }
@@ -111,23 +110,23 @@ calcConstructionWoodDemand <- function() {
 
     ssp_temp_demand <- NULL
     for (j in paste0("SSP", 1:5)) {
-      ## Check the max population for whole duration. 
+      ## Check the max population for whole duration.
       ## Remember - We don't need to build more wooden buildings than would be needed by peak urban population
       max_pop <- max(urban_population[i, , j][, paste0("y", seq(1995, 2015, 5)), , invert = TRUE])
-      
+
       ## Check the difference between current (2020) urban population with peak urban population
       pop_diff <- setYears(max_pop - urban_population[i, "y2020", j], NULL)
-      
+
       ## Find the peak year
       peak_year <- as.numeric(gsub(pattern = "y", replacement = "", x = as.character(where(urban_population[i, , j] == max_pop)$true$years)))
-      
+
       ## Calculate the time frame between peak urban population and current time period (2020)
       distribution_length <- peak_year - 2020
-      
-      ## Check what would be the demand at peak. Remember that population is a stock resource. 
+
+      ## Check what would be the demand at peak. Remember that population is a stock resource.
       ## Also keep in mind that this is the demand we calculate for new people moving in cities not overall population
       peak_building_demand <- pop_diff * dimSums(MwC, dim = 3) * CW * PR ## Million Cap * kg / cap  * C * PR = Million kg C
-      
+
       ## Calculate how the distribution share should look like. Higher weight to later years
       ## This distribution is a linear 45 degree line
       share_df <- data.frame(
@@ -135,15 +134,15 @@ calcConstructionWoodDemand <- function() {
         year = 2021:(2021 + distribution_length - 1),
         share = (1:distribution_length) / sum(1:distribution_length)
       )
-      
+
       ## Create magpie object for share
       dist_share_magpie <- collapseNames(as.magpie(share_df, spatial = , temporal = "year"))
-      
+
       ## Distribute the peak demand to annual numbers
       temp_demand <- peak_building_demand * dist_share_magpie
-      
+
       #### Additional checks for correct calculations :
-      
+
       ## If peak appears before 2100, no more building wood is to be demanded
 
       if (peak_year < 2100) {
@@ -164,7 +163,7 @@ calcConstructionWoodDemand <- function() {
           temp_demand <- temp2
           temp_demand[temp_demand != 0] <- 0
         } else {
-          temp_demand <- mbind(temp_demand, temp2) ## 
+          temp_demand <- mbind(temp_demand, temp2) ##
         }
       }
       ssp_temp_demand <- mbind(ssp_temp_demand, temp_demand) ## Merge demands together -- SSP specific, one region, looped over all SSPS
@@ -183,6 +182,8 @@ calcConstructionWoodDemand <- function() {
   # print(dimSums(building_wood_demand[,,"SSP2"],dim=1))
 
   out <- suppressMessages(toolCountryFill(x = building_wood_demand[, intersect(getYears(urban_population), getYears(building_wood_demand)), ], fill = 0))
+
+  out[, , "BAU"] <- 0 ## No constr wood demand in BAU case
 
   return(list(
     x = out,

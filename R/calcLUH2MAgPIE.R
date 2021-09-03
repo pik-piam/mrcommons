@@ -21,7 +21,6 @@
 
 calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflooded",
                            selectyears = "past", missing = "ignore") {
-  
   past <- findset("past")
 
   if (share == "total") {
@@ -77,9 +76,9 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
       # check for countries/years where no data is reported from FAO and fill with proxy of similar country
       noData       <- where(dimSums(toolIso2CellCountries(x), dim = 3) == 0)$true$individual
       proxyMapping <- c(ATF = "ISL", ESH = "MAR", FLK = "ISL", GRL = "ISL",
-                        PSE = "ISR", SGS = "ISL", SJM = "NOR", 
+                        PSE = "ISR", SGS = "ISL", SJM = "NOR",
                         CIV = "GHA", GUF = "SUR", REU = "MUS" ,SSD = "CAF", SDN = "TCD" )
-      
+
       for (i in row(noData)[, 1]) {
         x[noData[i, "ISO"], noData[i, "Year"], ]  <- x[proxyMapping[noData[i, "ISO"]], noData[i, "Year"], ]
       }

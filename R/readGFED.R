@@ -87,7 +87,7 @@ readGFED <- function() {
 	# Main body ---------------------------------------------------------------
 
 	# Potential partitions: SAVA, BORF, TEMF, DEFO, PEAT, AGRI
-	partitions_considered <- c("AGRI")
+	partitions_considered <- c("SAVA", "BORF", "TEMF", "DEFO", "PEAT", "AGRI")
 
 	# See GFED_emissionsFactors.txt for full list of potential emissions
 	emissions_considered <- c("CH4", "N2O", "NOx", "NH3")
@@ -156,6 +156,8 @@ readGFED <- function() {
 		mutate(year = paste0("y", as.character(.data$year)))
 
 	d <- as.magpie(d, tidy = TRUE, filter = FALSE)
+	
+	getNames(d,dim=2) <- tolower(getNames(d,dim=2))
 
 	return(d)
 

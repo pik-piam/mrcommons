@@ -55,6 +55,7 @@ downloadLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:his
   }
 
   path        <- paste(x$version, x$climatemodel, gsub("_", "/", x$scenario), sep = "/")
+  if(!dir.exists(file.path(storage, path))){path <- paste(x$version, gsub("-", "_",x$climatemodel), gsub("_", "/", x$scenario), sep = "/")}
   list_files  <- list.files(paste0(storage,path))
   file        <- grep(toolSubtypeSelect(x$variable, files), list_files, value=TRUE)
   file_path   <- paste0(storage, path, "/", file)
