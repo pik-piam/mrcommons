@@ -82,4 +82,4 @@ Suggests:
     HARr
 VignetteBuilder: knitr
 Remotes:
-    USDA-ERS/MTED-HARr
+    pfuehrlich-pik/HARr
