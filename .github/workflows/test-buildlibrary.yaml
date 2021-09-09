@@ -20,6 +20,13 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
+      - name: Use PIK RSE server
+        shell: bash
+        run: |
+          echo "::group::Use PIK RSE server"
+          echo 'options(repos = c(rseserver = "https://rse.pik-potsdam.de/r/packages", CRAN = "https://cloud.r-project.org"))' > $R_PROFILE_USER
+          echo "::endgroup::"
+
       - uses: r-lib/actions/setup-r-dependencies@v1
         
       - name: Run tests
