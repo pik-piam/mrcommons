@@ -14,7 +14,7 @@
 #' }
  
 convertSSP <- function(x,subtype) {
-  if(subtype=="all") {
+  if(subtype == "all") {
 
     #---------------------- add TWN data to population --------------------------------------------
     TWN_pop <- new.magpie("TWN",getYears(x[,,"Population"][,,"IIASA-WiC POP"]),getNames(x[,,"Population"][,,"IIASA-WiC POP"]))
@@ -98,9 +98,23 @@ convertSSP <- function(x,subtype) {
     # remove unrequired data, add missing data 
     x <- toolCountryFill(x, fill=0)
    
-      } else if(subtype=="ratioPM") {
+  } else if(subtype == "pop2018Update") {
+
+    # Sum over sex, agegrp and version
+    x <- dimSums(x, dim = c(3.2, 3.3, 3.4))
+    # Add the Channel Islands (GB_CHA) to Great Britain (GBR)
+    x["GBR",,] <- x["GBR",,] + x["GB_CHA",,]
+    x <- x["GB_CHA",, invert = TRUE]
+    # Fill in missing countries
+    x <- toolCountryFill(x, fill = 0)
+
+  }  else if(subtype == "ratioPM") {
+
+    x[is.na(x)] <- 1
+    getSets(x) <- c("Region", "year", "data")
     # fill all the rest with 1
-    x <- toolCountryFill(x,fill=1)
+    x <- toolCountryFill(x, fill = 1)
   }  
+
   return(x)
 }  

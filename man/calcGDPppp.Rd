@@ -5,9 +5,9 @@
 \title{calcGDPppp}
 \usage{
 calcGDPppp(
-  GDPpppCalib = "past_transition",
-  GDPpppPast = "IHME_USD05_PPP_pc_completed",
-  GDPpppFuture = "SRES_SSP_completed",
+  GDPpppCalib = c("fixHist_IMFgr_return2SSP", "Ariadne"),
+  GDPpppPast = c("WDI_completed", "Eurostat_WDI_completed"),
+  GDPpppFuture = c("SSP_bezierOut_completed", "SSP2Ariadne_completed_bezierOut"),
   FiveYearSteps = TRUE,
   naming = "indicator_scenario"
 )
@@ -47,8 +47,8 @@ into 2005 equivalents using the inflation rate of the United States(US), as
 the PPPs are in USDollar equvialents. \item \code{PWP}: Penn World Tables }
 }
 \seealso{
-\code{\link{convertWDI}}
+\code{\link{calcGDPpppPast}}, \code{\link{calcGDPpppFuture}}
 }
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

@@ -24,77 +24,161 @@
 #' 
 #' @param GDPpppPast GDPppp past data source
 #' @return GDP PPP in million USD05 equivalents
-#' @author Lavinia Baumstark, Benjamin Bodirsky
-#' @seealso \code{\link{convertWDI}}
-#' @importFrom magclass getNames
+#' @author Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 
+calcGDPpppPast <- function(GDPpppPast = "WDI_completed") {
 
-calcGDPpppPast <- function(GDPpppPast="IHME_USD05_PPP_pc_completed") {
-  type <- GDPpppPast
-  if(type=="PWT"){
-    data <- readSource("PWT")[,,"rgdpna"]
-    getNames(data) <- "GDPppp_PWT"
-  } else if (type=="WDI"){
-    
-    LCU<-readSource("WDI","NY.GDP.MKTP.KN")
-    # 2011 ppp dataset
-    PPP<-readSource("WDI","NY.GDP.MKTP.PP.KD")
-    
-    #complete it with missing countries
-    missingcountries<-c("ARG","SOM","SYR")
-    if(any(!is.na(PPP[missingcountries,,]))) {
-      stop("Database has been updated, please recheck whether replacement values are required")
-    } else {
-      warning("Filling values for Argentina, Somalia and Syria")
-    } 
-    # enter values from the publication
-    #World Bank. 2014. Purchasing Power Parities and the Real Size of World Economies: A Comprehensive Report of the 2011 International Comparison Program. The World Bank. http://elibrary.worldbank.org/doi/book/10.1596/978-1-4648-0329-1.
-    #table 2.13
-    
-    PPP[missingcountries,"y2011",] <- c(691.2*10^9,3*10^9,142.9*10^9)
-    
-    # esimate PPP as ICP2011 estimate with growth rate of GDP in local currencies
-    PPP<-LCU[,,]/setYears(LCU[,"y2011",])*setYears(PPP[,"y2011",],NULL)
-    
-    # inflate it to get a 2005 estimate
-    ppp_current<-readSource("WDI",subtype = "NY.GDP.MKTP.PP.CD")
-    inflator<- setYears(ppp_current["USA","y2005",]/PPP["USA","y2005",],NULL) 
-    
-    data<-PPP*colSums(inflator,na.rm=T)
-    getNames(data) <- "GDPppp05_WDI_ICP11"
-  } else if (type%in%c("IHME_USD05_PPP_pc","IHME_USD05_MER_pc","IMF_USD05_PPP_pc","PENN_USD05_PPP_pc","WB_USD05_PPP_pc","MADDISON_USD05_PPP_pc","WB_USD05_MER_pc","IMF_USD05_MER_pc","UN_USD05_MER_pc")) {
-    PPP_pc<-readSource(type="James",subtype = type)
-    pop<-readSource("WDI",subtype = "SP.POP.TOTL")
-    years<-intersect(getYears(PPP_pc),getYears(pop))
-    data=PPP_pc[,years,]*pop[,years,]
-    getNames(data) <- substr(type,1,(nchar(type)-3))
-  } 
+  # Check input argument
+  valid_inputs <- c(
+    "WDI", 
+    "WDI_completed",
+    "PWT", 
+    "Eurostat_WDI",
+    "Eurostat_WDI_completed",
+    "IHME_USD05_PPP_pc_completed",
+    "IHME_USD05_MER_pc_completed",
+    "IHME_USD05_PPP_pc",
+    "IHME_USD05_MER_pc",
+    "IMF_USD05_PPP_pc",
+    "PENN_USD05_PPP_pc",
+    "WB_USD05_PPP_pc",
+    "MADDISON_USD05_PPP_pc",
+    "WB_USD05_MER_pc",
+    "IMF_USD05_MER_pc",
+    "UN_USD05_MER_pc"
+  )
+  if (!GDPpppPast %in% valid_inputs) {
+    stop("Bad input for calcGDPpppPast. Invalid 'GDPpppPast' argument.")
+  }
+
+  # Look for "_completed" tag. Remove if found.
+  if (grepl("_completed$", GDPpppPast)) {
+    GDPpppPast <- gsub("_completed", "", GDPpppPast)
+    complete <- TRUE
+  } else {
+    complete <- FALSE
+  }
   
-  else if (type %in% c("IHME_USD05_PPP_pc_completed","IHME_USD05_MER_pc_completed")){
-    if(type=="IHME_USD05_PPP_pc_completed"){
-      data <- calcOutput("GDPpppPast", GDPpppPast="IHME_USD05_PPP_pc",aggregate = FALSE)
-    } else if (type=="IHME_USD05_MER_pc_completed") {
-      data <- calcOutput("GDPpppPast", GDPpppPast="IHME_USD05_MER_pc",aggregate = FALSE)  
-    }
-    
-    missing<-where(data==0)$true$region
-    
-    fill <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)
-    fill <- time_interpolate(fill,interpolated_year = getYears(data),extrapolation_type = "constant")
-    
-    missing<-where(setYears(dimSums(data,dim=2),"y2000")==0)$true$region
-    data[missing,,]<-fill[missing,,]
-    missing<-where(data==0)$true$region
-    for(ii in missing){
-      missingyears=where(data[ii,,]==0)$true$years
-      data[ii,missingyears,] <- time_interpolate(dataset = data[ii,,][,missingyears,,invert=T],interpolated_year = missingyears,extrapolation_type = "constant")
-    }
-    
-    getNames(data) <- "gdp"
+  # Call appropriate calcGDPpppPast function. 
+  data <- switch(GDPpppPast,
+                 "PWT" = calcGDPpppPastPWT(),
+                 "WDI" = calcGDPpppPastWDI(complete),
+                 "Eurostat_WDI" = calcGDPpppPastEurostatWDI(complete),
+                 calcGDPpppPastJames(GDPpppPast, complete))
 
+  return(list(x = data,
+              weight = NULL,
+              unit = "Million US Dollar 2005 equivalents in PPP",
+              description = "GDP in PPP with baseyear in 2005. PPP may come either from ICP 2005 or 2011."))
+}
+
+
+
+
+
+
+
+
+######################################################################################
+# Functions
+######################################################################################
+calcGDPpppPastPWT <- function() {
+  data <- readSource("PWT")[,,"rgdpna"]
+  getNames(data) <- "GDPppp_PWT"
+  data
+}
+
+calcGDPpppPastWDI <- function(complete) {
+  # "NY.GDP.MKTP.PP.KD" = GDP in constant 2017 Int$PPP (as of time of writing this function)
+  data <- readSource("WDI", "NY.GDP.MKTP.PP.KD") %>% 
+    GDPuc::convertGDP("constant 2017 Int$PPP", "constant 2005 Int$PPP")
+  # TODO: Decide if use JAMES 2019 data for NA countries, e.g. DJI (as is now) or 
+  # convert using regional averages and use JAMES 2019 growth rates
+  data[is.na(data)] <- 0 
+  
+  # There is no PPP data available before 1990, so we shall extrapolate back using constant LCU growth rates 
+  # data <- harmonizeFutureGrPast(past = readSource("WDI", "NY.GDP.MKTP.KN"),
+  #                               future = data)
+  
+  # Use the James2019  WB_USD05_PPP_pc series to fill in past data.
+  # Using growth rates, since conversion of James2019 data into 2005 Int$PPP not certain to be correct.
+  gdppc <- readSource("James2019", "WB_USD05_PPP_pc")
+  pop <- readSource("WDI", "SP.POP.TOTL")
+  cy <- intersect(getYears(gdppc), getYears(pop))
+  past_gdp <- gdppc[, cy,] * pop[, cy,]
+  getSets(past_gdp) <- c("iso3c", "year", "data")
+  getNames(past_gdp) <- "WB_USD05_PPP"
+  
+  x <- new.magpie(getRegions(data), getYears(past_gdp), getNames(data), fill = 0)
+  for (i in getRegions(data)) {
+    tmp <- data[i, getYears(data)[data[i,,] != 0], ]
+    ihme_data <- past_gdp[i, getYears(past_gdp)[past_gdp[i,,] != 0], ]
+    
+    if (length(tmp) == 0 && length(ihme_data) == 0) {
+      next
+    } else if (length(tmp) != 0 && length(ihme_data) == 0) {
+      x[i, getYears(tmp),] <- tmp
+    } else if (length(tmp) == 0 && length(ihme_data) != 0) {
+      x[i, getYears(past_gdp),] <- toolFillYears(ihme_data, getYears(past_gdp))
+    } else {
+      r <- harmonizeFutureGrPast(past = toolFillYears(ihme_data, getYears(past_gdp)), 
+                                 future = tmp)
+      x[i, getYears(r),] <- r
+    }
   }
-  else {
-    stop(type, " is not a valid source type for GDP")
+  data <- x
+
+  if (complete) {  
+    fill <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)
+    data <- completeData(data, fill)
   }
-  return(list(x=data,weight=NULL,unit="Million US Dollar 2005 equivalents in PPP",description="GDP in PPP with baseyear in 2005. PPP may come either from ICP 2005 or 2011."))
+  
+  getNames(data) <- "gdp in constant 2005 Int$PPP" 
+  data
+}
+
+calcGDPpppPastJames <- function(type, complete) {
+  PPP_pc <- readSource(type = "James", subtype = type)
+  pop <- readSource("WDI", subtype = "SP.POP.TOTL")
+  years <- intersect(getYears(PPP_pc), getYears(pop))
+  data <- PPP_pc[,years,] * pop[,years,]
+  getNames(data) <- substr(type, 1, (nchar(type) - 3))
+  
+  if (complete) {  
+    fill <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)
+    data <- completeData(data, fill)
+    getNames(data) <- "gdp" #??
+  }
+  
+  data
+}
+
+calcGDPpppPastEurostatWDI <- function(complete) {
+  data_eurostat <- readSource("Eurostat", "GDP")
+  data_wdi <- readSource("WDI", "NY.GDP.MKTP.PP.KD") %>% 
+    GDPuc::convertGDP("constant 2017 Int$PPP", "constant 2005 Int$PPP")
+  data_wdi[is.na(data_wdi)] <- 0
+
+  # Get EUR countries. 
+  EUR_countries <- toolGetMapping("regionmappingH12.csv") %>% 
+    tibble::as_tibble() %>% 
+    filter(.data$RegionCode == "EUR") %>% 
+    dplyr::pull(.data$CountryCode)
+  
+  # Use WDI data for everything but the EUR_countries. Use Eurostat stat for those.
+  data <- data_wdi
+  cy <- intersect(getYears(data_wdi),  getYears(data_eurostat))
+  data[EUR_countries, cy,] <- data_eurostat[EUR_countries, cy,]
+
+  # There is no PPP data available before 1990, so we shall extrapolate back using constant LCU growth rates 
+  data <- harmonizeFutureGrPast(past = readSource("WDI", "NY.GDP.MKTP.KN"),
+                                future = data)
+
+  if (complete) {
+    fill <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)
+    data <- completeData(data, fill)
+  }
+
+  getNames(data) <- "gdp in constant 2005 Int$PPP" 
+  data
 }

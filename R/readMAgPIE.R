@@ -13,7 +13,7 @@
 #' \dontrun{ a <- readSource(type="MAgPIE",subtype="EmiAPExo")
 #' }
 
-readMAgPIE<- function(subtype) {
+readMAgPIE <- function(subtype) {
   
   if (subtype == "EmiAirPoll") {
     x <- read.csv("emiAPexo.csv", row.names = 1)
@@ -101,7 +101,7 @@ readMAgPIE<- function(subtype) {
       vcat(1,"Could not find ",file_list[!file.exists(file_list)],"\n")
       vcat(1,"MAgPIE supplycurve input is not available for all policy cases for the regioncode",regcode,".\nUsing fallback input files.\n")
       # if emulators with current regional resolution are not available for ALL scenarios, use fallback files
-      regcode_H12 <- "690d3718e151be1b450b394c1064b1c5"
+      regcode_H12 <- "690d3718e151be1b450b394c1064b1c5"   # has to be updated based on the new regioncodehash
       file_list   <- paste0(scenario_names,regcode_H12,".cs4r")
       setnames    <- c("region_fallback","year","scenario","char")
     }
@@ -112,10 +112,18 @@ readMAgPIE<- function(subtype) {
     }
     getSets(x) <- setnames
     
-    # use data from SSP1 scenario for SPD scenario --- ATTENTION: needs to be deleted as soon as we have data for SDP
-    #x_SDP <- x[,,"SSP1",pmatch=TRUE]
-    #getNames(x_SDP) <- gsub("SSP1","SDP",getNames(x_SDP))
-    #x <- mbind(x,x_SDP)
+    # make SSP2Ariadne scenario using SSP2 data --- ATTENTION: needs to be deleted as soon as we have data for SSP2Ariadne
+    x_SSP2Ariadne <- x[,,c("SSP2-NDC-NDC","SSP2-NDC-PkBudg1300","SSP2-NDC-PkBudg900","SSP2-NPI-Base")]
+    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
+    x <- mbind(x, x_SSP2Ariadne)
+    # make SDP* scenarios using SSP1 data --- ATTENTION: needs to be deleted as soon as we have data for SDP*
+    x_SDP_EI <- x[,,c("SSP1-NDC-NDC","SSP1-NDC-PkBudg1300","SSP1-NDC-PkBudg900","SSP1-NPI-Base")]
+    getNames(x_SDP_EI) <- gsub("SSP1", "SDP_EI", getNames(x_SDP_EI))
+    x_SDP_RC <- x[,,c("SSP1-NDC-NDC","SSP1-NDC-PkBudg1300","SSP1-NDC-PkBudg900","SSP1-NPI-Base")]
+    getNames(x_SDP_RC) <- gsub("SSP1", "SDP_RC", getNames(x_SDP_RC))
+    x_SDP_MC <- x[,,c("SSP1-NDC-NDC","SSP1-NDC-PkBudg1300","SSP1-NDC-PkBudg900","SSP1-NPI-Base")]
+    getNames(x_SDP_MC) <- gsub("SSP1", "SDP_MC", getNames(x_SDP_MC))
+    x <- mbind(x, x_SDP_EI, x_SDP_RC, x_SDP_MC)
 
   } else {
     stop("Not a valid subtype!")

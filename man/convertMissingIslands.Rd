@@ -18,7 +18,7 @@ Read in core data for minor islands which are not included in big inventories bu
 \examples{
 
 \dontrun{ 
-readSource("MissingIslands", subtype="pop",convert=FALSE)
+readSource("MissingIslands", subtype="pop", convert=FALSE)
 }
 
 }

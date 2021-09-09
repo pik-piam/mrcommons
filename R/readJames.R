@@ -1,6 +1,3 @@
-#setwd("sources/spencer/")
-
-
 #' Read James
 #' 
 #' Read-in GDP per-capita data from the publication James, Spencer L., Paul
@@ -9,7 +6,7 @@
 #' 2015." Population Health Metrics 10 (1): 12. doi:10.1186/1478-7954-10-12.
 #' from a .csv file to a magclass object
 #' 
-#' 
+#' @param subtype String indicating the data series
 #' @return GDP per capita in USD05 in PPP or MER as magpie object
 #' @author Benjamin Bodirsky
 #' @seealso \code{\link{readSource}}
@@ -18,9 +15,9 @@
 #' \dontrun{ a <- readSource(type="James",subtype="IHME_USD05_PPP_pc")
 #' }
 #' 
-readJames <- function() {
-      file <- "james.csv"
-      spencer<-read.csv(file, sep=";",dec = ",")
-      spencer<-as.magpie(spencer,spatial=1,temporal=2)    
-      return(spencer)
+readJames <- function(subtype) {
+  x <- read.csv("james.csv", sep = ";", dec = ",")
+  x <- x[, c("ISO3", "Year", subtype)]
+  x <- as.magpie(x, spatial = 1, temporal = 2)    
+  return(x)
 }  

@@ -15,131 +15,82 @@
 #' @param naming naming scheme
 #' 
 #' @return Population in millions.
-#' @author Lavinia Baumstark, Benjamin Bodirsky
-#' @seealso \code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
-#' @importFrom magclass setNames ndata clean_magpie
-#' @importFrom madrat calcOutput
+#' @author Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
+#' @seealso \code{\link{calcPopulationPast}},\code{\link{calcPopulationFuture}}
 
-
-calcPopulation <- function(PopulationCalib="past_transition", PopulationPast="WDI_completed", PopulationFuture="SRES_SSP_completed", FiveYearSteps = TRUE, naming="indicator_scenario") {
-  if(PopulationFuture=="SRES_SSP_completed") {
-    combined1 <- calcOutput(type = "Population",PopulationCalib=PopulationCalib, PopulationPast=PopulationPast, PopulationFuture="SSP_completed", FiveYearSteps=FiveYearSteps,aggregate=FALSE)
-    combined2 <- calcOutput(type = "Population",PopulationCalib=PopulationCalib, PopulationPast=PopulationPast, PopulationFuture="SRES_completed",FiveYearSteps=FiveYearSteps,aggregate=FALSE)
-    combined  <- mbind(combined1,combined2)
-    datasettype <- PopulationCalib
-  } else {
-    past   <- calcOutput("PopulationPast",PopulationPast=PopulationPast,aggregate=FALSE)
-    future <- calcOutput("PopulationFuture",PopulationFuture=PopulationFuture,aggregate=FALSE)
-    firstyear <- min(getYears(future,as.integer = TRUE))
-  
-    if (PopulationCalib == "past") {
-      tmp <- future/setYears(future[,firstyear,],NULL)
-      tmp[is.nan(tmp)]<-1
-      tmp<- dimSums(tmp*setYears(past[,firstyear,],NULL),dim=3.2)
-      if (firstyear>min(getYears(past,as.integer = TRUE))) {                                                 
-        years_past <- getYears(past)[which(getYears(past,as.integer = TRUE)<firstyear)]
-        tmp2       <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        combined   <- mbind(tmp2,tmp)
-      } else {
-        combined <- tmp
-      }
-      datasettype <- PopulationPast
-    } else if (PopulationCalib == "future") {
-      tmp <- dimSums(past/setYears(past[,firstyear,],NULL)*setYears(future[,firstyear,],NULL),dim=3.2)
-      tmp[is.nan(tmp)]<-0
-      if (firstyear>min(getYears(past,as.integer = TRUE))) {                                                 
-        years_past <- getYears(past)[which(getYears(past,as.integer = TRUE)<firstyear)]
-        tmp2       <- setNames(tmp[,years_past,rep(1,ndata(future))],getNames(future))
-        combined   <- mbind(tmp2,future)
-      } else {
-        combined <- future
-      }
-      datasettype <- PopulationFuture
-    } else if (PopulationCalib == "transition") {
-      # end of transisiton, from this time on the future values are used
-      yEnd <- 2020
-      # last year of past data
-      lastyear <- max(getYears(past,as.integer = TRUE))
-      # generate past data for all future scenarios
-      if (firstyear < lastyear) {                                                 
-        years_past  <- getYears(past)[which(getYears(past,as.integer=TRUE)<=firstyear)]
-        tmpPast     <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        years_future  <- getYears(future)[which(getYears(future,as.integer=TRUE)>=lastyear)]
-        tmpPast     <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        years_trans <- getYears(future,as.integer=TRUE)[which(getYears(future,as.integer=TRUE) >= firstyear 
-                                            & getYears(future,as.integer=TRUE) <= yEnd)]
-        tmpTrans    <- new.magpie(getRegions(future),years_trans,getNames(future),fill=0)
-        for(t in years_trans) {
-          tmpTrans[,t,] <- (  (max(years_trans) - t)/(max(years_trans) - min(years_trans)) * setYears(tmpPast[,firstyear,],t) 
-                            + (t - min(years_trans))/(max(years_trans) - min(years_trans)) * setYears(future[,yEnd,],t)       )
-        }  
-        combined   <- mbind(tmpPast[,which(getYears(tmpPast,as.integer=TRUE)<firstyear),],
-                            tmpTrans,
-                            future[,which(getYears(future,as.integer=TRUE)>yEnd),])
-      } else {
-        stop("the past and future data need to have some overlap")
-      }
-      datasettype <- paste0("transition between ",PopulationPast, "and ",PopulationFuture," with a transition period until ",yEnd)
-    } else if (PopulationCalib == "past_transition") {
-      # end of transisiton, from this time on the future values are used
-      yEnd <- 2050
-      # last year of past data, that also exist in future data
-      lastyear <- max( intersect(getYears(past,as.integer = TRUE),getYears(future,as.integer = TRUE)) )
-      # generate past data for all future scenarios
-      if (firstyear > min(getYears(past,as.integer = TRUE))) {                                                 
-        years_past  <- getYears(past)[which(getYears(past,as.integer=TRUE) <= lastyear)]
-        tmpPast     <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        years_trans <- getYears(future,as.integer=TRUE)[which(getYears(future,as.integer=TRUE) >= lastyear 
-                                                              & getYears(future,as.integer=TRUE) <= yEnd)]
-        diff_in_lastyear <- tmpPast[,lastyear,] - future[,lastyear,]
-        tmpTrans    <- new.magpie(getRegions(future),years_trans,getNames(future),fill=0)
-        for(t in years_trans) {
-          tmpTrans[,t,] <- future[,t,] + setYears(diff_in_lastyear,t) * ( (max(years_trans) - t)/(max(years_trans) - min(years_trans)) ) 
-        }  
-        combined   <- mbind(tmpPast[,which(getYears(tmpPast,as.integer=TRUE) < lastyear),],
-                            tmpTrans,
-                            future[,which(getYears(future,as.integer=TRUE) > yEnd),])
-      } else {  
-        stop("the past and future data need to have some overlap")
-      }
-      datasettype <- paste0("used past data and afterwards transition between ",PopulationPast, "and ",PopulationFuture," with a transition period until ",yEnd)
-    
-    } else {
-      stop("PopulationCalib has to be past, future, transition or past_transition")
-    }
-    if (FiveYearSteps){
-      years    <- findset("time") 
-      combined <- combined[,years,]
-    }
-    combined <- clean_magpie(combined)
-    combined[combined[]=="Inf"] <- 0    # LB: preliminary bug fix
-    combined <- setNames(combined,getNames(future))
-  }   # close if (PopulationFuture)
-  
-  if(naming=="indicator.scenario"){
-    getNames(combined)<-sub(pattern = "_",x=getNames(combined),replacement = ".")
-    getSets(combined)<-c("region","year","indicator","scenario")
-  } else if (naming!="indicator_scenario"){
-    stop("unknown naming scheme")
+calcPopulation <- function(PopulationCalib = c("past_grPEAP_grFuture", "Ariadne"),
+                           PopulationPast = c("WDI_completed", "Eurostat_WDI_completed"), 
+                           PopulationFuture = c("SSP2018Update_completed_bezierOut", "SSP2Ariadne_completed_bezierOut"), 
+                           FiveYearSteps = TRUE, 
+                           naming = "indicator_scenario") {
+  if (!(length(PopulationCalib) == length(PopulationPast) && length(PopulationCalib) == length(PopulationFuture))) {
+     stop("Arguments PopulationCalib, PopulationPast and PopulationFuture are not the same length.")
   }
   
-  # add SSP1plus/SDP scenario as copy of SSP1, might be substituted by real data later
-  if(!("pop_SDP" %in% getNames(combined,dim=1))){
-     if("pop_SSP1" %in% getNames(combined,dim=1)){ 
-        combined_SDP <- combined[,,"pop_SSP1"]
-        getNames(combined_SDP) <- gsub("pop_SSP1","pop_SDP",getNames(combined_SDP))
-        combined <- mbind(combined,combined_SDP)
-     }
-  }
-       
-  return(list(x=combined,weight=NULL,unit="million",
-              description=paste0("Population data. Datasource for the Past: ",
-                                 PopulationPast,
-                                 ". Datasource for the Future: ",
-                                 PopulationFuture,
-                                 ". Calibrated to ",
-                                 datasettype)
-              )
-  )
-         
+  purrr::pmap(list(PopulationCalib, PopulationPast, PopulationFuture, FiveYearSteps, naming),
+              internal_calcPopulation) %>% 
+  purrr::reduce(~ list(x = mbind(.x$x, .y$x),
+                       weight = NULL,
+                       unit = "million",
+                       description = glue::glue("{.x$description} || {.y$description}")))
+}
+
+
+internal_calcPopulation <- function(PopulationCalib, 
+                                    PopulationPast, 
+                                    PopulationFuture, 
+                                    FiveYearSteps, 
+                                    naming){
+
+  past <- calcOutput("PopulationPast", PopulationPast = PopulationPast, aggregate = FALSE)
+  future <- calcOutput("PopulationFuture", PopulationFuture = PopulationFuture, aggregate = FALSE)
+
+  # The harmonization functions can be found in the file "helperFunctionsGDPandPopulation"
+  combined <- switch(PopulationCalib,
+                     "past" = popHarmonizePast(past, future),
+                     "future" = harmonizeFuture(past, future),
+                     "transition" = harmonizeTransition(past, future, yEnd = 2020),
+                     "past_transition" = harmonizePastTransition(past, future, yEnd = 2050),
+                     "past_grFuture" = harmonizePastGrFuture(past, future),
+                     "past_grPEAP_grFuture" =  harmonizePastGrPEAPGrFuture(past, future),
+                     "Ariadne" =  harmonizeAriadne(past, future),
+                     stop("Bad input for calcPopulation. Invalid 'PopulationCalib' argument."))
+
+  datasettype <- switch(PopulationCalib,
+                        "past" = PopulationPast,
+                        "future" = PopulationFuture,
+                        "transition" = glue::glue("transition between {PopulationPast} and {PopulationFuture} \\
+                                                   with a transition period until 2020"),
+                        "past_transition" = glue::glue("use past data and afterwards transition between \\
+                                                       {PopulationPast} and {PopulationFuture} with a transition \\
+                                                       period until 2050"),
+                        "past_grFuture" = glue::glue("use past data from {PopulationPast} and then the growth rates \\
+                                                      from {PopulationFuture}."),
+                        "past_grPEAP_grFuture" = glue::glue("use past data from {PopulationPast}, then the growth rates \\
+                                                             from the Wolrld Bank's PEAP until 2025, and then the growth \\
+                                                             rates from {PopulationFuture}."),
+                        "Ariadne" = glue::glue("use past data from {PopulationPast}, then the growth rates \\
+                                                from the Wolrld Bank's PEAP until 2025, and then the growth \\
+                                                rates from {PopulationFuture}. For EUR/ARIADNE countries, \\
+                                                just glue past with future."))
+
+  # The function "finishingTouches" can be found in the file "helperFunctionsGDPandPopulation"
+  combined <- finishingTouches(combined, future, FiveYearSteps, naming)
+
+  # Add SDP, SDP_EI, SDP_RC and SDP_MC scenarios as copy of SSP1
+  if("pop_SSP1" %in% getNames(combined) && !("pop_SDP" %in% getNames(combined))){
+    combined_SDP <- combined[,, "pop_SSP1"]
+    for  (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
+      getNames(combined_SDP) <- gsub("SSP1", i, getNames(combined[,, "pop_SSP1"]))
+      combined <- mbind(combined, combined_SDP) 
+    }
+  }  
+  
+  return(list(x = combined,
+              weight = NULL,
+              unit = "million",
+              description = glue::glue("Population data. Datasource for the Past: {PopulationPast}.\\
+                                        Datasource for the Future: {PopulationFuture}. Calibrated \\
+                                        to {datasettype}")))
+
 }

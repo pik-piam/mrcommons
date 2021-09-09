@@ -4,7 +4,7 @@
 \alias{calcGDPpppFuture}
 \title{calcGDPpppFuture}
 \usage{
-calcGDPpppFuture(GDPpppFuture = "SSP_completed")
+calcGDPpppFuture(GDPpppFuture = "SSP_bezierOut_completed")
 }
 \arguments{
 \item{GDPpppFuture}{GDPppp future data source}
@@ -14,13 +14,10 @@ GDP PPP(ICP11) in million USD05 equivalents
 }
 \description{
 Calculates a time series of GDP in Purchase Power Parity (PPP) of million
-International Dollars of the year 2005.  The source is selected in the
-config file(getConfig()$calc$GDPpppFuture). Different sources are available:
+International Dollars of the year 2005.  The source is selected in the config
+file(getConfig()$calc$GDPpppFuture). Different sources are available:
 \itemize{ \item \code{SSP}: Lavinia? \item \code{OECD}: Lavinia? }
 }
-\seealso{
-\code{\link{convertWDI}}
-}
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

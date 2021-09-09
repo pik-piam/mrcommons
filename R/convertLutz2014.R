@@ -11,7 +11,7 @@
 
 convertLutz2014 <- function(x){
   
-  pop_wdi<-calcOutput("Population",PopulationPast="WDI_completed",PopulationFuture="SSP_completed",aggregate = FALSE) # at least one citizen per country
+  pop_wdi <- calcOutput("Population", aggregate = FALSE) # at least one citizen per country
   
   # handle countries with missing education data before 2010
   tmp<-where(is.na(x))$true$region
@@ -27,7 +27,7 @@ convertLutz2014 <- function(x){
 	fill_country_by_average_of_region <- function(x, country="SSD", region=c("AFG","TCD")){
 	  vcat(2,paste0("interpolating country: ", country))
 	  values <- x[region,,]
-	  population <- pop_wdi[country,getYears(values),"pop_SSP2"]
+	  population <- pop_wdi[country,getYears(values), "pop_SSP2"]
 	  x[country,,]  <-  setCells(dimSums(values, dim=1)/dimSums(values[,,"Total"][,,"Both"][,,"All"], dim=1),"GLO") * population
 	  return(x)
 	}

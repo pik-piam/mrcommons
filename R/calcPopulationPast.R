@@ -12,42 +12,78 @@
 #' 
 #' @param PopulationPast population past data source
 #' @return Population in millions.
-#' @author Lavinia Baumstark, Benjamin Bodirsky
-#' @seealso \code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
-#' @importFrom magclass getNames clean_magpie
+#' @author Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 
-
-calcPopulationPast <- function(PopulationPast="WDI_completed") {
-  type <- PopulationPast
-  if (type=="WDI") {
-    data <- readSource(type = "WDI",subtype = "SP.POP.TOTL",convert = T)
-    getNames(data) <- "population"
-    
-  } else if ('UN_PopDiv' == type) {
-    data <- readSource("UN_PopDiv")
-    getNames(data) <- 'population'
-    
-  } else if (type == "WDI_completed"){
-    data <- calcOutput("PopulationPast", PopulationPast = "WDI", aggregate = F)
-    missing<-where(data==0)$true$region
-    
-    fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
-    fill <- time_interpolate(fill,interpolated_year = getYears(data),extrapolation_type = "constant")
-    
-    missing<-where(setYears(dimSums(data,dim=2),"y2000")==0)$true$region
-    data[missing,,]<-fill[missing,,]
-    missing<-where(data==0)$true$region
-    for(ii in missing){
-      missingyears=where(data[ii,,]==0)$true$years
-      data[ii,missingyears,] <- time_interpolate(dataset = data[ii,,][,missingyears,,invert=T],interpolated_year = missingyears,extrapolation_type = "constant")
-    }
-    
-    getNames(data) <- "population"
-  }
+calcPopulationPast <- function(PopulationPast = "WDI_completed") {
   
-    else {
-    stop(type, " is not a valid source type for population")
+  # Check input argument  
+  valid_inputs <- c(
+    "WDI", 
+    "WDI_completed",
+    "UN_PopDiv",
+    "Eurostat_WDI",
+    "Eurostat_WDI_completed"
+  )
+  if (!PopulationPast %in% valid_inputs) {
+    stop("Bad input for PopulationPast. Invalid 'PopulationPast' argument.")
   }
-  data<-clean_magpie(data)
-  return(list(x=data,weight=NULL,unit="million",description=paste0("Population data based on ",type)))
+
+  # Look for "_completed" tag. Remove if found.
+  if (grepl("_completed$", PopulationPast)) {
+    PopulationPast <- gsub("_completed", "", PopulationPast)
+    complete <- TRUE
+  } else {
+    complete <- FALSE
+  }
+
+  data <- switch(PopulationPast,
+                 "WDI" = calcPopulationPastWDI(complete),
+                 "UN_PopDiv" = readSource("UN_PopDiv"),
+                 "Eurostat_WDI" = calcPopulationPastEurostatWDI(complete))
+
+  getNames(data) <- "population"
+  data <- clean_magpie(data)
+
+  return(list(x = data,
+              weight = NULL,
+              unit = "million",
+              description = paste0("Population data based on ", PopulationPast)))
+}
+
+
+
+######################################################################################
+# Functions
+######################################################################################
+calcPopulationPastWDI <- function(complete) {
+  data <- readSource("WDI", "SP.POP.TOTL")
+  
+  if (complete) {
+    fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+    data <- completeData(data, fill)
+  }
+
+  data
+}
+
+calcPopulationPastEurostatWDI <- function(complete) {
+  data_eurostat <- readSource("Eurostat", "population") / 1e+6
+  data_wdi <- readSource("WDI", "SP.POP.TOTL")
+
+  # Get EUR countries. 
+  EUR_countries <- toolGetMapping("regionmappingH12.csv") %>% 
+    tibble::as_tibble() %>% 
+    filter(.data$RegionCode == "EUR") %>% 
+    dplyr::pull(.data$CountryCode)
+  
+  # Use WDI data for everything but the EUR_countries. Use Eurostat stat for those.
+  data <- data_wdi
+  data[EUR_countries,,] <- data_eurostat[EUR_countries,,]
+
+  if (complete) {
+    fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+    data <- completeData(data, fill)
+  }
+
+  data
 }

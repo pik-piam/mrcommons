@@ -10,13 +10,9 @@
 #' \dontrun{ a <- downloadSource(type="WDI")
 #' }
 #' 
-#' @importFrom reshape2 melt
-#' @importFrom WDI WDI WDIcache WDIsearch
-
-
-downloadWDI<-function(){
-  end_year <- as.numeric(strsplit(as.character(Sys.Date()),"-")[[1]][1]) -1
-  WDIsearch(cache = WDIcache())
+downloadWDI <- function(){
+  end_year <- as.numeric(strsplit(as.character(Sys.Date()), "-")[[1]][1]) -1
+  WDI::WDIsearch(cache = WDI::WDIcache())
   indicator <- c("SP.POP.TOTL", #population, total
                  "NY.GDP.MKTP.PP.KD", #GDP ppp, constant 2017 int$
                  "NY.GDP.MKTP.PP.CD", # GDP current international $
@@ -30,16 +26,13 @@ downloadWDI<-function(){
                  "SP.URB.TOTL.IN.ZS", #Urban Population (% of total)
                  "AG.SRF.TOTL.K2", #surface area, sq. km
                  "NY.GDP.PCAP.CN", #GDP per capita current LCU,
-                 "NY.GDP.PCAP.PP.KD", #GDP per capita PPP, 2011int$,
+                 "NY.GDP.PCAP.PP.KD", #GDP per capita PPP, 2017int$,
                  "NY.GDP.PCAP.KD", #GDP per capita MER, 2010 US$,
                  "NV.AGR.TOTL.CD", #Ag GDP MER, current US$,
                  "NV.AGR.TOTL.KD", #Ag GDP MER, 2010 US$
                  "NY.GDP.PCAP.CD", #GDP per capita, current US$
                  "NY.GDP.PCAP.PP.CD" #GDP per capita, current PPP int$
                  )
-  wdi <- WDI(indicator = indicator,start= 1960, end = end_year)
-  save(wdi,file = paste("WDI","rda",sep="."))
+  wdi <- WDI::WDI(indicator = indicator, start = 1960, end = end_year)
+  save(wdi, file = "WDI.rda")
 }
-
-
-
