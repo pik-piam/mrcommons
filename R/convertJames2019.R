@@ -10,22 +10,20 @@
 #' 
 #' \dontrun{ a <- convertSource("James2019","IHME_USD05_PPP_pc")
 #' }
-#' @importFrom countrycode countrycode
-#' @importFrom mstools toolHoldConstant 
+convertJames2019 <- function(x, subtype) {
 
-convertJames2019 <- function(x,subtype) {
-  x<-x[c("USSR_FRMR","CHN_354","CHN_361"),,,invert=TRUE] #Macao and HKG and Former USSR have 0 values in the dataset
-  x<-toolCountryFill(x[,,subtype],fill = 0) 
-  
+  x <- x[c("USSR_FRMR","CHN_354","CHN_361"),,,invert = TRUE] #Macao and HKG and Former USSR have 0 values in the dataset
+  x <- toolCountryFill(x[,,subtype], fill = 0) 
+
   #fill missing islands not in MissingIslands, using older James
-  old <- readSource("James", subtype=subtype)
+  old <- readSource("James", subtype = subtype)
   missing <- time_interpolate(old[c("ABW","PYF","NCL"),,], interpolated_year = c(1950:2019))
   x[c("ABW","PYF","NCL"),,] <- missing
   
   # use old HKG and MAC shares, and subtract from CHN
   # new james has much higher (double in earliest time steps)
   # historical china values
-  pop<-readSource("WDI",subtype = "SP.POP.TOTL")[c("CHN","HKG","MAC"),,]
+  pop <- readSource("WDI", subtype = "SP.POP.TOTL")[c("CHN","HKG","MAC"),,]
   oldyears <- intersect(getYears(pop), getYears(old))
   old <- pop[,oldyears,]*old[c("CHN","HKG","MAC"),oldyears,]
   old <- collapseNames(old)
@@ -40,6 +38,18 @@ convertJames2019 <- function(x,subtype) {
   x[c("CHN","HKG","MAC"),getYears(x1),] <- x1/pop[c("CHN","HKG","MAC"),,]
   x[c("HKG","MAC"),1950:1959,] <- setYears(x[c("HKG","MAC"),1960,],NULL)
   
+  # South Sudan values are very large, likely inaccurate. In their stead, the Missing island gdp values and WDI pop numbers are used.
+  ssd_gdp <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)["SSD",,]
+  ssd_pop <- readSource("WDI", subtype = "SP.POP.TOTL")["SSD",,] %>% dimReduce()
+  
+  ssd_gdp <- time_interpolate(ssd_gdp, c(1950:2019)) 
+  ssd_pop <- time_interpolate(ssd_pop, c(1950:2019)) 
+  
+  ssd_gdppc <- ssd_gdp/ssd_pop
+  
+  x["SSD",,] <- ssd_gdppc
+
+
   #reset set name of year to Year
   getSets(x)[2] <- "Year"
   return(x)

@@ -4,7 +4,10 @@
 \alias{readJames2019}
 \title{Read James 2019 updated dataset}
 \usage{
-readJames2019()
+readJames2019(subtype)
+}
+\arguments{
+\item{subtype}{String indicating the data series}
 }
 \value{
 GDP per capita in USD05 in PPP or MER as magpie object
@@ -21,7 +24,7 @@ from a .csv file to a magclass object
 }
 \examples{
 
-\dontrun{ a <- readSource(type="James2019",subtype="IHME_USD05_PPP_pc")
+\dontrun{ a <- readSource(type="James2019", subtype="IHME_USD05_PPP_pc")
 }
 
 }

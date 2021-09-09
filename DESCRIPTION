@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.61.5
-Date: 2021-09-09
+Version: 0.62.0
+Date: 2021-09-07
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -29,6 +29,7 @@ Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.d
              person("Patrick", "von Jeetze", role = "aut"),
              person("Eleonora", "Martinelli", role = "aut"),
              person("Felix", "Schreyer", role = "aut"),
+             person("Bjoern", "Soergel", role = "aut"),
              person("Jan Philipp", "Dietrich", email = "dietrich@pik-potsdam.de", role = c("aut","cre")))
 Description: Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND
     of model input data.
@@ -38,30 +39,34 @@ Depends:
     madrat(>= 2.2.1),
     mstools
 Imports:
-  SPEI,
-  WDI,
+  bezier,
   countrycode,
   data.table,
   dplyr,
-  rlang,
+  hdf5r,
+  GDPuc,
+  glue,
   lazyeval,
   lpjclass,
   luscale,
   magpiesets(>= 0.44.2),
   ncdf4,
   nleqslv,
+  purrr,
   quitte,
   raster,
   readr,
   readxl,
   reshape2,
+  rlang,
+  SPEI,
   stringr,
+  tibble,
   tidyr,
+  tidyselect,
+  WDI,
   XML,
-  zoo,
-  purrr,
-  hdf5r,
-  GDPuc
+  zoo
 License: LGPL-3 | file LICENSE
 URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues

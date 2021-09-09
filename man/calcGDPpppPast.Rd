@@ -4,7 +4,7 @@
 \alias{calcGDPpppPast}
 \title{calcGDPpppPast}
 \usage{
-calcGDPpppPast(GDPpppPast = "IHME_USD05_PPP_pc_completed")
+calcGDPpppPast(GDPpppPast = "WDI_completed")
 }
 \arguments{
 \item{GDPpppPast}{GDPppp past data source}
@@ -35,9 +35,6 @@ Comprehensive Time Series of GDP per Capita for 210 Countries from 1950 to
 This publication also contains further interpolated indicators that can be
 used. }
 }
-\seealso{
-\code{\link{convertWDI}}
-}
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

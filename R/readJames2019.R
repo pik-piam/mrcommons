@@ -8,17 +8,17 @@
 #' 
 #' 2019 dataset from personal communication w/ B Bodirsky
 #' 
+#' @param subtype String indicating the data series
 #' @return GDP per capita in USD05 in PPP or MER as magpie object
 #' @author David Chen, Benjamin Bodirsky
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' 
-#' \dontrun{ a <- readSource(type="James2019",subtype="IHME_USD05_PPP_pc")
+#' \dontrun{ a <- readSource(type="James2019", subtype="IHME_USD05_PPP_pc")
 #' }
 #' 
-readJames2019 <- function() {
-  file <- "james2019.csv"
-  x<-read.csv(file, sep=",",dec = ".", header=T)
-  x<-as.magpie(x,spatial=1,temporal=2)    
-  return(x)
+readJames2019 <- function(subtype) {
+  x <- read.csv("james2019.csv", sep = ",", dec = ".", header = TRUE)
+  x <- x[, c("ISO3", "Year", subtype)]
+  x <- as.magpie(x, spatial = 1, temporal = 2)    
 }  

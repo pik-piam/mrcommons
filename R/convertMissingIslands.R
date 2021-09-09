@@ -11,14 +11,11 @@
 #' @examples
 #' 
 #' \dontrun{ 
-#' readSource("MissingIslands", subtype="pop",convert=FALSE)
+#' readSource("MissingIslands", subtype="pop", convert=FALSE)
 #' }
 #'
 
-
-convertMissingIslands<-function(subtype){
-  
-stop("This dataset should not be converted.")
-  
+convertMissingIslands <- function(subtype){
+  stop("This dataset should not be converted.")
   return(NULL)
-}  
+}

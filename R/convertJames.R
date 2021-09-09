@@ -15,8 +15,8 @@
 #' }
 #' @importFrom countrycode countrycode
 
-convertJames <- function(x,subtype) {
-      x<-x[c("ANT","SUN"),,,invert=TRUE]
-      y<-toolCountryFill(x[,,subtype],fill = 0) 
-      return(y)
+convertJames <- function(x, subtype) {
+  x <- x[c("ANT", "SUN"),,, invert = TRUE]
+  y <- toolCountryFill(x[,, subtype], fill = 0) 
+  return(y)
 }  

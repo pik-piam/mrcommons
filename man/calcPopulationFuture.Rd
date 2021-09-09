@@ -4,7 +4,7 @@
 \alias{calcPopulationFuture}
 \title{calcPopulationFuture}
 \usage{
-calcPopulationFuture(PopulationFuture = "SSP_completed")
+calcPopulationFuture(PopulationFuture = "SSP2018Update_completed_bezierOut")
 }
 \arguments{
 \item{PopulationFuture}{population future data source}
@@ -18,9 +18,6 @@ can be selected in the madrat config (getConfig()$calc$PopulationPast):
 \itemize{ \item \code{"IIASApop"}: Source: IIASA? Lavinia?  \item
 \code{"IIASApop"}: Source: Lavinia? }
 }
-\seealso{
-\code{\link{convertWDI}},\code{\link{calcGDPpppPast}}
-}
 \author{
-Lavinia Baumstark, Benjamin Bodirsky
+Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
 }

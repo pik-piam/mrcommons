@@ -4,7 +4,10 @@
 \alias{readJames}
 \title{Read James}
 \usage{
-readJames()
+readJames(subtype)
+}
+\arguments{
+\item{subtype}{String indicating the data series}
 }
 \value{
 GDP per capita in USD05 in PPP or MER as magpie object
