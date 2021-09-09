@@ -26,7 +26,7 @@ jobs:
 
       - uses: r-universe-org/build-and-check@master
         with:
-          cranlikerepo: https://pik-piam.r-universe.dev
+          cranlikerepo: "https://pik-piam.r-universe.dev"
 
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
