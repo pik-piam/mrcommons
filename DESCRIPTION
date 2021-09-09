@@ -81,5 +81,3 @@ Suggests:
     Rilostat,
     HARr
 VignetteBuilder: knitr
-Remotes:
-    pfuehrlich-pik/HARr

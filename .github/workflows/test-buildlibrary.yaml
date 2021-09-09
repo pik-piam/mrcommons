@@ -26,12 +26,14 @@ jobs:
 
       - name: Use pik-piam r-universe
         shell: bash
-        run: |
-          echo "::group::Use PIK RSE server"
-          echo 'options(repos = c(universe = "https://pik-piam.r-universe.dev", CRAN = "https://cloud.r-project.org"))' > .Rprofile
-          echo "::endgroup::"
+        run: echo 'options(repos = c(universe = "https://pik-piam.r-universe.dev", CRAN = "https://cloud.r-project.org"))' > .Rprofile
 
       - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: |
+            devtools
+            covr
+            lucode2
 
       - name: Run tests
         run: devtools::test(stop_on_failure = TRUE)
