@@ -24,15 +24,15 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Use PIK RSE server
+      - name: Use pik-piam r-universe
         shell: bash
         run: |
           echo "::group::Use PIK RSE server"
-          echo 'options(repos = c(rseserver = "https://rse.pik-potsdam.de/r/packages", CRAN = "https://cloud.r-project.org"))' > .Rprofile
+          echo 'options(repos = c(universe = "https://pik-piam.r-universe.dev", CRAN = "https://cloud.r-project.org"))' > .Rprofile
           echo "::endgroup::"
 
       - uses: r-lib/actions/setup-r-dependencies@v1
-        
+
       - name: Run tests
         run: devtools::test(stop_on_failure = TRUE)
         shell: Rscript {0}
@@ -40,8 +40,7 @@ jobs:
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
         shell: Rscript {0}
-        
+
       - name: Validation key 
         run: if(!lucode2:::validkey()$valid) stop("Invalid build key!")
         shell: Rscript {0}
-        
