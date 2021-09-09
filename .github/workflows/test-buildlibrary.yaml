@@ -20,13 +20,13 @@ jobs:
         with:
           r-version: release
           install-r: false
-          use-public-rspm: true
+          # use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@v1
 
       - uses: r-universe-org/build-and-check@master
         with:
-          cranlikerepo: "https://pik-piam.r-universe.dev"
+          cranlikerepo: '"https://pik-piam.r-universe.dev"'
 
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
