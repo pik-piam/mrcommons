@@ -24,18 +24,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Use PIK RSE server
-        shell: bash
-        run: |
-          echo "::group::Use PIK RSE server"
-          echo 'options(repos = c(rseserver = "https://rse.pik-potsdam.de/r/packages", CRAN = "https://cloud.r-project.org"))' > .Rprofile
-          echo "::endgroup::"
-
-      - uses: r-lib/actions/setup-r-dependencies@v1
-        
-      - name: Run tests
-        run: devtools::test(stop_on_failure = TRUE)
-        shell: Rscript {0}
+      - uses: r-universe-org/build-and-check@master
+        with:
+          cranlikerepo: https://pik-piam.r-universe.dev
 
       - name: Test coverage
         run: covr::codecov(quiet = FALSE)
