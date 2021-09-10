@@ -18,8 +18,9 @@ Data as MAgPIE object with common country list
 Convert FRA 2020 data
 }
 \examples{
-
-\dontrun{ a <- readSource("FRA2020","growing_stock",convert=TRUE)}
+\dontrun{
+a <- readSource("FRA2020", "growing_stock", convert = TRUE)
+}
 }
 \seealso{
 \code{\link{readSource}},

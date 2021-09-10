@@ -16,8 +16,8 @@ Magpie object of the FRA 2020 data
 Read-in an FRA data from 2020 (forest resource assessment).
 }
 \examples{
-
-\dontrun{ a <- readSource("FRA2020","growing_stock")
+\dontrun{
+a <- readSource("FRA2020", "growing_stock")
 }
 
 }
