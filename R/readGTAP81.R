@@ -27,7 +27,7 @@ readGTAP81 <- function(subtype) {
       GTAP <- HARr::read_har(paste0("FilesGTAP81y", year, "/", file, ".har"))[subtype]
     } else {
       stop(paste("HARr is needed to read data from GTAP. You can install the package via",
-                 "devtools::install_git('https://github.com/USDA-ERS/MTED-HARr.git')"))
+                 "remotes::install_git('https://github.com/USDA-ERS/MTED-HARr.git')"))
     }
 
     GTAP <- melt(GTAP)
