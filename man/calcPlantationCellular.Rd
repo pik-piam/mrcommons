@@ -13,10 +13,10 @@ List of magpie object with results on cellular level, weight on cellular level, 
 Calculates the cellular plantation area based on carbon densities
 }
 \examples{
-
 \dontrun{
 calcOutput("PlantationCellular")
 }
+
 }
 \author{
 Abhijeet Mishra
