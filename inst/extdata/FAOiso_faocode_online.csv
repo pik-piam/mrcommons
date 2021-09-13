@@ -1,7 +1,7 @@
-Country,ISO,
-Belgium-Luxembourg,XBL,
-China, mainland,XCN
-Pacific Islands Trust Territory,PCI,
-Sudan (former),XSD,
-Channel Islands,JEY,
-French Guyana,GUF,
+Country;ISO
+Belgium-Luxembourg;XBL
+China, mainland;XCN
+Pacific Islands Trust Territory;PCI
+Sudan (former);XSD
+Channel Islands;JEY
+French Guyana;GUF
