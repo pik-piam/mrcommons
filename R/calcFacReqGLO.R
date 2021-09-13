@@ -1,6 +1,6 @@
 #' @title calcFacReqGLO
 #'
-#' @description This function calculates 2005 global factor requirement costs (05USDppp/tDM) using FAO databases
+#' @description This function calculates 2005 global factor requirement costs (05USDMER/tDM) using FAO databases
 #'
 #' @return MAgPIE object
 #' @author Edna J. Molina Bacca
@@ -36,6 +36,6 @@ calcFacReqGLO <- function() {
 
   return(list(x = x,
               weight = NULL,
-              unit = "USD05ppp per tDM",
-              description = "Factor requirements for different crops (USD05ppp per tDM) at global level"))
+              unit = "USD05MER per tDM",
+              description = "Factor requirements for different crops (USD05MER per tDM) at global level"))
 }

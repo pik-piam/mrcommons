@@ -11,7 +11,7 @@ calcVoP_crops(output = "absolute")
 as a "fraction" of the overall value of production.}
 }
 \value{
-magpie object. in mio. USD05 ppp or fraction
+magpie object. in mio. USD05 MER or fraction
 }
 \description{
 Calculates the value of production of individual production items or

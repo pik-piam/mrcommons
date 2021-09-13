@@ -7,7 +7,7 @@
 calcVoP_AFF()
 }
 \value{
-magpie object. in mio. 05USD ppp units
+magpie object. in mio. 05USD MER units
 }
 \description{
 Calculates the overall value of production of the agriculture,
