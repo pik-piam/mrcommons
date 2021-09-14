@@ -1,7 +1,7 @@
 {
   "title": "mrcommons: MadRat commons Input Data Library",
-  "version": "0.64.0",
-  "description": "<p>Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND\n    of model input data.<\/p>",
+  "version": "0.64.1",
+  "description": "<p>\n    Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND\n    of model input data.<\/p>",
   "creators": [
     {
       "name": "Bodirsky, Benjamin Leon"

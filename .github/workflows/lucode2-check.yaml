@@ -35,11 +35,15 @@ jobs:
             lucode2
             covr
 
-      - name: Validation key
-        run: if(!lucode2:::validkey()$valid) stop("Invalid build key!")
+      - name: Verify ValidationKey
+        run: |
+          if(!lucode2:::validkey()$valid) {
+            stop(paste("The ValidationKey in .buildLibrary is invalid. Not all changes made by lucode2::buildLibrary()",
+                       "were commited, or it was not run at all.")
+          }
         shell: Rscript {0}
 
-      - name: Check
+      - name: Checks, Tests, Linter
         run: |
           options(crayon.enabled = TRUE)
           lucode2::check()
