@@ -75,23 +75,20 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
 
-          # GDP for units conversion from 15USD MER to 05USDppp
-          GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
-          GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
-          GDP_con <- setNames(setYears((GDP_ppp[, 2005, ] / GDP_mer[, 2015, ]), NULL), NULL)
-
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
           fraction_VoP_crop <- calcOutput("VoP_crops", output = "fraction", aggregate = FALSE)
 
           # Existing capital stocks
           name <- "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_USD_2015_prices_(millions)"
           CapitalStocks <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
+          CapitalStocks <- convertGDP(CapitalStocks, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
+                                      replace_NAs = 1)
           years <- intersect(getYears(fraction_VoP_crop), getYears(CapitalStocks))
           region <- intersect(getCells(fraction_VoP_crop), getCells(CapitalStocks))
 
           # Capital stocks per crop
           CapitalStocks_crop <- collapseDim(CapitalStocks[region, years, ] *
-                                              fraction_VoP_crop[region, years, ]) * GDP_con[region, , ]
+                                              fraction_VoP_crop[region, years, ])
 
           # Production
           Production <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE)[, , "dm"])
@@ -128,7 +125,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
   }
 
    units <-
-   if (output %in% c("intensities", "requirements")) "05USDppp/tDM" else if (output == "CapitalShare") "fraction"
+   if (output %in% c("intensities", "requirements")) "05USDMER/tDM" else if (output == "CapitalShare") "fraction"
 
 
 

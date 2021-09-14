@@ -10,7 +10,7 @@ calcFacReqGLO()
 MAgPIE object
 }
 \description{
-This function calculates 2005 global factor requirement costs (05USDppp/tDM) using FAO databases
+This function calculates 2005 global factor requirement costs (05USDMER/tDM) using FAO databases
 }
 \examples{
 \dontrun{
