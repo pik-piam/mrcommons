@@ -36,11 +36,7 @@ jobs:
             covr
 
       - name: Verify ValidationKey
-        run: |
-          if(!lucode2:::validkey()$valid) {
-            stop(paste("The ValidationKey in .buildLibrary is invalid. Not all changes made by lucode2::buildLibrary()",
-                       "were commited, or it was not run at all.")
-          }
+        run: lucode2:::validkey(stopIfInvalid = TRUE)
         shell: Rscript {0}
 
       - name: Checks, Tests, Linter
