@@ -266,7 +266,7 @@ harmonizeFutureGrPast <- function(past, future) {
   years_past <- getYears(past)[which(getYears(past, as.integer = TRUE) < firstFutureYear)]
   tmpPast <- new.magpie(getRegions(past), years_past, getNames(past), fill = 0)
 
-  # Use growth rates of future object
+  # Use growth rates of past object
   tmpPast[,,] <- tmpFuture[,firstFutureYear,] * past[,years_past,] / past[,firstFutureYear,]
   tmpPast[is.nan(tmpPast)] <- 0
 
