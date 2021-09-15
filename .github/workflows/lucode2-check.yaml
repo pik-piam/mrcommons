@@ -41,11 +41,11 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Checks, Tests, Linter
+      - name: Checks
         shell: Rscript {0}
         run: |
           options(crayon.enabled = TRUE)
-          lucode2::check()
+          lucode2::check(runLinter = FALSE)
 
       - name: Test coverage
         shell: Rscript {0}
