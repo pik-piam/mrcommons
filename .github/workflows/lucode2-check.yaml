@@ -25,8 +25,19 @@ jobs:
           chmod 0755 run.sh
           ./run.sh bootstrap
 
-      - name: Use pik-piam r-universe
-        run: echo 'options(repos = c(universe = "https://pik-piam.r-universe.dev", CRAN = "https://cloud.r-project.org"))' > .Rprofile
+      - name: Modify Setup
+        run: |
+          echo 'options(repos = c(universe = "https://pik-piam.r-universe.dev", CRAN = "https://cloud.r-project.org"))' >> .Rprofile
+          cat .Rprofile
+          sudo sed -i '/bspm::enable()/d' /etc/R/Rprofile.site
+          echo 'trace(utils::install.packages, quote({' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '  if (!is.null(repos)) {' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '    pikCranPackages <- c("madrat", "magclass", "citation", "gms", "goxygen")' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '    pkgs <- c(bspm::install_sys(pkgs[!pkgs %in% pikCranPackages]),' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '              pkgs[pkgs %in% pikCranPackages])' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '  }' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          echo '}), print=FALSE)' | sudo tee --append /etc/R/Rprofile.site >/dev/null
+          cat /etc/R/Rprofile.site
 
       - name: Dependencies
         run: |
@@ -42,8 +53,8 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
-      - name: Remove bspm # to get rid of error when running install.packages
-        run: sudo sed -i '/bspm::enable()/d' /etc/R/Rprofile.site
+      - name: Remove bspm integration # to get rid of error when running install.packages
+        run: echo 'untrace(utils::install.packages)' | sudo tee --append /etc/R/Rprofile.site >/dev/null
 
       - name: Checks
         shell: Rscript {0}
