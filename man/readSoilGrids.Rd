@@ -7,14 +7,16 @@
 readSoilGrids(subtype)
 }
 \arguments{
-\item{subtype}{Switch between different input. Use predefined ones or any FileName specified in 'SoilGrids/META_GEOTIFF_1B.csv'}
+\item{subtype}{Switch between different input. Use predefined ones or any FileName
+specified in 'SoilGrids/META_GEOTIFF_1B.csv'}
 }
 \value{
 magpie object in cellular resolution
 }
 \description{
-This function reads the raw SoilGrids data (available at https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif)
-or if available the preprocessed raster layers.
+This function reads the raw SoilGrids data (available at
+             https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif)
+             or if available the preprocessed raster layers.
 }
 \examples{
 \dontrun{
