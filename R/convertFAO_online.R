@@ -119,8 +119,8 @@ convertFAO_online <- function(x,subtype) {
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if (all(c("XSD", "SSD", "SDN") %in% getRegions(x))){
-    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2010"), c("XSD", "SDN","y2010")))
-  } else if ("XSD" %in% getRegions(x) & !any(c("SDD", "SDN") %in% getRegions(x)) ) {
+    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2011"), c("XSD", "SDN","y2011")))
+  } else if ("XSD" %in% getRegions(x) & !any(c("SSD", "SDN") %in% getRegions(x)) ) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
   }
 
