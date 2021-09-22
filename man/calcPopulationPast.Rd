@@ -15,11 +15,11 @@ Population in millions.
 \description{
 Calculates a time series of Population. Different sources are available and
 can be selected in the madrat config(getConfig()$calc$PopulationPast):
-\itemize{ 
+\itemize{
   \item \code{WDI}: Source: Worldbank. Taiwan was estimated as the
         difference between all countries and the global total.
   \item \code{UN_PopDiv}: UN Population Division data. Taiwan is estimated
-        from "other, non-specified areas". Missing countries have their 
+        from "other, non-specified areas". Missing countries have their
         values set to zero.
 }
 }
