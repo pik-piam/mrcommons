@@ -24,7 +24,7 @@ readSoilGrids <- function(subtype) {
 
   if (grepl(".tif", subtype)) {
 
-      file <- subtype
+    file <- subtype
 
   } else {
 
