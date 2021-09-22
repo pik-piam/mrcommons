@@ -136,7 +136,7 @@ readFAO_online <- function(subtype) {
   readcolClass[csvcolnames %in% c("Value","Year")] <- NA
   if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
 
-  FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "UTF-8", showProgress = FALSE)
+  FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
   FAO <- as.data.frame(FAO)
   # from wide to long (move years from individual columns into one column)
   if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
