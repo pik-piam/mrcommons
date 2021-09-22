@@ -33,6 +33,7 @@ Handle LPJmL data and its time behaviour (smoothing and harmonizing to baseline)
 \dontrun{
 calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 }
+
 }
 \seealso{
 \code{\link{readLPJmL}}

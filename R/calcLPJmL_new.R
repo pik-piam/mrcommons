@@ -20,7 +20,7 @@
 #' \dontrun{
 #' calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 #' }
-
+#'
 calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
 
@@ -42,7 +42,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       subtypeIn <- subtype
     }
 
-    readinName <- paste0(cfg$lpjml_version, ":", climatetype, ":", subtypeIn)
+    readinName <- paste0(cfg$lpjml_version, ":", cfg$climatetype, ":", subtypeIn)
 
     ########## PLUG HIST + FUTURE ##########
 
@@ -179,9 +179,9 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "mio. m^3"
 
     } else if (grepl("cshift", subtype)) {
-      
+
       unit <- "C/C"
-      
+
     } else {
       stop(paste0("subtype ", subtype, " is not existing"))
     }
@@ -209,7 +209,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = version, climatetype = climatetype,
+      x   <- calcOutput("LPJmL_new", version = version, climatetype = cfg$climatetype,
                         subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
     }
@@ -229,7 +229,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = version, climatetype = climatetype,
+      x   <- calcOutput("LPJmL_new", version = version, climatetype = cfg$climatetype,
                         subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$ref_year_gcm)
     }
@@ -244,6 +244,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     unit         = unit,
     min          = 0,
     description  = paste0("Carbon output from LPJmL (", subtype, ") for ",
-                          version, " and ", climatetype, " at stage: ", stage, "."),
+                          cfg$lpjml_version, " and ", cfg$climatetype, " at stage: ", stage, "."),
     isocountries = FALSE))
 }
