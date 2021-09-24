@@ -230,7 +230,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     if (nclasses %in% c("six", "seven")) {
       other <- "other"
     } else if (nclasses == "nine") {
-      other <- "secdn"
+      other <- "secdother"
     }
     out <- round(out, 8)
     cellArea <- dimSums(out, dim = 3)
