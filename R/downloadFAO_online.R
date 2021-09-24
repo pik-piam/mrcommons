@@ -5,10 +5,13 @@
 #' @param subtype Type of FAO data that should be read.
 #' 
 #' @importFrom utils download.file unzip person
-#' @importFrom XML xmlToDataFrame
 
 downloadFAO_online <- function(subtype) {
   
+  if (!requireNamespace("XML", quietly = TRUE)) {
+    stop("The 'XML' package is required to download data from FAO. Please install it.")
+  }
+
   # Additional information not accessed by this function but potentially interesting.
   # DEFINITION AND CLASSIFICATION OF COMMODITIES
   #    http://www.fao.org/es/faodef/fdef11e.htm
@@ -62,7 +65,7 @@ downloadFAO_online <- function(subtype) {
   # Download meta data (e.g. name, description, release date, file path) for all FAO data sets currently available
   fao_meta_xmlfile <- "FAO_datasets_E.xml"
   download.file(url = "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml", destfile = fao_meta_xmlfile)
-  fao_meta <- xmlToDataFrame(fao_meta_xmlfile,stringsAsFactors = F)
+  fao_meta <- XML::xmlToDataFrame(fao_meta_xmlfile,stringsAsFactors = F)
   unlink(fao_meta_xmlfile)
   
   # extract the data set for the selected subtype by searching for the file name
