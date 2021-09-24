@@ -41,7 +41,6 @@ List of magpie object with results on country or cellular level, weight on cellu
 Calculates the cellular MAgPIE landuse initialisation area. Data from FAO on forestry is used to split the secondary forest pool of the LU2v2 dataset into forestry and secd_forest.
 }
 \examples{
-
 \dontrun{
 calcOutput("LanduseInitialisation")
 }

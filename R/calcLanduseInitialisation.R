@@ -16,14 +16,13 @@
 #' @return List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
 #' @examples
-#'
 #' \dontrun{
 #' calcOutput("LanduseInitialisation")
 #' }
 #' @importFrom magclass setNames
 
 
-calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", country_level=FALSE, selectyears = "past", input_magpie = FALSE) {
+calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", country_level = FALSE, selectyears = "past", input_magpie = FALSE) {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
   if (cellular == FALSE) {
@@ -228,25 +227,30 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
   }
 
   if (input_magpie) {
+    if (nclasses %in% c("six", "seven")) {
+      other <- "other"
+    } else if (nclasses == "nine") {
+      other <- "secdn"
+    }
     out <- round(out, 8)
     cellArea <- dimSums(out, dim = 3)
-    temp <- out[, , "other"]
+    temp <- out[, , other]
     zero <- which(cellArea == 0, arr.ind = F)
     temp[zero] <- 10^-8
-    out[, , "other"] <- temp
+    out[, , other] <- temp
   }
 
-  if (country_level){
+  if (country_level) {
     if (cells == "lpjcell") {
-      getCells(out) <- toolGetMappingCoord2Country()[,"coords"]
+      getCells(out) <- toolGetMappingCoord2Country()[, "coords"]
       out <- toolAggregateCell2Country(out, fill = 0)
-    }else{
+    } else {
       mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
-      out <- toolAggregate(out, mapping, from = "celliso", to="iso")
+      out <- toolAggregate(out, mapping, from = "celliso", to = "iso")
       out <- toolCountryFill(out, fill = 0)
     }
   }
-  
+
   return(list(
     x = out,
     weight = NULL,
