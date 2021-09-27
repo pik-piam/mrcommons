@@ -24,7 +24,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20", "rcp26", "rcp45", "none"))
 
   y <- new.magpie(cells_and_regions = iso_country$x, years = seq(2005,2150,5), names = source, sets = c("region","year","type"))
-  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2Ariadne"))
+  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
   y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20","rcp26","rcp45","none"))
   
   if (subtype == "MAgPIE") {
@@ -42,10 +42,10 @@ calcMacBaseLandUse <- function(subtype) {
        getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
        x <- mbind(x, x_SDP)
     }
-    # make SSP2Ariadne scenario using SSP2 data
-    x_SSP2Ariadne <- x[,,"SSP2"]
-    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
-    x <- mbind(x, x_SSP2Ariadne)
+    # make SSP2EU scenario using SSP2 data
+    x_SSP2EU <- x[,,"SSP2"]
+    getNames(x_SSP2EU) <- gsub("SSP2", "SSP2EU", getNames(x_SSP2EU))
+    x <- mbind(x, x_SSP2EU)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
@@ -172,9 +172,9 @@ calcMacBaseLandUse <- function(subtype) {
        x <- mbind(x, x_SDP)
     }
     # make SSP2riadne scenario using SSP2 data
-    x_SSP2Ariadne <- x[,,"SSP2"]
-    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
-    x <- mbind(x, x_SSP2Ariadne)
+    x_SSP2EU <- x[,,"SSP2"]
+    getNames(x_SSP2EU) <- gsub("SSP2", "SSP2EU", getNames(x_SSP2EU))
+    x <- mbind(x, x_SSP2EU)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")

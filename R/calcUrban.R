@@ -71,7 +71,7 @@ calcUrban <- function(UrbanCalib="past", UrbanPast="WDI", UrbanFuture="SSP",nami
                             "SDP_EI" = "SSP1", # = high urbanization from SSPs
                             "SDP_RC" = "SSP2", # = med urbanization from SSPs
                             "SDP_MC" = "SSP1", # = high urbanization from SSPs
-                            "SSP2Ariadne" = "SSP2")
+                            "SSP2EU" = "SSP2")
   
   combined_add <- mbind(lapply(names(urbanization_mapping),
                                function(name, mapping, data)  setNames(combined[,,paste0("pop_",mapping[[name]])],paste0("pop_",name)),

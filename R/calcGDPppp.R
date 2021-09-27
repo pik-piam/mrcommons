@@ -31,7 +31,7 @@
 
 calcGDPppp <- function(GDPpppCalib = c("fixHist_IMFgr_return2SSP", "Ariadne"),
                        GDPpppPast = c("WDI_completed", "Eurostat_WDI_completed"), 
-                       GDPpppFuture = c("SSP_bezierOut_completed", "SSP2Ariadne_completed_bezierOut"),
+                       GDPpppFuture = c("SSP_bezierOut_completed", "SSP2EU_completed_bezierOut"),
                        FiveYearSteps = TRUE,
                        naming = "indicator_scenario") {
   if (!(length(GDPpppCalib) == length(GDPpppPast) && length(GDPpppCalib) == length(GDPpppFuture))) {

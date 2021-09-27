@@ -32,7 +32,7 @@ calcGDPpppFuture <- function(GDPpppFuture = "SSP_bezierOut_completed") {
     "OECD", 
     "SSP",
     "SRES",
-    "SSP2Ariadne"
+    "SSP2EU"
   )
   if (!GDPpppFuture %in% valid_inputs) {
     stop("Bad input for calcGDPpppFuture. Invalid 'GDPpppFuture' argument.")
@@ -42,7 +42,7 @@ calcGDPpppFuture <- function(GDPpppFuture = "SSP_bezierOut_completed") {
                  "OECD" = calcGDPpppFutureOECD(),
                  "SSP" = calcGDPpppFutureSSP(complete, bezierOut),
                  "SRES" = calcGDPpppFutureSRES(complete),
-                 "SSP2Ariadne" = calcGDPpppFutureSSP2Ariadne(complete, bezierOut))
+                 "SSP2EU" = calcGDPpppFutureSSP2EU(complete, bezierOut))
 
   # Clean and put in alphabetical order (necessary?)
   data <- clean_magpie(data)
@@ -128,7 +128,7 @@ calcGDPpppFutureSRES <- function(complete) {
 }
 
 
-calcGDPpppFutureSSP2Ariadne <- function(complete, bezierOut) {
+calcGDPpppFutureSSP2EU <- function(complete, bezierOut) {
   data_ariadne <- readSource("ARIADNE_ReferenceScenario", "gdp_corona")
   data_ssp <- calcGDPpppFutureSSP(FALSE, FALSE)
 
@@ -141,7 +141,7 @@ calcGDPpppFutureSSP2Ariadne <- function(complete, bezierOut) {
   # Start with the SSP2 scenario until 2100. Change the name, and overwrite the EUR
   # countries with the Eurostat data.
   data <- data_ssp[, getYears(data_ssp, as.integer = TRUE) <= 2100, "gdp_SSP2"] %>% 
-    setNames("gdp_SSP2Ariadne")
+    setNames("gdp_SSP2EU")
   data[EUR_countries,,] <- 0
   data[EUR_countries, cy, ] <- data_ariadne[EUR_countries, cy,]
 

@@ -32,7 +32,7 @@ calcPopulationFuture <- function(PopulationFuture = "SSP2018Update_completed_bez
     "SSP2018Update",
     "SRES",
     "IIASApop",
-    "SSP2Ariadne"
+    "SSP2EU"
   )
   if (!PopulationFuture %in% valid_inputs) {
     stop("Bad input for PopulationFuture. Invalid 'PopulationFuture' argument.")
@@ -43,7 +43,7 @@ calcPopulationFuture <- function(PopulationFuture = "SSP2018Update_completed_bez
                  "SSP2018Update" = calcPopulationFutureSSP2018Update(complete, bezierOut),
                  "SRES" = calcPopulationFutureSRES(complete),
                  "IIASApop" = calcPopulationFutureIIASApop(),
-                 "SSP2Ariadne" = calcPopulationFutureSSP2Ariadne(complete, bezierOut))
+                 "SSP2EU" = calcPopulationFutureSSP2EU(complete, bezierOut))
 
   # Clean and put in alphabetical order
   data <- clean_magpie(data)
@@ -154,7 +154,7 @@ calcPopulationFutureSRES <- function(complete) {
 }
 
 
-calcPopulationFutureSSP2Ariadne <- function(complete, bezierOut) {
+calcPopulationFutureSSP2EU <- function(complete, bezierOut) {
   data_eurostat <- readSource("Eurostat", "population_projections") / 1e+6
   data_ssp2 <- calcPopulationFutureSSP2018Update(FALSE, FALSE)[,, "pop_SSP2"]
 
@@ -170,7 +170,7 @@ calcPopulationFutureSSP2Ariadne <- function(complete, bezierOut) {
   # Start with the SSP2 scenario until 2100. Change the name, and overwrite the EUR
   # countries with the Eurostat data.
   data <- data_ssp2[, getYears(data_ssp2)[getYears(data_ssp2, as.integer = TRUE) <= 2100], ] %>% 
-    setNames("pop_SSP2Ariadne")
+    setNames("pop_SSP2EU")
   data[EUR_countries,,] <- 0
   data[EUR_countries, cy, ] <- data_eurostat[EUR_countries, cy,]
 

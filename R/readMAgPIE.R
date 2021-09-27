@@ -112,10 +112,10 @@ readMAgPIE <- function(subtype) {
     }
     getSets(x) <- setnames
     
-    # make SSP2Ariadne scenario using SSP2 data --- ATTENTION: needs to be deleted as soon as we have data for SSP2Ariadne
-    x_SSP2Ariadne <- x[,,c("SSP2-NDC-NDC","SSP2-NDC-PkBudg1300","SSP2-NDC-PkBudg900","SSP2-NPI-Base")]
-    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
-    x <- mbind(x, x_SSP2Ariadne)
+    # make SSP2EU scenario using SSP2 data --- ATTENTION: needs to be deleted as soon as we have data for SSP2EU
+    x_SSP2EU <- x[,,c("SSP2-NDC-NDC","SSP2-NDC-PkBudg1300","SSP2-NDC-PkBudg900","SSP2-NPI-Base")]
+    getNames(x_SSP2EU) <- gsub("SSP2", "SSP2EU", getNames(x_SSP2EU))
+    x <- mbind(x, x_SSP2EU)
     # make SDP* scenarios using SSP1 data --- ATTENTION: needs to be deleted as soon as we have data for SDP*
     x_SDP_EI <- x[,,c("SSP1-NDC-NDC","SSP1-NDC-PkBudg1300","SSP1-NDC-PkBudg900","SSP1-NPI-Base")]
     getNames(x_SDP_EI) <- gsub("SSP1", "SDP_EI", getNames(x_SDP_EI))

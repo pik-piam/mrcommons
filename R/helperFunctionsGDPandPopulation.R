@@ -316,19 +316,19 @@ harmonizeAriadneGDP <- function(past, future) {
   EUR_countries <- where(readSource("ARIADNE_ReferenceScenario", "gdp_corona") != 0)$true$regions
   fut_years <- getYears(future)[getYears(future, as.integer = TRUE) >= max(getYears(past, as.integer = TRUE))]
 
-  ssp2Ariadne_data <- ssp2_data
-  ssp2Ariadne_data[EUR_countries, getYears(past), ] <- past[EUR_countries, , ]
-  ssp2Ariadne_data[EUR_countries, fut_years, ] <- future[EUR_countries, fut_years, ]
+  ssp2EU_data <- ssp2_data
+  ssp2EU_data[EUR_countries, getYears(past), ] <- past[EUR_countries, , ]
+  ssp2EU_data[EUR_countries, fut_years, ] <- future[EUR_countries, fut_years, ]
 
   # After 2070, transition to SSP2 values
   past_years <- getYears(future)[getYears(future, as.integer = TRUE) <= 2070]
-  combined_Ariadne <- harmonizePastTransition(ssp2Ariadne_data[EUR_countries, past_years, ],
+  combined_Ariadne <- harmonizePastTransition(ssp2EU_data[EUR_countries, past_years, ],
                                               ssp2_data[EUR_countries, , ],
                                               2150)
 
   combined <- ssp2_data
   combined[EUR_countries, getYears(combined_Ariadne), ]  <- combined_Ariadne[EUR_countries, , ]
-  getNames(combined) <- "gdp_SSP2Ariadne"
+  getNames(combined) <- "gdp_SSP2EU"
 
   combined
 }
