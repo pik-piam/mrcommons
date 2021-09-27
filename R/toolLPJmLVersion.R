@@ -27,26 +27,32 @@ toolLPJmLVersion <- function(version, climatetype) {
 
 
   ##### ADDON CONFIG #####
-  # overwrite default settings and LPJmL version for add-on tag in version argument
-  # implemented add-ons:
+  # overwrite default settings and LPJmL version for
+  # (1) add-on tag in version argument - implemented add-ons:
   # * `+oldGSWP3`               - use older LPJmL version for GSWP3
   #                               as long as new GSWP3 is not available
   # * `+baseline_gcm<GCM:RCP>`  - use another baseline for 2010--2020
   # * `+baseline_hist<GCM:RCP>` - use another baseline for 1965--2010
-  # * `+scen:<scenario_addon>   - add scenario specification to cimatetype variable
+  #
+  # (2) add-on tag in climatetype argument - implemented add-ons:
+  # * `_<scenario_addon>   - add scenario specification to baseline climatetypes
 
+  ### version addon
   if (grepl("\\+", version)) {
 
-    tmp     <- unlist(str_split(version, "\\+"))
+    tmp      <- unlist(str_split(version, "\\+"))
 
-    if (any(tmp == "oldGSWP3") & climatetype == "GSWP3-W5E5:historical") {
+    if (any(tmp == "oldGSWP3")) {
 
-      if (grepl("LPJmL4", tmp[1])) cfg$lpjml_version <- "LPJmL4_for_MAgPIE_84a69edd"
-      if (grepl("ggcmi", tmp[1])) cfg$lpjml_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
+      if (climatetype == "GSWP3-W5E5:historical") {
 
-    } else {
+        if (grepl("LPJmL4", tmp[1])) cfg$lpjml_version <- "LPJmL4_for_MAgPIE_84a69edd"
+        if (grepl("ggcmi", tmp[1])) cfg$lpjml_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
 
-      cfg$lpjml_version       <- tmp[1]
+      } else {
+
+        cfg$lpjml_version       <- paste0(tmp[1], "+oldGSWP3")
+      }
     }
 
     if (any(grepl("baseline_gcm", tmp))) {
@@ -60,19 +66,16 @@ toolLPJmLVersion <- function(version, climatetype) {
       i <- grep("baseline_hist", tmp)
       cfg$baseline_hist <- gsub("baseline_hist", "", tmp[i])
     }
-
-    if (any(grepl("scen", tmp))) {
-
-      scen  <- toolSplitSubtype(tmp[grep("scen", tmp)],
-                                list(prefix = "scen", scen = NULL))$scen
-
-      cfg$baseline_hist <- paste("GSWP3-W5E5:historical", scen, sep = "_")
-      cfg$baseline_gcm  <- paste("MRI-ESM2-0:ssp370",     scen, sep = "_")
-      cfg$climatetype   <- paste(climatetype,             scen, sep = "_")
-      cfg$lpjml_version <- tmp[1]
-
-    }
   }
+
+  ### climatetype addon
+  if (grepl("\\_", climatetype)) {
+
+    tmp               <- unlist(str_split(climatetype, "\\_"))
+    cfg$baseline_hist <- paste("GSWP3-W5E5:historical", paste(tmp[-1], collapse = "_"), sep = "_")
+    cfg$baseline_gcm  <- paste("MRI-ESM2-0:ssp370",     paste(tmp[-1], collapse = "_"), sep = "_")
+  }
+
   ##### ADDON CONFIG #####
 
   return(cfg)
