@@ -47,6 +47,8 @@ downloadFAO_online <- function(subtype) {
     FSLive                  = "FoodSupply_LivestockFish_E_All_Data_(Normalized).zip",
     Fbs                     = "FoodBalanceSheets_E_All_Data_(Normalized).zip",
     Fertilizer              = "Environment_Fertilizers_E_All_Data_(Normalized).zip",
+    FertilizerNutrients     = "Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip",
+    FertilizerProducts      = "Inputs_FertilizersProduct_E_All_Data_(Normalized).zip",
     #Fodder                 = "",
     FoodSecurity            = "Food_Security_Data_E_All_Data_(Normalized).zip",
     ForestProdTrade         = "Forestry_E_All_Data_(Normalized).zip",

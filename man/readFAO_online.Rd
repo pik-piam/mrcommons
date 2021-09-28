@@ -15,6 +15,8 @@ readFAO_online(subtype)
 \item \code{CropProc}: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
 \item \code{Fbs}: Food Balance Sheet ("FoodBalanceSheets_E_All_Data.zip")
 \item \code{Fertilizer}: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
+\item \code{FertilizerProducts}: Fertilizer by product ("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip")
+\item \code{FertilizerNutrients}: Fertilizer by nutrient ("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip")
 \item \code{Fodder}: Fodder (data that has been manually downloaded from the FAOSTAT website as
 seperate .xls files via a search for "forage" and "fodder" withing
 Production-Crops. These datasets have been added together to a "Fodder.csv" file)

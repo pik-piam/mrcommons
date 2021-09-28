@@ -28,7 +28,8 @@ convertFAO_online <- function(x,subtype) {
 
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
-                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs")
+                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs",
+                "FertilizerProducts", "FertilizerNutrients")
 
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
@@ -119,7 +120,9 @@ convertFAO_online <- function(x,subtype) {
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if (all(c("XSD", "SSD", "SDN") %in% getRegions(x))){
-    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2010"), c("XSD", "SDN","y2010")))
+    last_year <- "y2010"
+    if (subtype == "Land") last_year <- "y2011"
+    additional_mapping <- append(additional_mapping, list(c("XSD","SSD",last_year), c("XSD", "SDN",last_year)))
   } else if ("XSD" %in% getRegions(x) & !any(c("SDD", "SDN") %in% getRegions(x)) ) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
   }
@@ -149,7 +152,7 @@ convertFAO_online <- function(x,subtype) {
 
 
   ### For certain subtypes: if some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and Montenegro (SCG) are missing add them with values of 0
-  if(subtype %in% c("EmisAgRiceCult","Fertilizer","EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
+  if(subtype %in% c("EmisAgRiceCult","Fertilizer", "FertilizerNutrients", "EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
     ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
     missing <- former[!former %in% getRegions(x)]
