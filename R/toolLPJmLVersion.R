@@ -51,7 +51,7 @@ toolLPJmLVersion <- function(version, climatetype) {
 
       } else {
 
-        cfg$lpjml_version       <- paste0(tmp[1], "+oldGSWP3")
+        cfg$lpjml_version <- tmp[1]
       }
     }
 

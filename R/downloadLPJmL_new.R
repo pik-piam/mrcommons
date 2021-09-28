@@ -77,7 +77,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:h
       files2copy <- find_file(storage, path, list_files, file)
       file.copy(file.path(storage, path, files2copy), files2copy, overwrite = T)
     } else {
-      file.copy(paste0(storage, path, "/", head(grep(".out", list_files, value = T), n = 1)), "lpjml_log.out")
+      file.copy(paste0(storage, path, "/lpjml_log.out"), "lpjml_log.out")
     }
   } else {
     stop("Data is not available so far!")

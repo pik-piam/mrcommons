@@ -194,7 +194,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
   } else if (stage == "harmonized") {
 
     # read in historical data for subtype
-    baseline        <- calcOutput("LPJmL_new", version = cfg$lpjml_version, climatetype = cfg$baseline_hist,
+    baseline        <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_hist,
                                   subtype = subtype, subdata = subdata, stage = "smoothed",
                                   aggregate = FALSE, supplementary = TRUE)
 
@@ -206,7 +206,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = cfg$lpjml_version, climatetype = cfg$climatetype,
+      x   <- calcOutput("LPJmL_new", version = version, climatetype = cfg$climatetype,
                         subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
     }
@@ -214,7 +214,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
   } else if (stage == "harmonized2020") {
 
     # read in historical data for subtype
-    baseline2020    <- calcOutput("LPJmL_new", version = cfg$lpjml_version, climatetype = cfg$baseline_gcm,
+    baseline2020    <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_gcm,
                                   subtype = subtype, subdata = subdata, stage = "harmonized",
                                   aggregate = FALSE, supplementary = TRUE)
 
@@ -226,7 +226,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = cfg$lpjml_version, climatetype = cfg$climatetype,
+      x   <- calcOutput("LPJmL_new", version = version, climatetype = cfg$climatetype,
                         subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$ref_year_gcm)
     }
