@@ -72,9 +72,7 @@ toolLPJmLVersion <- function(version, climatetype) {
       scen  <- toolSplitSubtype(tmp[grep("scen", tmp)],
                                 list(prefix = "scen", scen = NULL))$scen
 
-      cfg$baseline_hist <- paste("GSWP3-W5E5:historical", scen, sep = "_")
-      cfg$baseline_gcm  <- paste("MRI-ESM2-0:ssp370",     scen, sep = "_")
-      cfg$climatetype   <- paste(climatetype,             scen, sep = "_")
+      cfg$addon_scen    <- paste0("_", scen)
       cfg$lpjml_version <- tmp[1]
 
     }
