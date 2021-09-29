@@ -4,10 +4,10 @@
 \alias{calcFAOmassbalance_pre}
 \title{calcFAOmassbalance_pre}
 \usage{
-calcFAOmassbalance_pre(years = paste0("y", seq(1965, 2010, 5)))
+calcFAOmassbalance_pre(years = NULL)
 }
 \arguments{
-\item{years}{years to be estimated.}
+\item{years}{years to be estimated, if null, then all years in FAOharmonized are returned}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

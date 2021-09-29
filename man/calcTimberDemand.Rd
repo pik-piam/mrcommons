@@ -14,7 +14,7 @@ Calculates the demand of timber from FAO data (including intermediate products).
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("TimberDemand")
 }
 }

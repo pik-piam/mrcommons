@@ -17,7 +17,7 @@ calculates stocks of animals of different categories.
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("AnimalStocks")
 }
 }

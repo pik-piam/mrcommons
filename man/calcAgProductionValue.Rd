@@ -17,15 +17,15 @@ Calculate FAO Value Of Production
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 a <- calcOutput("AgProductionValue", datasource="FAO")
 }
- 
+
 }
 \seealso{
 \code{\link{calcOutput}}, \code{\link{readFAO}},
 \code{\link{convertFAO}}, \code{\link{readSource}}
 }
 \author{
-Roman Popov, Mishko Stevanovic
+Roman Popov, Mishko Stevanovic, Patrick v. Jeetze
 }
