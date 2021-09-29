@@ -48,7 +48,7 @@ calcUrban <- function(UrbanCalib="past", UrbanPast="WDI", UrbanFuture="SSP",nami
   }
   
   wp <- calcOutput("Population", aggregate = FALSE)
-  getNames(wp) <- gsub("(pop_SSP\\d).*","\\1",getNames(wp))
+  #getNames(wp) <- gsub("(pop_SSP\\d).*","\\1",getNames(wp))
   combined <- combined[getRegions(wp),getYears(wp),]
   
  
@@ -63,7 +63,21 @@ calcUrban <- function(UrbanCalib="past", UrbanPast="WDI", UrbanFuture="SSP",nami
   } else if (naming!="indicator_scenario"){
     stop("unknown naming scheme")
   }
- 
+  
+  # add urbanization scenarios for SDP, SHAPE SDPs, and Ariadne
+  # note on SHAPE: the alternative scenario combinations are not coded explicitly here. They will re-use urbanization settings:
+  # SDP_LS = SDP_MC (Green cities), SDP_GS = SDP_EI (Tech cities)
+  urbanization_mapping <- c("SDP" = "SSP1",
+                            "SDP_EI" = "SSP1", # = high urbanization from SSPs
+                            "SDP_RC" = "SSP2", # = med urbanization from SSPs
+                            "SDP_MC" = "SSP1", # = high urbanization from SSPs
+                            "SSP2EU" = "SSP2")
+  
+  combined_add <- mbind(lapply(names(urbanization_mapping),
+                               function(name, mapping, data)  setNames(combined[,,paste0("pop_",mapping[[name]])],paste0("pop_",name)),
+                               mapping = urbanization_mapping, data = combined))
+
+  combined <- mbind(combined,combined_add)
   
   return(list(x=combined,weight=wp,unit="share of population",
               description=paste0("Urban data. Datasource for the Past: ",

@@ -15,33 +15,39 @@
 #' @importFrom madrat toolSubtypeSelect
 #' 
 readSSP<- function(subtype) {
-  files <- c(all="SspDb_country_data_2013-06-12.csv.zip",
-             ratioPM="OECD-WB PPP-MER2005_conversion_rates.xlsx")
+  files <- c(all = "SspDb_country_data_2013-06-12.csv.zip",
+             pop2018Update = "Population in 000 by Age and Sex, countries, SSPs 2018vers wide.csv",
+             ratioPM = "WB_PPP_MER_2005_conversion_rates.xlsx")
   
-  file <- toolSubtypeSelect(subtype,files)
+  file <- toolSubtypeSelect(subtype, files)
   
-  if(subtype=="all") {
-    unziped_file <- gsub("[[:alnum:],[:punct:]]*/","",file)
-    unziped_file <- gsub(".zip","",unziped_file)
-    ssp <- read.csv(unz("SspDb_country_data_2013-06-12.csv.zip",unziped_file),check.names=FALSE, stringsAsFactors=FALSE)
-  
-    ssp[,1]<- paste(ssp$MODEL,ssp$SCENARIO,ssp$VARIABLE,ssp$UNIT, sep = '.')
-  
-    ssp$SCENARIO <- NULL
-    ssp$VARIABLE <- NULL
-    ssp$UNIT <- NULL
-  
-    names(ssp)[names(ssp)=="MODEL"]     <- "mod.scen"
-    names(ssp)[names(ssp)=="REGION"]    <- "iso3c"
-  
-    final <- ssp[,colSums(is.na(ssp)) != nrow(ssp)] # remove column with NANs
+  if(subtype == "all") {
+
+    x <- readr::read_csv(file, col_types = list(.default = readr::col_character())) %>% 
+      tidyr::unite("mod.scen", .data$MODEL, .data$SCENARIO, .data$VARIABLE, .data$UNIT, sep = ".") %>% 
+      dplyr::rename("iso3c" = .data$REGION) %>% 
+      # Drop columns with only NAs
+      dplyr::select(tidyselect::vars_select_helpers$where(~ !all(is.na(.x)))) %>% 
+      tidyr::pivot_longer(cols = tidyselect::starts_with("2"), names_to = "year") %>% 
+      dplyr::mutate(value = as.double(.data$value)) %>% 
+      as.magpie(spatial = "iso3c", temporal = "year", tidy = TRUE, filter = FALSE)  
+
+  } else if(subtype == "pop2018Update") {
+
+    x <- readr::read_csv(file, col_types = list(.default = readr::col_double(), 
+                                                scenario = readr::col_character(),
+                                                vers = readr::col_character(),
+                                                sex = readr::col_character(),
+                                                agegrp = readr::col_character())) %>% 
+      tidyr::pivot_longer(6:206, names_to = "iso3c") %>% 
+      as.magpie(spatial = "iso3c", temporal = "year", tidy = TRUE) 
     
-    x <-as.magpie(final,datacol=3,filter=FALSE)  
-  } else if(subtype=="ratioPM") {
-    data <- as.data.frame(read_excel(file))
-    colnames(data) <- c("Region","value") 
+  } else if(subtype == "ratioPM") {
+
+    data <- as.data.frame(readxl::read_excel(file)) 
     x <- as.magpie(data)
-    getYears(x) <- "y2005"   #automated?
+    
   }
+
   return(x)
 }

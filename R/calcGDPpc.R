@@ -14,27 +14,23 @@
 #' }
 #' @importFrom magclass setNames
 
-calcGDPpc<-function(gdp="PPP"){
+calcGDPpc <- function(gdp = "PPP"){
   
-  drivers<-calcOutput("CollectProjectionDrivers",aggregate = FALSE)
-  pop=collapseNames(drivers[,,"pop"])
+  drivers <- calcOutput("CollectProjectionDrivers", aggregate = FALSE)
+  pop <- collapseNames(drivers[,,"pop"])
 
-  if(gdp=="PPP"){
-    gdp_pc=collapseNames(drivers[,,"gdp"]/pop)
-    gdp_pc[is.nan(gdp_pc)]<-0
-    unit="US Dollar 2005 equivalents in PPP per capita"
-  } else  if(gdp=="MER"){
-    gdp_pc=collapseNames(drivers[,,"gdpmer"]/pop)
-    gdp_pc[is.nan(gdp_pc)]<-0
-    unit="US Dollar 2005 equivalents in MER per capita"
+  if(gdp == "PPP"){
+    gdp_pc <- collapseNames(drivers[,,"gdp"] / pop)
+    gdp_pc[is.nan(gdp_pc)] <- 0
+    unit <- "US Dollar 2005 equivalents in PPP per capita"
+  } else  if(gdp == "MER"){
+    gdp_pc <- collapseNames(drivers[,,"gdpmer"] / pop)
+    gdp_pc[is.nan(gdp_pc)] <- 0
+    unit <- "US Dollar 2005 equivalents in MER per capita"
   }
 
-  return(list(x=gdp_pc,
-              weight=pop,
-              unit=unit,
-              description="per capita income"
-              )
-           )
-    
-
+  return(list(x = gdp_pc,
+              weight = pop,
+              unit = unit,
+              description = "per capita income"))
 }

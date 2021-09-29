@@ -4,10 +4,12 @@
 #'
 #'
 #'
-#' @return magpie object. in mio. 05USD ppp units
+#' @return magpie object. in mio. 05USD MER units
 #' @author Edna J. Molina Bacca
 #' @importFrom dplyr intersect
 #' @importFrom magclass dimSums
+#' @importFrom GDPuc convertGDP
+#'
 #' @seealso \code{\link{calcOutput}}
 #' @examples
 #' \dontrun{
@@ -16,17 +18,14 @@
 #'
 calcVoP_AFF <- function() {
 
-#### GDP conversion factor from MER to ppp
-  GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
-  GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
-  GDP_con <- setNames(setYears((GDP_ppp[, 2005, ] / GDP_ppp[, 2015, ]), NULL), NULL)
-
 #### Value of production for Agriculture (crops and livestock)
   Ag <- c("2041|Crops.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)",
         "2044|Livestock.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)")
 
    # factor converts from mio. 2015 USD to 2005 USD
-  VoP_agriculture <- dimSums(readSource("FAO_online", "ValueOfProd")[, , Ag] / 1000, dim = 3) * GDP_con
+  VoP_agriculture <- convertGDP(dimSums(readSource("FAO_online", "ValueOfProd")[, , Ag] / 1000, dim = 3),
+                                unit_in = "constant 2015 Int$PPP", unit_out = "constant 2005 US$MER",
+                                replace_NAs = 1)
   getNames(VoP_agriculture) <- "Agriculture"
 
 
@@ -49,13 +48,12 @@ calcVoP_AFF <- function() {
   cells_fish <- intersect(intersect(getCells(export_fish_value),
                                     getCells((export_fish_tonNet))), getCells(production_fish_tonNet))
 
-  # Base year and USD type conversion
-  GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years_fish, ], years_fish)
-  GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
 
   # Value of production for fish and aquatic products -> Production*export_price
   VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
-             production_fish_tonNet[cells_fish, years_fish, ] / 1000 * GDP_con[cells_fish, years_fish, ] # mio. 05USDpp
+             production_fish_tonNet[cells_fish, years_fish, ] / 1000  # mio. current USD
+  VoP_fish <- convertGDP(VoP_fish, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
+                         replace_NAs = 1)
   VoP_fish[!is.finite(VoP_fish)] <- 0
   getNames(VoP_fish) <- "Fisheries"
 
@@ -71,15 +69,14 @@ calcVoP_AFF <- function() {
   price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] /
                 VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
 
-
   # Base year change for exports value
   years <- getYears(price_forestry)
 
-  GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years, ], years)
-  GDP_con <- GDP_con_mer * setYears(GDP_ppp[, 2005, ] / GDP_mer[, 2005, ], NULL)
+  price_forestry <- convertGDP(price_forestry[, years, ], unit_in = "current US$MER",
+                               unit_out = "constant 2005 US$MER", replace_NAs = 1)
 
-  price_forestry <- price_forestry[, years, ] * GDP_con [, , ]
   price_forestry[!is.finite(price_forestry)] <- 0
+
 
   years <- intersect(getYears(price_forestry), getYears(VoP_forestry_data))
   # mio. current USD

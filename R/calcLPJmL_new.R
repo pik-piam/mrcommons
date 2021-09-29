@@ -20,7 +20,7 @@
 #' \dontrun{
 #' calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 #' }
-
+#'
 calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
 
@@ -42,7 +42,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       subtypeIn <- subtype
     }
 
-    readinName <- paste0(cfg$lpjml_version, ":", climatetype, ":", subtypeIn)
+    readinName <- paste0(cfg$lpjml_version, ":", cfg$climatetype, cfg$addon_scen, ":", subtypeIn)
 
     ########## PLUG HIST + FUTURE ##########
 
@@ -51,13 +51,9 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       # For climate scenarios historical data has to be read in from a different file
       readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
                                                       scenario = NULL, variable = NULL))
-      if (grepl("withlu", readinHist$scenario)) {
-        readinHist <- paste(gsub(readinHist$scenario, "historicalwithlu", readinHist), collapse = ":")
-      } else if (grepl("_gsadapt", readinHist$scenario)) {
-        readinHist <- paste(gsub(readinHist$scenario, "historical_gsadapt", readinHist), collapse = ":")
-      } else {
-        readinHist <- paste(gsub(readinHist$scenario, "historical", readinHist), collapse = ":")
-      }
+
+      # replace scenario name with 'historical' (including optional addon setting) to load historical baseline
+      readinHist <- paste(gsub(readinHist$scenario, paste0("historical", cfg$addon_scen), readinHist), collapse = ":")
 
       x     <- mbind(readSource("LPJmL_new", subtype = readinHist, convert = FALSE),
                      readSource("LPJmL_new", subtype = readinName, convert = FALSE))
@@ -179,9 +175,9 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "mio. m^3"
 
     } else if (grepl("cshift", subtype)) {
-      
+
       unit <- "C/C"
-      
+
     } else {
       stop(paste0("subtype ", subtype, " is not existing"))
     }
@@ -243,7 +239,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     weight       = NULL,
     unit         = unit,
     min          = 0,
-    description  = paste0("Carbon output from LPJmL (", subtype, ") for ",
+    description  = paste0("Output from LPJmL (", subtype, ") for ",
                           version, " and ", climatetype, " at stage: ", stage, "."),
     isocountries = FALSE))
 }

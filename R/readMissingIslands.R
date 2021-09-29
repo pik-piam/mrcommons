@@ -21,11 +21,11 @@ readMissingIslands<-function(subtype){
   files <- c(pop = "pop_past_missing.csv",
              gdp = "gdp_past_missing.csv")
   
-  file <- toolSubtypeSelect(subtype = subtype,files = files)
+  file <- toolSubtypeSelect(subtype = subtype, files = files)
   
-  x=read.csv(file,header = T)
-  names(x)<-substring(names(x),1,5)
-  x=as.magpie(x)
+  x <- read.csv(file, header = TRUE)
+  names(x) <- substring(names(x), 1, 5)
+  x <- as.magpie(x)
   
   return(x)
 }  

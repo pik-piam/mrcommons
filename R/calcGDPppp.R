@@ -26,127 +26,96 @@
 #' @param naming naming scheme
 #' 
 #' @return GDP PPP(ICP11) in million USD05 equivalents
-#' @author Lavinia Baumstark, Benjamin Bodirsky
-#' @seealso \code{\link{convertWDI}}
-#' @importFrom magclass setNames clean_magpie
+#' @author Lavinia Baumstark, Benjamin Bodirsky, Johannes Koch
+#' @seealso \code{\link{calcGDPpppPast}}, \code{\link{calcGDPpppFuture}}
 
-calcGDPppp <- function(GDPpppCalib="past_transition",
-                       GDPpppPast="IHME_USD05_PPP_pc_completed",
-                       GDPpppFuture="SRES_SSP_completed",
+calcGDPppp <- function(GDPpppCalib = c("fixHist_IMFgr_return2SSP", "Ariadne"),
+                       GDPpppPast = c("WDI_completed", "Eurostat_WDI_completed"), 
+                       GDPpppFuture = c("SSP_bezierOut_completed", "SSP2EU_completed_bezierOut"),
                        FiveYearSteps = TRUE,
-                       naming="indicator_scenario") {
-
-  if(GDPpppFuture=="SRES_SSP_completed") {
-    # using the direct function call instead of calcOutput to avoid caching.
-    combined1 <- calcOutput(type = "GDPppp",GDPpppCalib=GDPpppCalib, GDPpppPast=GDPpppPast, GDPpppFuture="SSP_completed",FiveYearSteps=FiveYearSteps,aggregate=F)
-    combined2 <- calcOutput(type = "GDPppp",GDPpppCalib=GDPpppCalib, GDPpppPast=GDPpppPast, GDPpppFuture="SRES_completed",FiveYearSteps = FiveYearSteps,aggregate=F)
-    combined  <- mbind(combined1,combined2)
-    datasettype <- GDPpppCalib
-  } else {
-    past   <- calcOutput("GDPpppPast", GDPpppPast=GDPpppPast, aggregate = FALSE)
-    future <- calcOutput("GDPpppFuture", GDPpppFuture=GDPpppFuture, aggregate = FALSE)
-    firstyear <- min(getYears(future,as.integer = TRUE))
-  
-    if (GDPpppCalib == "past") {
-      tmp<-dimSums(future/setYears(future[,firstyear,],NULL)*setYears(past[,firstyear,],NULL),dim = 3.2)
-      tmp[is.nan(tmp)]<-0
-      if (firstyear>min(getYears(past,as.integer = T))) {                                                 
-        years_past<-getYears(past)[which(getYears(past,as.integer = T)<firstyear)]
-        tmp2 <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        combined<-mbind(tmp2,tmp)
-      } else {
-        combined<-tmp
-      }
-      datasettype <- GDPpppPast
-    } else if (GDPpppCalib == "future") {
-      tmp<-dimSums(past/setYears(past[,firstyear,],NULL)*setYears(future[,firstyear,],NULL),dim = 3.2)
-      tmp[is.nan(tmp)]<-0
-      if (firstyear>min(getYears(past,as.integer = T))) {                                                 
-        years_past<-getYears(past)[which(getYears(past,as.integer = T)<firstyear)]
-        tmp2 <- setNames(tmp[,years_past,rep(1,ndata(future))],getNames(future))
-        combined<-mbind(tmp2,future)
-      } else {
-        combined<-future
-      }
-      datasettype <- GDPpppFuture
-    } else if (GDPpppCalib == "transition") {
-      # end of transisiton, from this time on the future values are used
-      yEnd <- 2020
-      # generate past data for all future scenarios
-      if (firstyear>min(getYears(past,as.integer = TRUE))) {                                                 
-        years_past  <- getYears(past)[which(getYears(past,as.integer=TRUE)<=firstyear)]
-        tmpPast     <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        years_trans <- getYears(future,as.integer=TRUE)[which(getYears(future,as.integer=TRUE) >= firstyear 
-                                                              & getYears(future,as.integer=TRUE) <= yEnd)]
-        tmpTrans    <- new.magpie(getRegions(future),years_trans,getNames(future),fill=0)
-        for(t in years_trans) {
-          tmpTrans[,t,] <- (  (max(years_trans) - t)/(max(years_trans) - min(years_trans)) * setYears(tmpPast[,firstyear,],t) 
-                              + (t - min(years_trans))/(max(years_trans) - min(years_trans)) * setYears(future[,yEnd,],t)       )
-        }  
-        combined   <- mbind(tmpPast[,which(getYears(tmpPast,as.integer=TRUE)<firstyear),],
-                            tmpTrans,
-                            future[,which(getYears(future,as.integer=TRUE)>yEnd),])
-      } else {
-        stop("the past and future data need to have some overlap")
-      }
-      datasettype <- paste0("transition between ",GDPpppPast, "and ",GDPpppFuture," with a transition period until ",yEnd)  
-    } else if (GDPpppCalib == "past_transition") {
-      # end of transisiton, from this time on the future values are used
-      yEnd <- 2050
-      # last year of past data, that also exist in future data
-      lastyear <- max( intersect(getYears(past,as.integer = TRUE),getYears(future,as.integer = TRUE)) )
-      # generate past data for all future scenarios
-      if (firstyear > min(getYears(past,as.integer = TRUE))) {                                                 
-        years_past  <- getYears(past)[which(getYears(past,as.integer=TRUE) <= lastyear)]
-        tmpPast     <- setNames(past[,years_past,rep(1,ndata(future))],getNames(future))
-        years_trans <- getYears(future,as.integer=TRUE)[which(getYears(future,as.integer=TRUE) >= lastyear 
-                                                              & getYears(future,as.integer=TRUE) <= yEnd)]
-        diff_in_lastyear <- tmpPast[,lastyear,] - future[,lastyear,]
-        tmpTrans    <- new.magpie(getRegions(future),years_trans,getNames(future),fill=0)
-        for(t in years_trans) {
-          tmpTrans[,t,] <- future[,t,] + setYears(diff_in_lastyear,t) * ( (max(years_trans) - t)/(max(years_trans) - min(years_trans)) )  
-        }  
-        combined   <- mbind(tmpPast[,which(getYears(tmpPast,as.integer=TRUE) < lastyear),],
-                            tmpTrans,
-                            future[,which(getYears(future,as.integer=TRUE) > yEnd),])
-      } else {  
-        stop("the past and future data need to have some overlap")
-      }
-      datasettype <- paste0("used past data and afterwards transition between ",GDPpppPast, "and ",GDPpppFuture," with a transition period until ",yEnd)
-    } else {
-      stop("GDPpppCalib has to be past, future, transition or past_transition")
-    }
-    if (FiveYearSteps){
-      years<-  findset("time") 
-      combined<-combined[,years,]
-    }
-    combined<-clean_magpie(combined)
-    combined[combined[]=="Inf"] <- 0    # LB: preliminary bug fix
-    combined<-setNames(combined,getNames(future))
-  }  # close if (GDPpppFuture)
-  
-  if(naming=="indicator.scenario"){
-    getNames(combined)<-sub(pattern = "_",x=getNames(combined),replacement = ".")
-    getSets(combined)<-c("region","year","indicator","scenario")
-  } else if (naming!="indicator_scenario"){
-    stop("unknown naming scheme")
+                       naming = "indicator_scenario") {
+  if (!(length(GDPpppCalib) == length(GDPpppPast) && length(GDPpppCalib) == length(GDPpppFuture))) {
+     stop("Arguments GDPpppCalib, GDPpppPast and GDPpppFuture are not the same length.")
   }
+
+  purrr::pmap(list(GDPpppCalib, GDPpppPast, GDPpppFuture, FiveYearSteps, naming),
+              internal_calcGDPppp) %>% 
+  purrr::reduce(~ list(x = mbind(.x$x, .y$x),
+                       weight = NULL,
+                       unit = "million",
+                       description = glue::glue("{.x$description} || {.y$description}")))
+
+}
+
+
+internal_calcGDPppp <- function(GDPpppCalib, 
+                                GDPpppPast, 
+                                GDPpppFuture, 
+                                FiveYearSteps, 
+                                naming){     
   
-  # add SSP1plus/SDP scenario as copy of SSP1, might be substituted by real data later
-  if(!("gdp_SDP" %in% getNames(combined,dim=1))){
-     if("gdp_SSP1" %in% getNames(combined,dim=1)){ 
-        combined_SDP <- combined[,,"gdp_SSP1"]
-        getNames(combined_SDP) <- gsub("gdp_SSP1","gdp_SDP",getNames(combined_SDP))
-        combined <- mbind(combined,combined_SDP)
-     }
-  }  
+  past <- calcOutput("GDPpppPast", GDPpppPast = GDPpppPast, aggregate = FALSE)
+  future <- calcOutput("GDPpppFuture", GDPpppFuture = GDPpppFuture, aggregate = FALSE)
+  
+  # The harmonization functions can be found in the file "helperFunctionsGDPandPopulation"
+  combined <- switch(GDPpppCalib,
+                     "past" = harmonizePast(past, future),
+                     "future" = harmonizeFuture(past, future),
+                     "transition" = harmonizeTransition(past, future, yEnd = 2020),
+                     "past_transition" = harmonizePastTransition(past, future, yEnd = 2050),
+                     "fixHist_IMFgr_return2SSP" = harmonizeFixHistIMFSSP(past, future, yEnd = 2100),
+                     "Ariadne" = harmonizeAriadneGDP(past, future),
+                     stop("Bad input for calcGDPppp. Invalid 'GDPpppCalib' argument."))
+
+  datasettype <- switch(GDPpppCalib,
+                        "past" = GDPpppPast,
+                        "future" = GDPpppFuture,
+                        "transition" = glue::glue("transition between {GDPpppPast} and {GDPpppFuture} \\
+                                                   with a transition period until 2020"),
+                        "past_transition" = glue::glue("use past data and afterwards transition between \\
+                                                       {GDPpppPast} and {GDPpppFuture} with a transition \\
+                                                       period until 2050"),
+                        "fixHist_IMFgr_return2SSP" = glue::glue("use past data, short term growth rates from IMF and \\
+                                                                afterwards transition between {GDPpppPast} and \\
+                                                                {GDPpppFuture} with a transition period until 2100"),
+                        "Ariadne" = glue::glue("use past data, short term growth rates from IMF and \\
+                                                afterwards transition between {GDPpppPast} and \\
+                                                {GDPpppFuture} with a transition period until 2100. \\
+                                                For EUR/ARIADNE countries, just glue past with future and \\
+                                                after 2070 converge to 2150 SSP2 values."))
+
+  # The function "finishingTouches" can be found in the file "helperFunctionsGDPandPopulation"
+  combined <- finishingTouches(combined, future, FiveYearSteps, naming)
        
-  return(list(x=combined,weight=NULL,unit="Million US Dollar in currency units of the calibration dataset",
-              description=paste0("Million US Dollar in currency units of the calibration dataset. Datasource for the Past: ",
-                                 GDPpppPast,
-                                 ". Datasource for the Future: ",
-                                 GDPpppFuture,
-                                 ". Calibrated to ",
-                                 datasettype
-                                 )))
+  # Add SDP, and SHAPE scenarios SDP_EI, SDP_RC and SDP_MC scenarios as copies/variants of SSP1
+  # SHAPE scenarios are calculated in 5-year steps
+  if ("gdp_SSP1" %in% getNames(combined) && !("gdp_SDP" %in% getNames(combined))){
+    
+    # standard SDP inherits SSP1 GDP
+    combined_SDP <- combined[,, "gdp_SSP1"]
+    getNames(combined_SDP) <- gsub("SSP1", "SDP", getNames(combined_SDP))
+    
+    # SHAPE SDP_XX variants are calculated as modifications of SSP1 GDP/cap growth rates
+    # TODO is there a more elegant way to avoid the back and forth between GDP and GDP/capita?
+    pop <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FiveYearSteps)[, getYears(combined, as.integer = TRUE), ]
+    gdppcap_SSP1 <- combined[,,"gdp_SSP1"]/setNames(pop[,,"pop_SSP1"],"gdp_SSP1")
+    
+    # The function "compute_SHAPE_growth" can be found in the file "helperFunctionsGDPandPopulation"
+    gdppcap_SHAPE <- 
+      lapply(c("gdp_SDP_EI","gdp_SDP_MC","gdp_SDP_RC"), compute_SHAPE_growth, gdppcap_SSP1 = gdppcap_SSP1, startFromYear = 2020) %>% 
+      mbind()
+    
+    # scale back to GDP
+    # (all SHAPE scenarios have the same (SSP1) population, but like this it's generic)
+    combined_SHAPE <- gdppcap_SHAPE * setNames(pop[,,gsub("gdp","pop",getNames(gdppcap_SHAPE))],getNames(gdppcap_SHAPE))
+    
+    combined <- mbind(combined, combined_SDP, combined_SHAPE)
+  }  
+
+  return(list(x = combined,
+              weight = NULL,
+              unit = "Million US Dollar in currency units of the calibration dataset",
+              description = glue::glue("Million US Dollar in currency units of the calibration dataset. \\
+                                        Datasource for the Past: {GDPpppPast}. Datasource for the Future: \\
+                                        {GDPpppFuture}. Calibrated to {datasettype}.")))
 }
