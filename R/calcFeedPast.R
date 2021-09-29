@@ -24,10 +24,11 @@ calcFeedPast<-function(balanceflow=TRUE, cellular=FALSE, products="kall",nutrien
   kap                 <- findset("kap")
   kli                 <- findset("kli")
   kcr                 <- findset("kcr")
+  past                <- findset("past")
   
   products2           <- findset(products,noset = "original")
   
-  LivestockProduction <- collapseNames(calcOutput("Production", products="kli", cellular=cellular ,aggregate=FALSE)[,,"dm"])
+  LivestockProduction <- collapseNames(calcOutput("Production", products="kli", cellular=cellular ,aggregate=FALSE)[,past,"dm"])
   AnimalProduction    <- add_columns(LivestockProduction, addnm="fish", dim=3.1)
   AnimalProduction[,,"fish"]        <- 0
   getNames(AnimalProduction, dim=1) <- paste0("alias_",getNames(AnimalProduction,dim=1))

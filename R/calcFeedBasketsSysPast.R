@@ -16,11 +16,11 @@
 #' @importFrom luscale rename_dimnames
 
 calcFeedBasketsSysPast <- function() {
-  mag_years_past <- findset("past")
-  
+
   #read in system-specific feed basket data (for sys_dairy,sys_beef,sys_pig,sys_hen,sys_chicken)
   fbask_sys <-  readSource(type="FeedModel",subtype="FeedBaskets")
   
+
   #expand dim=3.2 to kall (add products like wood and woodfuel)
   kdiff         <- setdiff(findset("kall"),getNames(fbask_sys,dim=2))
   fbask_sys          <- add_columns(fbask_sys,addnm = kdiff,dim=3.2)
@@ -28,7 +28,8 @@ calcFeedBasketsSysPast <- function() {
   
   #use livestock production as weight
   kli<-findset("kli")
-  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+  past <- findset("past")
+  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,past,]
   weight <- collapseNames(massbalance[,,kli][,,"dm"][,,"production"])
   
   mapping<-data.frame(
@@ -38,6 +39,7 @@ calcFeedBasketsSysPast <- function() {
   
   weight<-rename_dimnames(weight,dim = 3,query = mapping,from = "kli", to="sys")
   
+
   # remove datasets with NAs in weight/data
   fbask_sys<-toolNAreplace(x=fbask_sys,weight=weight,replaceby=0)
   weight=fbask_sys$weight

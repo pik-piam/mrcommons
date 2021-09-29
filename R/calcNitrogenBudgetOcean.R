@@ -29,7 +29,7 @@ calcNitrogenBudgetOcean<-function(deposition="ACCMIP",leaching="Nsurplus"){
   sewage<-collapseNames(calcOutput("NutrientBudgetSewage",aggregate = FALSE)[,,"nr"][,,"freshwater"])
   
   waterloss<-calcOutput("EmisNitrogenWater",method=leaching,aggregate = FALSE)
-  fish<-collapseNames(calcOutput("FAOmassbalance",aggregate = FALSE)[,,"fish"][,,"production"][,,"nr"])
+  fish<-collapseNames(calcOutput("FAOmassbalance",aggregate = FALSE)[,past,"fish"][,,"production"][,,"nr"])
   
   riverdischarge <- setNames(groundwater+sewage-dimSums(waterloss,dim=3),"riverdischarge")
   

@@ -74,7 +74,8 @@ readFAO_online <- function(subtype) {
     EmisLuTotal             = c("Emissions_Land_Use_Land_Use_Total_E_All_Data.zip"),
     FSCrop                  = c("FoodSupply_Crops_E_All_Data.zip"),
     FSLive                  = c("FoodSupply_LivestockFish_E_All_Data.zip"),
-    Fbs                     = c("FoodBalanceSheets_E_All_Data.zip"),
+    FbsHistoric             = c("FoodBalanceSheetsHistoric_E_All_Data.zip" ),
+    Fbs                     = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"),#old and new FBS
     Fertilizer              = c("Environment_Fertilizers_E_All_Data.zip"),# should not be used, use CB and FS or calcFAOharmonized() instead
     FertilizerNutrients     = c("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip"),
     FertilizerProducts      = c("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip"),

@@ -2,7 +2,7 @@
 #' @description Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that convert one type of product into another. 
 #' Includes processes like milling, distilling, extraction etc. Adds certain byproducts like distillers grains or ethanol.
 #'
-#' @param years years to be estimated.
+#' @param years years to be estimated, if null, then all years in FAOharmonized are returned
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' This is an intermediary result, which is used e.g. for estimating the feed baskets. For most uses, it is more appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
@@ -18,7 +18,7 @@
 #' @importFrom magclass getSets as.magpie complete_magpie
 #' @importFrom utils read.csv
 
-calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
+calcFAOmassbalance_pre <- function(years = NULL) {
   #### Data input ####
   
   ### FAO Commodity Balance 
@@ -40,43 +40,48 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   CBC <- CBC[, years,]
   
   # remove double counting and add missing products
-  removethem <- c("2903|Vegetal Products + (Total)",
-                  "2905|Cereals - Excluding Beer + (Total)",
-                  "2907|Starchy Roots + (Total)",
-                  "2908|Sugar Crops + (Total)",
-                  "2909|Sugar & Sweeteners + (Total)",
-                  "2911|Pulses + (Total)",
-                  "2912|Treenuts + (Total)",
-                  "2913|Oilcrops + (Total)",
-                  "2914|Vegetable Oils + (Total)",
-                  "2918|Vegetables + (Total)",
-                  "2919|Fruits - Excluding Wine + (Total)",
-                  "2922|Stimulants + (Total)",
-                  "2923|Spices + (Total)",
-                  "2924|Alcoholic Beverages + (Total)",
-                  "2928|Miscellaneous + (Total)",
-                  "2941|Animal Products + (Total)",
-                  "2943|Meat + (Total)",
-                  "2945|Offals + (Total)",
-                  "2946|Animal fats + (Total)",
-                  "2948|Milk - Excluding Butter + (Total)",
-                  "2949|Eggs + (Total)",
-                  "2960|Fish, Seafood + (Total)",
-                  "2961|Aquatic Products, Other + (Total)",
-                  "2805|Rice (Milled Equivalent)",
-                  "2556|Groundnuts (Shelled Eq)",
-                  "2827|Sugar, Raw Equivalent",
-                  "2542|Sugar (Raw Equivalent)",
-                  "2815|Roots & Tuber Dry Equiv",
-                  "2562|Palm kernels",
-                  "2901|Grand Total + (Total)",
-                  "2747|Silk",
-                  "2739|Milk, Skimmed",
-                  "2738|Milk, Whole",
-                  "2741|Cheese",
-                  "2672|Rubber",
-                  "2742|Whey",
-                  "2671|Tobacco")
+  removethem<-c(
+    #crop commodity balance and Food Supply items aggregated
+    "2924|Alcoholic Beverages",
+    "2905|Cereals - Excluding Beer",
+    "2919|Fruits - Excluding Wine",
+    "2928|Miscellaneous",
+    "2913|Oilcrops",
+    "2911|Pulses",
+    "2923|Spices",
+    "2907|Starchy Roots",
+    "2922|Stimulants",
+    "2909|Sugar & Sweeteners",
+    "2908|Sugar Crops",
+    "2912|Treenuts",
+    "2914|Vegetable Oils",
+    "2918|Vegetables",
+    "2903|Vegetal Products",
+    "2901|Grand Total",
+    #livestock commodity balance and Food Supply items aggregated
+    "2941|Animal Products",
+    "2946|Animal fats",
+    "2961|Aquatic Products, Other",
+    "2949|Eggs",
+    "2960|Fish, Seafood",
+    "2943|Meat",
+    "2948|Milk - Excluding Butter",
+    "2738|Milk, Whole",
+    "2739|Milk, Skimmed",
+    "2945|Offals",
+    #others and equivalents
+    "2741|Cheese",
+    "2556|Groundnuts (Shelled Eq)",
+    "2562|Palm kernels",
+    "2805|Rice (Milled Equivalent)",
+    "2815|Roots & Tuber Dry Equiv",
+    "2672|Rubber",
+    "2747|Silk",
+    "2827|Sugar, Raw Equivalent", 
+    "2542|Sugar (Raw Equivalent)",
+    "2671|Tobacco",
+    "2742|Whey"
+  )
   
   CBC <- CBC[, , removethem, invert = TRUE]
   
@@ -98,7 +103,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
   prod_attributes <- prod_attributes[, , remove_prod, invert = TRUE]
   
   # Sectoral mapping for FAO items 
-  relationmatrix <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
+  relationmatrix <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
   relationmatrix <- relationmatrix[, c("FoodBalanceItem", "k")]
   relationmatrix <- relationmatrix[!duplicated(relationmatrix[, "FoodBalanceItem"]), ]
   
@@ -283,7 +288,7 @@ calcFAOmassbalance_pre <- function(years = paste0("y", seq(1965, 2010, 5))) {
                                  goods_out,     # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses") - (the order matters!)
                                  report_as,     # e.g. c("sugar1", "molasses1") - (the order matters!)
                                  residual       # e.g. "refiningloss"
-  ) {
+                                 ) {
     if (any(object[, , list(goods_in, c(report_as, residual))] != 0)) {
       stop("Output flows already exist.")
     }

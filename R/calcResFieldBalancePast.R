@@ -24,10 +24,13 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
     past              <- findset("past")
     relevant_nutrients <- c("nr","p","k","c")  # after burning, unclear what dm and ge may be
 
-    production        <- collapseNames(calcOutput("ResBiomass", cellular=cellular, plantparts="ag", aggregate = FALSE, scenario=scenario))[,,relevant_nutrients]
+    production        <- collapseNames(calcOutput("ResBiomass", cellular=cellular, plantparts="ag", 
+                                                  aggregate = FALSE, scenario=scenario))[,past,relevant_nutrients]
 
     burnshr           <- calcOutput("ResCombustEff",aggregate = FALSE)[,,getNames(production,dim=1)]
     dev_state_past    <- collapseNames(calcOutput("DevelopmentState",aggregate = F)[,past,"SSP2"])
+    
+
     if(cellular){
       dev_state_past    <- toolIso2CellCountries(dev_state_past)
     }

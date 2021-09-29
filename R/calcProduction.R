@@ -32,13 +32,11 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
     missing       <- c("betr", "begr")
     MAGcroptypes  <- setdiff(MAGcroptypes, missing)
 
-    if (!cellular) {
-      if (irrigation) stop("Irrigation not yet implemented for this resolution")
-
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre",
-                                                aggregate = FALSE)[, , "production"][, selectyears, MAGcroptypes])
-      MAGProduction <- add_columns(MAGProduction, addnm = missing, dim = 3.1)
-      MAGProduction[, , missing] <- 0
+    if(!cellular){
+      if(irrigation){stop("Irrigation not yet implemented for this resolution")}
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,"production"][,,MAGcroptypes])
+      MAGProduction <- add_columns(MAGProduction,addnm = missing,dim = 3.1)
+      MAGProduction[,,missing]<-0
 
     } else {
 
@@ -154,13 +152,11 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       MAGProduction[, , missing] <- 0
     }
 
-  } else if (products == "pasture") {
+  } else if (products=="pasture"){
+    if(irrigation){stop("Irrigation not yet implemented for this Product group")}
+    if(!cellular){
 
-    if (irrigation) stop("Irrigation not yet implemented for this Product group")
-    if (!cellular) {
-
-      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance",
-                                                 aggregate = FALSE)[, , "production"][, selectyears, "pasture"])
+      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate=FALSE)[,,"production"][,,"pasture"])
 
     } else {
 
@@ -241,11 +237,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
   } else if (products == "kli") {
 
     Livestocktypes <- findset("kli")
-    if (irrigation) stop("Irrigation not yet implemented for this Product group")
-    if (!cellular) {
+    if(irrigation){stop("Irrigation not yet implemented for this Product group")}
+    if(!cellular){
 
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre",
-                                                aggregate = FALSE)[, selectyears, Livestocktypes][, , "production"])
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,Livestocktypes][,,"production"])
 
     } else {
 

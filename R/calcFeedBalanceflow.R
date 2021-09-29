@@ -18,6 +18,7 @@
 calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products="kall", future="constant"){
   
   products2<-findset(products,noset="orignal")
+  past <- findset("past")
   
   if(!per_livestock_unit){
     
@@ -25,7 +26,7 @@ calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products=
     # kli              <- findset("kli")
     ProdAttributes      <- calcOutput("Attributes", aggregate = FALSE)
     
-    FAOFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,"feed"])
+    FAOFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,past,"feed"])
     FAOFeed          <- collapseNames(FAOFeednutrients[,,"dm"])
     FAOFeed          <- add_columns(FAOFeed, addnm = "pasture", dim=3.1)
     
@@ -109,9 +110,10 @@ calcFeedBalanceflow<-function(per_livestock_unit=FALSE, cellular=FALSE,products=
   } else if(per_livestock_unit){
     
     kli                           <- findset("kli")
+    past                           <- findset("past")
     
     FeedBalanceflow               <- calcOutput("FeedBalanceflow", cellular=cellular, products=products, future=future, aggregate=FALSE)
-    LivestockProduction           <- collapseNames(calcOutput("Production", products="kli", cellular=cellular, aggregate = FALSE)[,,kli][,,"dm"])
+    LivestockProduction           <- collapseNames(calcOutput("Production", products="kli", cellular=cellular, aggregate = FALSE)[,,kli][,past,"dm"])
     LivestockProduction           <- add_columns(LivestockProduction, addnm = "fish", dim=3.1)
     LivestockProduction[,,"fish"] <- 0
     

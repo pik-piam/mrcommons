@@ -20,15 +20,15 @@ calcStorage <- function(datasource="FAO"){
 
 aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
 
-#use mass balance here in future
+#use mass balance here in future, IS BUGGY!
 
 stocks <- collapseNames(calcOutput("FAOharmonized",aggregate=FALSE)[,,"stock_variation"])
 stocks  <- stocks[,,-grep("Total", getNames(stocks))]
 
 #Weighting?
 
-stocks <- toolAggregate(stocks, rel=aggregation, from="FoodBalanceItem",
-                     to="k", dim=3, partrel=TRUE, verbosity=2)
+#stocks <- toolAggregate(stocks, rel=aggregation, from="FoodBalanceItem",
+          #           to="k", dim=3, partrel=TRUE, verbosity=2)
 
 ##with positive values being withdrawals:
 stocks <- -1*stocks

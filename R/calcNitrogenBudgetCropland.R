@@ -20,11 +20,11 @@ calcNitrogenBudgetCropland<-function(cellular=FALSE,deposition="CEDS",include_fe
   past<-findset("past")
   kcr<-findset("kcr")
   
-  harvest<-dimSums(calcOutput("Production",products="kcr",cellular=cellular,calibrated=TRUE,aggregate = FALSE)[,,"nr"],dim=3)
-  ag<-collapseNames(calcOutput("ResFieldBalancePast",aggregate = FALSE,cellular=cellular)[,,"nr"])
-  bg<-dimSums(collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",aggregate = FALSE)[,,"nr"]),dim=3.1)
+  harvest<-dimSums(calcOutput("Production",products="kcr",cellular=cellular,calibrated=TRUE,aggregate = FALSE)[,past,"nr"],dim=3)
+  ag<-collapseNames(calcOutput("ResFieldBalancePast",aggregate = FALSE,cellular=cellular)[,past,"nr"])
+  bg<-dimSums(collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",aggregate = FALSE)[,past,"nr"]),dim=3.1)
   
-  seed<-dimSums(calcOutput("Seed",cellular=cellular,products="kcr",aggregate=FALSE)[,,"nr"],dim=3)
+  seed<-dimSums(calcOutput("Seed",cellular=cellular,products="kcr",aggregate=FALSE)[,past,"nr"],dim=3)
   
   fixation<-dimSums(calcOutput("NitrogenFixationPast",fixation_types="both",sum_plantparts=TRUE,aggregate = FALSE,cellular=cellular),dim=3.2)
   som<-calcOutput("SOMlossN",cellular=cellular,aggregate = F)[,past,]

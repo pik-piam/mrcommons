@@ -28,7 +28,7 @@ convertFAO_online <- function(x,subtype) {
 
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
-                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs",
+                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs", "FbsHistoric",
                 "FertilizerProducts", "FertilizerNutrients")
 
   ## datasets that contain relative values that can be deleted because they can
@@ -120,19 +120,17 @@ convertFAO_online <- function(x,subtype) {
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if (all(c("XSD", "SSD", "SDN") %in% getRegions(x))){
-    last_year <- "y2010"
-    if (subtype == "Land") last_year <- "y2011"
-    additional_mapping <- append(additional_mapping, list(c("XSD","SSD",last_year), c("XSD", "SDN",last_year)))
-  } else if ("XSD" %in% getRegions(x) & !any(c("SDD", "SDN") %in% getRegions(x)) ) {
+    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2011"), c("XSD", "SDN","y2011")))
+  } else if ("XSD" %in% getRegions(x) & !any(c("SSD", "SDN") %in% getRegions(x)) ) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
   }
 
-  ## if XCN exists, replace CHN with XCN. 
+  ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getRegions(x)) {
     if ("CHN" %in% getRegions(x)) x <- x["CHN",,,invert=TRUE]
       getItems(x, dim=1)[getItems(x, dim=1)=="XCN"] <- "CHN"
   }
-  
+
   ## data for the Netherlands Antilles is currently removed because currently no
   ## information for its successors SXM, CUW, ABW is available as input for toolISOhistorical
   if(any(getRegions(x) == "ANT")) {
@@ -165,7 +163,7 @@ convertFAO_online <- function(x,subtype) {
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    if(subtype!="Fbs") {x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)}
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]], value=TRUE),collapse=" "), "\n" , "and would need a different treatment of NAs in convertFAO")
 

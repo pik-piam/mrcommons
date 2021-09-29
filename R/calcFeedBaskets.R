@@ -49,7 +49,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=FALSE, method="new") {
     } 
     out<-dimOrder(out,perm = c(3,1,2))
     
-    weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,findset("kli")][,,"dm"][,,"production"])
+    weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,past,findset("kli")][,,"dm"][,,"production"])
     weight_kli <- toolHoldConstantBeyondEnd(weight_kli)
     
     if(any(out[,,list(data1 = "livst_milk", kall = "livst_milk")] >= 1 )){
@@ -117,7 +117,7 @@ calcFeedBaskets <- function(non_eaten_food=FALSE, fadeout=FALSE, method="new") {
     
     #use livestock production as weight
     kli <- findset("kli")
-    weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"])
+    weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,past,kli][,,"dm"][,,"production"])
     weight_sys <- dimSums(fbask_sys,dim=3.2)
     weight_sys[,,] <- 0
     for(t in past){
