@@ -15,7 +15,7 @@
 #' @importFrom utils head
 #' @importFrom stringr str_detect
 
-downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
+downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") {
 
   x     <- toolSplitSubtype(subtype, list(version = NULL, climatemodel = NULL, scenario = NULL, variable = NULL))
   files <- c(soilc              = "soilc_natveg",

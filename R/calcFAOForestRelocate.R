@@ -32,7 +32,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
 
   if (cells == "lpjcell") {
     mapping   <- toolGetMappingCoord2Country()
-    cellvegc  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(countrydata), ]
+    cellvegc  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(countrydata), ]
     countries <- unique(gsub("[^A-Z]", "", getCells(cellvegc)))
     getCells(LUH2v2_init) <-  paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = ".")
     getCells(cellvegc)    <-  paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = ".")
@@ -43,7 +43,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
     mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
     countries <- unique(mapping$iso)
 
-    cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(countrydata), ]
+    cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(countrydata), ]
     # reduce to 59199 cells and rename cells
     cellvegc <- toolCoord2Isocell(cellvegc)
   }
