@@ -46,13 +46,13 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     ########## PLUG HIST + FUTURE ##########
 
-    if (!grepl("historical", climatetype)) {
+    if (!grepl("historical", cfg$climatetype)) {
 
       # For climate scenarios historical data has to be read in from a different file
       readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
                                                       scenario = NULL, variable = NULL))
       # if addon is present, split addon scenario after first '_', otherwise return empty string
-      addon <- ifelse(grepl("\\_", climatetype), unlist(str_split(climatetype, "(?=[_])", 2))[2], "")
+      addon <- ifelse(grepl("\\_", cfg$climatetype), unlist(str_split(cfg$climatetype, "(?=[_])", 2))[2], "")
       # replace scenario name with 'historical' (including optional addon setting) to load historical baseline
       readinHist <- paste(gsub(readinHist$scenario, paste0("historical", addon), readinHist), collapse = ":")
 

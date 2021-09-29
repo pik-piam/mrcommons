@@ -66,14 +66,18 @@ toolLPJmLVersion <- function(version, climatetype) {
       i <- grep("baseline_hist", tmp)
       cfg$baseline_hist <- gsub("baseline_hist", "", tmp[i])
     }
-  }
 
-  ### climatetype addon
-  if (grepl("\\_", climatetype)) {
+    if (any(grepl("scen", tmp))) {
 
-    tmp               <- unlist(str_split(climatetype, "\\_"))
-    cfg$baseline_hist <- paste("GSWP3-W5E5:historical", paste(tmp[-1], collapse = "_"), sep = "_")
-    cfg$baseline_gcm  <- paste("MRI-ESM2-0:ssp370",     paste(tmp[-1], collapse = "_"), sep = "_")
+      scen  <- toolSplitSubtype(tmp[grep("scen", tmp)],
+                                list(prefix = "scen", scen = NULL))$scen
+
+      cfg$baseline_hist <- paste("GSWP3-W5E5:historical", scen, sep = "_")
+      cfg$baseline_gcm  <- paste("MRI-ESM2-0:ssp370",     scen, sep = "_")
+      cfg$climatetype   <- paste(climatetype,             scen, sep = "_")
+      cfg$lpjml_version <- tmp[1]
+
+    }
   }
 
   ##### ADDON CONFIG #####
