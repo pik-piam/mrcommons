@@ -7,13 +7,11 @@
 #' @param subtype  Switch between different input. Use predefined ones or any FileName specified in 'SoilGrids/META_GEOTIFF_1B.csv'
 #'
 #' @seealso
-#' \code{\link{readSoilGrids}}
+#' [readSoilGrids()]
 #'
 #' @examples
 #' \dontrun{ downloadSource("SoilGrids",subtype="carbon0_30") }
-#'
-#' @import madrat
-#' @import magclass
+#' 
 #' @importFrom utils download.file tail
 #' @importFrom madrat toolSubtypeSelect
 

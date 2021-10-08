@@ -10,7 +10,7 @@
 #' palm oil data
 #' @return MAgPIE object with data from both inputs but dublicates removed
 #' @author Ulrich Kreidenweis
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- toolFAOcombine(Crop, CropPro, combine = "Item")

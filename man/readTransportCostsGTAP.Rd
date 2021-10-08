@@ -19,7 +19,7 @@ Read in  Transport Costs from GTAP
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 David Chen

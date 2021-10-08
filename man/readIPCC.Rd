@@ -42,7 +42,7 @@ a <- readSource("IPCC","efnsoil", convert=F)
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich

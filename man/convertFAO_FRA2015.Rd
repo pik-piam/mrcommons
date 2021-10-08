@@ -24,7 +24,7 @@ Update dd-Jmm-jjjj - Please add comment if changes made here (Abhi)
 \dontrun{ a <- readSource("FRA2015","production",convert=TRUE)}
 }
 \seealso{
-\code{\link{readSource}},
+\code{\link[=readSource]{readSource()}},
 }
 \author{
 Abhijeet Mishra

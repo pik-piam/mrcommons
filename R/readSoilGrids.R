@@ -9,15 +9,13 @@
 #'                 specified in 'SoilGrids/META_GEOTIFF_1B.csv'
 #'
 #' @seealso
-#' \code{\link{downloadSoilGrids}}
+#' [downloadSoilGrids()]
 #'
 #' @examples
 #' \dontrun{
 #' readSource("SoilGrids", subtype = "cstock_0_30")
 #' }
 #'
-#' @import madrat
-#' @import magclass
 #' @importFrom raster raster aggregate res res<- projectRaster writeRaster as.matrix
 
 readSoilGrids <- function(subtype) {

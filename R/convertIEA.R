@@ -23,7 +23,7 @@ convertIEA <- function(x,subtype) {
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA.csv", returnPathOnly = TRUE)
     mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE)
     wp <- calcOutput("Population",aggregate=F,FiveYearSteps = F)[as.vector(mapping[[1]]),2010,"pop_SSP2"]
-    wg <- calcOutput("GDPppp",aggregate=F,FiveYearSteps = F)[as.vector(mapping[[1]]),2010,"gdp_SSP2"]
+    wg <- calcOutput("GDP", aggregate = FALSE, FiveYearSteps = FALSE)[as.vector(mapping[[1]]), 2010, "gdp_SSP2"]
     wp <- wp/max(wp);getNames(wp)<-"SSP2"
     wg <- wg/max(wg);getNames(wg)<-"SSP2"
     xadd <- toolAggregate(x[levels(mapping[[2]]),,],mappingfile,weight=wp+wg)

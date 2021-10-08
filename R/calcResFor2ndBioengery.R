@@ -8,7 +8,7 @@
 #' @param add_off add a column with empty supply for no residues available for 2nd gen BE
 #' @author Kristine Karstens
 #' @seealso
-#' \code{\link{calcResFor2ndBioengery}}
+#' [calcResFor2ndBioengery()]
 #' @examples
 #' 
 #' \dontrun{ 

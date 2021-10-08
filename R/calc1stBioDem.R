@@ -7,13 +7,12 @@
 #' @param subtype all per default. ethanol_oils for selecting 1st gen crop types relevant for REMIND input.
 #' @author Xiaoxi Wang, David Klein
 #' @seealso
-#' \code{\link{calc1stBioenergyPast}}
+#' [calc1stBioenergyPast()]
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("1stBioDem")
 #' }
-#' @importFrom magclass getNames<- as.magpie
 #' @importFrom magpiesets findset
 
 calc1stBioDem<- function(subtype="all"){

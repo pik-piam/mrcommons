@@ -8,7 +8,7 @@
 #' "nExcrRate"
 #' @return IPCC data as MAgPIE object for all subtypes on country level
 #' @author Nele Steinmetz
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{

@@ -23,8 +23,8 @@ readSource("LPJmlCarbon", subtype="historical.nat_veg.soilc_layer", convert="onl
 
 }
 \seealso{
-\code{\link{readLPJmlCarbon}},
-\code{\link{readLPJ}}
+\code{\link[=readLPJmlCarbon]{readLPJmlCarbon()}},
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Kristine Karstens

@@ -7,7 +7,7 @@
 readPBL_MACC_2019(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. 
+\item{subtype}{data subtype.
 "ch4coal","ch4oil","ch4gas","ch4wstl","ch4wsts","ch4rice","ch4animals","ch4anmlwst",
 "n2otrans","n2oadac","n2onitac","n2ofert","n2oanwst","n2owaste",
 "HFC_tot", "SF6_tot", "PFC_tot" or "baseline_sources"}
@@ -19,7 +19,7 @@ magpie object of the PBL_MACC_2019 data
 Read in PBL MAC curves from Harmsen_et_al_2019 for different subtypes
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Florian Humpenoeder

@@ -30,7 +30,7 @@ Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 \dontrun{ a <- readSource("FAO_online","Crop", convert=TRUE)}
 }
 \seealso{
-\code{\link{readFAO}}, \code{\link{readSource}},
+\code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},
 }
 \author{
 Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca

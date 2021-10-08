@@ -18,7 +18,7 @@ Read-in cost data from Vittis dataset.
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Debbora Leip

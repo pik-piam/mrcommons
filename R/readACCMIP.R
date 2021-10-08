@@ -33,7 +33,7 @@
 #' }
 #' @return magpie object of the ACCMIP data. Unit is t NO2-N  per ha per year, or t NH3-N  per ha per year,...
 #' @author Roman Popov
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readACCMIP("ACCMIP", "nhx_2000")

@@ -19,7 +19,7 @@ readSource("SSPresults",aggregate=FALSE)
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Abhijeet Mishra, Florian Humpenoeder

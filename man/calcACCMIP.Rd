@@ -23,7 +23,7 @@ calcOutput("ACCMIP")
 
 }
 \seealso{
-\code{\link{calcAtmosphericDeposition}}
+\code{\link[=calcAtmosphericDeposition]{calcAtmosphericDeposition()}}
 }
 \author{
 Benjamin Leon Bodirsky

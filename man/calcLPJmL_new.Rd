@@ -36,7 +36,7 @@ calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 
 }
 \seealso{
-\code{\link{readLPJmL}}
+\code{\link[=readLPJmL]{readLPJmL()}}
 }
 \author{
 Kristine Karstens, Felicitas Beier

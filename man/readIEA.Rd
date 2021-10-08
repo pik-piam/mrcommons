@@ -22,7 +22,7 @@ a <- readSource(type = "IEA", subtype = "EnergyBalances")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues

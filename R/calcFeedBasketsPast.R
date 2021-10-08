@@ -6,7 +6,7 @@
 #' objects
 #' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
 #' @author Isabelle Weindl, Benjamin Bodirsky
-#' @seealso \code{\link{calcOutput}}, \code{\link{readFeedModel}}
+#' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
 #' 
 #' \dontrun{ 

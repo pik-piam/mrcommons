@@ -19,5 +19,5 @@ Correct LUH2v2 content
 }
 \author{
 Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich,
- Edna J. Molina Bacca
+Edna J. Molina Bacca
 }

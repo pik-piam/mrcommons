@@ -2,7 +2,8 @@
 % Please edit documentation in R/correctLPJmLInputs.R
 \name{correctLPJmLInputs}
 \alias{correctLPJmLInputs}
-\title{correctLPJmLInputs}
+\title{\preformatted{  correctLPJmLInputs
+}}
 \usage{
 correctLPJmLInputs(x)
 }

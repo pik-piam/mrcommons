@@ -11,7 +11,7 @@ downloadAndrijevic2019(subtype = "governance_obs_project")
 }
 \description{
 This function downloads the governance indicator data available
-             at https://github.com/marina-andrijevic/governance2019
+at https://github.com/marina-andrijevic/governance2019
 }
 \examples{
 \dontrun{
@@ -20,7 +20,7 @@ downloadSource("Andrijevic2019", subtype = "governance_obs_project")
 
 }
 \seealso{
-\code{\link{readAndrijevic2019}}
+\code{\link[=readAndrijevic2019]{readAndrijevic2019()}}
 }
 \author{
 Felicitas Beier

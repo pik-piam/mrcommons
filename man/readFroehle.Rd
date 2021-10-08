@@ -18,7 +18,7 @@ Publication Froehle, Andrew W. 2008 "Climate Variables as Predictors of Basal Me
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Bodirsky

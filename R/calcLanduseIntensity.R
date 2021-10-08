@@ -10,8 +10,8 @@
 #' @return Total tau data and corresonding weights as a list of two MAgPIE
 #' objects
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
-#' @seealso \code{\link{calcTauTotal}}, \code{\link{readTau}},
-#' \code{\link{convertTau}}
+#' @seealso [calcTauTotal()], [readTau()],
+#' [convertTau()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LanduseIntensity")

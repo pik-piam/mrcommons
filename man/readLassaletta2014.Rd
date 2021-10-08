@@ -13,8 +13,8 @@ readLassaletta2014(subtype = "budget")
 Magpie object with results on country level.
 }
 \description{
-reads nitrogen budgets for a country dataset from 
-Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014. 
+reads nitrogen budgets for a country dataset from
+Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014.
 50 Year Trends in Nitrogen Use Efficiency of World Cropping Systems: The Relationship between Yield and Nitrogen Input to Cropland.
 Environmental Research Letters.
 }
@@ -25,8 +25,8 @@ readSource("Lassaletta2014",subtype="budget",convert=FALSE)
 }
 }
 \seealso{
-\code{\link{convertLassaletta2014}},
-\code{\link{readSource}}
+\code{\link[=convertLassaletta2014]{convertLassaletta2014()}},
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky, Felicitas Beier

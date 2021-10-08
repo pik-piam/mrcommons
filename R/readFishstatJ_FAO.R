@@ -7,7 +7,7 @@
 #' @return magpie object of either tonnes of liveweight or 1000 current USD
 #' @author Edna J. Molina Bacca
 #' @importFrom stats reshape
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("FishstatJ_FAO", "Production")

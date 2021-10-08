@@ -9,7 +9,7 @@ calcResDemand(cellular = FALSE, scenario = "dafault")
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}
 
-\item{scenario}{define scenario switch for sensititvy analysis 
+\item{scenario}{define scenario switch for sensititvy analysis
 for historical SOC budget}
 }
 \value{
@@ -25,7 +25,7 @@ calcOutput("ResDemand")
 }
 }
 \seealso{
-\code{\link{calcResBiomass}}
+\code{\link[=calcResBiomass]{calcResBiomass()}}
 }
 \author{
 Benjamin Leon Bodirsky

@@ -9,31 +9,31 @@
 #' 
 #' @param subtype Type of FAO data that should be read. Available types are:
 #' \itemize{ 
-#' \item \code{CBCrop}: Commodity Balance Crop (CommodityBalances_Crops_E_All_Data.zip)
-#' \item \code{CBLive}: Commoditiy Balance Livestock (CommodityBalances_LivestockFish_E_All_Data.zip)
-#' \item \code{Crop}: Production Crops ("Production_Crops_E_All_Data.zip")
-#' \item \code{CropProc}: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
-#' \item \code{Fbs}: Food Balance Sheet ("FoodBalanceSheets_E_All_Data.zip")
-#' \item \code{Fertilizer}: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
-#' \item \code{Fodder}: Fodder (data that has been manually downloaded from the FAOSTAT website as
+#' \item `CBCrop`: Commodity Balance Crop (CommodityBalances_Crops_E_All_Data.zip)
+#' \item `CBLive`: Commoditiy Balance Livestock (CommodityBalances_LivestockFish_E_All_Data.zip)
+#' \item `Crop`: Production Crops ("Production_Crops_E_All_Data.zip")
+#' \item `CropProc`: Production Crops Processed ("Production_CropsProcessed_E_All_Data.zip")
+#' \item `Fbs`: Food Balance Sheet ("FoodBalanceSheets_E_All_Data.zip")
+#' \item `Fertilizer`: Fertilizer ("Resources_Fertilizers_E_All_Data.zip")
+#' \item `Fodder`: Fodder (data that has been manually downloaded from the FAOSTAT website as
 #' seperate .xls files via a search for "forage" and "fodder" withing
 #' Production-Crops. These datasets have been added together to a "Fodder.csv" file)
-#' \item \code{FoodSecurity}: Food Security Data ("Food_Security_Data_E_All_Data.zip")
-#' \item \code{FSCrop}: Food Supply Crops ("FoodSupply_Crops_E_All_Data.zip")
-#' \item \code{FSLive}: Food Supply Livestock ("FoodSupply_LivestockFish_E_All_Data.zip")
-#' \item \code{Land}: Land ("Resources_Land_E_All_Data.zip")
-#' \item \code{LiveHead}: Production Live Animals ("Production_Livestock_E_All_Data.zip")
-#' \item \code{LivePrim}: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
-#' \item \code{LiveProc}: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
-#' \item \code{Pop}: Population ("Population_E_All_Data.zip") 
-#' \item \code{ForestProdTrade}: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
-#' \item \code{PricesProducerAnnual}: Producer Prices - Annual ("Prices_E_All_Data.zip")
-#' \item \code{PricesProducerAnnualLCU}: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
-#' \item \code{ValueOfProd}: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip") 
+#' \item `FoodSecurity`: Food Security Data ("Food_Security_Data_E_All_Data.zip")
+#' \item `FSCrop`: Food Supply Crops ("FoodSupply_Crops_E_All_Data.zip")
+#' \item `FSLive`: Food Supply Livestock ("FoodSupply_LivestockFish_E_All_Data.zip")
+#' \item `Land`: Land ("Resources_Land_E_All_Data.zip")
+#' \item `LiveHead`: Production Live Animals ("Production_Livestock_E_All_Data.zip")
+#' \item `LivePrim`: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
+#' \item `LiveProc`: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
+#' \item `Pop`: Population ("Population_E_All_Data.zip") 
+#' \item `ForestProdTrade`: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
+#' \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
+#' \item `PricesProducerAnnualLCU`: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
+#' \item `ValueOfProd`: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip") 
 #' }
 #' @return FAO data as MAgPIE object
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #'   \dontrun{ a <- readSource("FAO","Crop")

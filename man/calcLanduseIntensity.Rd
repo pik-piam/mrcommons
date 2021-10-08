@@ -28,8 +28,8 @@ calcOutput("LanduseIntensity")
 
 }
 \seealso{
-\code{\link{calcTauTotal}}, \code{\link{readTau}},
-\code{\link{convertTau}}
+\code{\link[=calcTauTotal]{calcTauTotal()}}, \code{\link[=readTau]{readTau()}},
+\code{\link[=convertTau]{convertTau()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens

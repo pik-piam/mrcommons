@@ -10,14 +10,14 @@ correctVittis(x)
 \item{x}{magpie object provided by the read function}
 }
 \value{
-corrected mapie object on national-scale costs of production for 10 
+corrected mapie object on national-scale costs of production for 10
 crops, disaggregated in 9 distinct cost elements
 }
 \description{
 Correct inconsistencies in crop naming in the Vittis dataset
 }
 \seealso{
-\code{\link{readVittis}}
+\code{\link[=readVittis]{readVittis()}}
 }
 \author{
 Debbora Leip

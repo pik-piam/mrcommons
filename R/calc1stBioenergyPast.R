@@ -6,14 +6,12 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Xiaoxi Wang, Isabelle Weindl
 #' @seealso
-#' \code{\link{setConfig}}
+#' [setConfig()]
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("1stBioenergyPast")
 #' }
-#' @importFrom magclass getNames<- as.magpie
-#' @importFrom madrat toolGetMapping
 #' @export
 
 calc1stBioenergyPast <- function(){

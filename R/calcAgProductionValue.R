@@ -2,13 +2,13 @@
 #'
 #' @description  Calculate FAO Value Of Production
 #'
-#' @param datasource Currently available: \code{"FAO"}
+#' @param datasource Currently available: `"FAO"`
 #'
 #' @return FAO Value Of Production as a list of MAgPIE objects
 #'
 #' @author Roman Popov, Mishko Stevanovic, Patrick v. Jeetze
-#' @seealso \code{\link{calcOutput}}, \code{\link{readFAO}},
-#' \code{\link{convertFAO}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readFAO()],
+#' [convertFAO()], [readSource()]
 #' @examples
 #'
 #' \dontrun{

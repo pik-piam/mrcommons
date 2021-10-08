@@ -7,7 +7,7 @@
 #' @param subtype file that should be downloaded from governance2019 repository
 #'
 #' @seealso
-#' \code{\link{readAndrijevic2019}}
+#' [readAndrijevic2019()]
 #'
 #' @examples
 #' \dontrun{

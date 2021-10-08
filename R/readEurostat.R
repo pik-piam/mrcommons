@@ -14,7 +14,7 @@
 #'  
 #' @importFrom madrat toolCountry2isocode
 #' @importFrom reshape2 melt
-#' 
+#' @export 
 
 readEurostat <- function(subtype = "emissions") {
 
@@ -22,9 +22,6 @@ readEurostat <- function(subtype = "emissions") {
          "emissions" = readEurostatEmissions(),
          "MACCemi" = readEurostatEmissions(),
          "sectorEmi" = readEurostatEmissions(),
-         "population" = readEurostatPopulation(),
-         "population_projections" = readEurostatPopulationProjections(),
-         "GDP" = readEurostatGDP(),
          stop("Bad input for readEurostat. Invalid 'subtype' argument."))
 } 
 

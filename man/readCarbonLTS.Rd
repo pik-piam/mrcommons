@@ -22,7 +22,7 @@ Read-in an Long term carbon storage data for historical period.
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Abhijeet Mishra

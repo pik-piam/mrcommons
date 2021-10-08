@@ -23,8 +23,8 @@ readSource("LPJml_rev21", subtype="maize_mrh")
 
 }
 \seealso{
-\code{\link{readLPJml_rev21}},
-\code{\link{readLPJ}}
+\code{\link[=readLPJml_rev21]{readLPJml_rev21()}},
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Benjamin Leon Bodirsky

@@ -8,7 +8,7 @@
 #'
 #' @return data
 #' @author Benjamin Bodirsky
-#' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

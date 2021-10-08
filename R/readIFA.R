@@ -5,11 +5,11 @@
 #' 
 #' 
 #' @param subtype Type of IFA data that should be read. Available types are:
-#' \itemize{ \item \code{consumption}: read in fertilizer_consumption.xlsx data
-#' \item \code{production}: read in fertilizer_production.xlsx data }
+#' \itemize{ \item `consumption`: read in fertilizer_consumption.xlsx data
+#' \item `production`: read in fertilizer_production.xlsx data }
 #' @return magpie object of the IFA data
 #' @author Lavinia Baumstark
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource(type="IFA",subtype="consumption")

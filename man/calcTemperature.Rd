@@ -26,7 +26,7 @@ calcOutput("Temperature")
 }
 }
 \seealso{
-\code{\link{readLPJml_rev21}}
+\code{\link[=readLPJml_rev21]{readLPJml_rev21()}}
 }
 \author{
 Benjamin Leon Bodirsky

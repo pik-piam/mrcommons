@@ -24,7 +24,7 @@ readSource("LPJmL_new", convert = FALSE)
 
 }
 \seealso{
-\code{\link{readLPJ}}
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Kristine Karstens, Abhijeet Mishra, Felicitas Beier, Marcos Alves

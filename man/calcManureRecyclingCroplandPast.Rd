@@ -24,7 +24,7 @@ calcOutput("calcManureRecyclingCroplandPast")
 }
 }
 \seealso{
-\code{\link{calcExcretion}}
+\code{\link[=calcExcretion]{calcExcretion()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens

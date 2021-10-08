@@ -22,7 +22,6 @@ Convert Koeppen climate zones on iso-country level
 \dontrun{
   readSource("Koeppen", subtype="iso", convert=TRUE)
 }
-
 }
 \author{
 Kristine Karstens

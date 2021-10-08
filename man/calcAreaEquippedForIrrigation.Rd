@@ -21,7 +21,7 @@ calcAreaEquippedForIrrigation(
 List of magpie objects with results on country/cellular level, weight on country level, unit and description.
 }
 \description{
-Calculates the area equipped for irrigation based on LU2v2 or other dataset. 
+Calculates the area equipped for irrigation based on LU2v2 or other dataset.
 For LUH2v2, it assumes, that all cropland irrigated in the last 20 years at least once is equipped for irrigation.
 }
 \examples{
@@ -31,7 +31,7 @@ calcOutput("AreaEquippedForIrrigation", source="LUH2v2", cellular=TRUE, aggregat
 }
 }
 \seealso{
-\code{\link{calcLanduseInitialisation}}
+\code{\link[=calcLanduseInitialisation]{calcLanduseInitialisation()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens

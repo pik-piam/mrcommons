@@ -16,7 +16,7 @@ Magpie object with results on country level.
 }
 \description{
 converts the dataset of
-Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014. 
+Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014.
 50 Year Trends in Nitrogen Use Efficiency of World Cropping Systems: The Relationship between Yield and Nitrogen Input to Cropland.
 Environmental Research Letters.
 into a dataset including all countries. Replacing Soviet Union by Russia and Yugoslavia by Serbia without detailed disaggregation.
@@ -28,8 +28,8 @@ readSource("Lassaletta2014",convert=TRUE)
 }
 }
 \seealso{
-\code{\link{readLassaletta2014}},
-\code{\link{readSource}}
+\code{\link[=readLassaletta2014]{readLassaletta2014()}},
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky

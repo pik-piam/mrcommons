@@ -5,7 +5,7 @@
 #' crops, disaggregated in 9 distinct cost elements
 #' @author Debbora Leip
 #' @seealso
-#' \code{\link{readVittis}}
+#' [readVittis()]
 
 correctVittis <- function(x) {
 

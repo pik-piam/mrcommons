@@ -25,7 +25,7 @@ calcOutput("DevelopmentState")
 
 }
 \seealso{
-\code{\link{calcGDPpc}}
+\code{\link[=calcGDPpc]{calcGDPpc()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens

@@ -7,7 +7,6 @@
 #' \dontrun{
 #' calcOutput("AgEmplILO")
 #' }
-#' @importFrom magclass getNames<- getYears where
 
 calcAgEmplILO <- function() {
   iloEmpl <- readSource("ILOSTAT", "EmplByActivityModelled")[, , list("Total", "Aggregate: Agriculture"), drop = TRUE]
@@ -21,7 +20,7 @@ calcAgEmplILO <- function() {
   # regression: sqrt(share s of total population that is employed in agriculture) ~ log10(GDP PPP per capita)
   regCoeff <- readSource("RegressionsILO", "AgEmpl")
 
-  gdp <- calcOutput("GDPpppPast", subtype = "IHME_USD05_PPP_pc_completed", aggregate = FALSE) # mio. USD$PPP05
+  gdp <- calcOutput("GDPPast", subtype = "IHME_USD05_PPP_pc-MI", aggregate = FALSE) # mio. USD$PPP05
   pop <- calcOutput("PopulationPast", aggregate = FALSE) # mio. people
   years <- intersect(getYears(gdp), getYears(pop))
   GDPpc <- gdp[, years, , drop = TRUE] / pop[, years, , drop = TRUE] # GDPpcPPP05

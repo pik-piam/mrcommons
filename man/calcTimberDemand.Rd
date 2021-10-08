@@ -19,7 +19,7 @@ calcOutput("TimberDemand")
 }
 }
 \seealso{
-\code{\link{calcFAOmassbalance_pre}}
+\code{\link[=calcFAOmassbalance_pre]{calcFAOmassbalance_pre()}}
 }
 \author{
 Abhijeet Mishra

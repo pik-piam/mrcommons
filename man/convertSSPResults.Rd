@@ -23,7 +23,7 @@ readSource("SSPResults",aggregate=TRUE)
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Abhijeet Mishra, Benjamin Leon Bodirsky, Florian Humpenoeder

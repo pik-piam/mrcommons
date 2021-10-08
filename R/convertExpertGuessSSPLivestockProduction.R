@@ -9,7 +9,7 @@
 #' 
 #' @return magpie object containing converted expert guesses
 #' @author Stephen Wirth
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{ 
 #' a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")

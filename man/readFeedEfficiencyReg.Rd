@@ -11,7 +11,7 @@ MAgPIE object containing regression coefficients
 }
 \description{
 Read in csv file containing coefficients of non-linear regression analysis
-for the calculation of future feed efficiencies of feed baskets dependent 
+for the calculation of future feed efficiencies of feed baskets dependent
 on livestock productivity trends
 }
 \examples{
@@ -20,7 +20,7 @@ a <- readSource("FeedEfficiencyReg")
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Isabelle Weindl

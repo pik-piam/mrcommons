@@ -57,7 +57,7 @@ calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggr
 }
 }
 \seealso{
-\code{\link{readLPJmL}}
+\code{\link[=readLPJmL]{readLPJmL()}}
 }
 \author{
 Kristine Karstens, Felicitas Beier

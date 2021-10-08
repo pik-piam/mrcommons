@@ -6,7 +6,7 @@
 #' @param subtype data subtype. Available subtypes: "forest_area","growing_stock","biomass_stock","carbon_stock","management","disturbance","forest_fire"
 #' @return Magpie object of the FRA 2020 data
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("FRA2020", "growing_stock")

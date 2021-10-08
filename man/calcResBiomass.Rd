@@ -21,7 +21,7 @@ calcResBiomass(
 
 \item{attributes}{in dm, wm, ge, nr, p, k}
 
-\item{scenario}{define scenario switch for sensititvy analysis 
+\item{scenario}{define scenario switch for sensititvy analysis
 for historical SOC budget}
 }
 \value{
@@ -40,7 +40,7 @@ calcOutput("ResBiomass")
 
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readSource}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readSource]{readSource()}}
 }
 \author{
 Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky

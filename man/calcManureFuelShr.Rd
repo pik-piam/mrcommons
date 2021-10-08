@@ -23,7 +23,7 @@ calcOutput("ManureFuelShr")
 
 }
 \seealso{
-\code{\link{calcExcretion}}
+\code{\link[=calcExcretion]{calcExcretion()}}
 }
 \author{
 Benjamin Leon Bodirsky

@@ -9,7 +9,7 @@
 #' @return A MAgPIE object with the GFED emissions data and sub-dimensions Partition and Species.
 #' @author Michael S. Crawford
 #'
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples \dontrun{ a <- readSource("GFED") }
 #'
 #' @importFrom hdf5r h5file

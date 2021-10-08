@@ -3,8 +3,8 @@
 #' @return  magpie object of time series of world price of commodites
 #' @author Xiaoxi Wang
 #' @seealso 
-#' \code{\link{readSource}},
-#' \code{\link{readWBGEM}}
+#' [readSource()],
+#' [readWBGEM()]
 #' 
 #' @examples 
 #' 

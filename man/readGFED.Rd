@@ -22,7 +22,7 @@ burning partitions (AGRI), which are currently being used for validation.
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Michael S. Crawford

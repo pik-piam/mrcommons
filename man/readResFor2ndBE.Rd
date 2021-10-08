@@ -21,7 +21,7 @@ Read in old ReMIND use of residues for 2nd generation bioenergy and newly estima
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Kristine Karstens

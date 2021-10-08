@@ -21,10 +21,10 @@ Reads a dataset containing values for biological nitrogen fixation in agricultur
 }
 \details{
 Availables Subtypes:
- \itemize{
- \item ndfa:  National values for Plant associated fixation
- \item freeliving: Global values for free living agents
- }
+\itemize{
+\item ndfa:  National values for Plant associated fixation
+\item freeliving: Global values for free living agents
+}
 }
 \examples{
 

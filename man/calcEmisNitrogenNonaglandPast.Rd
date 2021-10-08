@@ -23,8 +23,8 @@ calcOutput("EmisNitrogenPasturePast")
 
 }
 \seealso{
-\code{\link{calcEmisNitrogenPast}},
-\code{\link{calcExcretion}}
+\code{\link[=calcEmisNitrogenPast]{calcEmisNitrogenPast()}},
+\code{\link[=calcExcretion]{calcExcretion()}}
 }
 \author{
 Benjamin Leon Bodirsky

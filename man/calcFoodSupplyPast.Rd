@@ -37,7 +37,7 @@ calcOutput("FoodSupplyPast")
 
 }
 \seealso{
-\code{\link{calcFAOharmonized}}
+\code{\link[=calcFAOharmonized]{calcFAOharmonized()}}
 }
 \author{
 Benjamin Leon Bodirsky, Xiaoxi Wang

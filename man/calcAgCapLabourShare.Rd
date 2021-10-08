@@ -19,7 +19,7 @@ calcOutput("calcAgCapLabourShare")
 
 }
 \seealso{
-\code{\link{calcAgCapLabourShare}}
+\code{\link[=calcAgCapLabourShare]{calcAgCapLabourShare()}}
 }
 \author{
 Edna J. Molina Bacca

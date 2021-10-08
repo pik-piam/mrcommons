@@ -8,7 +8,7 @@ readFAO(subtype)
 }
 \arguments{
 \item{subtype}{Type of FAO data that should be read. Available types are:
-\itemize{ 
+\itemize{
 \item \code{CBCrop}: Commodity Balance Crop (CommodityBalances_Crops_E_All_Data.zip)
 \item \code{CBLive}: Commoditiy Balance Livestock (CommodityBalances_LivestockFish_E_All_Data.zip)
 \item \code{Crop}: Production Crops ("Production_Crops_E_All_Data.zip")
@@ -25,11 +25,11 @@ Production-Crops. These datasets have been added together to a "Fodder.csv" file
 \item \code{LiveHead}: Production Live Animals ("Production_Livestock_E_All_Data.zip")
 \item \code{LivePrim}: Production Livestock Primary ("Production_LivestockPrimary_E_All_Data.zip")
 \item \code{LiveProc}: Production Livestock Processed ("Production_LivestockProcessed_E_All_Data.zip")
-\item \code{Pop}: Population ("Population_E_All_Data.zip") 
+\item \code{Pop}: Population ("Population_E_All_Data.zip")
 \item \code{ForestProdTrade}: Forestry Production and Trade ("Forestry_E_All_Data_(Normalized).zip")
 \item \code{PricesProducerAnnual}: Producer Prices - Annual ("Prices_E_All_Data.zip")
 \item \code{PricesProducerAnnualLCU}: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
-\item \code{ValueOfProd}: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip") 
+\item \code{ValueOfProd}: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip")
 }}
 }
 \value{
@@ -49,7 +49,7 @@ Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
   }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic

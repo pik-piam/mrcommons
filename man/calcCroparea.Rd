@@ -36,10 +36,10 @@ areas of individual crops from FAOSTAT and weight
 }
 \description{
 Returns harvested areas of individual crops from FAOSTAT.
-             Total harvested areas can be lower or higher than arable
-             land because of multicropping or fallow land.
-             Rice areas are distributed to flooded LUH areas. Additional FAOSTAT
-             rice areas are distributed based on country shares.
+Total harvested areas can be lower or higher than arable
+land because of multicropping or fallow land.
+Rice areas are distributed to flooded LUH areas. Additional FAOSTAT
+rice areas are distributed based on country shares.
 }
 \author{
 Ulrich Kreidenweis, Kristine Karstens, Felicitas Beier

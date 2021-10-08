@@ -8,7 +8,7 @@
 #' This is an intermediary result, which is used e.g. for estimating the feed baskets. For most uses, it is more appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcFAOmassbalance}}
+#' [calcFAOmassbalance()]
 #' @examples
 #'
 #' \dontrun{

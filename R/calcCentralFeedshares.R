@@ -9,7 +9,6 @@
 #' @return Central feed shares and weights as list of two MAgPIE-objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Stephen Wirth, Jan Philipp Dietrich
 #'
-#' @importFrom magclass collapseNames
 #' @examples 
 #' \dontrun{ 
 #' calcOutput("CentralFeedshares")
