@@ -50,9 +50,5 @@ stop("it seems the Japan bug in LUH2v2 has been removed. Please remove the bugfi
 }
   }
 
-  # Correct locations where there is no land reported
-  position <- where(dimSums(x, dim = 3) == 0)$true
-  x[position$regions, position$years, "other"] <- 1e-6
-
   return(x)
 }

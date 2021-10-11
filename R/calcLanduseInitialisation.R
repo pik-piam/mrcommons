@@ -19,7 +19,7 @@
 #' \dontrun{
 #' calcOutput("LanduseInitialisation")
 #' }
-#' @importFrom magclass setNames
+#' @importFrom magclass setNames where
 
 
 calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", country_level = FALSE, selectyears = "past", input_magpie = FALSE) {
@@ -250,6 +250,10 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       out <- toolCountryFill(out, fill = 0)
     }
   }
+  
+  # Correct locations where there is no land reported
+  position <- where(dimSums(out, dim = 3) == 0)$true
+  out[position$regions, position$years, "other"] <- 1e-6
 
   return(list(
     x = out,
