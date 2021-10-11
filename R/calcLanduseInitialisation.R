@@ -253,7 +253,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
   
   # Correct locations where there is no land reported
   position <- where(dimSums(out, dim = 3) == 0)$true
-  out[position$regions, position$years, "other"] <- 1e-6
+  out[position$regions, position$years, "other"] <- 1e-5
 
   return(list(
     x = out,
