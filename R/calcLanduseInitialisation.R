@@ -236,7 +236,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     cellArea <- dimSums(out, dim = 3)
     temp <- out[, , other]
     zero <- which(cellArea == 0, arr.ind = F)
-    temp[zero] <- 10^-8
+    temp[zero] <- 10^-6
     out[, , other] <- temp
   }
 
@@ -251,9 +251,6 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     }
   }
   
-  # Correct locations where there is no land reported
-  position <- where(dimSums(out, dim = 3) == 0)$true
-  out[position$regions, position$years, "other"] <- 1e-5
 
   return(list(
     x = out,
