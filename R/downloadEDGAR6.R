@@ -4,7 +4,7 @@
 #' @param subtype type in gas for receiving the newest data. type in specific filename for old version 4.31 data
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Benjamin Leon Bodirsky, 
-#' @importFrom utils download.file tail unzip
+#' @importFrom utils download.file tail unzip bibentry
 
 downloadEDGAR6 <- function(subtype="n2o") {
   
