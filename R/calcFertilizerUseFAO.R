@@ -25,10 +25,13 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
 
   # calculate nutrients per area (to fill in fertilizer by nutrient data later on)
   cropland <- readSource("FAO_online", "Land")[, , list("6620|Cropland", "Area_(1000_ha)"), drop = TRUE]
+  years <- intersect(getItems(cropland, dim = 2), getItems(totalUseNutrients, dim = 2))
+  totalUseNutrients <- totalUseNutrients[, years, ]
+  cropland <- cropland[, years, ]
   nutrientPerArea <- totalUseNutrients / cropland
   nutrientPerArea[is.na(nutrientPerArea)] <- 0
 
-  # fill gaps in nutrients per area data by using regional averages (scaled by a mulitplicative correction coefficient
+  # fill gaps in nutrients per area data by using regional averages (scaled by a multiplicative correction coefficient
   # to match first observation of each country)
   regionMapping <- toolGetMapping("regionmappingH12.csv", type = "regional")
   numCountries <- nutrientPerArea
@@ -38,21 +41,25 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
   worldRegionNutrientPerArea <- toolAggregate(nutrientPerArea, rel = regionMapping,
                                         weight = NULL, from = "CountryCode", to = "RegionCode", dim = 1) / numCountries
 
-  .calibratingWorldRegionValues <- function(reg, x) {
+  .calibratingWorldAverages <- function(reg, x, data, glo = FALSE) {
     tmp <- x[reg, , ]
-    wr <- regionMapping$RegionCode[regionMapping$CountryCode == reg]
+    if (isFALSE(glo)) {
+      wr <- regionMapping$RegionCode[regionMapping$CountryCode == reg]
+      data <- data[wr, , ]
+    }
     yearsObs <- where(tmp != 0)$true$years
     yearsMissing <- where(tmp == 0)$true$years
     if (length(yearsObs) == 0) {
-      tmp[, , ] <- worldRegionNutrientPerArea[wr, , drop = TRUE]
+      tmp[, , ] <- data[, , drop = TRUE]
     } else if (length(yearsMissing) > 0) {
       y <- min(yearsObs)
-      factor <- tmp[, y, ] / worldRegionNutrientPerArea[wr, y, , drop = TRUE]
-      tmp[, yearsMissing, ] <- worldRegionNutrientPerArea[wr, yearsMissing, , drop = TRUE] * factor
+      factor <- tmp[, y, ] / data[, y, , drop = TRUE] # multiplicative correction coefficient
+      tmp[, yearsMissing, ] <- data[, yearsMissing, , drop = TRUE] * factor
     }
     return(tmp)
   }
-  nutrientPerArea <- mbind(lapply(getItems(nutrientPerArea, dim = 1), .calibratingWorldRegionValues, nutrientPerArea))
+  nutrientPerArea <- mbind(lapply(getItems(nutrientPerArea, dim = 1),
+                                  .calibratingWorldAverages, nutrientPerArea, worldRegionNutrientPerArea))
 
   # fill gaps in fertilizer use by nutrient based on cropland and nutrient per area
   estFertByNutrient <- cropland * nutrientPerArea
@@ -67,20 +74,24 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
   totalUseProducts <- setNames(dimSums(fertByProduct[, , "Agricultural_Use_(tonnes)"], dim = 3.1),
                                paste0(subtype, "_fertilizer"))
 
+  years <- intersect(getItems(totalUseNutrients, dim = 2), getItems(totalUseProducts, dim = 2))
+  totalUseProducts <- totalUseProducts[, years, ]
+
   ## average nutrient content in fertilizer products
-  avgNutrientContent <- totalUseNutrients[, getItems(totalUseProducts, dim = 2), , drop = TRUE] / totalUseProducts
+  avgNutrientContent <- totalUseNutrients[, years, , drop = TRUE] / totalUseProducts
   avgNutrientContent[avgNutrientContent > 1] <- 0
   avgNutrientContent[!is.finite(avgNutrientContent)] <- 0
 
-  # fill gaps with world averages
-  worldAvgNutrientContent <- avgNutrientContent
-  worldAvgNutrientContent[worldAvgNutrientContent != 0] <- 1
-  worldAvgNutrientContent[, , ] <- dimSums(avgNutrientContent, dim = 1) / dimSums(worldAvgNutrientContent, dim = 1)
-  worldAvgNutrientContent[is.na(worldAvgNutrientContent)] <- 0
-  avgNutrientContent[avgNutrientContent == 0] <- worldAvgNutrientContent[avgNutrientContent == 0]
+  # fill gaps with world averages calibrated to countries
+  numCountries <- avgNutrientContent
+  numCountries[numCountries != 0] <- 1
+  worldAvgNutrientContent <- dimSums(avgNutrientContent, dim = 1) / dimSums(numCountries, dim = 1)
+
+  avgNutrientContent <- mbind(lapply(getItems(avgNutrientContent, dim = 1),
+                                     .calibratingWorldAverages, avgNutrientContent, worldAvgNutrientContent, TRUE))
 
   ## fill gaps in total fertilizer use based on fertilizer by nutrient use
-  estTotalUseProducts <- totalUseNutrients[, getItems(totalUseProducts, dim = 2), , drop = TRUE] / avgNutrientContent
+  estTotalUseProducts <- totalUseNutrients[, years, , drop = TRUE] / avgNutrientContent
   totalUseProducts[totalUseProducts == 0] <- estTotalUseProducts[totalUseProducts == 0]
 
   ## select output
