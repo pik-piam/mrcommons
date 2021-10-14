@@ -71,6 +71,7 @@ if (subtype == "wheat_areas"){
    tmp         <- left_join(mapping, tmp, by = c("lat", "lon"), copy = TRUE)
    drop      <- c("^iso$|lpj|^cell$|lon|lat")
    tmp         <- as.magpie(tmp[, !grepl(drop, colnames(tmp))])
+   getCells(x) <- gsub("_", ".", getCells(x))
    getItems(tmp, dim=3.1) <- i  
    
    out <- mbind(out,tmp)
@@ -90,6 +91,7 @@ if (subtype == "wheat_areas"){
      tmp         <- left_join(mapping, tmp, by = c("lat", "lon"), copy = TRUE)
      drop      <- c("^iso$|lpj|^cell$|lon|lat")
      tmp         <- as.magpie(tmp[, !grepl(drop, colnames(tmp))])
+     getCells(x) <- gsub("_", ".", getCells(x))
      getItems(tmp, dim=3.1) <- ri  
      
      out <- mbind(out,tmp)
