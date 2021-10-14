@@ -30,16 +30,7 @@ read <- function(cr, ir, dat){
   colnames(x)[c(1, 2)] <- c("lon", "lat")
   x         <- left_join(mapping, x, by = c("lat", "lon"), copy = TRUE)
   drop      <- c("^iso$|lpj|^cell$|lon|lat")
-  x         <- as.magpie(x[, !grepl(drop, colnames(x))], temporal="layer")
-  
-  #fill missing days and make described date 1
-  missingdays <- setdiff(seq(1,365,1), getYears(x))
-  filld <- new.magpie(cells_and_regions = getItems(x, dim=1), years=missingdays, names = "layer", fill=0)
-  getItems(filld, dim=2) <- gsub("y0+", "", getYears(filld))
-  x <- mbind(x, filld)
-  x <- x[,order(as.numeric(getItems(x, dim=2))),]
-  x[is.na(x)] <- 0
-  x[x>0] <- 1
+  x         <- as.magpie(x[, !grepl(drop, colnames(x))])
   
   getCells(x) <- gsub("_", ".", getCells(x))
   getItems(x,dim=3.1) <- cr
