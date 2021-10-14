@@ -50,10 +50,10 @@ calcEDGAR6<-function(non_country=FALSE, nutrient=TRUE){
     return(v56)
   }
   if(nutrient==TRUE){
-    v56=reformulate("n2o","n2o_n",1/44*28/1000,v56)
-    v56=reformulate("no2","no2_n",1/46*14/1000,v56)
-    v56=reformulate("nh3","nh3_n",1/17*14/1000,v56)
-    v56=reformulate("co2_excl_short","co2_c",1/44*12/1000,v56)    
+    v56=reformulate("n2o","n2o_n",1/44*28,v56)
+    v56=reformulate("no2","no2_n",1/46*14,v56)
+    v56=reformulate("nh3","nh3_n",1/17*14,v56)
+    v56=reformulate("co2_excl_short","co2_c",1/44*12,v56)    
   }
 
   return(list(
