@@ -1,0 +1,69 @@
+#' @title readGGCMICropCalendar
+#' @description Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars 
+#' @return A MAgPIE 0.5deg resolution, day of the year
+#' @author David Chen
+#' @importFrom raster brick rasterToPoints
+#' @import magclass
+#' @importFrom dplyr left_join
+
+
+readGGCMICropCalendar <- function(){
+
+crops <- c("bar", "bea", "cas", "cot", "mai", "mil",
+           "nut","pea","pot","rap", "ri1", "ri2", "rye",
+           "sgb", "sgc", "sor","soy", "sun", "swh","wwh")
+
+irri <- c("rf", "ir")
+
+dates <- c("planting_day", "maturity_day")
+
+
+mapping <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")
+
+
+read <- function(cr, ir, dat){
+
+  # read in as magpie
+  file <- paste0(cr,"_",ir,"_ggcmi_crop_calendar_phase3_v1.01.nc4")
+  x         <- brick(file, var=dat)
+  x         <- rasterToPoints(x)
+  colnames(x)[c(1, 2)] <- c("lon", "lat")
+  x         <- left_join(mapping, x, by = c("lat", "lon"), copy = TRUE)
+  drop      <- c("^iso$|lpj|^cell$|lon|lat")
+  x         <- as.magpie(x[, !grepl(drop, colnames(x))], temporal="layer")
+  
+  #fill missing days and make described date 1
+  missingdays <- setdiff(seq(1,365,1), getYears(x))
+  filld <- new.magpie(cells_and_regions = getItems(x, dim=1), years=missingdays, names = "layer", fill=0)
+  getItems(filld, dim=2) <- gsub("y0+", "", getYears(filld))
+  x <- mbind(x, filld)
+  x <- x[,order(as.numeric(getItems(x, dim=2))),]
+  x[is.na(x)] <- 0
+  x[x>0] <- 1
+  
+  getCells(x) <- gsub("_", ".", getCells(x))
+  getItems(x,dim=3.1) <- cr
+  getItems(x, dim=3.2) <- ir
+  getItems(x, dim=3.3) <- dat  
+  return(x)
+}
+
+out <- NULL
+for (cr in crops){
+  for (ir in irri){
+    for (dat in dates){
+      tmp <- read(cr=cr, ir=ir, dat=dat)
+      out <- mbind(tmp, out)      
+    }}}
+
+## some crops are left for some days after maturity until harvest, Elliott et al. 2015source data from pdf in source folder 
+days_to_harvest <- new.magpie(cells_and_regions = getItems(out,dim=1),
+                              years = NULL,names = getItems(out, dim=3.1), fill = 0)
+days_to_harvest[,,c("mai", "soy")] <- 21
+days_to_harvest[,,c("swh", "wwh","bar", "rye", "rap")] <- 7
+
+out <- magclass::add_columns(out, addnm="harvest_day", dim=3.3, fill=0)
+out[,,"harvest_day"] <- out[,,"maturity_day"] + days_to_harvest
+
+return(out)
+}
