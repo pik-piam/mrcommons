@@ -4,7 +4,10 @@
 \alias{readGGCMICropCalendar}
 \title{readGGCMICropCalendar}
 \usage{
-readGGCMICropCalendar()
+readGGCMICropCalendar(subtype)
+}
+\arguments{
+\item{subtype}{"cal" for the basic calendar "wheat_areas" for swh and wwh growing areas, "rice_areas" for}
 }
 \value{
 A MAgPIE 0.5deg resolution, day of the year
