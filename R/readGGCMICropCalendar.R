@@ -1,5 +1,5 @@
 #' @title readGGCMICropCalendar
-#' @description Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars 
+#' @description Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars. Note that 0 means crop is not harvested in a given grid cell.
 #' @return A MAgPIE 0.5deg resolution, day of the year
 #' @param subtype "cal" for the basic calendar "wheat_areas" for swh and wwh growing areas, "rice_areas" for 
 #' @author David Chen
@@ -27,16 +27,12 @@ readGGCMICropCalendar <- function(subtype){
      # read in as magpie
      file <- paste0(cr,"_",ir,"_ggcmi_crop_calendar_phase3_v1.01.nc4")
      x         <- brick(file, var=dat)
-     x         <- rasterToPoints(x)
-     colnames(x)[c(1, 2)] <- c("lon", "lat")
-     x         <- left_join(mapping, x, by = c("lat", "lon"), copy = TRUE)
-     drop      <- c("^iso$|lpj|^cell$|lon|lat")
-     x         <- as.magpie(x[, !grepl(drop, colnames(x))])
-  
-     getCells(x) <- gsub("_", ".", getCells(x))
+     x         <- as.magpie(x)
+     x         <- toolCoord2Isocell(x)
      getItems(x,dim=3.1) <- cr
      getItems(x, dim=3.2) <- ir
      getItems(x, dim=3.3) <- dat  
+     
      return(x)
      }
 
@@ -48,6 +44,8 @@ readGGCMICropCalendar <- function(subtype){
       out <- mbind(tmp, out)      
     }}}
 
+  out[is.na(out)] <- 0
+  
  ## some crops are left for some days after maturity until harvest, Elliott et al. 2015source data from pdf in source folder 
  days_to_harvest <- new.magpie(cells_and_regions = getItems(out,dim=1),
                               years = NULL,names = getItems(out, dim=3.1), fill = 0)
@@ -65,18 +63,22 @@ if (subtype == "wheat_areas"){
   
    for (i in c("wwh", "swh")){
    
-   tmp <- brick("winter_and_spring_wheat_areas_phase3.nc4", var=paste0(i, "_mask")) 
-   tmp         <- rasterToPoints(tmp)
-   colnames(tmp)[c(1, 2)] <- c("lon", "lat")
-   tmp         <- left_join(mapping, tmp, by = c("lat", "lon"), copy = TRUE)
-   drop      <- c("^iso$|lpj|^cell$|lon|lat")
-   tmp         <- as.magpie(tmp[, !grepl(drop, colnames(tmp))])
-   getCells(x) <- gsub("_", ".", getCells(x))
+   tmp   <- brick("winter_and_spring_wheat_areas_phase3.nc4", var=paste0(i, "_mask")) 
+   tmp   <- as.magpie(tmp)
+   tmp   <- toolCoord2Isocell(tmp)
+   
+   #fill NA cells with 0
+   cells  <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")[,"celliso"]
+   fill   <- new.magpie(cells_and_regions = setdiff(cells, getItems(tmp, dim=1)), years = NULL, names = "layer", fill=0 )
+   tmp2   <- mbind(tmp, fill)
+   
    getItems(tmp, dim=3.1) <- i  
    
    out <- mbind(out,tmp)
    }
-
+   
+  out[is.na(out)] <- 0
+  
   }
  if (subtype == "rice_areas"){
    
@@ -86,16 +88,13 @@ if (subtype == "wheat_areas"){
      
      tmp <- brick(paste0(ri,"_ir_ggcmi_crop_calendar_phase3_v1.01.nc4"), var="fraction_of_harvested_area") 
     
-     tmp         <- rasterToPoints(tmp)
-     colnames(tmp)[c(1, 2)] <- c("lon", "lat")
-     tmp         <- left_join(mapping, tmp, by = c("lat", "lon"), copy = TRUE)
-     drop      <- c("^iso$|lpj|^cell$|lon|lat")
-     tmp         <- as.magpie(tmp[, !grepl(drop, colnames(tmp))])
-     getCells(x) <- gsub("_", ".", getCells(x))
+     tmp         <- as.magpie(tmp)
+     tmp        <- toolCoord2Isocell(tmp)
      getItems(tmp, dim=3.1) <- ri  
      
      out <- mbind(out,tmp)
    }
+   out[is.na(out)] <- 0
    
  }
  

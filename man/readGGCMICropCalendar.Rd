@@ -13,7 +13,7 @@ readGGCMICropCalendar(subtype)
 A MAgPIE 0.5deg resolution, day of the year
 }
 \description{
-Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars
+Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars. Note that 0 means crop is not harvested in a given grid cell.
 }
 \author{
 David Chen
