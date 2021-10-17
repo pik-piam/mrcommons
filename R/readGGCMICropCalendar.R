@@ -29,6 +29,12 @@ readGGCMICropCalendar <- function(subtype){
      x         <- brick(file, var=dat)
      x         <- as.magpie(x)
      x         <- toolCoord2Isocell(x)
+     
+     if (length(getItems(x,dim=1)) < 59199) {
+        fill <- new.magpie(cells_and_regions = setdiff(mapping$celliso, getItems(x, dim=1)), years = NULL, names = "layer", fill=0)
+        x1 <- mbind(x,fill)
+     }
+     
      getItems(x,dim=3.1) <- cr
      getItems(x, dim=3.2) <- ir
      getItems(x, dim=3.3) <- dat  
@@ -41,7 +47,8 @@ readGGCMICropCalendar <- function(subtype){
     for (ir in irri){
      for (dat in dates){
       tmp <- read(cr=cr, ir=ir, dat=dat)
-      out <- mbind(tmp, out)      
+      print(paste(cr, ir, dat))
+      out <- mbind(out, tmp)      
     }}}
 
   out[is.na(out)] <- 0
