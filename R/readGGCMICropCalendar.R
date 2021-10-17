@@ -1,6 +1,6 @@
 #' @title readGGCMICropCalendar
 #' @description Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars. Note that 0 means crop is not harvested in a given grid cell.
-#' @return A MAgPIE 0.5deg resolution, day of the year
+#' @return A MAgPIE object, day of the year
 #' @param subtype "cal" for the basic calendar "wheat_areas" for swh and wwh growing areas, "rice_areas" for 
 #' @author David Chen
 #' @importFrom raster brick rasterToPoints

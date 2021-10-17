@@ -126,8 +126,8 @@ if (products == "kcr") {
     setNames(tece_ratio[,, "15|Wheat"],NULL) * setNames(cropcaldf[,,"wheat"],NULL))
   
     iprod[,,"trce"] <- prod[,,"trce"] * 
-    (setNames(tece_ratio[,,"79|Millet"],NULL) * setNames(cropcaldf[,,"mil"],NULL) +
-       setNames(tece_ratio[,, "83|Sorghum"],NULL) * setNames(cropcaldf[,,"sor"],NULL))
+    (setNames(trce_ratio[,,"79|Millet"],NULL) * setNames(cropcaldf[,,"mil"],NULL) +
+       setNames(trce_ratio[,, "83|Sorghum"],NULL) * setNames(cropcaldf[,,"sor"],NULL))
   
     iprod[,,"puls_pro"] <- prod[,,"puls_pro"] * 
       (setNames(dimSums(puls_ratio[,,c("176|Beans, dry", "181|Broad beans, horse beans, dry")],dim=3),NULL) * setNames(cropcaldf[,,"bea"],NULL) +
