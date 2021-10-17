@@ -32,7 +32,7 @@ readGGCMICropCalendar <- function(subtype){
      
      if (length(getItems(x,dim=1)) < 59199) {
         fill <- new.magpie(cells_and_regions = setdiff(mapping$celliso, getItems(x, dim=1)), years = NULL, names = "layer", fill=0)
-        x1 <- mbind(x,fill)
+        x <- mbind(x,fill)
      }
      
      getItems(x,dim=3.1) <- cr
@@ -47,7 +47,6 @@ readGGCMICropCalendar <- function(subtype){
     for (ir in irri){
      for (dat in dates){
       tmp <- read(cr=cr, ir=ir, dat=dat)
-      print(paste(cr, ir, dat))
       out <- mbind(out, tmp)      
     }}}
 
