@@ -76,7 +76,7 @@ if (subtype == "wheat_areas"){
    #fill NA cells with 0
    cells  <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")[,"celliso"]
    fill   <- new.magpie(cells_and_regions = setdiff(cells, getItems(tmp, dim=1)), years = NULL, names = "layer", fill=0 )
-   tmp2   <- mbind(tmp, fill)
+   tmp   <- mbind(tmp, fill)
    
    getItems(tmp, dim=3.1) <- i  
    
