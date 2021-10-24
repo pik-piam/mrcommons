@@ -46,7 +46,7 @@ Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 }
 \examples{
 
-  \dontrun{ a <- readSource("FAO","Crop")
+  \dontrun{ a <- readSource("FAO_online","Crop")
   }
 }
 \seealso{

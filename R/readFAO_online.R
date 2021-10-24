@@ -37,7 +37,7 @@
 #' @seealso \code{\link{readSource}}
 #' @examples
 #'
-#'   \dontrun{ a <- readSource("FAO","Crop")
+#'   \dontrun{ a <- readSource("FAO_online","Crop")
 #'   }
 #' @importFrom tools file_ext
 #' @importFrom data.table fread

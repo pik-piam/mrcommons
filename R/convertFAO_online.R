@@ -16,7 +16,7 @@
 #' @seealso \code{\link{readFAO}}, \code{\link{readSource}},
 #' @examples
 #'
-#' \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
+#' \dontrun{ a <- readSource("FAO_online","Crop", convert=TRUE)}
 #' @importFrom magclass magpiesort dimExists getItems
 #'
 
