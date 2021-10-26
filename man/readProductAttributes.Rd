@@ -23,8 +23,8 @@ livestock_specifications_2012_06_14.ods in the svn folder /tools/Nutrients .
 Values standardized on DM.
 }
 \examples{
-
-\dontrun{ a <- readSource("ProductAttributes")
+\dontrun{
+a <- readSource("ProductAttributes")
 }
 }
 \seealso{
