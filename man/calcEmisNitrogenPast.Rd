@@ -13,12 +13,12 @@ calcEmisNitrogenPast(method = "IPCC")
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates nitrogenous emissions from all emission sources for the historical period. 
+Calculates nitrogenous emissions from all emission sources for the historical period.
 Complements own estimates with Edgar esimtates for the historical period.
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPast")
 }
 

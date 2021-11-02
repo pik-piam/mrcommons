@@ -31,7 +31,7 @@ Conputes Atmospheric (nitrogen) deposition on different land-use types. It disti
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("AtmosphericDeposition")
 }
 

@@ -21,7 +21,7 @@ calcLandEmissions <- function(datasource="CEDS") {
 
     ceds<-calcOutput("EmissionInventory",
                      datasource=datasource,
-                     mapping="mappingCEDS59toMAgPIE.csv",
+                     targetResolution="magpie",
                      from="CEDS59",
                      to="MAgPIE",
                      aggregate = FALSE)
@@ -102,7 +102,7 @@ calcLandEmissions <- function(datasource="CEDS") {
     # WORK IN PROGRESS!!!
     inventory<-calcOutput("EmissionInventory",
                      datasource=datasource,
-                     mapping=NULL,
+                     targetResolution=NULL,
                      to="PRIMAPhist",
                      aggregate = FALSE)
 
