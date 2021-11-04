@@ -17,7 +17,7 @@
 calcAdjustGrassi2021 <- function(){
   df <- readSource("AdjustGrassi2021",subtype="data")
 
-  wf <- readSource("AdjustGrassi2021",subtype="weigt")
+  wf <- readSource("AdjustGrassi2021",subtype="weight")
   wf <- dimSums(wf,dim=2)/dim(wf)[2]
   wf <- toolCountryFill(wf,fill=0)
   wf <- abs(wf)
