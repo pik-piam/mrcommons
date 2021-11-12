@@ -33,7 +33,7 @@ calcOutput("calcNitrogenFixationPast")
 }
 }
 \seealso{
-\code{\link{calcNitrogenFixationPast}}
+\code{\link[=calcNitrogenFixationPast]{calcNitrogenFixationPast()}}
 }
 \author{
 Benjamin Leon Bodirsky

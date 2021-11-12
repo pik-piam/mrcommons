@@ -11,8 +11,8 @@
 #' @param source "ImageMacc" or "PBL_MACC_2019"
 #' @return MAgPIE object
 #' @author Nele Steinmetz, Florian Humpenoeder
-#' @seealso \code{\link{calcOutput}}, \code{\link{readImageMacc}},
-#' \code{\link{convertImageMacc}}
+#' @seealso [calcOutput()], [readImageMacc()],
+#' [convertImageMacc()]
 #' @examples
 #' \dontrun{
 #' calcOutput("MACCsCH4")

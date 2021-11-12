@@ -6,7 +6,7 @@
 #' @return magpie object 
 #' 
 #' @seealso
-#' \code{\link{readBodirsky2018}}
+#' [readBodirsky2018()]
 #' 
 convertBodirsky2018 <- function(x,subtype) {
   if (subtype!="scenarios") {stop("No convert script for this subtype!")}

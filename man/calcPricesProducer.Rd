@@ -25,7 +25,7 @@ a <- calcOutput("PricesProducer")
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
 Edna J. Molina Bacca

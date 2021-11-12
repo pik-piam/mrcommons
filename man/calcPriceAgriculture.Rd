@@ -27,9 +27,9 @@ calcOutput("PriceAgriculture",datasource = "WBGEM",aggregate =  FALSE)
 
 }
 \seealso{
-\code{\link{readIMPACT3.2.2World_Price}},
-\code{\link{calcWBGEM}},
-\code{\link{readWBGEM}}
+\code{\link[=readIMPACT3.2.2World_Price]{readIMPACT3.2.2World_Price()}},
+\code{\link[=calcWBGEM]{calcWBGEM()}},
+\code{\link[=readWBGEM]{readWBGEM()}}
 }
 \author{
 Mishko Stevanovic, Xiaoxi Wang

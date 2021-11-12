@@ -48,7 +48,7 @@ calcHourlyLaborCostsILO <- function() {
   # fixed effect regression to calibrate to different countries -> common slope, different intercepts
   regCoeff <- readSource("RegressionsILO", "HourlyLaborCosts")
 
-  GDPmer <- calcOutput("GDPpppPast", subtype = "IHME_USD05_MER_pc_completed", aggregate = FALSE) # mio. USD$MER05
+  GDPmer <- calcOutput("GDPPast", subtype = "IHME_USD05_MER_pc-MI", aggregate = FALSE) # mio. USD$MER05
   pop <- calcOutput("PopulationPast", aggregate = FALSE) # mio. people
   years <- intersect(intersect(getYears(GDPmer), getYears(pop)), getYears(ilo))
   GDPpcMER <- GDPmer[, years, , drop = TRUE] / pop[, years, , drop = TRUE] # GDPpcMER05

@@ -20,8 +20,7 @@
 #' \dontrun{
 #'  readSource("ISIMIP", convert=TRUE)
 #' }
-#'
-#' @import madrat
+#' 
 #' @importFrom magclass getCoords
 #' @importFrom raster brick subset stack
 

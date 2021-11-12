@@ -6,17 +6,12 @@
 #' @param subtype data subtype. 
 #' @return magpie object of the FRA 2015 data
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("CarbonLTS","Lauk_et_al")
 #' }
 #' 
-#' @importFrom magclass as.magpie getYears<- getNames<-
-#' @importFrom madrat toolSubtypeSelect
-#' @importFrom readxl read_xlsx
-#' @importFrom zoo na.locf
-
 readCarbonLTS <- function(subtype){
   
   if(subtype == "Lauk_et_al"){
@@ -24,7 +19,7 @@ readCarbonLTS <- function(subtype){
     location <- "erl431725data.xlsx"
     
     ## Read file
-    x <- read_xlsx(path = location,sheet = "figure1c",skip = 6)
+    x <- readxl::read_xlsx(path = location,sheet = "figure1c",skip = 6)
     
     ## General cleanup
     x <- x[-1,-2] # Remove empty row and unit column
@@ -44,17 +39,17 @@ readCarbonLTS <- function(subtype){
     ## Source file name
     location <- "pnas.1904231116.sd01.xlsm"
     
-    cumulative <- read_xlsx(path = location,sheet = "Figures",skip = 50,n_max = 6)[,-2]
+    cumulative <- readxl::read_xlsx(path = location,sheet = "Figures",skip = 50,n_max = 6)[,-2]
     colnames(cumulative) <- paste0("y",colnames(cumulative))
     colnames(cumulative)[1] <- "Emission"
     
-    annual <- read_xlsx(path = location,sheet = "Figures",skip = 58,n_max = 6)[,-2]
+    annual <- readxl::read_xlsx(path = location,sheet = "Figures",skip = 58,n_max = 6)[,-2]
     colnames(annual) <- paste0("y",colnames(annual))
     colnames(annual)[1] <- "Emission"
     
     ## Filling Historical SSP values
-    cumulative <- na.locf(cumulative,na.rm = FALSE)
-    annual     <- na.locf(annual,    na.rm = FALSE)
+    cumulative <- zoo::na.locf(cumulative,na.rm = FALSE)
+    annual     <- zoo::na.locf(annual,    na.rm = FALSE)
     
     cumulative_mo <- as.magpie(cumulative)
     cumulative_mo <- add_dimension(cumulative_mo, dim=3.1, add="type", nm = "Cumulative (GtCO2)")

@@ -51,7 +51,7 @@ a <- readACCMIP("ACCMIP", "sox_26_2030")
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Roman Popov

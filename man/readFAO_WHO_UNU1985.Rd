@@ -18,7 +18,7 @@ Food and Agriculture Organization of the United Nations, World Health Organizati
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Bodirsky

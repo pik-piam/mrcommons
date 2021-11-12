@@ -5,7 +5,7 @@
 #' @return magpie object 
 #' 
 #' @seealso
-#' \code{\link{readNCDrisc}}
+#' [readNCDrisc()]
 #' 
 readBodirsky2018 <- function(subtype="bmi_shr") {
   if(subtype=="bmi_shr"){

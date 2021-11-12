@@ -12,7 +12,7 @@
 #' @importFrom magclass collapseNames
 #'
 #'
-#' @seealso \code{\link{calcOutput}}
+#' @seealso [calcOutput()]
 #' @examples
 #'
 #' \dontrun{

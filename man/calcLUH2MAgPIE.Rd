@@ -31,7 +31,7 @@ List of magpie objects with results on country level, weight on country level, u
 }
 \description{
 Calculates the real aggregation of LUH croptypes to MAgPIE croptypes
-             out of LUH2FAO and FAO2MAgPIE mappings
+out of LUH2FAO and FAO2MAgPIE mappings
 }
 \examples{
 \dontrun{

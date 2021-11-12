@@ -8,7 +8,7 @@
 #' @return Data as MAgPIE object
 #' @author Kristine Karstens
 #' 
-#' @seealso \code{\link{readFAO}}, \code{\link{readSource}},
+#' @seealso [readFAO()], [readSource()],
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}

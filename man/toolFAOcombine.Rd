@@ -27,7 +27,7 @@ a <- toolFAOcombine(Crop, CropPro, combine = "Item")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Ulrich Kreidenweis

@@ -17,7 +17,7 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens, Felicitas Beier
 #' @seealso
-#' \code{\link{readLPJmL}}
+#' [readLPJmL()]
 #' @examples
 #' 
 #' \dontrun{ 

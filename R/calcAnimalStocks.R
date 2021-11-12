@@ -6,15 +6,13 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcExcretionIPCC}},
-#' \code{\link{readIPCC}}
+#' [calcExcretionIPCC()],
+#' [readIPCC()]
 #' @examples
 #'
 #' \dontrun{
 #' calcOutput("AnimalStocks")
 #' }
-#' @importFrom magclass setNames
-
 
 calcAnimalStocks <- function(grouping = "IPCC") {
   if (grouping != "IPCC") {

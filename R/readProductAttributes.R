@@ -13,7 +13,7 @@
 #' Aboveground crop residues and "BgResidues" Belowground crop residues
 #' @return magpie object with the dimension crops and attributes
 #' @author Benjamin Leon Bodrisky
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ProductAttributes")

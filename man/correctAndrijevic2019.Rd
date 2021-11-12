@@ -20,7 +20,7 @@ corrected magpie object iso-level
 correct Andrijevic governance data
 }
 \seealso{
-\code{\link{readAndrijevic2019}}
+\code{\link[=readAndrijevic2019]{readAndrijevic2019()}}
 }
 \author{
 Felicitas Beier

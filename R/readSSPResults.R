@@ -5,7 +5,7 @@
 #' @return MAgPIE object with regional aggregation of SSP regions, including all indicators
 #' @author Abhijeet Mishra, Florian Humpenoeder
 #' @seealso
-#' \code{\link{readSource}}
+#' [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

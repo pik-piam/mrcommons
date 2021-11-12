@@ -8,9 +8,7 @@
 #' \dontrun{
 #'   readSource("Koeppen", subtype="iso")
 #' }
-#'
-#' @import madrat
-#' @import magclass
+#' 
 #' @importFrom utils read.csv
 
 readKoeppen<-function(subtype="iso"){

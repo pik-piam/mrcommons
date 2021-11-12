@@ -28,7 +28,7 @@ a <- readSource("ProductAttributes")
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodrisky

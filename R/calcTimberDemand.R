@@ -5,7 +5,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Abhijeet Mishra
 #' @seealso
-#' \code{\link{calcFAOmassbalance_pre}}
+#' [calcFAOmassbalance_pre()]
 #' @examples
 #'
 #' \dontrun{

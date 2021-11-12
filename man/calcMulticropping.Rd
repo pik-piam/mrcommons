@@ -23,8 +23,8 @@ calcOutput("Multicropping")
 
 }
 \seealso{
-\code{\link{calcFAOLand}},
-\code{\link{calcCroparea}}
+\code{\link[=calcFAOLand]{calcFAOLand()}},
+\code{\link[=calcCroparea]{calcCroparea()}}
 }
 \author{
 Benjamin Leon Bodirsky, David Chen

@@ -11,7 +11,7 @@ toolIso2CellCountries(x, cells = "magpiecell", absolute = NULL)
 
 \item{cells}{switch between 59199 ("magpiecell") and 67420 ("lpjcell") cells}
 
-\item{absolute}{switch declaring the values as absolute (TRUE) or relative (FALSE) 
+\item{absolute}{switch declaring the values as absolute (TRUE) or relative (FALSE)
 for additional (type-specific) diagnostic information. If not defined (NULL) additional diagnostics
 will not be shown.}
 }

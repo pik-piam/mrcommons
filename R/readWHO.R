@@ -8,7 +8,7 @@
 #' physical_inactivity_adults and physical_inactivity_underaged
 #' @return magpie object of the WHO data
 #' @author Benjamin Bodirsky
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource(type="WHO",subtype="physical_activity_adults")

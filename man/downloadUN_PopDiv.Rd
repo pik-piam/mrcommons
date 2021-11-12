@@ -15,7 +15,7 @@ Download UN_PopDiv dataset (World Population Prospects)
 }
 }
 \seealso{
-\code{\link{downloadSource}} \code{\link{readUN_PopDiv}}
+\code{\link[=downloadSource]{downloadSource()}} \code{\link[=readUN_PopDiv]{readUN_PopDiv()}}
 }
 \author{
 Michael Crawford, Debbora Leip

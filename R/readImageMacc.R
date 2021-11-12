@@ -9,7 +9,7 @@
 #' "baseline_sources"
 #' @return magpie object of the ImageMacc data
 #' @author Nele Steinmetz
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

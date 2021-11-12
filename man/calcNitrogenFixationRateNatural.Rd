@@ -19,8 +19,8 @@ calcOutput("NitrogenFixationRateNatural")
 
 }
 \seealso{
-\code{\link{calcNitrogenFixationPast}}
-\code{\link{readHerridge}}
+\code{\link[=calcNitrogenFixationPast]{calcNitrogenFixationPast()}}
+\code{\link[=readHerridge]{readHerridge()}}
 }
 \author{
 Benjamin Leon Bodirsky

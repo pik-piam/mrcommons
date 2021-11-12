@@ -26,8 +26,8 @@ calcOutput("MACCsN2O")
 }
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readImageMacc}},
-\code{\link{convertImageMacc}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readImageMacc]{readImageMacc()}},
+\code{\link[=convertImageMacc]{convertImageMacc()}}
 }
 \author{
 Nele Steinmetz, Florian Humpenoeder

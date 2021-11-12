@@ -20,7 +20,7 @@ a <- download("TFP_USD")
 
 }
 \seealso{
-\code{\link{downloadSource}}
+\code{\link[=downloadSource]{downloadSource()}}
 }
 \author{
 Edna J. Molina Bacca

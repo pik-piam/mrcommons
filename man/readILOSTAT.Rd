@@ -20,7 +20,7 @@ series (thousands) | Monthly"
 \item \code{EmplByActivityAndStatus}: "Employment by sex, status in employment and economic activity
 (thousands) | Annual"
 \item \code{WeeklyHoursByActivityMonthly}: "Mean weekly hours actually worked per employee by sex and economic
- activity | Monthly"
+activity | Monthly"
 }}
 }
 \value{

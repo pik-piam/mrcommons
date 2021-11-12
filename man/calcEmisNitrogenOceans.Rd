@@ -23,8 +23,8 @@ calcOutput("EmisNitrogenOceans")
 
 }
 \seealso{
-\code{\link{calcAtmosphericDeposition}},
-\code{\link{calcNitrogenBudgetCropland}}
+\code{\link[=calcAtmosphericDeposition]{calcAtmosphericDeposition()}},
+\code{\link[=calcNitrogenBudgetCropland]{calcNitrogenBudgetCropland()}}
 }
 \author{
 Benjamin Leon Bodirsky

@@ -11,7 +11,7 @@
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
 #' @author Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky
-#' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

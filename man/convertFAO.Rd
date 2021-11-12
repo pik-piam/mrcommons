@@ -19,7 +19,7 @@ Converts FAO data to fit to the common country list and removes or converts
 relative values where possible. Yields (Hg/ha) are for instance removed
 since they can later easily be calculated from production and area but might
 be problematic in the spatial aggregation. Per capita demand values are
-transformed into absolute values using population estimates from the 
+transformed into absolute values using population estimates from the
 calcPopulationPast function.
 }
 \details{
@@ -30,7 +30,7 @@ Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
 }
 \seealso{
-\code{\link{readFAO}}, \code{\link{readSource}},
+\code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},
 }
 \author{
 Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic

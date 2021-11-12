@@ -4,8 +4,8 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{readLPJml_rev21}},
-#' \code{\link{readLPJ}}
+#' [readLPJml_rev21()],
+#' [readLPJ()]
 #' @examples
 #' 
 #' \dontrun{ 

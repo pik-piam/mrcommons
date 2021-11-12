@@ -20,5 +20,5 @@ body height:
 Collaboration (NCD-RisC), NCD Risk Factor. 2016. "A Century of Trends in Adult Human Height." ELife 5 (July):e13410. https://doi.org/10.7554/eLife.13410.
 }
 \seealso{
-\code{\link{convertNCDrisc}}
+\code{\link[=convertNCDrisc]{convertNCDrisc()}}
 }

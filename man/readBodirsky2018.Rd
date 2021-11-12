@@ -17,5 +17,5 @@ Reads in regression parameters estimated using mrregression, and reads in some s
 based on Bodirsky et al not yet published
 }
 \seealso{
-\code{\link{readNCDrisc}}
+\code{\link[=readNCDrisc]{readNCDrisc()}}
 }

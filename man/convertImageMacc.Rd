@@ -36,7 +36,7 @@ a <- readSource("ImageMacc","baseline_sources")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Nele Steinmetz

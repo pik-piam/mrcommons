@@ -3,7 +3,7 @@
 #' Download UN_PopDiv dataset (World Population Prospects)
 #' 
 #' @author  Michael Crawford, Debbora Leip
-#' @seealso  \code{\link{downloadSource}} \code{\link{readUN_PopDiv}}
+#' @seealso  [downloadSource()] [readUN_PopDiv()]
 #' @examples
 #' 
 #' \dontrun{ a <- downloadSource()

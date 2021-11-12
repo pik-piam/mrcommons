@@ -13,7 +13,7 @@ convertGTAP81 <- function(x, subtype) {
 
   # optimally GDP would be converted from constant 2005 US$MER to current US$MER, but as it is used as weight
   # this shouldn't have a big impact
-  GDPmer <- calcOutput("GDPpppPast", GDPpppPast = "IHME_USD05_MER_pc_completed", aggregate = FALSE)
+  GDPmer <- calcOutput("GDPPast", GDPPast = "IHME_USD05_MER_pc-MI", aggregate = FALSE)
   GDPmer <- GDPmer[, getYears(x), , drop = TRUE]
   mapping <- toolGetMapping("regionmappingGTAP81.csv", type = "regional")
   x <- toolAggregate(x, rel = mapping, weight = GDPmer, from = "GTAPCode", to = "CountryCode", dim = 1)

@@ -4,7 +4,7 @@
 #' 
 #' @return MAgPIE object
 #' @author Edna J. Molina Bacca
-#' @seealso \code{\link{calcAgCapLabourShare}}
+#' @seealso [calcAgCapLabourShare()]
 #' 
 #' @examples
 #' \dontrun{ 

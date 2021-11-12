@@ -23,8 +23,8 @@ calcOutput("ExcretionIPCC")
 
 }
 \seealso{
-\code{\link{calcExcretion}},
-\code{\link{calcAnimalStocks}}
+\code{\link[=calcExcretion]{calcExcretion()}},
+\code{\link[=calcAnimalStocks]{calcAnimalStocks()}}
 }
 \author{
 Benjamin Leon Bodirsky

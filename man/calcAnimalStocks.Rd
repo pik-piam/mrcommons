@@ -22,8 +22,8 @@ calcOutput("AnimalStocks")
 }
 }
 \seealso{
-\code{\link{calcExcretionIPCC}},
-\code{\link{readIPCC}}
+\code{\link[=calcExcretionIPCC]{calcExcretionIPCC()}},
+\code{\link[=readIPCC]{readIPCC()}}
 }
 \author{
 Benjamin Leon Bodirsky

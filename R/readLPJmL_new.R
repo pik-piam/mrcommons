@@ -5,13 +5,12 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens, Abhijeet Mishra, Felicitas Beier, Marcos Alves
 #' @seealso
-#' \code{\link{readLPJ}}
+#' [readLPJ()]
 #' @examples
 #' \dontrun{
 #' readSource("LPJmL_new", convert = FALSE)
 #' }
 #'
-#' @import madrat
 #' @importFrom magpiesets addLocation
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split

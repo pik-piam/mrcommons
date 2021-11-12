@@ -5,8 +5,8 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, David Chen
 #' @seealso
-#' \code{\link{calcFAOLand}},
-#' \code{\link{calcCroparea}}
+#' [calcFAOLand()],
+#' [calcCroparea()]
 #' @examples
 #'
 #' \dontrun{

@@ -10,8 +10,8 @@ calcCentralFeedshares()
 Central feed shares and weights as list of two MAgPIE-objects
 }
 \description{
-Calculates future central feed shares for all livestock categories 
-based on the results of a non-linear regression between historical 
+Calculates future central feed shares for all livestock categories
+based on the results of a non-linear regression between historical
 central feed shares and livestock productivity and using Koeppen-
 Geiger climate zones
 }

@@ -33,7 +33,7 @@ calcOutput("ResFieldBalancePast")
 
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readSource}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Bodirsky

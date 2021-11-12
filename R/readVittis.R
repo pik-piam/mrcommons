@@ -2,7 +2,7 @@
 #' @description Read-in cost data from Vittis dataset. 
 #' @return National-scale costs of production for 10 crops, disaggregated in 9 distinct cost elements
 #' @author Debbora Leip
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("Vittis")

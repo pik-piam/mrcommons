@@ -21,7 +21,7 @@ or if available the preprocessed raster layers.
 
 }
 \seealso{
-\code{\link{readSoilGrids}}
+\code{\link[=readSoilGrids]{readSoilGrids()}}
 }
 \author{
 Kristine Karstens

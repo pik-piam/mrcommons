@@ -4,7 +4,7 @@
 #'
 #' @return MAgPIE object
 #' @author Edna J. Molina Bacca
-#' @seealso \code{\link{calcOutput}},\code{\link{calcFactorIntensity}}
+#' @seealso [calcOutput()],[calcFactorIntensity()]
 #' @importFrom luscale superAggregate
 #' @importFrom magpiesets findset
 #

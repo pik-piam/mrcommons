@@ -23,7 +23,7 @@ calcOutput("FeedBasketsSysPast")
 }
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readFeedModel}}, \code{\link{calcFeedBasketsPast}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}, \code{\link[=calcFeedBasketsPast]{calcFeedBasketsPast()}}
 }
 \author{
 Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich

@@ -2,7 +2,8 @@
 % Please edit documentation in R/readLPJmLInputs.R
 \name{readLPJmLInputs}
 \alias{readLPJmLInputs}
-\title{readLPJmLInputs}
+\title{\preformatted{  readLPJmLInputs
+}}
 \usage{
 readLPJmLInputs(subtype = "lakeshare")
 }

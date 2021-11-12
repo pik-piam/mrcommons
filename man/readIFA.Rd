@@ -25,7 +25,7 @@ magclass object
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Lavinia Baumstark

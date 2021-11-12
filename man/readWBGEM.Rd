@@ -18,7 +18,7 @@ read raw data of world commodity prices from the dataset of World Bank global ec
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Xiaoxi Wang

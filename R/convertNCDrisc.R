@@ -8,7 +8,7 @@
 #' @return magpie object with a completed dataset.
 #' 
 #' @seealso
-#' \code{\link{convertNCDrisc}}
+#' [convertNCDrisc()]
 #' 
 #' @importFrom magpiesets findset
 
@@ -52,7 +52,7 @@ convertNCDrisc <- function(x, subtype)
     
     regression<-readSource("Bodirsky2018",convert = FALSE)
     
-    gdp_pc<-collapseNames(calcOutput("GDPpc",gdp="PPP",aggregate = FALSE)[,,"SSP2"])
+    gdp_pc <- collapseNames(calcOutput("GDPpc", naming = "scenario", aggregate = FALSE)[,,"SSP2"])
     bmi_regr=collapseNames(regression[,,"intercept"]+regression[,,"saturation"]*gdp_pc/(regression[,,"halfsaturation"]+gdp_pc))
     bmi_regr=time_interpolate(bmi_regr,interpolated_year = getYears(BMI2),integrate_interpolated_years = FALSE)
     
@@ -112,7 +112,7 @@ convertNCDrisc <- function(x, subtype)
     
     regression<-readSource("Bodirsky2018",convert = FALSE)
     
-    gdp_pc<-collapseNames(calcOutput("GDPpc",gdp="PPP",aggregate = FALSE)[,,"SSP2"])
+    gdp_pc<-collapseNames(calcOutput("GDPpc", naming = "scenario", aggregate = FALSE)[,,"SSP2"])
     bmi_regr=collapseNames(regression[,,"intercept"]+regression[,,"saturation"]*gdp_pc/(regression[,,"halfsaturation"]+gdp_pc))
     bmi_regr=time_interpolate(bmi_regr,interpolated_year = getYears(BMI2),integrate_interpolated_years = FALSE)
     

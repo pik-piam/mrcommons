@@ -14,7 +14,7 @@ magpie object in cellular resolution
 }
 \description{
 correctc area equipped for irrigation for the period 1997-2002 from Siebert et al.; 2007 ;
-             Global Map of Irrigation Areas version 4.0.1
+Global Map of Irrigation Areas version 4.0.1
 }
 \examples{
 

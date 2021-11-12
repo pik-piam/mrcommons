@@ -5,19 +5,14 @@
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @seealso
-#' \code{\link{calcAWMSconfShr}},
-#' \code{\link{calcExcretionIPCC}}
+#' [calcAWMSconfShr()],
+#' [calcExcretionIPCC()]
 #' @author Benjamin Leon Bodirsky
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("AWMSconfShrPast")
 #' }
-#' @importFrom magclass collapseNames where
-#' @importFrom madrat toolXlargest
-
-
-
 
 calcAWMSconfShrPast<-function(products="magpie"){
   excretion<-calcOutput("ExcretionIPCC",products=products,aggregate = FALSE)

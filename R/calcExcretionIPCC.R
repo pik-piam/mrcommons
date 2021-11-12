@@ -5,8 +5,8 @@
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @seealso
-#' \code{\link{calcExcretion}},
-#' \code{\link{calcAnimalStocks}}
+#' [calcExcretion()],
+#' [calcAnimalStocks()]
 #' @author Benjamin Leon Bodirsky
 #' @examples
 #' 

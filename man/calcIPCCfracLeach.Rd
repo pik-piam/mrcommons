@@ -24,7 +24,7 @@ a<-calcOutput("IPCCfracLeach",cellular=FALSE)
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
 Benjamin Leon Bodirsky

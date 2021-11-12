@@ -5,7 +5,7 @@
 #' @return magpie object with a completed dataset.
 #' 
 #' @seealso
-#' \code{\link{convertWHO}}
+#' [convertWHO()]
 
 
 convertWHO <- function(x) 

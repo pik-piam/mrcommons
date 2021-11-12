@@ -8,7 +8,7 @@
 #' @return raw TFP file from USDA
 #' @author Edna J. Molina Bacca
 #' @importFrom utils download.file
-#' @seealso \code{\link{downloadSource}}
+#' @seealso [downloadSource()]
 #' @examples
 #'
 #' \dontrun{

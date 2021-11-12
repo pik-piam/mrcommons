@@ -6,7 +6,7 @@
 #' @param subtype data subtype. Either "production" or "fac" (forest area and characteristics) or "biodiversity" or "anndat" (Annual Data)
 #' @return magpie object of the FRA 2015 data
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("FAO_FRA2015","production")

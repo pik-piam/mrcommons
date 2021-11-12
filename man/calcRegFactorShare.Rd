@@ -25,7 +25,7 @@ calcOutput("calcRegFactorShare")
 
 }
 \seealso{
-\code{\link{calcOutput}},\code{\link{calcFactorIntensity}}
+\code{\link[=calcOutput]{calcOutput()}},\code{\link[=calcFactorIntensity]{calcFactorIntensity()}}
 }
 \author{
 Debbora Leip, Edna J. Molina Bacca

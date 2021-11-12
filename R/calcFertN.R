@@ -9,8 +9,8 @@
 #' @return Fertilizer data for N and corresonding weights as a list of two
 #' MAgPIE objects
 #' @author Lavinia Baumstark
-#' @seealso \code{\link{calcOutput}}, \code{\link{readIFA}},
-#' \code{\link{convertIFA}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readIFA()],
+#' [convertIFA()], [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

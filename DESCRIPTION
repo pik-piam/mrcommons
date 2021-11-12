@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.75.4
-Date: 2021-11-09
+Version: 1.0.0
+Date: 2021-11-12
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -37,16 +37,16 @@ Depends:
     R(>= 2.10.0),
     magclass(>= 3.17),
     madrat(>= 2.2.1),
+    mrdrivers (>= 0.2.1),
     mstools
 Imports:
-    bezier,
     countrycode,
     data.table,
     dplyr,
     hdf5r,
     GDPuc,
-    glue,
     lazyeval,
+    lifecycle,
     lpjclass,
     luscale,
     magpiesets(>= 0.44.2),
@@ -61,10 +61,7 @@ Imports:
     rlang,
     SPEI,
     stringr,
-    tibble,
     tidyr,
-    tidyselect,
-    WDI,
     zoo
 Suggests:
     covr,
@@ -83,3 +80,4 @@ LazyData: no
 Encoding: UTF-8
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)

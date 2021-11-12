@@ -3,7 +3,7 @@
 #' @return Historical distribution of livestock production across different systems and corresonding weights as a list of two MAgPIE
 #' objects
 #' @author Isabelle Weindl
-#' @seealso \code{\link{calcOutput}}, \code{\link{readFeedModel}}
+#' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
 #' 
 #' \dontrun{ 

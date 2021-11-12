@@ -2,7 +2,8 @@
 % Please edit documentation in R/toolCoord2Isocell.R
 \name{toolCoord2Isocell}
 \alias{toolCoord2Isocell}
-\title{toolCoord2Isocell}
+\title{\preformatted{  toolCoord2Isocell
+}}
 \usage{
 toolCoord2Isocell(x, cells = "magpiecell", fillMissing = NULL)
 }

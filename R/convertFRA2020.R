@@ -4,7 +4,7 @@
 #' @param subtype The FAO FRA 2020 subtype.
 #' @return Data as MAgPIE object with common country list
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}},
+#' @seealso [readSource()],
 #' @examples
 #' \dontrun{
 #' a <- readSource("FRA2020", "growing_stock", convert = TRUE)

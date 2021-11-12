@@ -2,7 +2,8 @@
 % Please edit documentation in R/toolExtrapolateFodder.R
 \name{toolExtrapolateFodder}
 \alias{toolExtrapolateFodder}
-\title{toolExtrapolateFodder}
+\title{\preformatted{  toolExtrapolateFodder
+}}
 \usage{
 toolExtrapolateFodder(x, exyears = c(2004, 2009), average = 5)
 }

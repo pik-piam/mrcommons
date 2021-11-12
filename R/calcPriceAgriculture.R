@@ -3,15 +3,15 @@
 #' @description provides global prices from the IMPACT model projections, World Bank observations, and FAO
 #' obersvations for MAgPIE commodities in $/tDM
 #'
-#' @param datasource Options of the source of data:  \code{IMPACT3.2.2World_Price}
-#' , \code{FAO}, \code{FAOp} and \code{WBGEM}.
+#' @param datasource Options of the source of data:  `IMPACT3.2.2World_Price`
+#' , `FAO`, `FAOp` and `WBGEM`.
 #'
 #' @return List with a magpie object with commodity prices on global level.
 #' @author Mishko Stevanovic, Xiaoxi Wang
 #' @seealso
-#' \code{\link{readIMPACT3.2.2World_Price}},
-#' \code{\link{calcWBGEM}},
-#' \code{\link{readWBGEM}}
+#' [readIMPACT3.2.2World_Price()],
+#' [calcWBGEM()],
+#' [readWBGEM()]
 #' @examples
 #'
 #' \dontrun{

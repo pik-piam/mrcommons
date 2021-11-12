@@ -15,7 +15,7 @@
 #' @importFrom magclass dimSums getYears setYears
 #'
 #' @seealso
-#' \code{\link{readLPJmL}}
+#' [readLPJmL()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)

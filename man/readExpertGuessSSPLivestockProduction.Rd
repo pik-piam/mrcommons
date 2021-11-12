@@ -22,7 +22,7 @@ a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Stephen Wirth

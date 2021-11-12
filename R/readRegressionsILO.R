@@ -2,8 +2,8 @@
 #' @description Read regression coefficients which are used to fill missing values of ILO datasets
 #' @param subtype Type of ILOSTAT data for which regression coefficients should be read
 #' \itemize{
-#' \item \code{AgEmpl}: "Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands)"
-#' \item \code{HourlyLaborCosts}: "Mean nominal hourly labour cost per employee by economic activity"
+#' \item `AgEmpl`: "Employment by sex and economic activity -- ILO modelled estimates, Nov. 2020 (thousands)"
+#' \item `HourlyLaborCosts`: "Mean nominal hourly labour cost per employee by economic activity"
 #' }
 #' @return regression coefficients as MAgPIE object
 #' @author Debbora Leip

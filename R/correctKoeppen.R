@@ -9,10 +9,6 @@
 #' \dontrun{
 #'   readSource("Koeppen", subtype="cellular", convert="onlycorrect")
 #' }
-#' 
-#' @import madrat
-#' @import magclass
-
 correctKoeppen <- function(x, subtype="iso"){
 
   if(subtype=="cellular"){

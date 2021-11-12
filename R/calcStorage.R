@@ -4,7 +4,7 @@
 #' FAO data only has stock variation so we assume lowest level for each product/country as 0 level
 #' USDA data to be potentially included in future second data source
 #'
-#' @param datasource Options of the source of data, currently only FAO:  \code{FAO}.
+#' @param datasource Options of the source of data, currently only FAO:  `FAO`.
 #'
 #' @return List with a magpie object with stock level in tonnes
 #' @author David Chen

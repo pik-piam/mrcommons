@@ -26,7 +26,7 @@ calcOutput("FeedBasketsPast")
 }
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readFeedModel}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}
 }
 \author{
 Isabelle Weindl, Benjamin Bodirsky

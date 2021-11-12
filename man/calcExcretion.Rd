@@ -24,7 +24,7 @@ calcOutput("Excretion")
 }
 }
 \seealso{
-\code{\link{calcExcretionIPCC}}
+\code{\link[=calcExcretionIPCC]{calcExcretionIPCC()}}
 }
 \author{
 Benjamin Leon Bodirsky

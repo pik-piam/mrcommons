@@ -10,9 +10,9 @@ readHHS_USDA()
 Magpie object with results on global level.
 }
 \description{
-reads calory requirement for a standardized population from 
-HHS & USDA. 2015. "2015-2020 Dietary Guidelines for Americans." 
-8. Dietary Guidelines for Americans. 
+reads calory requirement for a standardized population from
+HHS & USDA. 2015. "2015-2020 Dietary Guidelines for Americans."
+8. Dietary Guidelines for Americans.
 https://health.gov/dietaryguidelines/2015/resources/2015-2020_Dietary_Guidelines.pdf.
 Appendix 2
 }
@@ -23,8 +23,8 @@ readSource("Lassaletta2014",subtype="budget",convert=FALSE)
 }
 }
 \seealso{
-\code{\link{convertLassaletta2014}},
-\code{\link{readSource}}
+\code{\link[=convertLassaletta2014]{convertLassaletta2014()}},
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky

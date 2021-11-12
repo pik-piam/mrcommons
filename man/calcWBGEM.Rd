@@ -19,8 +19,8 @@ calcOutput("WBGEM")}
 
 }
 \seealso{
-\code{\link{readSource}},
-\code{\link{readWBGEM}}
+\code{\link[=readSource]{readSource()}},
+\code{\link[=readWBGEM]{readWBGEM()}}
 }
 \author{
 Xiaoxi Wang

@@ -19,5 +19,5 @@ Reads in regression parameters estimated using mrregression, and reads in some s
 based on Bodirsky et al not yet published
 }
 \seealso{
-\code{\link{readBodirsky2018}}
+\code{\link[=readBodirsky2018]{readBodirsky2018()}}
 }

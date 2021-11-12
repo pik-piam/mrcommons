@@ -15,7 +15,6 @@
 #' \dontrun{
 #' calcOutput("FAOForestRelocate")
 #' }
-#' @import madrat
 #' @importFrom magclass setNames new.magpie nyears
 #' @importFrom nleqslv nleqslv
 #'

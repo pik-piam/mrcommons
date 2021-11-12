@@ -9,7 +9,7 @@
 #' and it is possible to replace them with the function convertLutz2014.
 #' 
 #' @seealso
-#' \code{\link{convertLutz2014}}
+#' [convertLutz2014()]
 #' 
 #' @importFrom reshape2 acast
 #' @importFrom countrycode countrycode

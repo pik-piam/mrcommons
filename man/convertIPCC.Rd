@@ -29,7 +29,7 @@ a <- readSource("IPCC","nExcrRate")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Nele Steinmetz

@@ -23,7 +23,7 @@ readSource("LPJmL", subtype="LPJmL5:CRU4p02.soilc", convert="onlycorrect")
 
 }
 \seealso{
-\code{\link{readLPJ}}
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Kristine Karstens, Abhijeet Mishra, Felicitas Beier

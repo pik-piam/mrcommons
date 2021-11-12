@@ -4,15 +4,13 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky. Modifications by Edna J. Molina Bacca
 #' @seealso
-#' \code{\link{calcAWMSconfShrPast}}
+#' [calcAWMSconfShrPast()]
 #' @examples
 #'
 #' \dontrun{
 #' calcOutput("AWMSconfShr")
 #' }
 #' @importFrom magpiesets findset
-#' @importFrom magclass collapseNames add_columns add_dimension getNames<- setYears
-
 
 calcAWMSconfShr<-function(rev=0.1){
 

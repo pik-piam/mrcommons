@@ -6,7 +6,7 @@
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcExcretion}}
+#' [calcExcretion()]
 #' @examples
 #' 
 #' \dontrun{ 

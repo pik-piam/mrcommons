@@ -6,7 +6,7 @@
 #' @param subtype data subtype. Either "EnergyBalances", "CHPreport" or "Emissions")
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "IEA", subtype = "EnergyBalances")

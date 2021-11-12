@@ -24,7 +24,7 @@ The files contain information on physical inactivity
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Bodirsky

@@ -17,7 +17,7 @@
 #' "emissionfactors","rescombusteff", "efnsoil"
 #' @return magpie object of the IPCC data
 #' @author Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

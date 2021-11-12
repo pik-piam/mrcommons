@@ -15,7 +15,7 @@
 #' @importFrom luscale speed_aggregate
 #' @importFrom dplyr  intersect
 #'
-#' @seealso \code{\link{calcOutput}}
+#' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("FactorIntensity")

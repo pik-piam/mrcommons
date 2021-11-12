@@ -2,7 +2,7 @@
 #' @description read raw data of world commodity prices from the dataset of World Bank global economic monitor
 #' @return magpie object of global price of commodities
 #' @author Xiaoxi Wang
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples 
 #' 
 #' \dontrun{ readSource(type = "WBGEM")}

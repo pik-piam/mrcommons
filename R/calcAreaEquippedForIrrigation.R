@@ -9,13 +9,12 @@
 #' @return List of magpie objects with results on country/cellular level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @seealso
-#' \code{\link{calcLanduseInitialisation}}
+#' [calcLanduseInitialisation()]
 #' @examples
 #' 
 #' \dontrun{ 
 #' calcOutput("AreaEquippedForIrrigation", source="LUH2v2", cellular=TRUE, aggregate=FALSE)
 #' }
-#' @importFrom magclass as.magpie getRegionList<- ncells
 #' @importFrom luscale groupAggregate
 
 

@@ -20,7 +20,7 @@ a <- calcOutput("VoP_AFF")
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
 Edna J. Molina Bacca

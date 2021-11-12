@@ -7,8 +7,8 @@
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcEmisNitrogenPast}},
-#' \code{\link{calcExcretion}}
+#' [calcEmisNitrogenPast()],
+#' [calcExcretion()]
 #' @examples
 #' 
 #' \dontrun{ 

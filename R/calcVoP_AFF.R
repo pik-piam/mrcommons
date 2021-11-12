@@ -10,7 +10,7 @@
 #' @importFrom magclass dimSums
 #' @importFrom GDPuc convertGDP
 #'
-#' @seealso \code{\link{calcOutput}}
+#' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("VoP_AFF")

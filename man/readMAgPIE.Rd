@@ -21,7 +21,7 @@ Read-in MAgPIE data
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Julian Oeser

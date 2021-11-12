@@ -23,7 +23,7 @@ Convert LPJmL content
 
 }
 \seealso{
-\code{\link{readLPJmL}}
+\code{\link[=readLPJmL]{readLPJmL()}}
 }
 \author{
 Kristine Karstens

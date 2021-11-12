@@ -4,7 +4,7 @@
 #' 
 #' @return MAgPIE object
 #' @author Benjamin Bodirsky
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("Schofield") }
