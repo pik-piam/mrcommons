@@ -7,7 +7,6 @@
 #' @seealso
 #' [calcFAOmassbalance_pre()]
 #' @examples
-#'
 #' \dontrun{
 #' calcOutput("TimberDemand")
 #' }
@@ -149,7 +148,7 @@ calcTimberDemand <- function() {
     incorrect_data <- where(production[, , indicator][, , "production"] < export[, , indicator][, , "export"])$true
     if (length(unique(incorrect_data$regions)) > 0) {
       indicator_list <- c(indicator_list, indicator)
-      export[incorrect_data$individual[,1], incorrect_data$individual[,2], indicator][, , "export"] <- production[incorrect_data$individual[,1], incorrect_data$individual[,2], indicator][, , "production"]
+      export[incorrect_data$individual[, 1], incorrect_data$individual[, 2], indicator][, , "export"] <- production[incorrect_data$individual[, 1], incorrect_data$individual[, 2], indicator][, , "production"]
       }
   }
   message("Higher exports than production level detected in some countries. Setting these export values to production value. Following categories affected: ", paste0(indicator_list, ", "))
