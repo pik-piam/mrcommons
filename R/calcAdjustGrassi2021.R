@@ -27,10 +27,8 @@ calcAdjustGrassi2021 <- function(){
   # downscale from 10 IPCC regions to country level using country removals as weight
   x <- toolAggregate(df, rel = mf, weight = wf, dim = 1, partrel = F, from = "RegionCode", to = "CountryCode")
 
-  # aggregate from country to magpie regions
-  xx <- toolAggregate(x, rel = mf, from = "CountryCode", to = "H12")
 
-  return(list(x=xx,
+  return(list(x=x,
               weight=wf,
               unit="GtCO2 yr-1",
               description="Emission adjustement factors")

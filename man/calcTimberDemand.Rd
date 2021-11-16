@@ -13,7 +13,6 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the demand of timber from FAO data (including intermediate products).
 }
 \examples{
-
 \dontrun{
 calcOutput("TimberDemand")
 }
