@@ -29,7 +29,7 @@ calcAdjustGrassi2021 <- function(){
 
 
   return(list(x=x,
-              weight=wf,
+              weight=NULL,
               unit="GtCO2 yr-1",
               description="Emission adjustement factors")
   )
