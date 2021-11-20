@@ -28,58 +28,63 @@
 #' @importFrom magpiesets findset addLocation
 #' @importFrom madrat toolAggregate toolGetMapping
 
-calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="magpiecell", irrigation=FALSE) {
+calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
+                         cells = "magpiecell", irrigation = FALSE) {
 
   sizelimit <- getOption("magclass_sizeLimit")
-  options(magclass_sizeLimit=1e+10)
-  on.exit(options(magclass_sizeLimit=sizelimit))
+  options(magclass_sizeLimit = 1e+10)
+  on.exit(options(magclass_sizeLimit = sizelimit))
 
-  selectyears <- findset("past")
+  if (!cellular) {
 
-  if(!cellular){
-
-    if(irrigation) stop("Irrigation levels for country based data not yet implemented!")
+    if (irrigation) stop("Irrigation levels for country based data not yet implemented!")
 
     #################################
     ### Croparea on country level ###
     #################################
 
-    if (!is.null(sectoral) & !(sectoral=="lpj")) {
-      CropPrim <- readSource("FAO_online", "Crop")[,,"area_harvested"]
-      #use linear_interpolate
-      Fodder   <- readSource("FAO", "Fodder")[,,"area_harvested"]
+    if (!is.null(sectoral) & !(sectoral == "lpj")) {
+      CropPrim <- readSource("FAO_online", "Crop")[, , "area_harvested"]
+      # use linear_interpolate
+      Fodder   <- readSource("FAO", "Fodder")[, , "area_harvested"]
       Fodder   <- toolExtrapolateFodder(Fodder)
-      data     <- toolFAOcombine(CropPrim, Fodder)/10^6 # convert to Mha
+      data     <- toolFAOcombine(CropPrim, Fodder) / 10^6 # convert to Mha
 
-      if (sectoral%in%c("FoodBalanceItem","kcr")) {
+      if (sectoral %in% c("FoodBalanceItem", "kcr")) {
 
-        aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where="mappingfolder")
-        remove      <- setdiff(getNames(data, dim=1), aggregation$ProductionItem)
-        data        <- data[,,remove, invert=TRUE]
-        data        <- toolAggregate(data, rel=aggregation, from="ProductionItem",
-                                     to=ifelse(sectoral=="kcr","k", sectoral), dim=3.1, partrel=TRUE)
-        if (sectoral=="kcr") {
+        aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
+        remove      <- setdiff(getNames(data, dim = 1), aggregation$ProductionItem)
+        data        <- data[, , remove, invert = TRUE]
+        data        <- toolAggregate(data, rel = aggregation, from = "ProductionItem",
+                                     to = ifelse(sectoral == "kcr", "k", sectoral), dim = 3.1, partrel = TRUE)
+        if (sectoral == "kcr") {
           # add bioenergy with 0 values
-          data <- add_columns(x = data,addnm = c("betr","begr"),dim = 3.1)
-          data[,,c("betr","begr")] <- 0
+          data <- add_columns(x = data, addnm = c("betr", "begr"), dim = 3.1)
+          data[, , c("betr", "begr")] <- 0
           # remove all non kcr items
           kcr <- findset("kcr")
-          remove <- setdiff(fulldim(data)[[2]][[3]],kcr)
-          if(length(remove)>0){
-            remain_area <- mean( dimSums(data[,,"remaining.area_harvested"], dim=1)/dimSums(dimSums(data[,,"area_harvested"], dim=3), dim=1) )
-            if (remain_area > 0.02) vcat(1,"Aggregation created a 'remaining' category. The area harvested is", round(remain_area,digits = 3)*100, "% of total \n")
+          remove <- setdiff(fulldim(data)[[2]][[3]], kcr)
+          if (length(remove) > 0) {
+            remain_area <- mean(dimSums(data[, , "remaining.area_harvested"], dim = 1) /
+                                  dimSums(dimSums(data[, , "area_harvested"], dim = 3), dim = 1))
+            if (remain_area > 0.02) vcat(1, "Aggregation created a 'remaining' category. The area harvested is",
+                                         round(remain_area, digits = 3) * 100, "% of total \n")
             vcat(2, paste0("Data for the following items removed: ", remove))
-            data <- data[,,kcr]
+            data <- data[, , kcr]
           }
         }
-      } else if(sectoral!="ProductionItem"){stop("Sectoral aggregation not supported")}
 
-    } else if(sectoral=="lpj"){
+      } else if (sectoral != "ProductionItem") {
+        stop("Sectoral aggregation not supported")
+      }
 
-      MAGcroparea <- calcOutput("Croparea", sectoral="kcr", physical=physical, cellular=FALSE, irrigation=FALSE, aggregate=FALSE)
-      MAGtoLPJ    <- toolGetMapping(type = "sectoral", name ="MAgPIE_LPJmL.csv")
-      MAGtoLPJ    <- MAGtoLPJ[!(MAGtoLPJ$MAgPIE=="pasture"),]
-      LPJcroparea <- toolAggregate(MAGcroparea, rel=MAGtoLPJ, from="MAgPIE", to="LPJmL", dim=3.1)
+    } else if (sectoral == "lpj") {
+
+      MAGcroparea <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
+                                cellular = FALSE, irrigation = FALSE, aggregate = FALSE)
+      MAGtoLPJ    <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
+      MAGtoLPJ    <- MAGtoLPJ[!(MAGtoLPJ$MAgPIE == "pasture"), ]
+      LPJcroparea <- toolAggregate(MAGcroparea, rel = MAGtoLPJ, from = "MAgPIE", to = "LPJmL", dim = 3.1)
       data        <- LPJcroparea
 
     } else {
@@ -88,11 +93,12 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
 
     # use the share of the single crops to calculate their "physical" area
     if (physical) {
-      #6620  = (6620|Arable land and Permanent crops or  6620|Cropland)
-      cropland        <- setNames(collapseNames(calcOutput("FAOLand", aggregate=FALSE)[,,"6620", pmatch=TRUE]), "crop")
-      harvested_share <- data/dimSums(data, dim=3.1)
-      commonyears     <- intersect(getYears(cropland),getYears(harvested_share))
-      data            <- collapseNames(cropland[,commonyears,]*harvested_share[,commonyears,])
+      # 6620  = (6620|Arable land and Permanent crops or  6620|Cropland)
+      cropland        <- setNames(collapseNames(calcOutput("FAOLand",
+                                                           aggregate = FALSE)[, , "6620", pmatch = TRUE]), "crop")
+      harvested_share <- data / dimSums(data, dim = 3.1)
+      commonyears     <- intersect(getYears(cropland), getYears(harvested_share))
+      data            <- collapseNames(cropland[, commonyears, ] * harvested_share[, commonyears, ])
     }
 
     data[is.na(data)] <- 0
@@ -111,9 +117,9 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
       LUHcroptypes      <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
 
       LUHcroparea       <- toolCell2isoCell(calcOutput("LUH2v2", landuse_types = "LUH2v2",
-                                                      cells = cells, aggregate = FALSE, irrigation = irrigation,
-                                                      cellular = TRUE, selectyears = "past"),
-                                           cells = cells)
+                                                       cells = cells, aggregate = FALSE, irrigation = irrigation,
+                                                       cellular = TRUE, selectyears = "past"),
+                                            cells = cells)
 
       # corrected rice area (in Mha)
       ricearea          <- calcOutput("Ricearea", cellular = TRUE, cells = cells, share = FALSE, aggregate = FALSE)
@@ -184,9 +190,9 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
 
     if (!physical) {
 
-      MultiCropping <- calcOutput("Multicropping", selectyears = "past", aggregate = FALSE)
+      MultiCropping <- calcOutput("Multicropping", aggregate = FALSE)
 
-      data          <- data[, selectyears, ] * toolIso2CellCountries(MultiCropping, cells = cells)
+      data          <- data * toolIso2CellCountries(MultiCropping, cells = cells)
 
     }
 
@@ -195,7 +201,7 @@ calcCroparea <- function(sectoral="kcr", physical=TRUE, cellular=FALSE, cells="m
   data <- collapseNames(data)
 
   # not more precision than 1 ha needed. very small areas can make problems in some weighting scripts
-  data <- round(data,6)
+  data <- round(data, 6)
 
   return(list(x            = data,
               weight       = NULL,
