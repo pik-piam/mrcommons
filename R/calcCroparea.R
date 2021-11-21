@@ -192,7 +192,7 @@ calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
 
       MultiCropping <- calcOutput("Multicropping", aggregate = FALSE)
 
-      data          <- data * toolIso2CellCountries(MultiCropping, cells = cells)
+      data          <- data * toolIso2CellCountries(MultiCropping[, getYears(data), ], cells = cells)
 
     }
 
