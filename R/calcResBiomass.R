@@ -35,7 +35,10 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
                                  cellular=cellular, irrigation=irrigation, aggregate=FALSE)
     #cyears here above
     CropProduction <- collapseNames(calcOutput("Production", products="kcr", cellular=cellular,attributes="dm", irrigation=irrigation, aggregate = FALSE))
-    cyears <- intersect(getYears(HarvestedArea), getYears(CropProduction))
+    cyears         <- intersect(getYears(HarvestedArea), getYears(CropProduction))
+    
+    CropProduction <- CropProduction[, cyears, ]
+    HarvestedArea  <- HarvestedArea[, cyears, ]
     
     HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
     
@@ -45,11 +48,12 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
       freeze_year <- as.integer(gsub("freeze","",scenario))
     
       # calculate yields and freeze yield levels
-      CropYields  <- toolConditionalReplace(CropProduction[,cyears,]/HarvestedArea[,cyears,], c("is.na()","is.infinite()"), 0)
-      CropYields  <- toolFreezeEffect(CropYields, freeze_year, constrain="first_use")
+      CropYields  <- toolConditionalReplace(CropProduction[, cyears, ] / HarvestedArea[, cyears, ], 
+                                            c("is.na()", "is.infinite()"), 0)
+      CropYields  <- toolFreezeEffect(CropYields, freeze_year, constrain = "first_use")
       
       # recalculate production
-      CropProduction <- CropYields * HarvestedArea
+      CropProduction <- CropYields[, cyears, ] * HarvestedArea[, cyears, ]
     }
     
     if(plantparts=="ag"){
