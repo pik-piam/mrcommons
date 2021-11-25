@@ -19,8 +19,7 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the demand for Crop Residues
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResDemand")
 }
 }
