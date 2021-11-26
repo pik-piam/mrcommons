@@ -18,7 +18,7 @@
 calcEmisNitrogenPast<-function(method="IPCC"){
   # add CEDS past
   years<-findset("past")
-  inventory<-calcOutput("EmissionInventory",aggregate = FALSE, datasource="CEDS",targetResolution=NULL,from="CEDS59",to="Sectors")
+  inventory<-calcOutput("EmissionInventory",aggregate = FALSE, datasource="CEDS",targetResolution="sectoral",from="CEDS59",to="Sectors")
   vcat(verbosity=1,"CEDS emissions are not complete yet, and the units have to be controlled.")
 
   getNames(inventory,dim=2)<-sub(getNames(inventory,dim=2),pattern = "n2o_n",replacement = "n2o_n_direct")
