@@ -178,8 +178,8 @@ else if (products == "staples") {
     
     #convert to attribute
     ProdAttributes <- collapseNames(calcOutput("Attributes", aggregate = FALSE)[,,attribute])
-    getNames(ProdAttributes[,,"tece"]) <- "wheat"
-   
+    getItems(ProdAttributes, dim=3)[getItems(ProdAttributes,dim=3) == "tece"] <- "wheat"
+    
     iprod <- iprod * ProdAttributes[,,getItems(iprod, dim=3)]  
   
 }
