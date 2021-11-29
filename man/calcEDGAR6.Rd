@@ -7,7 +7,8 @@
 calcEDGAR6(non_country = FALSE, nutrient = TRUE)
 }
 \arguments{
-\item{non_country}{can alternatively provide SEA and AIR emissions, which are global emissions that cannot be attributed to a country}
+\item{non_country}{can alternatively provide SEA and AIR emissions, which are global emissions that
+cannot be attributed to a country}
 
 \item{nutrient}{if TRUE, nitrogen is reported as N and CO2 as C}
 }
