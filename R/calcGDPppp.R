@@ -17,7 +17,7 @@ calcGDPppp <- function(GDPpppCalib = NULL,
                        GDPpppFuture = NULL,
                        FiveYearSteps = TRUE,
                        naming = NULL) {
-  warning("calcGDPppp() is deprecated. Returning default 'calcOutput(GDP)' output instead. Please use mrdrivers::calcGDP() directly.")
+  warning("calcGDPppp() is deprecated. Returning default mrdrivers::calcGDP() output instead. Please use mrdrivers::calcGDP() directly.")
   x <- calcOutput("GDP", FiveYearSteps = FiveYearSteps, aggregate = FALSE, supplementary = TRUE)
   list(x = x$x,
        weight = x$weight,
