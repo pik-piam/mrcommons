@@ -1,7 +1,9 @@
 #' calcGDPppp
 #' 
 #' @description 
-#'  `r lifecycle::badge('deprecated')`
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This function is defunct. Use [mrdrivers::calcGDP()] instead.
 #' 
 #' @param GDPpppCalib to what should be calibrated? past, future or a transition?
 #' @param GDPpppPast GDPppp past data source
@@ -17,12 +19,7 @@ calcGDPppp <- function(GDPpppCalib = NULL,
                        GDPpppFuture = NULL,
                        FiveYearSteps = TRUE,
                        naming = NULL) {
-  warning("calcGDPppp() is deprecated. Returning default mrdrivers::calcGDP() output instead. Please use mrdrivers::calcGDP() directly.")
-  x <- calcOutput("GDP", FiveYearSteps = FiveYearSteps, aggregate = FALSE, supplementary = TRUE)
-  list(x = x$x,
-       weight = x$weight,
-       unit = x$unit,
-       description = x$description)
+  stop("calcGDPppp() is defunct. Please use mrdrivers::calcGDP() directly.")
 }
 
 
@@ -31,16 +28,13 @@ calcGDPppp <- function(GDPpppCalib = NULL,
 #' @description 
 #' `r lifecycle::badge('deprecated')`
 #'
+#' This function is defunct. Use [mrdrivers::calcGDPFuture()] instead.
+#'
 #' @param GDPpppFuture GDPppp future data source
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDPFuture()]
 calcGDPpppFuture <- function(GDPpppFuture = NULL) {
-  warning("calcGDPpppFuture() is deprecated. Please use mrdrivers::calcGDPFuture() directly.")
-  x <- calcOutput("GDPFuture", aggregate = FALSE, supplementary = TRUE)
-  list(x = x$x,
-       weight = x$weight,
-       unit = x$unit,
-       description = x$description)
+  stop("calcGDPpppFuture() is defunct. Please use mrdrivers::calcGDPFuture() directly.")
 }
 
 #' calcGDPpppPast
@@ -48,14 +42,11 @@ calcGDPpppFuture <- function(GDPpppFuture = NULL) {
 #' @description 
 #' `r lifecycle::badge('deprecated')`
 #'
+#' This function is defunct. Use [mrdrivers::calcGDPPast()] instead.
+#'
 #' @param GDPpppPast GDPppp future data source
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDPPast()]
 calcGDPpppPast <- function(GDPpppPast = "WDI-MI") {
-  warning("calcGDPpppPast() is deprecated. Please use mrdrivers::calcGDPPast() directly.")
-  x <- calcOutput("GDPPast", GDPPast = GDPpppPast, aggregate = FALSE, supplementary = TRUE)
-  list(x = x$x,
-       weight = x$weight,
-       unit = x$unit,
-       description = x$description)
+  stop("calcGDPpppPast() is defunct. Please use mrdrivers::calcGDPPast() directly.")
 }
