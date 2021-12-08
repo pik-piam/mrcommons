@@ -22,10 +22,13 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
   ## fix dimension names and currency unit
   currencyDims <- c("import_kUS$", "export_kUS$")
-  fertByProduct[, , currencyDims] <- convertGDP(fertByProduct[, , currencyDims],
+  fertByProduc_currentUSD <- fertByProduct
+  fertByProduct[, , currencyDims] <- convertGDP(fertByProduc_currentUSD[, , currencyDims],
                                                 unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = 1) * 1000
+                                                unit_out = "constant 2005 US$MER") * 1000
+  # for countries with missing conversion factors we assume no inflation:
+  fertByProduct[is.na(fertByProduct)] <- fertByProduc_currentUSD[is.na(fertByProduct)]
+
   getNames(fertByProduct, dim = 2)[getNames(fertByProduct, dim = 2) == "import_kUS$"] <- "import_US$MER05"
   getNames(fertByProduct, dim = 2)[getNames(fertByProduct, dim = 2) == "export_kUS$"] <- "export_US$MER05"
 

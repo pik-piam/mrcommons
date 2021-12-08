@@ -22,10 +22,13 @@ calcVoP_AFF <- function() {
   Ag <- c("2041|Crops.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)",
         "2044|Livestock.Gross_Production_Value_(constant_2014_2016_thousand_I$)_(1000_Int_$)")
 
-   # factor converts from mio. 2015 USD to 2005 USD
-  VoP_agriculture <- convertGDP(dimSums(readSource("FAO_online", "ValueOfProd")[, , Ag] / 1000, dim = 3),
-                                unit_in = "constant 2015 Int$PPP", unit_out = "constant 2005 US$MER",
-                                replace_NAs = 1)
+   # factor converts from mio. 2015 USD PPP to 2005 USD MER
+  VoP_agriculture_ppp <- dimSums(readSource("FAO_online", "ValueOfProd")[, , Ag] / 1000, dim = 3)
+  VoP_agriculture <- convertGDP(VoP_agriculture_ppp,
+                                unit_in = "constant 2015 Int$PPP",
+                                unit_out = "constant 2005 US$MER")
+  # for countries with missing conversion factor we assume PPP = MER and no inflation:
+  VoP_agriculture[is.na(VoP_agriculture)] <- VoP_agriculture_ppp[is.na(VoP_agriculture)] 
   getNames(VoP_agriculture) <- "Agriculture"
 
 
@@ -50,10 +53,13 @@ calcVoP_AFF <- function() {
 
 
   # Value of production for fish and aquatic products -> Production*export_price
-  VoP_fish <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
+  VoP_fish_currentUSD <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
              production_fish_tonNet[cells_fish, years_fish, ] / 1000  # mio. current USD
-  VoP_fish <- convertGDP(VoP_fish, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
-                         replace_NAs = 1)
+  VoP_fish <- convertGDP(VoP_fish_currentUSD, unit_in = "current US$MER", 
+                         unit_out = "constant 2005 US$MER")
+  # for countries with missing inflation factors we assume no inflation
+  VoP_fish[is.na(VoP_fish)] <- VoP_fish_currentUSD[is.na(VoP_fish)]
+  
   VoP_fish[!is.finite(VoP_fish)] <- 0
   getNames(VoP_fish) <- "Fisheries"
 
@@ -66,20 +72,21 @@ calcVoP_AFF <- function() {
 
   VoP_forestry_data <- readSource("FAO", "ForestProdTrade")[, , Forest_cat]
 
-  price_forestry <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] /
+  price_forestry_currentUSD <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] /
                 VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
 
   # Base year change for exports value
-  years <- getYears(price_forestry)
-
-  price_forestry <- convertGDP(price_forestry[, years, ], unit_in = "current US$MER",
-                               unit_out = "constant 2005 US$MER", replace_NAs = 1)
+  price_forestry <- convertGDP(price_forestry_currentUSD, 
+                               unit_in = "current US$MER",
+                               unit_out = "constant 2005 US$MER")
+  # for countries with missing inflation factors we assume no inflation
+  price_forestry[is.na(price_forestry)] <- price_forestry_currentUSD[is.na(price_forestry)]
 
   price_forestry[!is.finite(price_forestry)] <- 0
 
 
   years <- intersect(getYears(price_forestry), getYears(VoP_forestry_data))
-  # mio. current USD
+  # constant 2005 US$MER
   VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] *
                                     price_forestry[, years, ], fill = 0)
   getNames(VoP_forestry) <- "Forestry"
@@ -98,6 +105,6 @@ calcVoP_AFF <- function() {
   return(list(x = x,
          weight = NULL,
          mixed_aggregation = NULL,
-         unit = "mio. 05USDppp units",
+         unit = "mio. 05USDmer units",
          description = " Value of production for the agriculture, forestry and fisheries sector"))
 }

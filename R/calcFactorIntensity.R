@@ -29,7 +29,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
     # Production of crops. mio. ton
       crop_prod_dm_All  <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
 
-      VoP_crops <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE) # mio. 05USDppp
+      VoP_crops <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE) # mio. 05USD MER
       getNames(VoP_crops)[getNames(VoP_crops) == "oilpalm_fruit"] <- "oilpalm"
 
       gnames <- intersect(getNames(VoP_crops), getNames(crop_prod_dm_All))
@@ -61,10 +61,10 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
        weight <- x
 
        if (output != "CapitalShare") {
-       weight[, , "Capital"] <- crop_prod_dm_All[, fyears, gnames]
-       weight[, , "Labor"] <- crop_prod_dm_All[, fyears, gnames]
-       weight[!is.finite(x)] <- 0
-       weight[x == 0] <- 0
+         weight[, , "Capital"] <- crop_prod_dm_All[, fyears, gnames]
+         weight[, , "Labor"] <- crop_prod_dm_All[, fyears, gnames]
+         weight[!is.finite(x)] <- 0
+         weight[x == 0] <- 0
        } else {
          weight[, , "Capital"] <- dimSums(crop_prod_dm_All[, fyears, ], dim = 3)
          weight[!is.finite(x)] <- 0
@@ -80,9 +80,11 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
           # Existing capital stocks
           name <- "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_USD_2015_prices_(millions)"
-          CapitalStocks <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
-          CapitalStocks <- convertGDP(CapitalStocks, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
-                                      replace_NAs = 1)
+          CapitalStocks_currentUSD <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
+          CapitalStocks <- convertGDP(CapitalStocks_currentUSD, unit_in = "current US$MER", unit_out = "constant 2005 US$MER")
+          # for countries with missing conversion factors we assume no inflation:
+          CapitalStocks[is.na(CapitalStocks)] <- CapitalStocks_currentUSD[is.na(CapitalStocks)] 
+          
           years <- intersect(getYears(fraction_VoP_crop), getYears(CapitalStocks))
           region <- intersect(getCells(fraction_VoP_crop), getCells(CapitalStocks))
 
