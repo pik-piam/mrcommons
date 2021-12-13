@@ -18,7 +18,7 @@
 readIEA <- function(subtype) {
 
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
-    data <- fread("ExtendedEnergyBalances.csv", sep = ";", stringsAsFactors = FALSE,
+    data <- fread("ExtendedEnergyBalances.csv.gz", sep = ";", stringsAsFactors = FALSE,
                   colClasses = c("character", "character", "character", "numeric", "character"), showProgress = FALSE,
                   na.strings = c("x", ".."), skip = 2, col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"))
     # converting IEA country names to ISO codes
