@@ -134,7 +134,8 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
         x          <- x * lakeShare
 
         # Transform units: liter/m^2 -> liter
-        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", where = "mcrommons")
+        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+                                    type = "cell", where = "mcrommons")
         cellArea  <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         x         <- x * cellArea
 
