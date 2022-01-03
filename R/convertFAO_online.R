@@ -94,15 +94,23 @@ convertFAO_online <- function(x,subtype) {
 
   # ---- Section for country specific treatment ----
 
-  ## data for Eritrea ERI added with 0 if not existing in the dimensionality of
-  ## Ethiopia, to make toolISOhistorical work
+  ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
+  ## to make toolISOhistorical work
   if(any(getRegions(x)=="XET") & any(getRegions(x)=="ETH") & !any(getRegions(x)=="ERI")) {
     xERI <- x["ETH",,]
     xERI[,,] <- 0
     getRegions(xERI) <- "ERI"
     x <- magpiesort(mbind(x,xERI))
   }
-
+  
+  if(any(getRegions(x)=="XSD") & any(getRegions(x)=="SDN") & !any(getRegions(x)=="SSD")) {
+    xSSD <- x["SDN",,]
+    xSSD[,,] <- 0
+    getRegions(xSSD) <- "SSD"
+    x <- magpiesort(mbind(x, xSSD))
+  }
+  
+  
   ## add additional mappings
   additional_mapping <- list()
 
@@ -123,7 +131,7 @@ convertFAO_online <- function(x,subtype) {
     additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2011"), c("XSD", "SDN","y2011")))
   } else if ("XSD" %in% getRegions(x) & !any(c("SSD", "SDN") %in% getRegions(x)) ) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
-  }
+  } 
 
   ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getRegions(x)) {
