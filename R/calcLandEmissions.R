@@ -5,7 +5,7 @@
 #' @param datasource The Emission Inventory that shall be used. For futher information, best see function calcEmissionInventory. Options are e.g.  CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky
+#' @author Benjamin Leon Bodirsky, Michael S. Crawford
 #' @examples
 #'
 #' \dontrun{
@@ -185,6 +185,44 @@ calcLandEmissions <- function(datasource="CEDS") {
     out <- add_dimension(out, dim=3.2, add="model", nm="EDGAR_LU")
     names(dimnames(out))[3] <- "scenario.model.variable"
 
+  } else if (datasource == "EDGAR6") {
+
+    edgar <- calcOutput("EmissionInventory", datasource = "EDGAR6", targetResolution = NULL, aggregate = FALSE)
+
+    # Unit conversion when appropriate (e.g. n2o_n to n2o)
+    .formatToReporting = function(x, old, new, conversion) {
+      x[,, old] <- x[,, old] * conversion
+      getNames(x, dim = 1)[ which(getNames(x, dim = 1) == old) ] <- new
+      
+      return(x)
+    }
+    
+    edgar <- .formatToReporting(edgar, "n2o_n", "n2o", (44/28) ) 
+    edgar <- .formatToReporting(edgar, "nh3_n", "nh3", (17/14) )
+    edgar <- .formatToReporting(edgar, "no2_n", "no2", (46/14) )
+    edgar <- .formatToReporting(edgar, "co2_c", "co2", (44/12) )
+    
+    # Rename emissions according to their MAgPIE reporting names
+    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv")
+    edgar     <- toolAggregate(x = edgar, rel = sectorMap, 
+                               from = "MAgPIE", to = "MAgPIE_reporting",
+                               dim = 3.2, partrel = TRUE, verbosity = 3)
+    
+    getNames(edgar) <- lapply(X = getNames(edgar), 
+                              FUN = function(x) {
+                                x    <- unlist(strsplit(x, split = "\\."))
+                                x[1] <- magpiesets::reportingnames(x[1])
+                                new  <- gsub(x = x[2], pattern = "XX", replacement = x[1], fixed = T)
+                                new  <- paste0(new, " (Mt ", x[1], "/yr)")
+                              })
+    
+    # Format for validation .mif
+    edgar <- add_dimension(edgar, dim = 3.1, add = "scenario", nm = "historical")
+    edgar <- add_dimension(edgar, dim = 3.2, add = "model", nm = "EDGAR6")
+    names(dimnames(edgar))[3] <- "scenario.model.variable"
+    
+    out <- edgar
+    
   } else if (datasource=="FAO_EmisLUC") {
 
     co2 <- readSource("FAO",subtype="EmisLuTotal")

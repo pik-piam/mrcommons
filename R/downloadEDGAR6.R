@@ -6,7 +6,7 @@
 #' @author Benjamin Leon Bodirsky, 
 #' @importFrom utils download.file tail unzip bibentry
 
-downloadEDGAR6 <- function(subtype="n2o") {
+downloadEDGAR6 <- function(subtype = "n2o") {
   
   # Define subtype-specific elements of the meta data. Elements that are common to all subtypes are added further down.
   settings <- list(     n2o = list(title = "EDGAR 6 N2O data inventories by country and emission source",

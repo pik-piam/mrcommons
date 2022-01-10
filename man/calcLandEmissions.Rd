@@ -23,5 +23,5 @@ calcOutput("LandEmissions")
 }
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, Michael S. Crawford
 }
