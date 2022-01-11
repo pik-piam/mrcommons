@@ -23,5 +23,5 @@ a <- calcOutput("VoP_AFF")
 \code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
-Edna J. Molina Bacca
+Edna J. Molina Bacca, Debbora Leip
 }
