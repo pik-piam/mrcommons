@@ -205,16 +205,8 @@ calcLandEmissions <- function(datasource="CEDS") {
     # Rename emissions according to their MAgPIE reporting names
     sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv")
     edgar     <- toolAggregate(x = edgar, rel = sectorMap, 
-                               from = "MAgPIE", to = "MAgPIE_reporting",
-                               dim = 3.2, partrel = TRUE, verbosity = 3)
-    
-    getNames(edgar) <- lapply(X = getNames(edgar), 
-                              FUN = function(x) {
-                                x    <- unlist(strsplit(x, split = "\\."))
-                                x[1] <- magpiesets::reportingnames(x[1])
-                                new  <- gsub(x = x[2], pattern = "XX", replacement = x[1], fixed = T)
-                                new  <- paste0(new, " (Mt ", x[1], "/yr)")
-                              })
+                               from = "EDGAR6", to = "MAgPIE_reporting",
+                               dim = 3, partrel = FALSE)
     
     # Format for validation .mif
     edgar <- add_dimension(edgar, dim = 3.1, add = "scenario", nm = "historical")

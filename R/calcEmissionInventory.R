@@ -156,19 +156,23 @@ calcEmissionInventory<-function(datasource="CEDS",targetResolution="sectoral",fr
     edgarList[["co2"]] <- .formatToMAgPIE(edgarList[["co2"]], "co2_c", (12/44) )
     
     edgar <- mbind(edgarList)
+
+    # EDGAR has incomplete temporal coverage for many countries
+    edgar <- toolConditionalReplace(edgar, "is.na()", 0)
     
     # Remove names wherein all the underlying data are 0
     toKeep <- lapply(X = getNames(edgar), FUN = function(x) !(all(edgar[,, x] == 0)))
     edgar <- edgar[,, unlist(toKeep)]
     
-    # EDGAR has incomplete temporal coverage for many countries
-    edgar <- toolConditionalReplace(edgar, "is.na()", 0)
+    # Filter down to the sectors relevant to MAgPIE
+    relevantSectors <- c("3_C_1 Emissions from biomass burning", 
+                         "3_A_1 Enteric Fermentation",
+                         "3_A_2 Manure Management",
+                         "3_C_7 Rice cultivations",
+                         "3_C_4 Direct N2O Emissions from managed soils",
+                         "3_C_5 Indirect N2O Emissions from managed soils")
     
-    # Filter to dimensions used in MAgPIE, more accurate naming convention
-    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv")
-    edgar     <- toolAggregate(x = edgar, rel = sectorMap, 
-                               from = "EDGAR6", to = "MAgPIE", 
-                               dim = 3.2, partrel = TRUE, verbosity = 3)
+    edgar <- edgar[,, relevantSectors]
     
     # Rename dimensions
     names(dimnames(edgar)) <- c("Region", "Year", "pollutant.sector")
