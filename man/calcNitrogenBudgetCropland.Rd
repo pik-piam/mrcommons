@@ -27,8 +27,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates Nitrogen Budgets for Cropland soils on country levels.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NitrogenBudgetCropland")
 }
 }

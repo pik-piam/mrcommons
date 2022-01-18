@@ -17,10 +17,10 @@ Land emission data. This function was originally called calcValidEmissions and l
 mrvalidation.
 }
 \examples{
-
 \dontrun{
 calcOutput("LandEmissions")
 }
+
 }
 \author{
 Benjamin Leon Bodirsky, Michael S. Crawford

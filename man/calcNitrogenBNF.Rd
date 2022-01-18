@@ -16,8 +16,7 @@ List of magpie objects with results on country level, weight on country level, u
 calculates fixation from freeliving bacteria and from nitrogen-fixing crops and natural vegetation
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NitrogenBNF")
 }
 

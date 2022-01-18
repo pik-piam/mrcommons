@@ -30,7 +30,6 @@ List of magpie objects with results on country level, weight on country level, u
 Conputes Atmospheric (nitrogen) deposition on different land-use types. It distinguishes ammonia (Nh3) and Nitrogen oxides (NOx) as well
 }
 \examples{
-
 \dontrun{
 calcOutput("AtmosphericDeposition")
 }

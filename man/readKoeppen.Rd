@@ -16,9 +16,8 @@ List of magpie objects with results on country or cellular level
 Read Koeppen climate zones on iso-country and cellular level
 }
 \examples{
-
 \dontrun{
-  readSource("Koeppen", subtype="iso")
+readSource("Koeppen", subtype = "iso")
 }
 
 }

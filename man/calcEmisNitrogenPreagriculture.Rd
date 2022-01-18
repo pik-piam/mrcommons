@@ -18,8 +18,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates nitrogenous emissions Nitrogen emissions from soils under 100\% natural cover (even for crop and urban) assuming a pre-agricultural time.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPreagriculture")
 }
 
