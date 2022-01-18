@@ -120,7 +120,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         totother_luh <- dimSums(LUH2v2[, , c("primn", "secdn")], dim = 3)
         primother_shr <- LUH2v2[, , "primn"] / setNames(totother_luh + 1e-10, NULL)
         secdother_shr <- LUH2v2[, , "secdn"] / setNames(totother_luh + 1e-10, NULL)
-        # where luh2 does not report other land, but we find other land after 
+        # where luh2 does not report other land, but we find other land after
         # reallocation set share of secondary other land to 1
         secdother_shr[secdother_shr == 0 & primother_shr == 0] <- 1
         # multiply shares of primary and secondary non-forest veg with corrected other land
@@ -237,7 +237,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     out <- round(out, 8)
     cellArea <- dimSums(out, dim = 3)
     temp <- out[, , other]
-    zero <- which(cellArea == 0, arr.ind = F)
+    zero <- which(cellArea == 0, arr.ind = FALSE)
     temp[zero] <- 10^-6
     out[, , other] <- temp
   }
@@ -252,7 +252,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       out <- toolCountryFill(out, fill = 0)
     }
   }
-  
+
 
   return(list(
     x = out,

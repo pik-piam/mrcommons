@@ -91,7 +91,7 @@ glo <- FALSE
     getYears(d) <- c(paste("y", str_sub(file, -7, -4), sep = ""))
     # kg(N)/m²/s to t(N)/ha/y
     # 1t(N)/ha/y = 1000kg(N) / 10.000m²/ (3600*24*365)s = 1000kg(N) / 10.000m² / 31536000s
-    e <- d[, , "area", invert = T] * 315360000
+    e <- d[, , "area", invert = TRUE] * 315360000
 
     getNames(e) <- sub(getNames(e), pattern = "_", replacement = ".")
     getNames(e) <- sub(getNames(e), pattern = "noy", replacement = "no2_n")

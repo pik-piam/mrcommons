@@ -36,7 +36,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
     getCells(cellvegc)    <-  paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = ".")
     names(dimnames(LUH2v2_init))[1] <- "celliso"
     names(dimnames(cellvegc))[1]    <- "celliso"
-    mapping   <- data.frame(mapping, celliso = paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = "."), stringsAsFactors = F)
+    mapping   <- data.frame(mapping, celliso = paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = "."), stringsAsFactors = FALSE)
   } else {
     mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     countries <- unique(mapping$iso)
@@ -187,14 +187,14 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
   }
 
   if (nclasses == "nine") {
-    LUH2v2_nocorr <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE, 
+    LUH2v2_nocorr <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE,
                                 cellular = TRUE, selectyears = selectyears, cells = cells, round = 8)
 
     # calculate shares of primary and secondary non-forest vegetation
     totother_luh <- dimSums(LUH2v2_nocorr[, , c("primn", "secdn")], dim = 3)
     primother_shr <- LUH2v2_nocorr[, , "primn"] / setNames(totother_luh + 1e-10, NULL)
     secdother_shr <- LUH2v2_nocorr[, , "secdn"] / setNames(totother_luh + 1e-10, NULL)
-    # where luh2 does not report other land, but we find other land after 
+    # where luh2 does not report other land, but we find other land after
     # reallocation set share of secondary other land to 1
     secdother_shr[secdother_shr == 0 & primother_shr == 0] <- 1
     # multiply shares of primary and secondary non-forest veg with corrected other land
