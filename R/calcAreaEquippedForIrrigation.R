@@ -46,7 +46,7 @@ calcAreaEquippedForIrrigation<-function(cellular=FALSE, source="LUH2v2", selecty
   
   
   if (!cellular){
-    mapping <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     out     <- toolAggregate(out, rel=mapping, from="celliso", to="iso", dim=1)
     out     <- toolCountryFill(out, fill=0)
   }

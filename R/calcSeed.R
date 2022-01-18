@@ -24,7 +24,7 @@ calcSeed<-function(cellular=FALSE,products="kall",irrigation=FALSE,attributes="a
     
     if(!all(products%in%findset("kcr"))){stop("cellular data only exists for kcr products")}
     
-    map            <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    map            <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     production_reg <- calcOutput("Production",products="kcr",cellular=FALSE,calibrated=TRUE,irrigation=FALSE,aggregate=FALSE)[,,products]
     seed_shr       <- collapseNames(seed[,,"dm"]/production_reg[,,"dm"])
     seed_shr[is.na(seed_shr)]       <- 0

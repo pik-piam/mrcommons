@@ -169,10 +169,10 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
       } else {
-        mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+        mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
         countries <- unique(mapping$iso)
       }
-      if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")
+      if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.rds! No country information found!")
 
       # divide secondary forest into forestry and secdf.
       forestry_shr <- countrydata[, , "forestry"] / dimSums(countrydata[, , c("forestry", "secdforest")], dim = 3)
@@ -247,7 +247,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       getCells(out) <- toolGetMappingCoord2Country()[, "coords"]
       out <- toolAggregateCell2Country(out, fill = 0)
     } else {
-      mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       out <- toolAggregate(out, mapping, from = "celliso", to = "iso")
       out <- toolCountryFill(out, fill = 0)
     }

@@ -28,7 +28,7 @@ calcIPCCfracLeach<-function(cellular=TRUE){
     lat[,,]<-NA
     pe[,,]<-NA
     lat<-p[,1,1]
-    lat[,,]<-as.numeric(toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")$lat)
+    lat[,,] <- as.numeric(toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")$lat)
     lat<-setNames(setYears(lat,NULL),NULL)
     
     # estimate potential evapotranspiration using the thornwaite method for temperature and latitude
@@ -81,7 +81,7 @@ calcIPCCfracLeach<-function(cellular=TRUE){
     frac_leach_average[,,"crop"]=frac_leach_average[,,"crop"]*(1-irrig_shr)+0.3*irrig_shr
     
     weight=lu
-    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")  
+    mapping <-toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     #x<-groupAggregate(x,query=mapping,dim = 3,from="luh2v2",to="land")
     #frac_leach_average<-toolAggregate(frac_leach_average,rel=mapping,dim = 1,from="cell",to="iso",weight = weight)
     frac_leach_average<-weighted_mean.groupAggregate(data = frac_leach_average,weight = weight,query=mapping,dim = 1,na.rm = T,from="celliso",to="iso")

@@ -5,7 +5,7 @@ calcSOMlossN<-function(cellular=FALSE){
   
 
   if(cellular==FALSE){
-    mapping <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     SOM  <- toolAggregate(SOM,rel = mapping,from=ifelse(nregions(SOM)>1,"celliso","cell"),to="iso",dim=1)
     SOM  <- toolCountryFill(SOM,fill=0)
   }

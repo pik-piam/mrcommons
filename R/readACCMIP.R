@@ -104,7 +104,7 @@ glo <- FALSE
       f <- f["0", , , invert = TRUE]
       f <- magpiesort(collapseDim(f, c("x", "y")))
     } else {
-      map <- toolGetMapping(type = "cell", name = "CountrytoCellMapping.csv")
+      map <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       getCells(f) <- map$celliso
     }
     out <- clean_magpie(f)

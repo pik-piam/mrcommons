@@ -23,7 +23,7 @@ x <- time_interpolate(x, interpolated_year=getYears(landuse), integrate_interpol
 out <- x*landuse_shr
 #aggregate
 out[is.na(out)] <- 0
-rel  <- toolGetMapping("CountryToCellMapping.csv",type="cell")
+rel  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 out <- toolAggregate(out,rel=rel, from="celliso", to="iso")
 out <- toolCountryFill(out, fill=0)
 return(list(x=out,

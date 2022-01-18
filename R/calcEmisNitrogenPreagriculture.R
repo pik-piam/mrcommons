@@ -85,7 +85,7 @@ calcEmisNitrogenPreagriculture<-function(cellular=FALSE, deposition=TRUE){
   }
   
   if(cellular==FALSE) {
-    mapping <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     out<-toolAggregate(x=out,rel=mapping,from="celliso",to="iso")
     out<-toolCountryFill(out,fill=colSums(out)*10^-10)
   }

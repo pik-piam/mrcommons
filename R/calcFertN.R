@@ -64,7 +64,7 @@ calcFertN <- function(appliedto="total",cellular=FALSE,deposition="CEDS",max_snu
     past<-findset("past")
     fert<-fert[,past,]
     
-    mapping<-toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     missing<-dimSums(fert,dim=1)-dimSums(fert[unique(mapping$iso),,],dim=1)
     vcat(verbosity = 2,paste0("Not all countries included in mapping. Fertilizer not accounted for in 2010 sums up to ",round(missing[,2010,],2)," Tg Nr"))
     

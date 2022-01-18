@@ -70,15 +70,7 @@ calcNitrogenBudgetCropland<-function(cellular=FALSE,deposition="CEDS",include_fe
   if(!is.null(max_snupe)){
     balanceflow<-(dimSums(outputs,dim=3.1)-dimSums(inputs_direct,dim=3.1))/max_snupe-dimSums(inputs,dim=3.1)
     balanceflow[balanceflow<0]<-0
-    
-    ## old: For cellular calculation country data has to be loaded to scale down the balance flow
-    #if(cellular){
-    #  iso           <- calcOutput("NitrogenBudgetCropland", cellular=FALSE, include_fertilizer=include_fertilizer, 
-    #                              deposition=deposition, max_snupe=max_snupe, aggregate = FALSE)[,,"balanceflow"]
-    #  CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
-    #  balanceflow   <- toolAggregate(x=toolIso2CellCountries(iso), rel=CountryToCell, weight = balanceflow, from="iso", to="celliso")
-    #}
-    
+
   } else {
     balanceflow<-dimSums(outputs,dim=3.1)*0
   }

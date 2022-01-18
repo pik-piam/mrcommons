@@ -10,7 +10,7 @@
 
 readGGCMICropCalendar <- function(subtype){
 
- mapping <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")
+ mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
   
 
   if (subtype == "cal"){
@@ -74,7 +74,7 @@ if (subtype == "wheat_areas"){
    tmp   <- toolCoord2Isocell(tmp)
    
    #fill NA cells with 0
-   cells  <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")[,"celliso"]
+   cells  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")[,"celliso"]
    fill   <- new.magpie(cells_and_regions = setdiff(cells, getItems(tmp, dim=1)), years = NULL, names = "layer", fill=0 )
    tmp   <- mbind(tmp, fill)
    

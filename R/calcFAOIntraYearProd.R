@@ -77,7 +77,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products="kcr", frequency=
   rice <-  readSource("GGCMICropCalendar", subtype="rice_areas", convert=F)
   #aggregate rice to national harvested areas
   
-  mapping <- toolGetMapping(type="cell", name="CountryToCellMapping.csv")
+  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
   
   rice <- toolAggregate(rice,rel=mapping, from ="celliso", to ="iso", 
                          weight= new.magpie(cells_and_regions = getItems(rice,dim=1),years = NULL,

@@ -38,7 +38,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
     names(dimnames(cellvegc))[1]    <- "celliso"
     mapping   <- data.frame(mapping, celliso = paste(gsub("[^A-Z]", "", getCells(cellvegc)), c(1:67420), sep = "."), stringsAsFactors = F)
   } else {
-    mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
     countries <- unique(mapping$iso)
 
     cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(countrydata), ]

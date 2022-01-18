@@ -33,7 +33,7 @@ readKoeppen<-function(subtype="iso"){
       irowicol       <- cbind(2*(x[,"Lon"]+180+0.25),2*(x[,"Lat"]+90+0.25))
       grid[irowicol] <- x[,"Cls"]
       
-      mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       cellNames <- mapping$celliso
       years     <- as.numeric(unlist(regmatches(file, gregexpr("\\d{4}",file))))
       years     <- seq(years[1],years[2])

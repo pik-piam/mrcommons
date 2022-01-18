@@ -30,7 +30,7 @@ calcTemperature<-function(landusetypes="all", months=FALSE,convert=TRUE){
   landuse<-time_interpolate(landuse, interpolated_year = getYears(temp),extrapolation_type = "constant")
 
   # Aggregation
-  CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+  CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
   landuse_sum<-dimSums(landuse,dim=3)
   out_sum <- toolAggregate(x = temp, rel = CountryToCell,weight = landuse_sum, from = "celliso", to = "iso", partrel = TRUE)
   

@@ -50,7 +50,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
 
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       MAGtoLPJ       <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
       MAGtoLPJ       <- MAGtoLPJ[which(MAGtoLPJ$MAgPIE %in% MAGcroptypes), ]
 
@@ -171,7 +171,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
                             calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                       climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
                                       aggregate = FALSE, years = selectyears)[, , "mgrass.rainfed"]))
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
       if (calibrated == TRUE) {
 

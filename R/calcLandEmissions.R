@@ -260,7 +260,7 @@ calcLandEmissions <- function(datasource="CEDS") {
 
     GFED_emissions <- readSource("GFED")
 
-    CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     CH4 <- GFED_emissions[,,"AGRI.ch4"]
     CH4 <- toolAggregate(CH4, rel = CountryToCell, from = "celliso", to = "iso")
