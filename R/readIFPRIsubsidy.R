@@ -12,7 +12,7 @@
 readIFPRIsubsidy <- function() {
 
   # read data from excel table
-  data <- read_excel("Support_Database_2021_version2.xlsx", "Aggregated_NRA")
+  data <- suppressWarnings(read_excel("Support_Database_2021_version2.xlsx", "Aggregated_NRA"))
   data <- data[, c("Country_Code", "Year", "CATPROD", "NRA_Cat", "Support_USD")]
 
   # subset to crop and livestock category

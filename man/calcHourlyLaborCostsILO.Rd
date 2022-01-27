@@ -4,7 +4,10 @@
 \alias{calcHourlyLaborCostsILO}
 \title{calcHourlyLaborCostsILO}
 \usage{
-calcHourlyLaborCostsILO()
+calcHourlyLaborCostsILO(projections = FALSE)
+}
+\arguments{
+\item{projections}{SSP on which projections should be based. If FALSE only historic values will be reported}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

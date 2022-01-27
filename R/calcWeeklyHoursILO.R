@@ -10,6 +10,7 @@
 #' @importFrom magclass getNames<- getYears getRegions where time_interpolate dimSums
 
 calcWeeklyHoursILO <- function() {
+
   ilo <- readSource("ILOSTAT", "WeeklyHoursByActivity")[, , list("Total", "Aggregate: Agriculture"), drop = TRUE]
   getNames(ilo) <- "Agriculture, forestry and fishing"
   ilo[ilo == 0] <- NA
@@ -18,7 +19,7 @@ calcWeeklyHoursILO <- function() {
   minYear <- min(getYears(ilo, as.integer = TRUE))
   maxYear <- max(getYears(ilo, as.integer = TRUE))
   regs <- c()
-  for (reg in getRegions(ilo)) {
+  for (reg in getItems(ilo, dim = 1)) {
     tmp <- ilo[reg, , ]
     tmpYears <- as.integer(gsub("y", "", where(is.finite(tmp))$true$years))
     if (length(tmpYears) >= 10) {
@@ -43,7 +44,7 @@ calcWeeklyHoursILO <- function() {
   }
 
   # agricultural employment as weight -> reduce time series to years that have data
-  agEmpl <- calcOutput("AgEmplILO", aggregate = FALSE)
+  agEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = FALSE)
   ilo <- ilo[, getYears(agEmpl), ]
 
   # fill countries that are completely missing with world averages (weighted with agricultural employment per country)
@@ -52,7 +53,7 @@ calcWeeklyHoursILO <- function() {
   weight1[regionsNotComplete, , ] <- 0
   weight1 <- weight1 / dimSums(weight1, dim = 1)
 
-  regionsFilled <- setdiff(getRegions(ilo), regionsNotComplete)
+  regionsFilled <- setdiff(getItems(ilo, dim = 1), regionsNotComplete)
   worldAvg <- dimSums(ilo[regionsFilled, , ] * weight1[regionsFilled, , ], dim = 1)
   ilo[regionsNotComplete, , ] <- worldAvg
 
