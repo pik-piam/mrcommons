@@ -19,7 +19,7 @@ calcVoP_AFF <- function() {
 #### Value of production for Agriculture (crops and livestock)
   agItems <- c("2041|Crops", "2044|Livestock")
   unit <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
-  
+
   # conversion from current USD MER to constant 2005 USD MER
   VoP_ag_curMER <- dimSums(readSource("FAO_online", "ValueOfProd")[, , list(agItems, unit)] / 1000, dim = 3) # mio. US$
   VoP_ag <- convertGDP(VoP_ag_curMER,
@@ -30,7 +30,7 @@ calcVoP_AFF <- function() {
   getNames(VoP_ag) <- "Agriculture"
 
 #### Value of production fisheries
-  
+
   # export value and quantity of fish and other aquatic products
   export_fish_value <- readSource("FishstatJ_FAO", subtype = "exportsValue") # 1000 current USD MER
   export_fish_tonNet <- readSource("FishstatJ_FAO", subtype = "exportsQuantity") # ton_net
