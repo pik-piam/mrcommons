@@ -45,7 +45,8 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
              grass_pft_hist     = "pft_harvest_hist.pft",
              grass_pft_scen     = "pft_harvest_scen.pft",
              cshift_fast        = "cshift_fast_natveg",
-             cshift_slow        = "cshift_slow_natveg")
+             cshift_slow        = "cshift_slow_natveg",
+             fpc                = "fpc.clm")
 
   # handling the separate sources of grass runs
   if (!grepl("Pasture", x$version, ignore.case = T)) {

@@ -179,6 +179,10 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- "C/C"
 
+    } else if (grepl("fpc", subtype)) {
+      
+      unit <- "ha/ha"
+      
     } else {
       stop(paste0("subtype ", subtype, " is not existing"))
     }
