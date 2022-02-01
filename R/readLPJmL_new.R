@@ -62,7 +62,7 @@ readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:histo
       bands           = nbands,
       datatype        = datatype,
       bytes           = bytes,
-      monthly         = FALSE
+      monthly         = monthly
     )
     
     class(x) <- "array"
