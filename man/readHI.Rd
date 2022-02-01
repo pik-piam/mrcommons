@@ -10,7 +10,7 @@ readHI()
 magpie object with the dimension crops and coeffizients
 }
 \description{
-Read-in a file containing the allometric coeffizients of MAgPIE crop types. 
+Read-in a file containing the allometric coeffizients of MAgPIE crop types.
 Values are assembled from various literature sources, and the weighting and allocation is done in the
 spreadsheet crop_specifications_*.ods for different versions of the file
 }
@@ -20,7 +20,7 @@ spreadsheet crop_specifications_*.ods for different versions of the file
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodrisky, Kristine Karstens

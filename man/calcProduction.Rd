@@ -37,8 +37,8 @@ calcOutput("Production")
 
 }
 \seealso{
-\code{\link{calcLanduseInitialisation}},
-\code{\link{calcCroparea}}
+\code{\link[=calcLanduseInitialisation]{calcLanduseInitialisation()}},
+\code{\link[=calcCroparea]{calcCroparea()}}
 }
 \author{
 Benjamin Leon Bodirsky

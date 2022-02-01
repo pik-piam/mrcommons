@@ -12,7 +12,7 @@
 #' @importFrom magpiesets findset
 #'
 #'
-#' @seealso \code{\link{calcOutput}}
+#' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("PricesProducer")
@@ -21,7 +21,7 @@
 calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
 
   ## Conversion of current USD MER to 05USDppp
-  GDP_ppp <- calcOutput("GDPppp", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
+  GDP_ppp <- calcOutput("GDP", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
   GDP_mer <- readSource("WDI", "NY.GDP.MKTP.CD")
   years <- intersect(getYears(GDP_ppp), getYears(GDP_mer))
   GDP_con_mer <- setYears(GDP_mer[, 2005, ] / GDP_mer[, years, ], years)

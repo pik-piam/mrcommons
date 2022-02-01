@@ -30,7 +30,7 @@ calcOutput("FertilizerByCrop")
 }
 }
 \seealso{
-\code{\link{calcNitrogenBudgetCropland}}
+\code{\link[=calcNitrogenBudgetCropland]{calcNitrogenBudgetCropland()}}
 }
 \author{
 Benjamin Leon Bodirsky

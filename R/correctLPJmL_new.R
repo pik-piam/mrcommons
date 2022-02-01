@@ -4,7 +4,7 @@
 #' 
 #' @author Kristine Karstens
 #' @seealso
-#' \code{\link{readLPJmL}}
+#' [readLPJmL()]
 #' @examples
 #'
 #' \dontrun{

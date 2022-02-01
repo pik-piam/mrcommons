@@ -4,7 +4,7 @@
 #' @param glo_incl_oceans if true, a global value will be returned that also includes deposition on oceans and should be equivalent to total emissions.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcAtmosphericDeposition}}
+#' [calcAtmosphericDeposition()]
 #' @examples
 #' 
 #' \dontrun{ 

@@ -19,7 +19,7 @@ Read-in world prices data csv file as magclass object
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Mishko Stevanovic

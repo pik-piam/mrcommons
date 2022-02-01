@@ -6,7 +6,7 @@
 #' @param subtype data subtype. Available subtypes: "forest_area","growing_stock","biomass_stock","carbon_stock","management","disturbance","forest_fire"
 #' @return Magpie object of the FRA 2020 data
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("FRA2020", "growing_stock")
@@ -131,7 +131,7 @@ readFRA2020 <- function(subtype) {
 
     # Convert from country names to ISO codes
     data$Country <- suppressWarnings(toolCountry2isocode(data$Country,
-      warn = T,
+      warn = TRUE,
       mapping = c(
         "United Kingdom of Great Britain and Northern Ireland" = "GBR",
         "Venezuela (Bolivarian Republic of)" = "VEN",
@@ -161,8 +161,8 @@ readFRA2020 <- function(subtype) {
         partial_data <- partial_data
       }
     }
-    if (missing_data > 0) message(missing_data, " missing data points.", " Such data will be set to 0.")
-    if (partial_data > 0) message(partial_data, " partial data points.", " Such data will be set to mean value of reported data.")
+    if (missing_data > 0) cat(missing_data, " missing data points.", " Such data will be set to 0.")
+    if (partial_data > 0) cat(partial_data, " partial data points.", " Such data will be set to mean value of reported data.")
 
     # Replace X in colnames with y to make sure as.magpie recognizes this column as temporal dimension later
     colnames(data) <- gsub(pattern = "X", replacement = "y", x = colnames(data))
@@ -194,9 +194,7 @@ readFRA2020 <- function(subtype) {
     getYears(out2) <- c("y1995", "y2005", "y2020")
     out <- mbind(out, out2)
     out <- out[, sort(getYears(out)), ]
-  }
-
-  else if (!(subtype %in% subtype_list)) {
+  } else if (!(subtype %in% subtype_list)) {
     stop("Invalid or unsupported subtype ", subtype, ". Accepted subtypes are ", paste(subtype_list, collapse = ", "), ". Choose one of the accepted subtype. Returning NULL")
   }
   out <- out[grep(pattern = "X0|X1|X2", x = getRegions(out), value = TRUE, invert = TRUE), , ]

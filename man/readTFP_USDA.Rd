@@ -20,7 +20,7 @@ a <- readSource("TFP_USD")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Edna J. Molina Bacca

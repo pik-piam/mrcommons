@@ -19,7 +19,7 @@ rice areas or rice area shares of flooded and non-flooded category
 }
 \description{
 calculates rice area based on LUH flooded areas and
-             physical rice areas reported by FAOSTAT.
+physical rice areas reported by FAOSTAT.
 }
 \author{
 Felicitas Beier, Kristine Karstens

@@ -18,7 +18,7 @@ Publication: Zhang, Xin, Eric A. Davidson, Denise L. Mauzerall, Timothy D. Searc
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky

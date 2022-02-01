@@ -24,7 +24,7 @@ a <- calcOutput(type = "MacBaseLandUse")
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
 David Klein, Julian Oeser

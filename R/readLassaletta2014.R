@@ -8,8 +8,8 @@
 #' @return Magpie object with results on country level.
 #' @author Benjamin Leon Bodirsky, Felicitas Beier
 #' @seealso
-#' \code{\link{convertLassaletta2014}},
-#' \code{\link{readSource}}
+#' [convertLassaletta2014()],
+#' [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

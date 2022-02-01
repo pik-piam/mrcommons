@@ -6,7 +6,7 @@
 #' objects
 #' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
 #' @author Isabelle Weindl, Benjamin Bodirsky
-#' @seealso \code{\link{calcOutput}}, \code{\link{readFeedModel}}
+#' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
 #' 
 #' \dontrun{ 
@@ -19,7 +19,7 @@ calcFeedBasketsPast <- function(non_eaten_food=TRUE) {
   kli<-findset("kli")
   kap<-findset("kap")
   Xkap<-findset("kap",alias=TRUE)
-  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,mag_years_past,]
   
   weight <- collapseNames(massbalance[,,kap][,,"dm"][,,"production"])
   getNames(weight)<-paste0("alias_",getNames(weight))

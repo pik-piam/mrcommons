@@ -9,7 +9,7 @@
 #' and it is possible to replace them with the function convertNCDrisc
 #' 
 #' @seealso
-#' \code{\link{convertNCDrisc}}
+#' [convertNCDrisc()]
 
 
 readNCDrisc <- function(subtype) 

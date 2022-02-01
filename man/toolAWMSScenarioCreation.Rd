@@ -24,7 +24,7 @@ List of magpie objects with results on country level, weight on country level, u
 tool function to calculated the share of manure managed in different animal waste management systems in confinements.
 }
 \seealso{
-\code{\link{calcAWMSconfShr}}
+\code{\link[=calcAWMSconfShr]{calcAWMSconfShr()}}
 }
 \author{
 Edna J. Molina Bacca

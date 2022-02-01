@@ -15,7 +15,7 @@
 #'
 #' @author Benjamin Leon Bodirsky, Florian Humpenoeder, Jens Heinke, Felicitas Beier
 #' @seealso
-#' \code{\link{calcLanduseInitialisation}}
+#' [calcLanduseInitialisation()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LUH2v2")

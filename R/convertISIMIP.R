@@ -9,7 +9,7 @@
 #' @return MAgPIE object on country level
 #' 
 #' @author Jan Philipp Dietrich, Felicitas Beier
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' 
 #' @examples
 #' \dontrun{

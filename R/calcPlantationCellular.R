@@ -15,7 +15,7 @@ calcPlantationCellular <- function() {
   planted_area <- readSource("FRA2020", "forest_area")[, , "plantedForest"]
   planted_area <- time_interpolate(dataset = planted_area, interpolated_year = "y1995", integrate_interpolated_years = TRUE, extrapolation_type = "linear")
   ## VegC
-  cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_84a69edd", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, "y1995", ]
+  cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, "y1995", ]
   # reduce to 59199 cells and rename cells
   cellvegc <- toolCoord2Isocell(cellvegc)
 

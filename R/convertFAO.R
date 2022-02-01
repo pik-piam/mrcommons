@@ -13,7 +13,7 @@
 #' @param subtype The FAO file type, e.g.: CBCrop
 #' @return Data as MAgPIE object with common country list
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic
-#' @seealso \code{\link{readFAO}}, \code{\link{readSource}},
+#' @seealso [readFAO()], [readSource()],
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}

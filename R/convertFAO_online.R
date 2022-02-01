@@ -13,10 +13,10 @@
 #' @param subtype The FAO file type, e.g.: CBCrop
 #' @return Data as MAgPIE object with common country list
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
-#' @seealso \code{\link{readFAO}}, \code{\link{readSource}},
+#' @seealso [readFAO()], [readSource()],
 #' @examples
 #'
-#' \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
+#' \dontrun{ a <- readSource("FAO_online","Crop", convert=TRUE)}
 #' @importFrom magclass magpiesort dimExists getItems
 #'
 
@@ -28,7 +28,8 @@ convertFAO_online <- function(x,subtype) {
 
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
-                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs")
+                "LiveProc", "Pop", "ValueOfProd","ForestProdTrade","Fbs", "FbsHistoric",
+                "FertilizerProducts", "FertilizerNutrients")
 
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
@@ -93,15 +94,23 @@ convertFAO_online <- function(x,subtype) {
 
   # ---- Section for country specific treatment ----
 
-  ## data for Eritrea ERI added with 0 if not existing in the dimensionality of
-  ## Ethiopia, to make toolISOhistorical work
+  ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
+  ## to make toolISOhistorical work
   if(any(getRegions(x)=="XET") & any(getRegions(x)=="ETH") & !any(getRegions(x)=="ERI")) {
     xERI <- x["ETH",,]
     xERI[,,] <- 0
     getRegions(xERI) <- "ERI"
     x <- magpiesort(mbind(x,xERI))
   }
-
+  
+  if(any(getRegions(x)=="XSD") & any(getRegions(x)=="SDN") & !any(getRegions(x)=="SSD")) {
+    xSSD <- x["SDN",,]
+    xSSD[,,] <- 0
+    getRegions(xSSD) <- "SSD"
+    x <- magpiesort(mbind(x, xSSD))
+  }
+  
+  
   ## add additional mappings
   additional_mapping <- list()
 
@@ -119,17 +128,17 @@ convertFAO_online <- function(x,subtype) {
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if (all(c("XSD", "SSD", "SDN") %in% getRegions(x))){
-    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2010"), c("XSD", "SDN","y2010")))
-  } else if ("XSD" %in% getRegions(x) & !any(c("SDD", "SDN") %in% getRegions(x)) ) {
+    additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2011"), c("XSD", "SDN","y2011")))
+  } else if ("XSD" %in% getRegions(x) & !any(c("SSD", "SDN") %in% getRegions(x)) ) {
     getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
-  }
+  } 
 
-  ## if XCN exists, replace CHN with XCN. 
+  ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getRegions(x)) {
     if ("CHN" %in% getRegions(x)) x <- x["CHN",,,invert=TRUE]
       getItems(x, dim=1)[getItems(x, dim=1)=="XCN"] <- "CHN"
   }
-  
+
   ## data for the Netherlands Antilles is currently removed because currently no
   ## information for its successors SXM, CUW, ABW is available as input for toolISOhistorical
   if(any(getRegions(x) == "ANT")) {
@@ -149,7 +158,7 @@ convertFAO_online <- function(x,subtype) {
 
 
   ### For certain subtypes: if some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and Montenegro (SCG) are missing add them with values of 0
-  if(subtype %in% c("EmisAgRiceCult","Fertilizer","EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
+  if(subtype %in% c("EmisAgRiceCult","Fertilizer", "FertilizerNutrients", "EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
     ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
     missing <- former[!former %in% getRegions(x)]
@@ -162,7 +171,7 @@ convertFAO_online <- function(x,subtype) {
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    if(subtype!="Fbs") {x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)}
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = 'yield|Yield|/', getNames(x, fulldim=T)[[2]], value=TRUE),collapse=" "), "\n" , "and would need a different treatment of NAs in convertFAO")
 

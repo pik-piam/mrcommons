@@ -9,7 +9,8 @@ calcFAOYield(
   attributes = "dm",
   irrigation = FALSE,
   cellular = FALSE,
-  cut = FALSE
+  cut = FALSE,
+  average = 5
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ calcFAOYield(
 \item{cellular}{if TRUE value is calculate on cellular level}
 
 \item{cut}{FALSE (default) - do not cut off yields, number between 0 and 1 to define percentile value for cut off}
+
+\item{average}{averaging period in years (if NULL no averaging is used)}
 }
 \value{
 MAgPIE object of yields

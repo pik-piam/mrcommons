@@ -4,22 +4,20 @@
 \alias{convertILOSTAT}
 \title{convertILOSTAT}
 \usage{
-convertILOSTAT(x, subtype)
+convertILOSTAT(x)
 }
 \arguments{
 \item{x}{unconverted magpie object from read-script}
-
-\item{subtype}{Type of ILOSTAT data that should be read}
 }
 \value{
 Data as MAgPIE object with common country list
 }
 \description{
-fills missing countries in ILOSTAT data with 0
+transforms currencies where applicable, and fills missing countries in ILOSTAT data with 0
 }
 \examples{
 \dontrun{
-  a <- readSource("ILOSTAT", "EmplByActivityModelled", convert = TRUE)
+  a <- readSource("ILOSTAT", subtype = "EmplByActivityModelled", convert = TRUE)
 }
 }
 \author{

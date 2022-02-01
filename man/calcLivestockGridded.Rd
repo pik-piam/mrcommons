@@ -16,8 +16,7 @@ List of magpie objects with results on cellular level, weights on cellular level
 Distributes crop, pasture and livestock production in space to 0.5 degree
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("calcLivestockGridded")
 }
 

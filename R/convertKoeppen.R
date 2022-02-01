@@ -9,10 +9,6 @@
 #' \dontrun{
 #'   readSource("Koeppen", subtype="iso", convert=TRUE)
 #' }
-#'
-#' @import madrat
-#' @import magclass
-
 convertKoeppen<-function(x, subtype="iso") {
   
   if(subtype=="iso"){

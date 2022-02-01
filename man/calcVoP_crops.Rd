@@ -24,8 +24,8 @@ a <- calcOutput("VoP_crops")
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
-Edna J. Molina Bacca
+Edna J. Molina Bacca, Debbora Leip
 }

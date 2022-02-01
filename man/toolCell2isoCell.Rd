@@ -15,7 +15,7 @@ toolCell2isoCell(x, cells = "magpiecell")
 return changed input data
 }
 \description{
-Sets cell names to [iso country code].[cell number]
+Sets cell names to "iso country code"."cell number"
 }
 \author{
 Kristine Karstens

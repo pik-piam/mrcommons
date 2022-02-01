@@ -15,8 +15,8 @@ magpie object in cellular resolution
 }
 \description{
 This function reads the raw SoilGrids data (available at
-             https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif)
-             or if available the preprocessed raster layers.
+https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif)
+or if available the preprocessed raster layers.
 }
 \examples{
 \dontrun{
@@ -25,7 +25,7 @@ readSource("SoilGrids", subtype = "cstock_0_30")
 
 }
 \seealso{
-\code{\link{downloadSoilGrids}}
+\code{\link[=downloadSoilGrids]{downloadSoilGrids()}}
 }
 \author{
 Kristine Karstens

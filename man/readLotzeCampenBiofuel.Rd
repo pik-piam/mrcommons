@@ -10,7 +10,7 @@ readLotzeCampenBiofuel()
 Future trends in first generation bioenergy demand in ExaJoule as magpie object
 }
 \description{
-Read-in Future trends in first generation bioenergy demand from the publication 
+Read-in Future trends in first generation bioenergy demand from the publication
 Lotze Campen et al. 2014. "Impacts of increased bioenergy demand on global food
 markets: an AgMIP economic model intercomparison" Agricultural Economics 45 (103-116).
 doi:10.1111/agec.12092.
@@ -24,7 +24,7 @@ from a .csv file to a magclass object
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Ewerton Araujo

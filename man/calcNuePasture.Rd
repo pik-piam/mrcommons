@@ -23,8 +23,8 @@ calcOutput("NuePasture")
 
 }
 \seealso{
-\code{\link{calcSNUpE}}
-\code{\link{calcNitrogenBudgetPasture}}
+\code{\link[=calcSNUpE]{calcSNUpE()}}
+\code{\link[=calcNitrogenBudgetPasture]{calcNitrogenBudgetPasture()}}
 }
 \author{
 Benjamin Leon Bodirsky

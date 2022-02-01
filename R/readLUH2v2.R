@@ -9,25 +9,24 @@
 #' @importFrom ncdf4 nc_open
 #' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
 #' @importFrom magclass as.magpie mbind
-#' @importFrom madrat getConfig
 #' @importFrom stringr str_match str_count
 
 readLUH2v2 <- function(subtype) {
 
   # basic settings
-  time_sel   <- seq(1901, 2015, by = 1)
+  timeSel   <- seq(1901, 2015, by = 1)
   offset     <- 849  # year 850=1, year 1900=1051, year 2015=1166
   # grep years to set other than default years, if subtypes ends with '_850to1901' like time span expression
-  time_span <- str_match(subtype, "_(\\d+)to(\\d+)")[2:3]
-  if (all(!is.na(time_span))) {
-    time_sel  <- seq(time_span[1], time_span[2], by = 1)
+  timeSpan <- str_match(subtype, "_(\\d+)to(\\d+)")[2:3]
+  if (all(!is.na(timeSpan))) {
+    timeSel  <- seq(timeSpan[1], timeSpan[2], by = 1)
     subtype   <- gsub("_(\\d+)to(\\d+)", "", subtype)
   }
 
   # File to process
-  f_states <- "states.nc"
-  f_man    <- "management.nc"
-  f_trans  <- "transitions.nc"
+  fStates <- "states.nc"
+  fMan    <- "management.nc"
+  fTrans  <- "transitions.nc"
 
   ### Define dimensions
   map      <- toolGetMappingCoord2Country(pretty = TRUE)
@@ -35,20 +34,20 @@ readLUH2v2 <- function(subtype) {
   if (grepl("states", subtype)) {
 
     # Open file and process information
-    nc_file <- nc_open(f_states)
-    data    <- setdiff(names(nc_file$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
+    ncFile <- nc_open(fStates)
+    data    <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     # Land area
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
     for (item in data) {
-      shr <- subset(brick(f_states, varname = item), time_sel - offset)
+      shr <- subset(brick(fStates, varname = item), timeSel - offset)
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
-      getYears(mag) <- time_sel
+      getYears(mag) <- timeSel
       getSets(mag)  <- c("x.y.iso", "t", "data")
       x <- mbind(x, mag)
     }
@@ -57,70 +56,71 @@ readLUH2v2 <- function(subtype) {
     x <- x / 10000
 
   } else  if (grepl("transition", subtype)) {
-    
+
     # Open file and process information
-    nc_file <- nc_open(f_trans)
-    luTrans <- setdiff(names(nc_file$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
+    ncFile <- nc_open(fTrans)
+    luTrans <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     luTrans <- grep("to", luTrans, value = TRUE)
     luTrans <- luTrans[str_count(luTrans, "c[3/4]") == 1]
     fromCrop <- grep("^c", luTrans, value = TRUE)
     toCrop   <- setdiff(luTrans, fromCrop)
-    
+
     # Land area
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
-    
+
     lucToCrop   <- new.magpie(fill = 0)
     lucFromCrop <- new.magpie(fill = 0)
-    
+
     for (item in toCrop) {
-      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1)
+      shr <- subset(brick(fTrans, varname = item), timeSel - offset - 1)
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
-      getYears(mag) <- time_sel
+      getYears(mag) <- timeSel
       getSets(mag)  <- c("x.y.iso", "t", "data")
       lucToCrop     <- collapseNames(lucToCrop + mag)
     }
-    
+
     for (item in fromCrop) {
-      shr <- subset(brick(f_trans, varname = item), time_sel - offset - 1) #This attributes LUC to the year resulting from it
+      # This attributes LUC to the year resulting from it
+      shr <- subset(brick(fTrans, varname = item), timeSel - offset - 1)
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
-      getYears(mag) <- time_sel
+      getYears(mag) <- timeSel
       getSets(mag)  <- c("x.y.iso", "t", "data")
       lucFromCrop   <- collapseNames(lucFromCrop + mag)
     }
-    
+
     x <- mbind(setNames(lucFromCrop, "from_crop"),
                setNames(lucToCrop,   "to_crop"))
-    
+
     # Convert from km^2 to Mha
     x <- x / 10000
-    
+
   } else if (grepl("irrigation", subtype)) {
 
     # Mapping between states and management_irrigation
-    data_man    <- c("irrig_c3ann", "irrig_c3per", "irrig_c4ann", "irrig_c4per", "irrig_c3nfx", "flood")
-    data_states <- c("c3ann", "c3per", "c4ann", "c4per", "c3nfx", "c3ann")
-    data        <- matrix(data = c(data_man, data_states), ncol = 2)
+    dataMan    <- c("irrig_c3ann", "irrig_c3per", "irrig_c4ann", "irrig_c4per", "irrig_c3nfx", "flood")
+    dataStates <- c("c3ann", "c3per", "c4ann", "c4per", "c3nfx", "c3ann")
+    data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
-    for (item in data_man) {
-      shr    <- subset(brick(f_states, varname = data[data[, 1] == item, 2]), time_sel - offset)
-      ir_shr <- subset(brick(f_man,    varname = item), time_sel - offset)
+    for (item in dataMan) {
+      shr    <- subset(brick(fStates, varname = data[data[, 1] == item, 2]), timeSel - offset)
+      irShr <- subset(brick(fMan,    varname = item), timeSel - offset)
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
-      mag <- aggregate(shr * carea * ir_shr, fact = 2, fun = sum)
+      mag <- aggregate(shr * carea * irShr, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
-      getYears(mag) <- time_sel
+      getYears(mag) <- timeSel
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
       getSets(mag)  <- c("x.y.iso", "t", "data")
       x <- mbind(x, mag)

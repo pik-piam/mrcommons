@@ -19,7 +19,7 @@ calcOutput("calcFacReqGLO")
 
 }
 \seealso{
-\code{\link{calcOutput}},\code{\link{calcFactorIntensity}}
+\code{\link[=calcOutput]{calcOutput()}},\code{\link[=calcFactorIntensity]{calcFactorIntensity()}}
 }
 \author{
 Edna J. Molina Bacca

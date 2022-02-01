@@ -5,7 +5,7 @@
 #' @param subtype The FAO FRA 2015 file type, e.g.: fac, production, biodiversity or anndat.
 #' @return Data as MAgPIE object with common country list
 #' @author Abhijeet Mishra
-#' @seealso \code{\link{readSource}},
+#' @seealso [readSource()],
 #' @examples
 #' 
 #' \dontrun{ a <- readSource("FRA2015","production",convert=TRUE)}

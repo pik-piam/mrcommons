@@ -15,7 +15,7 @@
 #' @importFrom utils head
 #' @importFrom stringr str_detect
 
-downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc") {
+downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") {
 
   x     <- toolSplitSubtype(subtype, list(version = NULL, climatemodel = NULL, scenario = NULL, variable = NULL))
   files <- c(soilc              = "soilc_natveg",
@@ -45,7 +45,8 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:h
              grass_pft_hist     = "pft_harvest_hist.pft",
              grass_pft_scen     = "pft_harvest_scen.pft",
              cshift_fast        = "cshift_fast_natveg",
-             cshift_slow        = "cshift_slow_natveg")
+             cshift_slow        = "cshift_slow_natveg",
+             fpc                = "fpc.clm")
 
   # handling the separate sources of grass runs
   if (!grepl("Pasture", x$version, ignore.case = T)) {
@@ -77,7 +78,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:h
       files2copy <- find_file(storage, path, list_files, file)
       file.copy(file.path(storage, path, files2copy), files2copy, overwrite = T)
     } else {
-      file.copy(paste0(storage, path, "/", head(grep(".out", list_files, value = T), n = 1)), "lpjml_log.out")
+      file.copy(paste0(storage, path, "/lpjml_log.out"), "lpjml_log.out")
     }
   } else {
     stop("Data is not available so far!")

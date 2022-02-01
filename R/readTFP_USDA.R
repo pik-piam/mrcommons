@@ -9,7 +9,7 @@
 #' @author Edna J. Molina Bacca
 #' @importFrom readxl read_excel
 #' @importFrom stats reshape
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #'
 #' \dontrun{

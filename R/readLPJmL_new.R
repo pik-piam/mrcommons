@@ -5,53 +5,52 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens, Abhijeet Mishra, Felicitas Beier, Marcos Alves
 #' @seealso
-#' \code{\link{readLPJ}}
+#' [readLPJ()]
 #' @examples
-#'
 #' \dontrun{
-#' readSource("LPJmL_new", convert=FALSE)
+#' readSource("LPJmL_new", convert = FALSE)
 #' }
 #'
-#' @import madrat
 #' @importFrom magpiesets addLocation
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split
 
-readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc"){
-
-  subtype     <- toolSplitSubtype(subtype, list(version=NULL, climatemodel=NULL, scenario=NULL, variable=NULL))$variable
-
+readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") {
+  
+  subtype     <- toolSplitSubtype(subtype, list(version = NULL, climatemodel = NULL, scenario = NULL, variable = NULL))$variable
+  
   .prepareLPJ <- function(datatype = numeric(),
                           bytes    = 4,
                           monthly  = FALSE,
                           nbands   = NULL) { # nbands will be overwritten for clm data
-
-    file_name   <- Sys.glob(c("*.bin","*.clm"))
-    file_type   <- tail(unlist(strsplit(file_name,'\\.')),1)
-
-    if(file_type=="clm"){
-
-      filedata    <- file(description = file_name, open = "rb", blocking = TRUE,encoding = getOption("encoding"))
-      seek(filedata, where=15, origin="start")
-      in_header   <- as.numeric(readBin(filedata,what=integer(),size=4,n=5,endian=.Platform$endian))
+    
+    file_name   <- Sys.glob(c("*.bin", "*.clm"))
+    file_type   <- tail(unlist(strsplit(file_name, "\\.")), 1)
+    
+    if (file_type == "clm") {
+      
+      filedata    <- file(description = file_name, open = "rb", blocking = TRUE, encoding = getOption("encoding"))
+      seek(filedata, where = 15, origin = "start")
+      in_header   <- as.numeric(readBin(filedata, what = integer(), size = 4, n = 5, endian = .Platform$endian))
       start_year  <- in_header[1]
       nyear       <- in_header[2]
       nbands      <- in_header[5]            # nbands will be overwritten for clm data
-      years       <- seq(start_year,start_year+nyear-1,1)
+      years       <- seq(start_year, start_year + nyear - 1, 1)
       headlines   <- 51                      # generation clm 3
       close(filedata)
-
-    } else if(file_type=="bin"){
+      
+    } else if (file_type == "bin") {
       outfile    <- grep(".out", list.files(), value = T) %>% head(1)
       out        <- readLines(outfile)
-      start_year <- out %>% str_subset('Output written in year:') %>% str_split(":") %>% unlist() %>%  str_trim() %>% subset(c(F,T)) %>% as.numeric()
-      end_year   <- out %>% str_subset('Last year:') %>% str_split(":") %>% unlist() %>% str_trim() %>% subset(c(F,T)) %>% as.numeric()
-      years      <- seq(start_year,end_year,1)
+      start_year <- out %>% str_subset("Output written in year:") %>% str_split(":") %>% unlist() %>%  str_trim() %>% subset(c(F, T)) %>% as.numeric()
+      end_year   <- out %>% str_subset("Last year:") %>% str_split(":") %>% unlist() %>% str_trim() %>% subset(c(F, T)) %>% as.numeric()
+      years      <- seq(start_year, end_year, 1)
       headlines  <- 0
-
-    } else {stop("File format of LPJmL input data unknown. Please provide .clm or .bin file format.")}
-
-
+      
+    } else {
+      stop("File format of LPJmL input data unknown. Please provide .clm or .bin file format.")
+    }
+    
     x <- readLPJ(
       file_name       = file_name,
       wyears          = years,
@@ -65,38 +64,44 @@ readLPJmL_new <- function(subtype="LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:histori
       bytes           = bytes,
       monthly         = monthly
     )
-
+    
     class(x) <- "array"
-    x        <- collapseNames(as.magpie(x, spatial=1))
-    x        <- collapseDim(addLocation(x), dim="N")
+    x        <- collapseNames(as.magpie(x, spatial = 1))
+    x        <- collapseDim(addLocation(x), dim = "N")
     x        <- clean_magpie(x)
-
+    
     return(x)
   }
-
-  if(subtype%in%c("soilc","litc", "vegc", "alitfallc", "aet",
-                  "vegc_grass", "litc_grass", "soilc_grass", "aprec", "soilc_past_hist", "soilc_past_scen") |
-     grepl("alitter", subtype)){
-
+  
+  if (subtype %in% c("soilc", "litc", "vegc", "alitfallc", "aet",
+                     "vegc_grass", "litc_grass", "soilc_grass", "aprec", "soilc_past_hist", "soilc_past_scen") |
+      grepl("alitter", subtype)) {
+    
     x <- .prepareLPJ(nbands = 1)
-
-  } else if(grepl("*date*", subtype)){
-
+    
+  } else if (grepl("*date*", subtype)) {
+    
     x <- .prepareLPJ(nbands = 24, datatype = integer(), bytes = 2)
-
-  } else if(subtype%in%c("soilc_layer", "cshift_slow", "cshift_fast")){
-
+    
+  } else if (subtype %in% c("soilc_layer", "cshift_slow", "cshift_fast")) {
+    
     x <- .prepareLPJ(nbands = 5)
-
-  } else if(grepl("mdischarge|mrunoff|mpet", subtype)){
-
+    
+  } else if (grepl("mdischarge|mrunoff|mpet", subtype)) {
+    
     x <- .prepareLPJ(monthly = TRUE)
-
-  } else if(grepl("harvest|irrig|cwater_b|grass_pft", subtype)){
-
+    
+  } else if (grepl("harvest|irrig|cwater_b|grass_pft", subtype)) {
+    
     x <- .prepareLPJ(nbands = 32)
-
-  } else {stop(paste0("subtype ",subtype," is not existing"))}
-
-  return(round(x, digits=10))
+    
+  } else if (grepl("fpc", subtype)) {
+    
+    x <- .prepareLPJ(nbands = 12)
+    
+  } else {
+    stop(paste0("subtype ", subtype, " is not existing"))
+  }
+  
+  return(round(x, digits = 10))
 }

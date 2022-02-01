@@ -23,7 +23,7 @@ a <- calcOutput("FractionInputsUSDA")
 
 }
 \seealso{
-\code{\link{calcOutput}}
+\code{\link[=calcOutput]{calcOutput()}}
 }
 \author{
 Edna J. Molina Bacca, Debbora Leip

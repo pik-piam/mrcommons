@@ -6,7 +6,7 @@
 #' @param x magpie object provided by the read function
 #' 
 #' @seealso
-#' \code{\link{readLutz2014}}
+#' [readLutz2014()]
 
 
 convertLutz2014 <- function(x){

@@ -21,7 +21,7 @@ Read in csv files containing data on production system distribution and system-s
 }
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Isabelle Weindl

@@ -9,8 +9,8 @@
 #' @return Magpie object with results on country level.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{readLassaletta2014}},
-#' \code{\link{readSource}}
+#' [readLassaletta2014()],
+#' [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

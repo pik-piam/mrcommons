@@ -6,7 +6,7 @@
 \usage{
 calcEmissionInventory(
   datasource = "CEDS",
-  mapping = "mappingCEDS59toSectors.csv",
+  targetResolution = "sectoral",
   from = "CEDS59",
   to = "Sectors"
 )
@@ -14,7 +14,7 @@ calcEmissionInventory(
 \arguments{
 \item{datasource}{The Inventory that shall be used. Options are CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)}
 
-\item{mapping}{if emission inventory shall be aggregated, this indicates the mapping csv. if NULL, the original resolution will be used.}
+\item{targetResolution}{Specific mapping file to be used.}
 
 \item{from}{column in mapping}
 
@@ -28,10 +28,10 @@ providees an emission inventory for the past, either from external data or own e
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenCroplandPast")
 }
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, Michael S. Crawford
 }

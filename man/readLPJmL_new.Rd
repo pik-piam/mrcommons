@@ -5,7 +5,7 @@
 \title{readLPJmL_new}
 \usage{
 readLPJmL_new(
-  subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc"
+  subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc"
 )
 }
 \arguments{
@@ -18,14 +18,13 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Read LPJmL content
 }
 \examples{
-
 \dontrun{
-readSource("LPJmL_new", convert=FALSE)
+readSource("LPJmL_new", convert = FALSE)
 }
 
 }
 \seealso{
-\code{\link{readLPJ}}
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Kristine Karstens, Abhijeet Mishra, Felicitas Beier, Marcos Alves

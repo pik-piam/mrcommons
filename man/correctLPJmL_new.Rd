@@ -20,7 +20,7 @@ Convert LPJmL content (dummy function)
 
 }
 \seealso{
-\code{\link{readLPJmL}}
+\code{\link[=readLPJmL]{readLPJmL()}}
 }
 \author{
 Kristine Karstens

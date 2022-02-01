@@ -16,5 +16,5 @@ magpie object with a completed dataset.
 Converts data from the WHO
 }
 \seealso{
-\code{\link{convertWHO}}
+\code{\link[=convertWHO]{convertWHO()}}
 }

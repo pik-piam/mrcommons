@@ -22,7 +22,7 @@ calcOutput("AWMSconfShr")
 }
 }
 \seealso{
-\code{\link{calcAWMSconfShrPast}}
+\code{\link[=calcAWMSconfShrPast]{calcAWMSconfShrPast()}}
 }
 \author{
 Benjamin Leon Bodirsky. Modifications by Edna J. Molina Bacca

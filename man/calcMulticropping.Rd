@@ -4,10 +4,10 @@
 \alias{calcMulticropping}
 \title{calcMulticropping}
 \usage{
-calcMulticropping(selectyears = "time")
+calcMulticropping(extend_future = FALSE)
 }
 \arguments{
-\item{selectyears}{"time": the full period in 5 year timesteps. "past": only past. "past_all" past with all years. otherwise, any vector of years.}
+\item{extend_future}{if TRUE}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -17,15 +17,15 @@ calculates the ratio between area harvested and physical cropland area. Can be l
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("Multicropping")
 }
 
 }
 \seealso{
-\code{\link{calcFAOLand}},
-\code{\link{calcCroparea}}
+\code{\link[=calcFAOLand]{calcFAOLand()}},
+\code{\link[=calcCroparea]{calcCroparea()}}
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, David Chen
 }

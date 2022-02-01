@@ -18,13 +18,12 @@ List of magpie object with results on country level, weight on country level, un
 calculates excretion during grazing, cropland-grazing, confinement and collected for fuel. Based on MAgPIE Feed baskets, slaughter biomass and simple allocation rules.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("Excretion")
 }
 }
 \seealso{
-\code{\link{calcExcretionIPCC}}
+\code{\link[=calcExcretionIPCC]{calcExcretionIPCC()}}
 }
 \author{
 Benjamin Leon Bodirsky

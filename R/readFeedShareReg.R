@@ -7,7 +7,7 @@
 #'
 #' @return MAgPIE object containing regression coefficients
 #' @author Isabelle Weindl
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @export
 #'
 #' @examples

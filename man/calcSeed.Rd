@@ -27,8 +27,7 @@ List of magpie object with results and weight on country or cellular level, unit
 Calculates Seed demand
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("Seed")
 }
 }

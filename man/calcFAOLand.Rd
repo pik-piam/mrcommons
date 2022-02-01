@@ -10,8 +10,8 @@ calcFAOLand()
 land areas from FAOSTAT and weight
 }
 \description{
-Returns either physical land areas from FAOSTAT.
+Returns physical land areas from FAOSTAT
 }
 \author{
-Ulrich Kreidenweis
+Ulrich Kreidenweis, Kristine Karstens
 }

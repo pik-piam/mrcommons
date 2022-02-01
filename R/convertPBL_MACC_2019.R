@@ -10,7 +10,7 @@
 #' @return PBL_MACC_2019 data as MAgPIE object for all subtypes aggregated to
 #' country level
 #' @author Florian Humpenoeder
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 
 convertPBL_MACC_2019 <- function(x,subtype) {
   

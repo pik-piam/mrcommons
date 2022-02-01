@@ -9,7 +9,6 @@
 #' @return Central feed shares and weights as list of two MAgPIE-objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Stephen Wirth, Jan Philipp Dietrich
 #'
-#' @importFrom magclass collapseNames
 #' @examples 
 #' \dontrun{ 
 #' calcOutput("CentralFeedshares")
@@ -61,7 +60,8 @@ calcCentralFeedshares <- function(){
 
    #use livestock production as weight
    kl <- c("livst_pig", "livst_rum", "livst_milk")
-   massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+   past <- findset("past")
+   massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,past,]
    weight <- collapseNames(massbalance[,,kl][,,"dm"][,,"production"])
    
    mapping<-data.frame(

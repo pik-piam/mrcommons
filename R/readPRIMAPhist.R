@@ -10,7 +10,7 @@
 #' @return magpie object of the PRIMAP-hist data.
 #' 
 #' @author Roman Popov
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

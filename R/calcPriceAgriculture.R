@@ -3,15 +3,15 @@
 #' @description provides global prices from the IMPACT model projections, World Bank observations, and FAO
 #' obersvations for MAgPIE commodities in $/tDM
 #'
-#' @param datasource Options of the source of data:  \code{IMPACT3.2.2World_Price}
-#' , \code{FAO}, \code{FAOp} and \code{WBGEM}.
+#' @param datasource Options of the source of data:  `IMPACT3.2.2World_Price`
+#' , `FAO`, `FAOp` and `WBGEM`.
 #'
 #' @return List with a magpie object with commodity prices on global level.
 #' @author Mishko Stevanovic, Xiaoxi Wang
 #' @seealso
-#' \code{\link{readIMPACT3.2.2World_Price}},
-#' \code{\link{calcWBGEM}},
-#' \code{\link{readWBGEM}}
+#' [readIMPACT3.2.2World_Price()],
+#' [calcWBGEM()],
+#' [readWBGEM()]
 #' @examples
 #'
 #' \dontrun{
@@ -119,11 +119,10 @@ calcPriceAgriculture <- function(datasource="IMPACT3.2.2World_Price"){
     isocountries <- TRUE
   }
   else if(datasource=="FAO"){
-    out <- readSource("FAO", "PricesProducerAnnual", convert=TRUE)
-    aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where="mappingfolder")
+    out <- readSource("FAO_online", "PricesProducerAnnual", convert=TRUE)
+    aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where="mappingfolder")
 
     qprod <- collapseNames(calcOutput("FAOharmonized", aggregate=FALSE)[,,"production"])
-    qprod <- qprod[,,-grep("Total", getNames(qprod))]
     qprod <- toolAggregate(qprod, rel=aggregation, from="FoodBalanceItem",
                            to="ProductionItem", dim=3, partrel=TRUE, verbosity=2)
     comms <- intersect(getNames(out), getNames(qprod))

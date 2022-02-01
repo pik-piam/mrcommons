@@ -3,43 +3,42 @@
 #' @return List of magpie objects with results on global level, empty weight, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcNitrogenFixationPast}}
-#' \code{\link{readHerridge}} 
+#' [calcNitrogenFixationPast()]
+#' [readHerridge()]
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("NitrogenFixationRateNatural")
 #' }
-#' 
+#'
 #' @importFrom madrat calcOutput
 #' @importFrom magclass collapseNames dimSums setYears
 #' @importFrom magpiesets findset
 
-calcNitrogenFixationRateNatural<-function(){
-  
+calcNitrogenFixationRateNatural <- function() {
+
   years <- findset("past")
-  
+
   # evapotranspiration (in m^3 per ha)
-  et_rate    <- collapseNames(calcOutput("LPJmL_new", version="LPJmL4_for_MAgPIE_84a69edd", climatetype="GSWP3-W5E5:historical", subtype="aet", stage="smoothed", aggregate=FALSE)[,years,])
+  et_rate    <- collapseNames(calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "aet", stage = "smoothed", aggregate = FALSE)[, years, ])
   # reduce to 59199 cells and rename cells
   et_rate    <- toolCoord2Isocell(et_rate)
-  start_year <-"y1965"
-  
-  land <- dimSums(setYears(calcOutput("LanduseInitialisation", aggregate = FALSE, cellular=TRUE)[,start_year,],NULL), dim=3)
+  start_year <- "y1965"
+
+  land <- dimSums(setYears(calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)[, start_year, ], NULL), dim = 3)
   et   <- et_rate * land
-  
+
   # calibration to global total of 58 Tg from Vitousek et al 2013,
   # assuming linear relation to evapotranspiration from Cleveland et al 1999
-  bnf <- 58 / dimSums(setYears(et[,start_year,],NULL), dim=c(1,3)) * et
+  bnf <- 58 / dimSums(setYears(et[, start_year, ], NULL), dim = c(1, 3)) * et
   bnf_rate                  <- bnf / land
   bnf_rate[is.na(bnf_rate)] <- 0
-  
+
   # in case we also have ET for pasture, we could also first calibrate with natveg and the apply to ET rates of pastures. however pasture productivtiy very uncertain
-  
-  return(list(x=bnf_rate,
-              weight=dimSums(land,dim=3),
-              unit="Mt Nr / Mha",
-              description="Nitrogen fixation  freeliving bacteria",
-              isocountries=FALSE)
+
+  return(list(x = bnf_rate,
+              weight = dimSums(land, dim = 3),
+              unit = "Mt Nr / Mha",
+              description = "Nitrogen fixation  freeliving bacteria",
+              isocountries = FALSE)
          )
 }

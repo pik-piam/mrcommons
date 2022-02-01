@@ -15,18 +15,17 @@ calcEmisNitrogenPreagriculture(cellular = FALSE, deposition = TRUE)
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates nitrogenous emissions Nitrogen emissions from soils under 100% natural cover (even for crop and urban) assuming a pre-agricultural time.
+Calculates nitrogenous emissions Nitrogen emissions from soils under 100\% natural cover (even for crop and urban) assuming a pre-agricultural time.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPreagriculture")
 }
 
 }
 \seealso{
-\code{\link{calcEmisNitrogenPast}},
-\code{\link{calcExcretion}}
+\code{\link[=calcEmisNitrogenPast]{calcEmisNitrogenPast()}},
+\code{\link[=calcExcretion]{calcExcretion()}}
 }
 \author{
 Benjamin Leon Bodirsky

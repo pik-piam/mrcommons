@@ -24,7 +24,7 @@ calcOutput("FAOmassbalance")
 }
 }
 \seealso{
-\code{\link{calcFAOmassbalance_pre}}
+\code{\link[=calcFAOmassbalance_pre]{calcFAOmassbalance_pre()}}
 }
 \author{
 Benjamin Leon Bodirsky, Xiaoxi Wang

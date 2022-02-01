@@ -5,14 +5,14 @@
 #'
 #' @note The IMPACT projections start in 2005 and the prices are taken from that year. 
 #'
-#' @param datasource The datasource specification. Currently available \code{FAO} and \code{IMPACT3.2.2World_Price}.
-#' @param year Specifies the year for the initialization of prices in MAgPIE. Default is \code{y2005}.
+#' @param datasource The datasource specification. Currently available `FAO` and `IMPACT3.2.2World_Price`.
+#' @param year Specifies the year for the initialization of prices in MAgPIE. Default is `y2005`.
 #' @param products subselection of products to be returned
 #'
 #' @return List with a magpie object with commodity prices on global level in $05/tDM.
 #' @author Mishko Stevanovic, Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{readIMPACT3.2.2World_Price}}
+#' [readIMPACT3.2.2World_Price()]
 #' @examples
 #' 
 #' \dontrun{ 

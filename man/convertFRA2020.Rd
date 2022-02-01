@@ -23,7 +23,7 @@ a <- readSource("FRA2020", "growing_stock", convert = TRUE)
 }
 }
 \seealso{
-\code{\link{readSource}},
+\code{\link[=readSource]{readSource()}},
 }
 \author{
 Abhijeet Mishra

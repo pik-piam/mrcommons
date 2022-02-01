@@ -16,14 +16,13 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Read LPJmL content
 }
 \examples{
-
 \dontrun{
-readSource("LPJmL", subtype="LPJmL5:CRU4p02.soilc", convert="onlycorrect")
+readSource("LPJmL", subtype = "LPJmL5:CRU4p02.soilc", convert = "onlycorrect")
 }
 
 }
 \seealso{
-\code{\link{readLPJ}}
+\code{\link[=readLPJ]{readLPJ()}}
 }
 \author{
 Kristine Karstens, Abhijeet Mishra, Felicitas Beier

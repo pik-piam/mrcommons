@@ -7,7 +7,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcNitrogenBudgetCropland}}
+#' [calcNitrogenBudgetCropland()]
 #' @examples
 #' 
 #' \dontrun{ 
@@ -19,15 +19,17 @@
 
 calcNitrogenWithdrawalByCrop<-function(indicator="total",cellular=FALSE,irrigation=FALSE){
   
+  past <- findset("past")
+  
   if(irrigation%in%c("rainfed","irrigated")){  #again, for size reasons
     irrigation2=irrigation
     irrigation=TRUE
   } else {irrigation2=FALSE}
   
-  harvest<-collapseNames(calcOutput("Production",products="kcr",cellular=cellular,attributes="nr",irrigation=irrigation,aggregate = FALSE))
-  ag<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="ag",irrigation=irrigation,attributes="nr",aggregate=FALSE))
-  bg<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",irrigation=irrigation,attributes="nr",aggregate=FALSE))
-  seed<-collapseNames(calcOutput("Seed",cellular=cellular,products="kcr",attributes="nr",irrigation=irrigation,aggregate=FALSE))
+  harvest<-collapseNames(calcOutput("Production",products="kcr",cellular=cellular,attributes="nr",irrigation=irrigation,aggregate = FALSE)[,past,])
+  ag<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="ag",irrigation=irrigation,attributes="nr",aggregate=FALSE)[,past,])
+  bg<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",irrigation=irrigation,attributes="nr",aggregate=FALSE)[,past,])
+  seed<-collapseNames(calcOutput("Seed",cellular=cellular,products="kcr",attributes="nr",irrigation=irrigation,aggregate=FALSE)[,past,])
   fixation<-calcOutput("NitrogenFixationPast",cellular=cellular,irrigation=irrigation,fixation_types="fixation_crops",aggregate = FALSE)
   
   if(irrigation2!="FALSE"){ #again, for size reasons
@@ -47,7 +49,7 @@ calcNitrogenWithdrawalByCrop<-function(indicator="total",cellular=FALSE,irrigati
   )
  
   if (indicator=="by_physical_area"){
-    area<-collapseNames(calcOutput("Croparea",aggregate = FALSE,physical=TRUE,cellular=cellular,irrigation=irrigation,sectoral="kcr"))
+    area<-collapseNames(calcOutput("Croparea",aggregate = FALSE,physical=TRUE,cellular=cellular,irrigation=irrigation,sectoral="kcr")[,past,])
     if(irrigation2!="FALSE"){ #again, for size reasons
       area<-area[,,irrigation2]
     }
@@ -59,7 +61,7 @@ calcNitrogenWithdrawalByCrop<-function(indicator="total",cellular=FALSE,irrigati
     out=data$x
     unit="t Nr per ha physical area"
   } else if (indicator=="by_area_harvested"){
-    area<-collapseNames(calcOutput("Croparea",physical=FALSE,cellular=cellular,irrigation=irrigation,aggregate = FALSE,sectoral="kcr"))
+    area<-collapseNames(calcOutput("Croparea",physical=FALSE,cellular=cellular,irrigation=irrigation,aggregate = FALSE,sectoral="kcr")[,past,])
     if(irrigation2!="FALSE"){ #again, for size reasons
       area<-area[,,irrigation2]
     }

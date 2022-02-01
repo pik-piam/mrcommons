@@ -24,7 +24,7 @@ a <- readSource("ResFor2ndBE", subtype = "oldReMIND", convert = TRUE)
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Kristine Karstens

@@ -10,8 +10,8 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcLanduseInitialisation}},
-#' \code{\link{calcCroparea}}
+#' [calcLanduseInitialisation()],
+#' [calcCroparea()]
 #' @examples
 #' \dontrun{
 #' calcOutput("Production")
@@ -33,10 +33,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
     MAGcroptypes  <- setdiff(MAGcroptypes, missing)
 
     if (!cellular) {
-      if (irrigation) stop("Irrigation not yet implemented for this resolution")
-
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre",
-                                                aggregate = FALSE)[, , "production"][, selectyears, MAGcroptypes])
+      if (irrigation) {
+stop("Irrigation not yet implemented for this resolution")
+}
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , "production"][, , MAGcroptypes])
       MAGProduction <- add_columns(MAGProduction, addnm = missing, dim = 3.1)
       MAGProduction[, , missing] <- 0
 
@@ -46,13 +46,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       ### crop production celluluar ###
       #################################
 
-      LPJYields      <- calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_fbed5c8b_newparam",
+      LPJYields      <- calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                    climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
                                    stage = "smoothed", aggregate = FALSE)[, selectyears, ]
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
 
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       MAGtoLPJ       <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
       MAGtoLPJ       <- MAGtoLPJ[which(MAGtoLPJ$MAgPIE %in% MAGcroptypes), ]
 
@@ -155,12 +155,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
     }
 
   } else if (products == "pasture") {
-
-    if (irrigation) stop("Irrigation not yet implemented for this Product group")
+    if (irrigation) {
+stop("Irrigation not yet implemented for this Product group")
+}
     if (!cellular) {
 
-      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance",
-                                                 aggregate = FALSE)[, , "production"][, selectyears, "pasture"])
+      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "production"][, , "pasture"])
 
     } else {
 
@@ -172,10 +172,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
                                                                   aggregate = FALSE)[, selectyears, "past"]))
       PastureYields  <- toolCoord2Isocell(
                           collapseNames(
-                            calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_fbed5c8b_newparam",
+                            calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                       climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
                                       aggregate = FALSE, years = selectyears)[, , "mgrass.rainfed"]))
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
       if (calibrated == TRUE) {
 
@@ -241,11 +241,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
   } else if (products == "kli") {
 
     Livestocktypes <- findset("kli")
-    if (irrigation) stop("Irrigation not yet implemented for this Product group")
+    if (irrigation) {
+stop("Irrigation not yet implemented for this Product group")
+}
     if (!cellular) {
 
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre",
-                                                aggregate = FALSE)[, selectyears, Livestocktypes][, , "production"])
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , Livestocktypes][, , "production"])
 
     } else {
 

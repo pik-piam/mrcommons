@@ -3,7 +3,7 @@
 #' Aggregate cellular data (with coordinate information) to countries and perform consistency checks
 #' @param x cellular magpie object with coordinates
 #' @param weight aggregation weight
-#' @param ... additional options forwarded to \code{toolCountryFill}
+#' @param ... additional options forwarded to `toolCountryFill`
 #' @return return country ISO level data
 #' @author Jan Philipp Dietrich
 #' @importFrom magclass getItems

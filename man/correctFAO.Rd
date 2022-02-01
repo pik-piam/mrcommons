@@ -22,7 +22,7 @@ Corrects FAO data for known mismatches or insufficiencies
 \dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
 }
 \seealso{
-\code{\link{readFAO}}, \code{\link{readSource}},
+\code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},
 }
 \author{
 Kristine Karstens

@@ -13,7 +13,7 @@ readFishstatJ_FAO(subtype = "Production")
 magpie object of either tonnes of liveweight or 1000 current USD
 }
 \description{
-Reads data of fisheries generated using the FishstatJ app of FAO. 
+Reads data of fisheries generated using the FishstatJ app of FAO.
 Read-in specifically, exports_value, exports_quantity, and/or overall production of fish/aquatic products.
 }
 \examples{
@@ -25,7 +25,7 @@ a <- readSource("FishstatJ_FAO", "exportsValue")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Edna J. Molina Bacca

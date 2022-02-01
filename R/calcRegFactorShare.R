@@ -5,7 +5,7 @@
 #' 
 #' @return MAgPIE object at global level with slope and intersect as items
 #' @author Debbora Leip, Edna J. Molina Bacca
-#' @seealso \code{\link{calcOutput}},\code{\link{calcFactorIntensity}} 
+#' @seealso [calcOutput()],[calcFactorIntensity()] 
 #' @param datasource Only USDA available
 #' @param factor "lab" for Labour and "cap" for capital
 #' @importFrom stats lm
@@ -49,7 +49,7 @@ calcRegFactorShare <- function(datasource="USDA",factor="cap") {
     USDA_shares <- USDA_shares / dimSums(USDA_shares, dim = 3)
     
     # GDP (US$PPP) per capita as independent variable
-    gdp <- calcOutput("GDPpc", gdp = "PPP", aggregate = FALSE)[, , "SSP2"]
+    gdp <- calcOutput("GDPpc", naming = "scenario", aggregate = FALSE)[, , "SSP2"]
     country<-intersect(getCells(gdp),unique(mapping$ISO))
     mapping2<-mapping[mapping$ISO %in% country,]
     years<-intersect(getYears(gdp),getYears(weight))

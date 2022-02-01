@@ -5,7 +5,7 @@
 #' @param subtype Available subtypes: "ProdSysRatio", "FeedBaskets" and "FeedBasketsDetailed"
 #' @return magpie object of feed basket data
 #' @author Isabelle Weindl
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource(type="FeedModel",subtype="FeedBaskets")

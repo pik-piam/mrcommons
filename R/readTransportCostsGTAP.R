@@ -5,7 +5,7 @@
 #' 
 #' @return Transport Costs in USD
 #' @author David Chen
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' 
 #' \dontrun{ a <- readSource(type="TransportCostsGTAP")

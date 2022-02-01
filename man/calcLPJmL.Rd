@@ -51,13 +51,13 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Handle LPJmL data and its time behaviour (averaging, approximation, harmonizing to baseline)
 }
 \examples{
-
-\dontrun{ 
-calcOutput("LPJmL", version="LPJmL4", climatetype="CRU_4", subtype="soilc", aggregate=FALSE)
+\dontrun{
+calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "soilc", aggregate = FALSE)
 }
+
 }
 \seealso{
-\code{\link{readLPJmL}}
+\code{\link[=readLPJmL]{readLPJmL()}}
 }
 \author{
 Kristine Karstens, Felicitas Beier

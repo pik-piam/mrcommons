@@ -6,7 +6,7 @@
 #' @return REMIND data for baseline emissions for maccs and corresonding
 #' weights (NULL) as a list of two MAgPIE objects
 #' @author Lavinia Baumstark
-#' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 

@@ -25,15 +25,13 @@ data
 Calculates data for aboveground and belowground residues production with other usage
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResFieldBalancePast")
-
 }
 
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readSource}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readSource]{readSource()}}
 }
 \author{
 Benjamin Bodirsky

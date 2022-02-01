@@ -27,8 +27,7 @@ List of magpie objects with results on country or cellular level, unit and descr
 Calculates feed balanceflows from MAgPIE-Feed model to meet FAO data
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedBalanceflow")
 }
 

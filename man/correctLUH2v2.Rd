@@ -18,5 +18,6 @@ List of magpie object with results on cellular level
 Correct LUH2v2 content
 }
 \author{
-Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
+Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich,
+Edna J. Molina Bacca
 }

@@ -20,10 +20,9 @@ Correct SoilGrids content
 \dontrun{
   readSource("SoilGrids", subtype="cstock_0_30", convert="onlycorrect")
 }
-
 }
 \seealso{
-\code{\link{readSoilGrids}}
+\code{\link[=readSoilGrids]{readSoilGrids()}}
 }
 \author{
 Kristine Karstens

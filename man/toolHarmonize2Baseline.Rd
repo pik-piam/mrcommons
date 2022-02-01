@@ -8,7 +8,7 @@ toolHarmonize2Baseline(
   x,
   base,
   ref_year = "y2015",
-  limited = TRUE,
+  method = "limited",
   hard_cut = FALSE
 )
 }
@@ -19,8 +19,11 @@ toolHarmonize2Baseline(
 
 \item{ref_year}{Reference year}
 
-\item{limited}{if TRUE, for an underestimated baseline the signal is limited to the additive term rather than the multiplicative factor
-if FALSE, x will be put on the baseline as a pure multiplicative factor}
+\item{method}{additive: x is harmonized to base by additive factor
+multiplicative: x is harmonized to base by multiplicative factor
+limited: multiplicative harmonization,
+but for an underestimated baseline the signal is
+limited to the additive term rather than the multiplicative factor}
 
 \item{hard_cut}{Switch to TRUE for data that can not be harmonized, but have to be glued together}
 }
@@ -31,5 +34,5 @@ the averaged data in magclass format
 toolHarmonize2Baseline
 }
 \author{
-Kristine Karstens
+Kristine Karstens, Felicitas Beier
 }

@@ -7,7 +7,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' \code{\link{calcNitrogenFixationPast}}
+#' [calcNitrogenFixationPast()]
 #' @examples
 #' 
 #' \dontrun{ 
@@ -26,10 +26,10 @@ calcNitrogenFixationPast<-function(fixation_types="both",sum_plantparts=TRUE,cel
     sum_plantparts<-TRUE
   }
   if (fixation_types%in%c("both","fixation_crops")){
-    harvest<-collapseNames(calcOutput("Production",products="kcr",cellular=cellular,attributes="nr",irrigation=irrigation,aggregate = FALSE))
+    harvest<-collapseNames(calcOutput("Production",products="kcr",cellular=cellular,attributes="nr",irrigation=irrigation,aggregate = FALSE)[,past,])
     harvest<-add_dimension(harvest,dim = 3.1,add = "data1",nm = "organ")
-    res_ag<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="ag",irrigation=irrigation,attributes="nr",aggregate=FALSE),collapsedim = "attributes")
-    res_bg<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",irrigation=irrigation,attributes="nr",aggregate=FALSE),collapsedim = "attributes")
+    res_ag<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="ag",irrigation=irrigation,attributes="nr",aggregate=FALSE)[,past,],collapsedim = "attributes")
+    res_bg<- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="bg",irrigation=irrigation,attributes="nr",aggregate=FALSE)[,past,],collapsedim = "attributes")
     biomass<-mbind(harvest,res_ag,res_bg)
     if(sum_plantparts==TRUE){
       biomass<-dimSums(biomass,dim=3.1)
@@ -40,9 +40,10 @@ calcNitrogenFixationPast<-function(fixation_types="both",sum_plantparts=TRUE,cel
     fix_biomass<-add_dimension(biomass,dim = 3.1,nm = "fixation_crops")
   }
   if (fixation_types%in%c("both","fixation_freeliving")){
-    area <- collapseNames(calcOutput("Croparea",cellular=cellular, aggregate=F, sectoral="kcr",physical=TRUE,irrigation=irrigation))
+    area <- collapseNames(calcOutput("Croparea",cellular=cellular, aggregate=F, sectoral="kcr",physical=TRUE,irrigation=irrigation)[,past,])
     freeliving <- setYears(readSource("Herridge",subtype = "freeliving",convert=FALSE),NULL)
-    freeliving<-area[,past,]*freeliving
+    freeliving<-area*freeliving
+    freeliving <- freeliving[,getYears(fix_biomass),]
     fix_freeliving<-add_dimension(freeliving,dim = 3.1,nm = "fixation_freeliving")
   }
 

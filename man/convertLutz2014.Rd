@@ -10,10 +10,10 @@ convertLutz2014(x)
 \item{x}{magpie object provided by the read function}
 }
 \description{
-It fills the missing values of the output of readLutz2014 through 
+It fills the missing values of the output of readLutz2014 through
 the weighted average of the values of two countries with similar carachteristcs
 to the one that has na values.
 }
 \seealso{
-\code{\link{readLutz2014}}
+\code{\link[=readLutz2014]{readLutz2014()}}
 }

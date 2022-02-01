@@ -8,39 +8,41 @@
 #' @return List of magpie object with results and weight on country or cellular level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("Seed")
 #' }
 #' @importFrom magpiesets findset
 
-calcSeed<-function(cellular=FALSE,products="kall",irrigation=FALSE,attributes="all"){
- 
-  products <- findset(products,noset = "original")
-  seed     <- collapseNames(calcOutput("FAOmassbalance",aggregate = FALSE)[,,"seed"][,,products])
-  
-  
-  if(cellular==TRUE) {
-    
-    if(!all(products%in%findset("kcr"))){stop("cellular data only exists for kcr products")}
-    
-    map            <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
-    production_reg <- calcOutput("Production",products="kcr",cellular=FALSE,calibrated=TRUE,irrigation=FALSE,aggregate=FALSE)[,,products]
-    seed_shr       <- collapseNames(seed[,,"dm"]/production_reg[,,"dm"])
+calcSeed <- function(cellular = FALSE, products = "kall", irrigation = FALSE, attributes = "all") {
+
+  products <- findset(products, noset = "original")
+  seed     <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "seed"][, , products])
+
+
+  if (cellular == TRUE) {
+
+    if (!all(products %in% findset("kcr"))) {
+stop("cellular data only exists for kcr products")
+}
+
+    map            <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    production_reg <- calcOutput("Production", products = "kcr", cellular = FALSE, calibrated = TRUE, irrigation = FALSE, aggregate = FALSE)[, , products]
+    seed_shr       <- collapseNames(seed[, , "dm"] / production_reg[, , "dm"])
     seed_shr[is.na(seed_shr)]       <- 0
     seed_shr[is.infinite(seed_shr)] <- 0
 
-    production     <- calcOutput("Production",products="kcr",cellular=cellular,irrigation=irrigation,calibrated=TRUE,attributes=attributes,aggregate=FALSE)[,,products]
-    seed           <- production * seed_shr[getRegions(production),,]
-  } 
-  
-  if(any(attributes!="all")){seed <-seed[,,attributes]}
+    production     <- calcOutput("Production", products = "kcr", cellular = cellular, irrigation = irrigation, calibrated = TRUE, attributes = attributes, aggregate = FALSE)[, , products]
+    seed           <- production * seed_shr[getRegions(production), , ]
+  }
 
-  return(list(
-    x=seed,
-    weight=NULL,
-    unit="Mt Dm, Nr, P, K, WM or PJ Energy",
-    description="Seed use",
-    isocountries =!cellular))
+  if (any(attributes != "all")) {
+seed <- seed[, , attributes]
 }
 
+  return(list(
+    x = seed,
+    weight = NULL,
+    unit = "Mt Dm, Nr, P, K, WM or PJ Energy",
+    description = "Seed use",
+    isocountries = !cellular))
+}

@@ -24,7 +24,7 @@ a <- readSource("ISIMIP", convert=TRUE)
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Jan Philipp Dietrich, Felicitas Beier

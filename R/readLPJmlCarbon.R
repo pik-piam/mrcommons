@@ -6,8 +6,8 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens
 #' @seealso
-#' \code{\link{readLPJmlCarbon}},
-#' \code{\link{readLPJ}}
+#' [readLPJmlCarbon()],
+#' [readLPJ()]
 #' @examples
 #' 
 #' \dontrun{ 

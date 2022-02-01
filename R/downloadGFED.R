@@ -3,7 +3,7 @@
 #' as beta, in addition to the emission factors.
 #'
 #' @author Michael S. Crawford
-#' @seealso \code{\link{downloadSource}} \code{\link{readGFED}}
+#' @seealso [downloadSource()] [readGFED()]
 #' @examples \dontrun{
 #' a <- downloadSource()
 #' }

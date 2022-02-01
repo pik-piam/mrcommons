@@ -11,7 +11,7 @@
 #'
 #' @author Felicitas Beier
 #' @seealso
-#' \code{\link{readAndrijevic2019}}
+#' [readAndrijevic2019()]
 
 correctAndrijevic2019 <- function(x, subtype) {
 

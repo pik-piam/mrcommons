@@ -17,9 +17,6 @@ convertEurostat <- function(x, subtype) {
          "emissions" = toolCountryFill(x, fill = 0, verbosity = 0),
          "sectorEmi" = convertEurostatSectorEmi(x),
          "MACCemi" = convertEurostatMACCemi(x),
-         "population" = convertEurostatPopulation(x),
-         "population_projections" = convertEurostatPopulation(x),
-         "GDP" = convertEurostatGDP(x),
          stop("Bad input for convertEurostat. Invalid 'subtype' argument."))
 }
 
@@ -90,51 +87,4 @@ convertEurostatMACCemi <- function(x) {
   x <- mbind(lapply(names(mapping), function(var){
     setNames(dimSums(x[,,mapping[[var]]$accounts][,,mapping[[var]]$emi],na.rm=T,dim = 3.2), var)
   }))
-}
-
-
-convertEurostatPopulation <- function(x) {
-  # Fix names of sets, and of variable
-  x <- collapseDim(x, dim = 3)
-  getNames(x) <- "population"
-  # Use the "DE_TOT" values for Germany, if they exist (DE_TOT = East + West Germany)
-  x["DE",,] <- if ("DE_TOT" %in% getRegions(x)) x["DE_TOT",,] else x["DE",,]
-  # Drop any countries with more than 2 charachters in their Eurostat identifier. Those are aggregates.
-  my_countries <- getRegions(x)[purrr::map_lgl(getRegions(x), ~ nchar(.x) == 2)]
-  x <- x[my_countries,,]
-  # Convert the eurostat countrycodes to iso3c codes
-  getRegions(x) <- countrycode::countrycode(getRegions(x), "eurostat", "iso3c")
-  # Fix set names
-  getSets(x) <- c("iso3c", "year", "value")
-  # Filter out any countries that don't have a iso3c code (in this case Kosovo, and Mainland-France)
-  x <- x[!is.na(getCells(x)),,]
-  # Sort by year
-  x <- x[,sort(getYears(x)),]
-  # Replace NAs with 0
-  x[is.na(x)] <- 0
-  # Fill in 0 for all missing countries
-  x <- toolCountryFill(x, fill = 0)
- }
-
-convertEurostatGDP <- function(x) {
-  # Fix names of sets, and of variable
-  x <- collapseDim(x, dim = 3)
-  getNames(x) <- "GDP"
-  # Drop any countries with more than 2 charachters in their Eurostat identifier. Those are aggregates.
-  my_countries <- getRegions(x)[purrr::map_lgl(getRegions(x), ~ nchar(.x) == 2)]
-  x <- x[my_countries,,]
-  # Convert the eurostat countrycodes to iso3c codes
-  getRegions(x) <- countrycode::countrycode(getRegions(x), "eurostat", "iso3c")
-  # Fix set names
-  getSets(x) <- c("iso3c", "year", "value")
-  # Filter out any countries that don't have a iso3c code
-  x <- x[!is.na(getCells(x)),,]
-  # Convert from constant 2005 LCU to constant 2005 Int$PPP
-  x <- GDPuc::convertGDP(x, "constant 2005 LCU", "constant 2005 Int$PPP")
-  # Sort by year
-  x <- x[,sort(getYears(x)),]
-  # Replace NAs with 0
-  x[is.na(x)] <- 0
-  # Fill in 0 for all missing countries
-  x <- toolCountryFill(x, fill = 0)
 }

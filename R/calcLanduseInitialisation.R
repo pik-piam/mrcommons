@@ -19,7 +19,7 @@
 #' \dontrun{
 #' calcOutput("LanduseInitialisation")
 #' }
-#' @importFrom magclass setNames
+#' @importFrom magclass setNames where
 
 
 calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", country_level = FALSE, selectyears = "past", input_magpie = FALSE) {
@@ -118,10 +118,12 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       if (nclasses == "nine") {
         # differentiate corrected other land into primary and secondary
         totother_luh <- dimSums(LUH2v2[, , c("primn", "secdn")], dim = 3)
-        primother_shr <- LUH2v2[, , "primn"] / setNames(totother_luh, NULL)
-        primother_shr[is.na(primother_shr)] <- 0
-        secdother_shr <- LUH2v2[, , "secdn"] / setNames(totother_luh, NULL)
-        secdother_shr[is.na(secdother_shr)] <- 0
+        primother_shr <- LUH2v2[, , "primn"] / setNames(totother_luh + 1e-10, NULL)
+        secdother_shr <- LUH2v2[, , "secdn"] / setNames(totother_luh + 1e-10, NULL)
+        # where luh2 does not report other land, but we find other land after
+        # reallocation set share of secondary other land to 1
+        secdother_shr[secdother_shr == 0 & primother_shr == 0] <- 1
+        # multiply shares of primary and secondary non-forest veg with corrected other land
         primother <- primother_shr * setNames(FAOother, NULL)
         secdother <- secdother_shr * setNames(FAOother, NULL)
 
@@ -167,10 +169,10 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
         countries <- unique(mapping$iso)
       } else {
-        mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+        mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
         countries <- unique(mapping$iso)
       }
-      if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.csv! No country information found!")
+      if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.rds! No country information found!")
 
       # divide secondary forest into forestry and secdf.
       forestry_shr <- countrydata[, , "forestry"] / dimSums(countrydata[, , c("forestry", "secdforest")], dim = 3)
@@ -235,8 +237,8 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     out <- round(out, 8)
     cellArea <- dimSums(out, dim = 3)
     temp <- out[, , other]
-    zero <- which(cellArea == 0, arr.ind = F)
-    temp[zero] <- 10^-8
+    zero <- which(cellArea == 0, arr.ind = FALSE)
+    temp[zero] <- 10^-6
     out[, , other] <- temp
   }
 
@@ -245,11 +247,12 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       getCells(out) <- toolGetMappingCoord2Country()[, "coords"]
       out <- toolAggregateCell2Country(out, fill = 0)
     } else {
-      mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       out <- toolAggregate(out, mapping, from = "celliso", to = "iso")
       out <- toolCountryFill(out, fill = 0)
     }
   }
+
 
   return(list(
     x = out,

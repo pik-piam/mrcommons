@@ -5,7 +5,7 @@
 \title{downloadLPJmL_new}
 \usage{
 downloadLPJmL_new(
-  subtype = "LPJmL4_for_MAgPIE_84a69edd:GSWP3-W5E5:historical:soilc"
+  subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc"
 )
 }
 \arguments{

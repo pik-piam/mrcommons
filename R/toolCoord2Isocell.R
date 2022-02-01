@@ -2,6 +2,7 @@
 #' @description Transforms an object with coordinate spatial data (on half-degree) to isocell (59199) standard
 #'
 #' @param x object to be transformed from coordinates to (old) magpie isocell standard
+#' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #'
 #' @return magpie object with 59199 cells in isocell naming
 #' @author Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich

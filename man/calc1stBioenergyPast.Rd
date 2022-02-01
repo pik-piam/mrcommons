@@ -10,17 +10,13 @@ calc1stBioenergyPast()
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates first generation biofuels production, imports, exports for biogas, bioethanol and biodiesel from IEA database. 
-The unit is Petajoule.
+Calculates first generation biofuels production, imports, exports for biogas, bioethanol and biodiesel
+from IEA database. The unit is Petajoule.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("1stBioenergyPast")
 }
-}
-\seealso{
-\code{\link{setConfig}}
 }
 \author{
 Xiaoxi Wang, Isabelle Weindl

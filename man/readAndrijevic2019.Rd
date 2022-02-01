@@ -22,7 +22,7 @@ a <- readSource("Andrijevic2019")
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Felicitas Beier

@@ -5,7 +5,7 @@
 #' @param x MAgPIE object containing original values
 #' @param subtype oldReMIND, newAgriSupply
 #' @author Kristine Karstens
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ResFor2ndBE", subtype = "oldReMIND", convert = TRUE)

@@ -24,9 +24,9 @@ calcIntakeBodyweight(
 \item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
 }
 \description{
-it computes the food intake pro capita through the bodyweight 
-and the activity level. First it computes the basal metabolic rate (bmr) through 
-the Schofield equation and then the estimated energy required (eer) depending on 
+it computes the food intake pro capita through the bodyweight
+and the activity level. First it computes the basal metabolic rate (bmr) through
+the Schofield equation and then the estimated energy required (eer) depending on
 the activitiy level by FAO/WHO/UNU tables (Human Energy Requirments, Rome 2004)
 }
 \author{

@@ -20,13 +20,12 @@ List of magpie object with results on country level, weight on country level, un
 calculates average monthly temperature on different landuse types
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("Temperature")
 }
 }
 \seealso{
-\code{\link{readLPJml_rev21}}
+\code{\link[=readLPJml_rev21]{readLPJml_rev21()}}
 }
 \author{
 Benjamin Leon Bodirsky

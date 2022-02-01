@@ -3,7 +3,7 @@
 #' @return Historical distribution of livestock production across different systems and corresonding weights as a list of two MAgPIE
 #' objects
 #' @author Isabelle Weindl
-#' @seealso \code{\link{calcOutput}}, \code{\link{readFeedModel}}
+#' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
 #' 
 #' \dontrun{ 
@@ -14,14 +14,14 @@
 #' @importFrom luscale rename_dimnames
 
 calcProdSysRatioPast <- function() {
-  mag_years_past <- findset("past")
-  
+
+  past <- findset("past")
   #read in data
   prodsysratio <-  readSource(type="FeedModel",subtype="ProdSysRatio")
   
   #use livestock production as weight
   kli<-findset("kli")
-  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,past,]
   weight <- collapseNames(massbalance[,,kli][,,"dm"][,,"production"])
   
   mapping<-data.frame(
@@ -30,6 +30,7 @@ calcProdSysRatioPast <- function() {
     stringsAsFactors = FALSE)
   
   weight<-rename_dimnames(weight,dim = 3,query = mapping,from = "kli", to="sys")
+  
   
   # remove datasets with NAs in weight/data
   prodsysratio<-toolNAreplace(x=prodsysratio,weight=weight,replaceby=0)

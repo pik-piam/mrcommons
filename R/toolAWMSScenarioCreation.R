@@ -8,7 +8,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Edna J. Molina Bacca
 #' @seealso
-#' \code{\link{calcAWMSconfShr}}
+#' [calcAWMSconfShr()]
 #' 
 
 toolAWMSScenarioCreation<-function(name,start_year,categories,values,out){

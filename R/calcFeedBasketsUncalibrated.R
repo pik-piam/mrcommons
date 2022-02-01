@@ -24,7 +24,7 @@ calcFeedBasketsUncalibrated <- function() {
   #central_feed_shr <- add_columns(central_feed_shr,addnm = missing)
   #central_feed_shr[,,missing] = 0.5 ## its held constant anyhow
   
-  fbask_raw = calcOutput("FeedBasketsSysPast", aggregate = FALSE)
+  fbask_raw = calcOutput("FeedBasketsSysPast", aggregate = FALSE)[,past,]
   getSets(fbask_raw) = c("iso","year","sys","kall")
   fbask_sys <- setYears(fbask_raw[,calib_year,],NULL)
   
@@ -119,8 +119,8 @@ calcFeedBasketsUncalibrated <- function() {
 
   #use livestock production as weight
   kli <- findset("kli")
-  weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"])
-  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
+  weight_kli <- collapseNames(calcOutput("FAOmassbalance_pre",aggregate = FALSE)[,,kli][,,"dm"][,,"production"][,past,])
+  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)[,past,]
   
   weight_sys <- dimSums(weight_kli*prod_sys_ratio,dim="ItemCodeItem")
   weight_sys <- toolHoldConstantBeyondEnd(weight_sys)

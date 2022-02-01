@@ -11,7 +11,7 @@
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
 #' @author Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky
-#' @seealso \code{\link{calcOutput}}, \code{\link{readSource}}
+#' @seealso [calcOutput()], [readSource()]
 #' @examples
 #' 
 #' \dontrun{ 
@@ -20,8 +20,6 @@
 #' }
 #' 
 calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,attributes="all",scenario="default") {
-  
-
   MAGcroptypes   <- findset("kcr")
   
   # memory problems for cellular data
@@ -33,8 +31,15 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
   } else if(plantparts %in% c("ag","bg")){
     
     # read in area harvested
-    HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, cellular=cellular, irrigation=irrigation, aggregate=FALSE)
+    HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, 
+                                 cellular=cellular, irrigation=irrigation, aggregate=FALSE)
+    #cyears here above
     CropProduction <- collapseNames(calcOutput("Production", products="kcr", cellular=cellular,attributes="dm", irrigation=irrigation, aggregate = FALSE))
+    cyears         <- intersect(getYears(HarvestedArea), getYears(CropProduction))
+    
+    CropProduction <- CropProduction[, cyears, ]
+    HarvestedArea  <- HarvestedArea[, cyears, ]
+    
     HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
     
     if(grepl("freeze*", scenario)){
@@ -43,11 +48,12 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
       freeze_year <- as.integer(gsub("freeze","",scenario))
     
       # calculate yields and freeze yield levels
-      CropYields  <- toolConditionalReplace(CropProduction/HarvestedArea, c("is.na()","is.infinite()"), 0)
-      CropYields  <- toolFreezeEffect(CropYields, freeze_year, constrain="first_use")
+      CropYields  <- toolConditionalReplace(CropProduction[, cyears, ] / HarvestedArea[, cyears, ], 
+                                            c("is.na()", "is.infinite()"), 0)
+      CropYields  <- toolFreezeEffect(CropYields, freeze_year, constrain = "first_use")
       
       # recalculate production
-      CropProduction <- CropYields * HarvestedArea
+      CropProduction <- CropYields[, cyears, ] * HarvestedArea[, cyears, ]
     }
     
     if(plantparts=="ag"){
@@ -56,7 +62,7 @@ calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,at
       ResWithProduction     <- CropProduction * collapseNames(HarvestIndex[,,"slope"])                         
       ResWithHarvestedArea  <- HarvestedArea  * collapseNames(HarvestIndex[,,"intercept"])                     
       
-      AboveGroundResidues   <- (ResWithProduction   + ResWithHarvestedArea) 
+      AboveGroundResidues   <- (ResWithProduction[,cyears,]   + ResWithHarvestedArea[,cyears]) 
       # read in residues attributes
       AttributesAboveGround <- readSource("ProductAttributes", subtype = "AgResidues")[,,MAGcroptypes]
       if(!all(attributes%in%"all")){# for problems with memory size

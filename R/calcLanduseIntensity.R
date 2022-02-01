@@ -10,8 +10,8 @@
 #' @return Total tau data and corresonding weights as a list of two MAgPIE
 #' objects
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
-#' @seealso \code{\link{calcTauTotal}}, \code{\link{readTau}},
-#' \code{\link{convertTau}}
+#' @seealso [calcTauTotal()], [readTau()],
+#' [convertTau()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LanduseIntensity")
@@ -30,10 +30,10 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
     MAGtoLPJ      <- MAGtoLPJ[MAGtoLPJ$MAgPIE %in% MAGcroptypes, ]
     LPJCroptypes  <- levels(droplevels(factor(MAGtoLPJ$LPJmL)))
-    CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
-    LPJYields      <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_fbed5c8b_newparam",
+    LPJYields      <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                                climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
                                                stage = "smoothed", aggregate = FALSE)[, selectyears, LPJCroptypes])
     LPJYields      <- toolCoord2Isocell(LPJYields)
@@ -88,11 +88,11 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
   } else if (sectoral == "pasture") {
 
     # Mappings
-    CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
     LPJYields           <- toolCoord2Isocell(
-                             calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_fbed5c8b_newparam",
+                             calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                         climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
                                         aggregate = FALSE, years = selectyears))[, , "mgrass.rainfed"]
     MAGPasturearea      <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[, , "past"]

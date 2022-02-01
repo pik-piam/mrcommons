@@ -22,7 +22,6 @@ Correct Koeppen climate zones on cellular level
 \dontrun{
   readSource("Koeppen", subtype="cellular", convert="onlycorrect")
 }
-
 }
 \author{
 Kristine Karstens

@@ -28,7 +28,7 @@ if false: total areas}
 }
 \value{
 List of magpie objects with results on country level,
-        weight on country level, unit and description
+weight on country level, unit and description
 }
 \description{
 Integrates the LUH2v2 landuse-dataset
@@ -39,7 +39,7 @@ calcOutput("LUH2v2")
 }
 }
 \seealso{
-\code{\link{calcLanduseInitialisation}}
+\code{\link[=calcLanduseInitialisation]{calcLanduseInitialisation()}}
 }
 \author{
 Benjamin Leon Bodirsky, Florian Humpenoeder, Jens Heinke, Felicitas Beier

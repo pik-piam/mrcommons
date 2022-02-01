@@ -16,12 +16,13 @@ magpie object
 Read-in MAgPIE data
 }
 \examples{
-
-\dontrun{ a <- readSource(type="MAgPIE",subtype="EmiAPExo")
+\dontrun{
+a <- readSource(type = "MAgPIE", subtype = "EmiAPExo")
 }
+
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Julian Oeser

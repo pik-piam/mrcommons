@@ -22,7 +22,7 @@ Read-in EDGAR_LU csv file as magclass object
 
 }
 \seealso{
-\code{\link{readSource}}
+\code{\link[=readSource]{readSource()}}
 }
 \author{
 Florian Humpenoeder

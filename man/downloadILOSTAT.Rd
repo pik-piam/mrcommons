@@ -7,21 +7,7 @@
 downloadILOSTAT(subtype)
 }
 \arguments{
-\item{subtype}{Type of ILOSTAT data that should be downloaded
-\itemize{
-\item \code{EmplByActivityModelled}: "Employment by sex and economic activity -- ILO modelled estimates,
-Nov. 2020 (thousands)"
-\item \code{WeeklyHoursByActivity}: "Mean weekly hours actually worked per employed person by sex
-and economic activity"
-\item \code{HourlyLaborCostsByActivity}: "Mean nominal hourly labour cost per employee by economic activity"
-\item \code{EmplByActivityMonthly}: "Employment by sex and economic activity (thousands) | Monthly"
-\item \code{EmplByActivityMonthlyAdj}: "Employment by sex and economic activity, seasonally adjusted
-series (thousands) | Monthly"
-\item \code{EmplByActivityAndStatus}: "Employment by sex, status in employment and economic activity
-(thousands) | Annual"
-\item \code{WeeklyHoursByActivityMonthly}: "Mean weekly hours actually worked per employee by sex and economic
- activity | Monthly"
-}}
+\item{subtype}{Type of ILOSTAT data that should be downloaded}
 }
 \value{
 metadata entry

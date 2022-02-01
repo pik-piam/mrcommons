@@ -4,7 +4,12 @@
 \alias{calcAgEmplILO}
 \title{calcAgEmplILO}
 \usage{
-calcAgEmplILO()
+calcAgEmplILO(subsectors = TRUE)
+}
+\arguments{
+\item{subsectors}{boolean: should overall values be split into the sub-sectors agriculture, forestry and fishery
+based on their relative share of people employed, and agriculture further split into crops and livestock based
+on VoP}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

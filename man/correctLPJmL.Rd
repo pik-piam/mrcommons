@@ -22,7 +22,7 @@ readSource("LPJmL", subtype="soilc", convert="onlycorrect")
 
 }
 \seealso{
-\code{\link{correctLPJmL}}
+\code{\link[=correctLPJmL]{correctLPJmL()}}
 }
 \author{
 Kristine Karstens, Felicitas Beier

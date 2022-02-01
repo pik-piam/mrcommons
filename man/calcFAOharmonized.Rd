@@ -2,27 +2,24 @@
 % Please edit documentation in R/calcFAOharmonized.R
 \name{calcFAOharmonized}
 \alias{calcFAOharmonized}
-\title{Calculate harmonized FAO Commodity Balance and Food Supply data}
+\title{calcFAOharmonized}
 \usage{
 calcFAOharmonized()
 }
 \value{
-FAO harmonized data, weight as NULL, and a description as as a list
-of MAgPIE objects
+FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 }
 \description{
-This functions adds the CBCrop, CBLive, FSCrop and FSLive data together
+Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas are taken from ProdSTAT.
+This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 a <- calcOutput("FAOharmonized")
 
 }
 }
-\seealso{
-\code{\link{calcOutput}}
-}
 \author{
-Ulrich Kreidenweis
+Ulrich Kreidenweis, David Chen, Kristine Karstens
 }

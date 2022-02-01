@@ -6,7 +6,7 @@
 #'
 #' @author Felicitas Beier
 #'
-#' @seealso \code{\link{readSource}}
+#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("Andrijevic2019")

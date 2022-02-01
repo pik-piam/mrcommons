@@ -1,15 +1,18 @@
-
-#' calcFAOLand
+#' @title calcFAOLand
+#' @description Returns physical land areas from FAOSTAT
 #' 
-#' Returns either physical land areas from FAOSTAT.
-#' 
-#' @importFrom magpiesets findset 
 #' @return land areas from FAOSTAT and weight
-#' @author Ulrich Kreidenweis
+#' @author Ulrich Kreidenweis, Kristine Karstens
+
 calcFAOLand <- function() {
-    selectyears <- findset("past")
-    data <- readSource("FAO","Land")[,selectyears,]
-    data <- data/10^6
-    return(list(x=data,weight=NULL, unit="mio. ha", description = "land-use categories from FAOSTAT"))
+  
+    data <- readSource("FAO_online","Land")
+    data <- data[,,"1000_ha", pmatch=TRUE]   # subset all area information
+    data <- collapseDim(data/10^3, dim=3.2)  # transform unit, drop unit statement
+    
+    return(list(x           = data,
+                weight      = NULL, 
+                unit        = "mio. ha", 
+                description = "land-use categories from FAOSTAT"))
 }
 

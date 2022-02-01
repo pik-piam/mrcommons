@@ -2,20 +2,21 @@
 #' @description providees an emission inventory for the past, either from external data or own estimates.
 #'
 #' @param datasource The Inventory that shall be used. Options are CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)
-#' @param mapping if emission inventory shall be aggregated, this indicates the mapping csv. if NULL, the original resolution will be used. 
+#' @param targetResolution Specific mapping file to be used.
 #' @param from column in mapping
 #' @param to column in mapping
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky
+#' @author Benjamin Leon Bodirsky, Michael S. Crawford
 #' @examples
-#' 
-#' \dontrun{ 
+#'
+#' \dontrun{
 #' calcOutput("EmisNitrogenCroplandPast")
 #' }
 
 
-calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSectors.csv",from="CEDS59",to="Sectors"){
+calcEmissionInventory<-function(datasource="CEDS",targetResolution="sectoral",from="CEDS59",to="Sectors"){
+  
   past<-findset("past")
   if (datasource=="CEDS"){
     
@@ -31,13 +32,13 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     oc    <- readSource("CEDS",subtype="OC")
     so2   <- readSource("CEDS",subtype="SO2")
     
-
+    
     # identify common years (starting in 1970 at least ch4 has less years that the other gases)
     y <- Reduce(intersect,list(getYears(bc),
-                             #  getYears(ch4),
+                               #  getYears(ch4),
                                getYears(co),
-                            #   getYears(co2),
-                             #  getYears(n2o),
+                               #   getYears(co2),
+                               #  getYears(n2o),
                                getYears(nh3),
                                getYears(nox),
                                getYears(nmvoc),
@@ -97,30 +98,111 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     ceds[,,"no2_n"]=ceds[,,"no2_n"]/46*14
     #ceds[,,"co2_c"]=ceds[,,"co2_c"]/44*12
     out<-ceds
-  } else if (datasource=="CEDS2021"){
-      
-      # read CEDS emissions data from sources
-      ceds    <- readSource("CEDS2021")
+  
+    } else if (datasource == "EDGAR6") {
+    
+    edgarEmissionNames <- list("n2o", 
+                               "ch4", 
+                               "co2_excl_short", "co2_incl_short",
+                               "nh3", 
+                               "no2",
+                               "bc", 
+                               "co", 
+                               "oc", 
+                               # "nmvoc", 
+                               # "pm10", 
+                               # "pm25", 
+                               "so2")
+    
+    edgarList <- lapply(X = edgarEmissionNames, FUN = function(x) readSource("EDGAR6", subtype = x))
+    names(edgarList) <- edgarEmissionNames
+    
+    # Find years common to all datasets
+    yearsPresent <- Reduce(f = intersect, x = Map(getYears, edgarList))
+    
+    edgarList <- lapply(X = edgarList,
+                        FUN = function(x) {
+                          
+                          x <- x[, yearsPresent, ] # Eliminate incomplete temporal ranges between emissions
+                          
+                          # Summation over dim 3.3, bio vs. fossil when appropriate
+                          if (dimExists(3.3, x)) {
+                            x <- dimSums(x, dim = 3.3)
+                          } 
+                          
+                          x <- x / 1000 # kt to Mt
+                          
+                          return(x)
+                        })
+    
+    # Consolidate "co2_excl_short" and "co2_incl_short" into one MAgPIE object
+    edgar_co2 <- mbind(edgarList[c("co2_excl_short", "co2_incl_short")])
+    edgar_co2 <- dimSums(edgar_co2, dim = 3.1)
+    edgar_co2 <- add_dimension(edgar_co2, dim = 3.1, nm = "co2")
+    edgarList <- edgarList[!names(edgarList) %in% c("co2_excl_short", "co2_incl_short")]
+    edgarList <- c(edgarList, list(co2 = edgar_co2))
+    
+     # Unit conversion when appropriate (e.g. n2o to n2o_n)
+    .formatToMAgPIE = function(x, new, conversion) {
+      getNames(x, dim = 1) <- new
+      x[,, new] <- x[,, new] * conversion
 
-      ceds <- ceds[,paste0("y",1960:2019),]
-      
-      # add nitrate leaching with zeros (to keeep a unique format with other sources)
-      ceds<-add_columns(ceds[,,],addnm = "no3_n",dim=3.2)
-      ceds[,,"no3_n"]<-0
+      return(x)
+    }
 
-      out<-ceds
+    edgarList[["n2o"]] <- .formatToMAgPIE(edgarList[["n2o"]], "n2o_n", (28/44) ) 
+    edgarList[["nh3"]] <- .formatToMAgPIE(edgarList[["nh3"]], "nh3_n", (14/17) )
+    edgarList[["no2"]] <- .formatToMAgPIE(edgarList[["no2"]], "no2_n", (14/46) )
+    edgarList[["co2"]] <- .formatToMAgPIE(edgarList[["co2"]], "co2_c", (12/44) )
+    
+    edgar <- mbind(edgarList)
+
+    # EDGAR has incomplete temporal coverage for many countries
+    edgar <- toolConditionalReplace(edgar, "is.na()", 0)
+    
+    # Remove names wherein all the underlying data are 0
+    toKeep <- lapply(X = getNames(edgar), FUN = function(x) !(all(edgar[,, x] == 0)))
+    edgar <- edgar[,, unlist(toKeep)]
+    
+    # Filter down to the sectors relevant to MAgPIE
+    relevantSectors <- c("3_C_1 Emissions from biomass burning", 
+                         "3_A_1 Enteric Fermentation",
+                         "3_A_2 Manure Management",
+                         "3_C_7 Rice cultivations",
+                         "3_C_4 Direct N2O Emissions from managed soils",
+                         "3_C_5 Indirect N2O Emissions from managed soils")
+    
+    edgar <- edgar[,, relevantSectors]
+    
+    # Rename dimensions
+    names(dimnames(edgar)) <- c("Region", "Year", "pollutant.sector")
+    
+    out <- edgar
+    
+    } else if (datasource=="CEDS2021"){
+    
+    # read CEDS emissions data from sources
+    ceds    <- readSource("CEDS2021")
+    
+    ceds <- ceds[,paste0("y",1960:2019),]
+    
+    # add nitrate leaching with zeros (to keeep a unique format with other sources)
+    ceds<-add_columns(ceds[,,],addnm = "no3_n",dim=3.2)
+    ceds[,,"no3_n"]<-0
+    
+    out<-ceds
   } else if (datasource%in%c("combined_CEDS_IPCC")){
-
+    
     ceds<-calcOutput("EmissionInventory",
                      datasource="CEDS",
-                     mapping=NULL,
+                     targetResolution=NULL,
                      aggregate = FALSE)
     
     ipcc<-calcOutput("EmissionInventory",
                      datasource="IPCC",
-                     mapping=NULL,
+                     targetResolution=NULL,
                      aggregate = FALSE)
-
+    
     #replace<-c("3B_Manure-management","3D_Soil-emissions")
     #"3E_Enteric-fermentation","3F_Agricultural-residue-burning-on-fields","3D_Rice-Cultivation"
     #ag_emis_in_magpie<-c("4B","4D1","4D2")
@@ -137,12 +219,12 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     
     ceds<-calcOutput("EmissionInventory",
                      datasource="CEDS",
-                     mapping=NULL,
+                     targetResolution=NULL,
                      aggregate = FALSE)
     
     ipcc<-calcOutput("EmissionInventory",
                      datasource="Nsurplus2",
-                     mapping=NULL,
+                     targetResolution=NULL,
                      aggregate = FALSE)
     
     #replace<-c("3B_Manure-management","3D_Soil-emissions")
@@ -162,7 +244,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     
   } else if (datasource%in%c("IPCC","Nsurplus","Nsurplus2")){
     out<-calcOutput("EmisNitrogenPast",method=datasource,aggregate = FALSE)
-  
+    
   }  else if (datasource%in%c("combined_CEDS_PRIMAPhist")){
     
     if (to != "PRIMAPhist"){
@@ -172,7 +254,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     mapping <- NULL
     ceds<-calcOutput("EmissionInventory",
                      datasource="CEDS",
-                     mapping=NULL,
+                     targetResolution=NULL,
                      aggregate = FALSE)
     
     primap<-readSource("PRIMAPhist", subtype = "hist")
@@ -183,7 +265,7 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     
     # aggregate ceds categories to primap categories
     map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toPRIMAP.csv")
-
+    
     ceds_agg <- toolAggregate(ceds, map, dim = 3.1)
     getSets(primap) <- getSets(ceds)
     getSets(ceds_agg) <- getSets(ceds)
@@ -197,12 +279,19 @@ calcEmissionInventory<-function(datasource="CEDS",mapping="mappingCEDS59toSector
     
     out <- mbind(ceds_agg[,joint_years,], primap[,joint_years,])
     
-
+    
   } else {stop("datasource unknown")}
   
-  if(!is.null(mapping)){
-    # aggregate and rename CEDS59 sectors to CEDS16 sectors      
-    map  <- toolGetMapping(type = "sectoral", name = mapping)
+  if(!is.null(targetResolution)){
+    
+    # aggregate and rename CEDS59 sectors to CEDS16 sectors
+    if (targetResolution == "sectoral") {
+      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toSectors.csv")
+    } else if (targetResolution == "magpie") {
+      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toMAgPIE.csv")
+    } else {
+      stop("Unknown target resolution \"", targetResolution, "\".")
+    }
     
     # reduce ceds to available categories
     out<-out[,,getNames(out,dim=1)[getNames(out,dim=1)%in%map[,which(names(map)==from)]]]

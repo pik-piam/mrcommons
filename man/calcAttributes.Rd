@@ -23,7 +23,7 @@ calcOutput("Attributes")
 
 }
 \seealso{
-\code{\link{readProductAttributes}}
+\code{\link[=readProductAttributes]{readProductAttributes()}}
 }
 \author{
 Benjamin Leon Bodirsky

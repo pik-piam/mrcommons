@@ -47,7 +47,8 @@ calcFeedEfficiencyFuture <- function(){
   
   #use livestock production as weight
   kli<-findset("kli")
-  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)
+  past <- findset("past")
+  massbalance<-calcOutput("FAOmassbalance_pre",aggregate = F)[,past,]
   weight <- collapseNames(massbalance[,,kli][,,"dm"][,,"production"])
   
   mapping<-data.frame(

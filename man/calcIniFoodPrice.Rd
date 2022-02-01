@@ -31,7 +31,7 @@ calcOutput("IniFoodPrice", aggregate=FALSE)
 
 }
 \seealso{
-\code{\link{readIMPACT3.2.2World_Price}}
+\code{\link[=readIMPACT3.2.2World_Price]{readIMPACT3.2.2World_Price()}}
 }
 \author{
 Mishko Stevanovic, Benjamin Leon Bodirsky

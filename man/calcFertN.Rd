@@ -28,15 +28,13 @@ MAgPIE objects
 Provides FertN data for N.No changes to the content have been done.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FertN")
-
 }
 }
 \seealso{
-\code{\link{calcOutput}}, \code{\link{readIFA}},
-\code{\link{convertIFA}}, \code{\link{readSource}}
+\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readIFA]{readIFA()}},
+\code{\link[=convertIFA]{convertIFA()}}, \code{\link[=readSource]{readSource()}}
 }
 \author{
 Lavinia Baumstark

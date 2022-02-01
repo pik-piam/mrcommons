@@ -4,17 +4,17 @@
 \alias{calcFAOmassbalance_pre}
 \title{calcFAOmassbalance_pre}
 \usage{
-calcFAOmassbalance_pre(years = paste0("y", seq(1965, 2010, 5)))
+calcFAOmassbalance_pre(years = NULL)
 }
 \arguments{
-\item{years}{years to be estimated.}
+\item{years}{years to be estimated, if null, then all years in FAOharmonized are returned}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
 This is an intermediary result, which is used e.g. for estimating the feed baskets. For most uses, it is more appropriate to use the FAOmasbalance instead of the FAOmassbalance_pre.
 }
 \description{
-Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that convert one type of product into another. 
+Calculates an extended version of the Food Balance Sheets. Makes explicit the conversion processes that convert one type of product into another.
 Includes processes like milling, distilling, extraction etc. Adds certain byproducts like distillers grains or ethanol.
 }
 \examples{
@@ -24,7 +24,7 @@ calcOutput("FAOmassbalance_pre")
 }
 }
 \seealso{
-\code{\link{calcFAOmassbalance}}
+\code{\link[=calcFAOmassbalance]{calcFAOmassbalance()}}
 }
 \author{
 Benjamin Leon Bodirsky

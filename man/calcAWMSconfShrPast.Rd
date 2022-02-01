@@ -22,8 +22,8 @@ calcOutput("AWMSconfShrPast")
 }
 }
 \seealso{
-\code{\link{calcAWMSconfShr}},
-\code{\link{calcExcretionIPCC}}
+\code{\link[=calcAWMSconfShr]{calcAWMSconfShr()}},
+\code{\link[=calcExcretionIPCC]{calcExcretionIPCC()}}
 }
 \author{
 Benjamin Leon Bodirsky

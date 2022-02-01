@@ -4,16 +4,13 @@
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens
 #' @seealso
-#' \code{\link{readLPJmL}}
+#' [readLPJmL()]
 #' @examples
 #'
 #' \dontrun{
 #'   readSource("LPJmL", subtype="soilc", convert=TRUE)
 #' }
 #'
-#' @import madrat
-#' @import magclass
-
 convertLPJmL <- function(x){
 
   return(x)
