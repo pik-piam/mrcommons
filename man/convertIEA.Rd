@@ -19,5 +19,5 @@ IEA data as MAgPIE object aggregated to country level
 Convert IEA energy data to data on ISO country level.
 }
 \author{
-Anastasis Giannousakis, Renato Rodrigues
+Anastasis Giannousakis, Renato Rodrigues, Falk Benke
 }
