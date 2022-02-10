@@ -3,7 +3,7 @@
 #'              physical cropland area (and optionally fallow land).
 #'
 #' @param extend_future  if TRUE
-#' @param type           CI: cropping intensity factor calculated as ratio of
+#' @param factortype     CI: cropping intensity factor calculated as ratio of
 #'                           harvested to physical area where values above one
 #'                           indicate multicropping, below one fallow land (default)
 #'                       MC: multiple cropping factor indicating areas that are
@@ -20,7 +20,7 @@
 #' calcOutput("Multicropping")
 #' }
 #'
-calcMulticropping <- function(extend_future = FALSE, type = "CI") {
+calcMulticropping <- function(extend_future = FALSE, factortype = "CI") {
 
   # physical cropland area ("6620|Cropland")
   phys   <- collapseNames(calcOutput("FAOLand", aggregate = FALSE)[, , "6620", pmatch = TRUE])
@@ -33,13 +33,13 @@ calcMulticropping <- function(extend_future = FALSE, type = "CI") {
   phys   <- phys[, intersect(getYears(phys), getYears(harv)), ]
   harv   <- harv[, intersect(getYears(phys), getYears(harv)), ]
 
-  if (type == "CI") {
+  if (factortype == "CI") {
 
     # Cropping intensity (>1: mulitple cropping dominates; <1: fallow land dominates)
     out         <- harv / phys
     description <- "cropping intensity factor with values above one indicating multicropping, below one fallow land"
 
-  } else if (type == "MC") {
+  } else if (factortype == "MC") {
 
     # fallow land ("6640|Land with temporary fallow")
     fallow <- collapseNames(calcOutput("FAOLand", aggregate = FALSE)[, , "6640", pmatch = TRUE])

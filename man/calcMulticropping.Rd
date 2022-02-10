@@ -4,12 +4,12 @@
 \alias{calcMulticropping}
 \title{calcMulticropping}
 \usage{
-calcMulticropping(extend_future = FALSE, type = "CI")
+calcMulticropping(extend_future = FALSE, factortype = "CI")
 }
 \arguments{
 \item{extend_future}{if TRUE}
 
-\item{type}{CI: cropping intensity factor calculated as ratio of
+\item{factortype}{CI: cropping intensity factor calculated as ratio of
 harvested to physical area where values above one
 indicate multicropping, below one fallow land (default)
 MC: multiple cropping factor indicating areas that are
