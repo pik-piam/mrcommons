@@ -62,6 +62,7 @@ Imports:
     SPEI,
     stringr,
     tidyr,
+    tidyselect,
     zoo
 Suggests:
     covr,
