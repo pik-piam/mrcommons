@@ -28,22 +28,21 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, gtapVar = "NVF
     # ILO mean weekly hours actually worked per employed person in agriculture (h)
     iloWeeklyHours <- calcOutput("WeeklyHoursILO", aggregate = FALSE)
 
-    # ILO mean nominal hourly labor cost per employee in agriculture (US$05MER/h)
-    iloLaborCosts <- calcOutput("HourlyLaborCostsILO", aggregate = FALSE)
-
     # subset to joint years
-    years <- intersect(intersect(getItems(iloEmpl, dim = 2), getItems(iloWeeklyHours, dim = 2)),
-                       getItems(iloLaborCosts, dim = 2))
+    years <- intersect(getItems(iloEmpl, dim = 2), getItems(iloWeeklyHours, dim = 2))
     iloEmpl <- iloEmpl[, years, ]
     iloWeeklyHours <- iloWeeklyHours[, years, ]
-    iloLaborCosts <- iloLaborCosts[, years, ]
+
+    # ILO mean nominal hourly labor cost per employee in agriculture (US$05MER/h)
+    iloLaborCosts <- calcOutput("HourlyLaborCosts", datasource = "USDA_FAO",
+                                fillWithRegression = TRUE, projection = "SSP2", # scenario has no influence until 2020
+                                aggregate = FALSE)[, years, ]
 
     # combine data sets to get total labor costs
     iloTotalHours <- 52.1429 * iloWeeklyHours[, , , drop = TRUE] * iloEmpl # mio. hours
     out <- iloTotalHours * iloLaborCosts[, , , drop = TRUE] # mio. US$MER05
 
   } else if (datasource == "USDA") {
-
     # Value of Production for livestock in US$MER2005 (including FAO livst categories not mapped to MAgPIE categories)
     VoP_livst <- calcOutput("VoP_livst", other = TRUE, aggregate = FALSE) # mio. US$MER05
     VoP_livst <- setNames(dimSums(VoP_livst, dim = 3), "Livestock")
@@ -52,24 +51,39 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, gtapVar = "NVF
     VoP_crops <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE) # mio. US$MER05
     VoP_crops <- setNames(dimSums(VoP_crops, dim = 3), "Crops")
 
-    years <- setdiff(intersect(getItems(VoP_livst, dim = 2), getItems(VoP_crops, dim = 2)), paste0("y", 1960:1989))
+    # VoP of fish
+    VoP_fish <- calcOutput("VoP_AFF", aggregate = FALSE)[, , "Fisheries"]
 
-    # add subsidies to VoP
+    # no VoP data before 1991, and data for 2019 seems incomplete
+    years <- setdiff(intersect(getItems(VoP_livst, dim = 2), getItems(VoP_fish, dim = 2)),
+                     paste0("y", c(1960:1990, 2019)))
+
+    # add subsidies to VoP (reduces available years)
     if (isTRUE(addSubsidies)) {
       subsidies <- calcOutput("IFPRIsubsidy", aggregate = FALSE)
-      years <- intersect(years, getItems(subsidies, dim = 2))
-      VoP_crops[, years, ] <- VoP_crops[, years, ] + subsidies[, years, "Crops"]
-      VoP_livst[, years, ] <- VoP_livst[, years, ] + subsidies[, years, "Livestock"]
+      # to not loose years, we keep subsidies constant for past years not covered by the dataset
+      subsidies <- time_interpolate(subsidies,
+                                    interpolated_year = setdiff(years, getItems(subsidies, dim = 2)),
+                                    integrate_interpolated_years = TRUE,
+                                    extrapolation_type = "constant")
+      VoP_crops <- VoP_crops[, years, ] + subsidies[, years, "Crops"]
+      VoP_livst <- VoP_livst[, years, ] + subsidies[, years, "Livestock"]
+      VoP_fish <- VoP_fish[, years, ]
     }
 
     # combine VoP for crops and livestock
-    VoP_agriculture <- mbind(VoP_livst, VoP_crops)
+    VoP_agriculture <- mbind(VoP_livst[, years, ], VoP_crops[, years, ], VoP_fish[, years, ])
     VoP_agriculture[!is.finite(VoP_agriculture)] <- 0
 
     # USDA labor cost shares
     shares_kcr <- calcOutput("FractionInputsUSDA", products = "kcr", aggregate = FALSE)[, , "Labor"]
     shares_kli <- calcOutput("FractionInputsUSDA", products = "kli", aggregate = FALSE)[, , "Labor"]
-    y <- intersect(years, getItems(shares_kcr, dim = 2))
+
+    # closest 5-year step before and after start of VoP data needed for interpolation of shares
+    years_int <- as.integer(stringr::str_split(years, "y", simplify = TRUE)[, 2])
+    y <- union(union(paste0("y", min(years_int) - min(years_int) %% 5),
+                     intersect(years, getItems(shares_kcr, dim = 2))),
+               paste0("y", max(years_int) - max(years_int) %% 5 + 5))
 
     # filling missing values with region average, using production as weight
     h12 <- toolGetMapping("regionmappingH12.csv", type = "regional")
@@ -80,10 +94,10 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, gtapVar = "NVF
                                         regionmapping = h12, verbose = FALSE)
     shares_kli <- toolFillWithRegionAvg(shares_kli[, y, ], valueToReplace = 0, weight = weight,
                                         regionmapping = h12, verbose = FALSE)
-    shares <- setNames(mbind(shares_kli, shares_kcr), c("Livestock", "Crops"))
+    shares <- setNames(mbind(shares_kli, shares_kcr, shares_kli), c("Livestock", "Crops", "Fisheries"))
 
     # for REF in 1990 no country has a value, so toolFillWithRegionAvg assigns NA. Use values from 1995 instead:
-    if ("y1990" %in% years) { # subsidy data starts only in 2005
+    if ("y1990" %in% y) { # subsidy data starts only in 2005
       ref <- h12$CountryCode[h12$RegionCode == "REF"]
       shares[ref, 1990, ]  <- shares[ref, 1995, ]
     }
@@ -98,7 +112,7 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, gtapVar = "NVF
     out <- VoP_agriculture[, years, ] * shares
 
     # aggregate if subsectors == FALSE
-    if (isFALSE(subsectors)) out <- setNames(dimSums(out, dim = 3), "Agriculture")
+    if (isFALSE(subsectors)) out <- setNames(dimSums(out, dim = 3), "Agriculture and fisheries")
 
   } else if (datasource == "GTAP") {
 

@@ -4,7 +4,10 @@
 \alias{calcIFPRIsubsidy}
 \title{calcIFPRIsubsidy}
 \usage{
-calcIFPRIsubsidy()
+calcIFPRIsubsidy(fillGaps = TRUE)
+}
+\arguments{
+\item{fillGaps}{boolean, should gaps in the dataset be filled using interpolation?}
 }
 \value{
 magpie object. in mio. USDMER05

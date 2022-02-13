@@ -4,7 +4,10 @@
 \alias{calcWeeklyHoursILO}
 \title{calcWeeklyHoursILO}
 \usage{
-calcWeeklyHoursILO()
+calcWeeklyHoursILO(projections = FALSE)
+}
+\arguments{
+\item{projections}{boolean, should weekly hours be projected up to 2100}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
