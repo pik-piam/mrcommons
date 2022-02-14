@@ -1,10 +1,8 @@
 #' calcIOEdgeBuildings
 #'
-#' Computes IEA-based model data for different subtypes by use of raw IEA Energy Balances data
-#' and a mapping that corresponds to the structure of "products" and "flows" of IEA.
-#'
-#' Mapping structure example: IEA product ANTCOAL used for IEA flow TPATFUEL, contributes via REMIND technology
-#' coaltr for generating sesofos from pecoal (REMIND names)
+#' Calculates buildings-related energy flows from the IEA energy balances. 'output_EDGE_buildings' is a key input
+#' to EDGE-Buildings providing the historic final energy demand from buildings. 'output_EDGE' does the same for
+#' buildings and industry together.
 #'
 #' @param subtype Data subtype. See default argument for possible values.
 #' @return IEA data as MAgPIE object aggregated to country level
@@ -19,7 +17,6 @@
 #' @importFrom dplyr %>% all_of
 #' @importFrom tidyr unite
 calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings")) {
-  # TODO documentation
   subtype <- match.arg(subtype)
   switch(subtype,
          output_EDGE = {
@@ -98,7 +95,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # Remove the bioshare item
   reminditems <- reminditems[, , nBioshare, invert = TRUE]
 
-  # TODO more (compared to mrremind calcIO) specific description?
   return(list(x = reminditems, weight = NULL, unit = "EJ",
-              description = "IEA SE Output Data based on 2017 edition of IEA World Energy Balances"))
+              description = paste("Historic final energy demand from buildings (and industry)",
+                                  "based on the 2017 IEA World Energy Balances")))
 }

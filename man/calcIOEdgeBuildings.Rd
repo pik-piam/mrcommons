@@ -13,12 +13,9 @@ calcIOEdgeBuildings(subtype = c("output_EDGE", "output_EDGE_buildings"))
 IEA data as MAgPIE object aggregated to country level
 }
 \description{
-Computes IEA-based model data for different subtypes by use of raw IEA Energy Balances data
-and a mapping that corresponds to the structure of "products" and "flows" of IEA.
-}
-\details{
-Mapping structure example: IEA product ANTCOAL used for IEA flow TPATFUEL, contributes via REMIND technology
-coaltr for generating sesofos from pecoal (REMIND names)
+Calculates buildings-related energy flows from the IEA energy balances. 'output_EDGE_buildings' is a key input
+to EDGE-Buildings providing the historic final energy demand from buildings. 'output_EDGE' does the same for
+buildings and industry together.
 }
 \examples{
 \dontrun{
