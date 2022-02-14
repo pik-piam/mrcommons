@@ -25,16 +25,15 @@ calcAgEmplILO <- function(subsectors = TRUE) {
   # above a certain value of GDPpcPPP, the share of people employed in agriculture is kept constant
   regCoeff <- readSource("RegressionsILO", "AgEmpl")
 
-  gdp <- calcOutput("GDPPast", GDPPast = "IHME_USD05_PPP_pc-MI", aggregate = FALSE) # mio. USD$PPP05
-  pop <- calcOutput("PopulationPast", aggregate = FALSE) # mio. people
-  years <- intersect(getYears(gdp), getYears(pop))
-  GDPpc <- gdp[, years, , drop = TRUE] / pop[, years, , drop = TRUE] # GDPpcPPP05
+  GDPpc <- calcOutput("GDPpcPast", GDPpcPast = "WDI-MI", unit = "constant 2005 Int$PPP", aggregate = FALSE)
 
   estShare <- (regCoeff[, , "slope", drop = TRUE] * log10(GDPpc) + regCoeff[, , "intercept", drop = TRUE]) ** 2
   const <- (regCoeff[, , "slope"] * log10(regCoeff[, , "threshold"]) + regCoeff[, , "intercept"]) ** 2
   estShare[GDPpc > regCoeff[, , "threshold"]] <- const
 
-  estEmpl <- estShare * pop[, years, , drop = TRUE]
+  pop <- calcOutput("PopulationPast", aggregate = FALSE) # million people
+  years <- intersect(getItems(estShare, dim = 2), getItems(pop, dim = 2))
+  estEmpl <- estShare[, years, ] * pop[, years, , drop = TRUE]
 
   # reduce years to those with estimations, fill missing countries
   regions <- where(!is.finite(iloEmpl))$true$regions

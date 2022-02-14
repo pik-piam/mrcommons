@@ -16,9 +16,8 @@
 #' }
 #'
 #' @seealso \code{\link{calcOutput}}
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% all_of
 #' @importFrom tidyr unite
-#' @importFrom tidyselect all_of
 calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings")) {
   # TODO documentation
   subtype <- match.arg(subtype)
