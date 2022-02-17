@@ -55,7 +55,6 @@ Imports:
     nleqslv,
     purrr,
     quitte,
-    R.utils,
     raster,
     readr,
     readxl,
