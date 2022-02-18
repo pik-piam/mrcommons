@@ -19,7 +19,6 @@ Read-in an Long term carbon storage data for historical period.
 
 \dontrun{ a <- readSource("CarbonLTS","Lauk_et_al")
 }
-
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}
