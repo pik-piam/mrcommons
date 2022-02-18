@@ -12,15 +12,14 @@
 #' a <- readSource(type = "IEA", subtype = "EnergyBalances")
 #' }
 #'
-#' @importFrom data.table fread
+#' @importFrom readr read_delim
 #' @importFrom madrat toolCountry2isocode
 #'
-readIEA <- function(subtype) {
+readIEA3 <- function(subtype) {
 
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
-    data <- fread("ExtendedEnergyBalances.csv.gz", sep = ";", stringsAsFactors = FALSE,
-                  colClasses = c("character", "character", "character", "numeric", "character"), showProgress = FALSE,
-                  na.strings = c("x", ".."), skip = 2, col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"))
+    data <- read_delim("ExtendedEnergyBalances.csv.gz", skip = 2, delim = ";", na = c("x", ".."), progress = FALSE,
+                       col_types = "cccdc", col_names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"))
     # converting IEA country names to ISO codes
     data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE) # nolint
     # removing NAs and converting data to numeric type
