@@ -11,7 +11,7 @@
 #' 
 #' \dontrun{ a <- readSource("CarbonLTS","Lauk_et_al")
 #' }
-#' 
+#' @importFrom zoo na.locf
 readCarbonLTS <- function(subtype){
   
   if(subtype == "Lauk_et_al"){
@@ -48,8 +48,8 @@ readCarbonLTS <- function(subtype){
     colnames(annual)[1] <- "Emission"
     
     ## Filling Historical SSP values
-    cumulative <- zoo::na.locf(cumulative,na.rm = FALSE)
-    annual     <- zoo::na.locf(annual,    na.rm = FALSE)
+    cumulative <- na.locf(cumulative,na.rm = FALSE)
+    annual     <- na.locf(annual,    na.rm = FALSE)
     
     cumulative_mo <- as.magpie(cumulative)
     cumulative_mo <- add_dimension(cumulative_mo, dim=3.1, add="type", nm = "Cumulative (GtCO2)")

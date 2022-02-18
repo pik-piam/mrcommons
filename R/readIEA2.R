@@ -19,10 +19,10 @@ readIEA2 <- function(subtype) {
 
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
     energyBalancesFile <- gzfile("ExtendedEnergyBalances.csv.gz")
-    data <- vroom::vroom("ExtendedEnergyBalances.csv.gz",
-                  col_names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
-                  col_types = "cccdc",
-                  delim = ";", na = c("x", ".."), skip = 2, progress = FALSE)
+    data <- fread(text = readLines(energyBalancesFile),
+                  col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
+                  colClasses = c("character", "character", "character", "numeric", "character"),
+                  sep = ";", stringsAsFactors = FALSE, na.strings = c("x", ".."), skip = 2, showProgress = FALSE)
     close(energyBalancesFile)
     # converting IEA country names to ISO codes
     data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE) # nolint
