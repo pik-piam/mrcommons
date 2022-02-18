@@ -2,7 +2,6 @@
 #'
 #' Read-in an IEA csv file as magpie object
 #'
-#'
 #' @param subtype data subtype. Either "EnergyBalances", "CHPreport" or "Emissions")
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
@@ -17,7 +16,6 @@
 #' @importFrom R.utils decompressFile
 #'
 readIEA <- function(subtype) {
-
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
     energyBalancesFile <- tempfile(fileext = "csv")
     decompressFile("ExtendedEnergyBalances.csv.gz", energyBalancesFile, remove = FALSE, ext = "not_used", FUN = gzfile)
@@ -50,6 +48,5 @@ readIEA <- function(subtype) {
   } else {
     stop("Not a valid subtype!")
   }
-
   return(mdata)
 }
