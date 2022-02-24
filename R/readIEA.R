@@ -2,7 +2,6 @@
 #'
 #' Read-in an IEA csv file as magpie object
 #'
-#'
 #' @param subtype data subtype. Either "EnergyBalances", "CHPreport" or "Emissions")
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
@@ -14,13 +13,17 @@
 #'
 #' @importFrom data.table fread
 #' @importFrom madrat toolCountry2isocode
+#' @importFrom R.utils decompressFile
 #'
 readIEA <- function(subtype) {
-
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
-    data <- fread("ExtendedEnergyBalances.csv.gz", sep = ";", stringsAsFactors = FALSE,
-                  colClasses = c("character", "character", "character", "numeric", "character"), showProgress = FALSE,
-                  na.strings = c("x", ".."), skip = 2, col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"))
+    energyBalancesFile <- tempfile(fileext = "csv")
+    decompressFile("ExtendedEnergyBalances.csv.gz", energyBalancesFile, remove = FALSE, ext = "not_used", FUN = gzfile)
+    data <- fread(file = energyBalancesFile,
+                  col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
+                  colClasses = c("character", "character", "character", "numeric", "character"),
+                  sep = ";", stringsAsFactors = FALSE, na.strings = c("x", ".."), skip = 2, showProgress = FALSE)
+    unlink(energyBalancesFile)
     # converting IEA country names to ISO codes
     data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE) # nolint
     # removing NAs and converting data to numeric type
@@ -45,6 +48,5 @@ readIEA <- function(subtype) {
   } else {
     stop("Not a valid subtype!")
   }
-
   return(mdata)
 }
