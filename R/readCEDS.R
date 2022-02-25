@@ -1,4 +1,4 @@
-#' @importFrom dplyr filter_ full_join
+#' @importFrom dplyr filter full_join
 #' @importFrom rlang .data
 readCEDS <- function(subtype) {
   files <- c(BC    = "CEDS_BC_emissions_by_country_CEDS_sector_v_10_25_2016.csv",

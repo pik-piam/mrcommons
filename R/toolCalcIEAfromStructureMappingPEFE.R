@@ -8,13 +8,11 @@
 #' @return MAgPIE object with completed time dimensionality.
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Isabelle Weindl
 #'
+#' @importFrom dplyr %>% filter
+#' @importFrom rlang .data
 #' @importFrom stats na.omit
-#' @importFrom dplyr %>%
-#' @importFrom dplyr filter_
 #' @export
-
 toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype = "remind") {
-
   # choose the name of the column which should be targeted in the structureMapping
   if  (subtype == "remind") {
     targetName <- "REMINDitems_out"
@@ -39,8 +37,7 @@ years <- getYears(data)
 flowsIntersect <- intersect(getNames(data, dim = "FLOW"), unique(ieamatch[["iea_flows"]]))
 prodIntersect <- intersect(getNames(data, dim = "PRODUCT"), unique(ieamatch[["iea_product"]]))
 
-ieamatch <- ieamatch %>% filter_(~ iea_flows %in% flowsIntersect,
-                               ~ iea_product %in% prodIntersect)
+ieamatch <- ieamatch %>% filter(.data$iea_flows %in% flowsIntersect, .data$iea_product %in% prodIntersect)
 
 # create an empty mapgie object that will be filled with aggregated items
 outputnames <- paste(rep(unique(ieamatch[[targetName]]), each = length(flowsIntersect)), flowsIntersect, sep = ".")
