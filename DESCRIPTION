@@ -37,7 +37,7 @@ Description: Provides useful functions and a common structure to all the input d
 Depends:
     R(>= 2.10.0),
     magclass(>= 3.17),
-    madrat(>= 2.9.0),
+    madrat(>= 2.11.0),
     mrdrivers (>= 0.2.1),
     mstools
 Imports:
