@@ -16,20 +16,20 @@
 correctAndrijevic2019 <- function(x, subtype) {
 
   x <- toolCountryFill(x, fill = NA)
-  
+
   # fill NA values using population of year 2010 as weight
-  pop           <- setYears(calcOutput("Population", aggregate = FALSE)[, 2010, 1], 
+  pop           <- setYears(calcOutput("Population", aggregate = FALSE)[, 2010, 1],
                             NULL)
   pop2          <- new.magpie(cells_and_regions = getCells(x),
                               years = getYears(x))
   pop2[, , ]    <- pop
-  
+
   z <- NULL
   for (i in getNames(x)) {
     y <- toolFillWithRegionAvg(x[, , i], weight = pop2, verbose = FALSE,
-                               warningThreshold = 1) # to include (once madrat ready): noteThreshold = 0.5, 
+                               warningThreshold = 1, noteThreshold = 0.5)
     z <- mbind(z, y)
   }
-  
+
   return(z)
 }
