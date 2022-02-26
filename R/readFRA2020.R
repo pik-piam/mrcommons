@@ -143,7 +143,7 @@ readFRA2020 <- function(subtype) {
         "R\u00E9union" = "REU",
         "Saint-Martin" = "MAF"
       ),
-      ignoreCountries = c("2020-12-22", "Â© FRA 2020")
+      ignoreCountries = c("2020-12-22", "\u00C2\u00A9 FRA 2020")
     ))
 
     # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
