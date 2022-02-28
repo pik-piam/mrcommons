@@ -136,14 +136,14 @@ readFRA2020 <- function(subtype) {
         "United Kingdom of Great Britain and Northern Ireland" = "GBR",
         "Venezuela (Bolivarian Republic of)" = "VEN",
         "Bolivia (Plurinational State of)" = "BOL",
-        "Côte d'Ivoire" = "CIV",
+        "C\u00F4te d'Ivoire" = "CIV",
         "French Guyana" = "GUF",
-        "Saint Barthélemy" = "BLM",
-        "Curaçao" = "CUW",
-        "Réunion" = "REU",
+        "Saint Barth\u00E9lemy" = "BLM",
+        "Cura\u00E7ao" = "CUW",
+        "R\u00E9union" = "REU",
         "Saint-Martin" = "MAF"
       ),
-      ignoreCountries = c("2020-12-22", "Â© FRA 2020")
+      ignoreCountries = c("2020-12-22", "\u00C2\u00A9 FRA 2020")
     ))
 
     # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
