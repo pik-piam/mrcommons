@@ -35,9 +35,9 @@ Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.d
 Description: Provides useful functions and a common structure to all the input data required to run models like MAgPIE
     and REMIND of model input data.
 Depends:
-    R(>= 2.10.0),
-    magclass(>= 3.17),
-    madrat(>= 2.11.1),
+    R (>= 2.10.0),
+    magclass (>= 3.17),
+    madrat (>= 2.11.2),
     mrdrivers (>= 0.2.1),
     mstools
 Imports:

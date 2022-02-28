@@ -138,7 +138,8 @@ readFRA2020 <- function(subtype) {
       suppressWarnings(toolCountry2isocode(data$Country,
                                            warn = TRUE,
                                            mapping = c("Saint-Martin" = "MAF"),
-                                           ignoreCountries = c("2020-12-22", "\u00C2\u00A9 FRA 2020")
+                                           ignoreCountries = c("2020-12-22", "2021-09-10",
+                                                               "\u00A9 FRA 2020", "\u00A9 FRA 2021")
       ))
 
     # Cleanup rows with NA in country names - Rows with no matching ISO code will be dropped
