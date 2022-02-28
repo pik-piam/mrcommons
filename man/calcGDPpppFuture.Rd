@@ -13,10 +13,10 @@ calcGDPpppFuture(GDPpppFuture = NULL)
 GDP PPP(ICP11) in million USD05 equivalents
 }
 \description{
-\verb{r lifecycle::badge('deprecated')}
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This function is defunct. Use \code{\link[mrdrivers:calcGDPFuture]{mrdrivers::calcGDPFuture()}} instead.
+This function is defunct. Use \code{\link[mrdrivers:calcGDP]{mrdrivers::calcGDPFuture()}} instead.
 }
 \seealso{
-\code{\link[mrdrivers:calcGDPFuture]{mrdrivers::calcGDPFuture()}}
+\code{\link[mrdrivers:calcGDP]{mrdrivers::calcGDPFuture()}}
 }

@@ -132,17 +132,7 @@ readFRA2020 <- function(subtype) {
     # Convert from country names to ISO codes
     data$Country <- suppressWarnings(toolCountry2isocode(data$Country,
       warn = TRUE,
-      mapping = c(
-        "United Kingdom of Great Britain and Northern Ireland" = "GBR",
-        "Venezuela (Bolivarian Republic of)" = "VEN",
-        "Bolivia (Plurinational State of)" = "BOL",
-        "C\u00F4te d'Ivoire" = "CIV",
-        "French Guyana" = "GUF",
-        "Saint Barth\u00E9lemy" = "BLM",
-        "Cura\u00E7ao" = "CUW",
-        "R\u00E9union" = "REU",
-        "Saint-Martin" = "MAF"
-      ),
+      mapping = c("Saint-Martin" = "MAF"),
       ignoreCountries = c("2020-12-22", "\u00C2\u00A9 FRA 2020")
     ))
 
