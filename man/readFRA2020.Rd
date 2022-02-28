@@ -7,13 +7,14 @@
 readFRA2020(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Available subtypes: "forest_area","growing_stock","biomass_stock","carbon_stock","management","disturbance","forest_fire"}
+\item{subtype}{data subtype. Available subtypes: forest_area, deforestation, growing_stock, biomass_stock,
+carbon_stock, management, disturbance, forest_fire}
 }
 \value{
 Magpie object of the FRA 2020 data
 }
 \description{
-Read-in an FRA data from 2020 (forest resource assessment).
+Read-in an FRA (forest resource assessment) dataset from 2020.
 }
 \examples{
 \dontrun{
