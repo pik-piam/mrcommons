@@ -15,9 +15,8 @@
 #' @importFrom reshape2 acast
 #' @importFrom utils read.table
 readLutz2014 <- function() {
-  merge <- NULL
-  for (i in (1:5)) {
-    scenario <- paste0("SSP", i)
+  merge <- list()
+  for (scenario in paste0("SSP", 1:5)) {
     for (gender in c("Both", "M-F")) {
       filename <- paste0("wicdf ", scenario, " ", gender, ".csv")
       d <- read.table(file = filename, skip = 8, quote = '"', header = TRUE, sep = ",")
@@ -38,13 +37,14 @@ readLutz2014 <- function() {
       # add "y"  in front of each the years
       d[, 2] <- paste(rep("y", times = length(d[, 2])), d[, 2], sep = "", collapse = NULL)
 
-      # tranform into magpie object
+      # transform into magpie object
       out <- acast(d, Area ~ Year ~ Sex ~ Age ~ Education, value.var = names(d)[6])
       out <- as.magpie(out)
       out <- add_dimension(out, dim = 3.1, add = "Scenario", nm = scenario)
-      merge <- mbind(merge, out)
+      merge[length(merge) + 1] <- out
     }
   }
+  merge <- do.call(mbind, merge)
   getSets(merge) <- c("country", "year", "scenario", "sex", "age", "education")
   merge <- merge / 1000
   return(merge)
