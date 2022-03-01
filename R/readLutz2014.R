@@ -25,7 +25,7 @@ readLutz2014 <- function() {
       if (length(d) == 5) { # "Both"
         target <- which(names(d) == "Age")
         d <- cbind(d[, seq_len(target), drop = FALSE],
-                   rep(gender, times = length(d[, 1])), # Sex
+                   Sex = rep(gender, times = length(d[, 1])),
                    d[, (target + 1):length(d), drop = FALSE])
       }
 
