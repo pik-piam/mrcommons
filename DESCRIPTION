@@ -1,7 +1,7 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.7.8
+Version: 1.7.9
 Date: 2022-03-01
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -37,7 +37,7 @@ Description: Provides useful functions and a common structure to all the input d
 Depends:
     R (>= 2.10.0),
     magclass (>= 3.17),
-    madrat (>= 2.11.2),
+    madrat (>= 2.12.0),
     mrdrivers (>= 0.2.1),
     mstools
 Imports:

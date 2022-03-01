@@ -38,7 +38,7 @@ readLutz2014 <- function() {
       d[, 2] <- paste(rep("y", times = length(d[, 2])), d[, 2], sep = "", collapse = NULL)
 
       # tranform into magpie object
-      out <- acast(d, Area ~ Year ~ Sex ~ Age ~ Education, value.var = names(d)[6])
+      out <- acast(d, Area ~ Year ~ sex ~ Age ~ Education, value.var = names(d)[6])
       out <- as.magpie(out)
       out <- add_dimension(out, dim = 3.1, add = "Scenario", nm = scenario)
       merge <- mbind(merge, out)
