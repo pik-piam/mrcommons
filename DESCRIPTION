@@ -48,7 +48,7 @@ Imports:
     lazyeval,
     lpjclass,
     luscale,
-    magpiesets(>= 0.44.2),
+    magpiesets (>= 0.44.2),
     ncdf4,
     nleqslv,
     purrr,

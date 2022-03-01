@@ -23,9 +23,10 @@ readLutz2014 <- function() {
       d <- read.table(file = filename, skip = 8, quote = '"', header = TRUE, sep = ",")
 
       if (length(d) == 5) { # "Both"
-        sex <- rep(gender, times = length(d[, 1]))
         target <- which(names(d) == "Age")
-        d <- cbind(d[, seq_len(target), drop = FALSE], sex, d[, (target + 1):length(d), drop = FALSE])
+        d <- cbind(d[, seq_len(target), drop = FALSE],
+                   rep(gender, times = length(d[, 1])), # Sex
+                   d[, (target + 1):length(d), drop = FALSE])
       }
 
       # change country codes
@@ -38,7 +39,7 @@ readLutz2014 <- function() {
       d[, 2] <- paste(rep("y", times = length(d[, 2])), d[, 2], sep = "", collapse = NULL)
 
       # tranform into magpie object
-      out <- acast(d, Area ~ Year ~ sex ~ Age ~ Education, value.var = names(d)[6])
+      out <- acast(d, Area ~ Year ~ Sex ~ Age ~ Education, value.var = names(d)[6])
       out <- as.magpie(out)
       out <- add_dimension(out, dim = 3.1, add = "Scenario", nm = scenario)
       merge <- mbind(merge, out)
