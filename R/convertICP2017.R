@@ -3,6 +3,7 @@
 #' mainly a currency conversion to MER05. Assume that in the original dataset, 2011 values are in 2011MER and 2017 in 2017MER, given the ICP rounds
 #'
 #' @param subtype data subtype needed. Either "priceLevel", or "per_cap_exp" 
+#' @param x MAgPIE object containing original values
 #' @return magpie object of relative price levels (world = 100) or per capita expenditure (USD17 MER)
 #' @author David M Chen
 #' @examples
@@ -10,8 +11,7 @@
 #' a <- convertSource("ICP2017", "per_cap_exp")
 #' }
 #'
-convertICP2017 <- function(subtype = "per_cap_expMER") {
-
+convertICP2017 <- function(x, subtype = "per_cap_expMER") {
 
   #remove aggregate categories
   x <- x[,,c("GROSS DOMESTIC PRODUCT", "FOOD AND NON-ALCOHOLIC BEVERAGES", "FOOD", "NON-ALCOHOLIC BEVERAGES")]

@@ -4,9 +4,11 @@
 \alias{convertICP2017}
 \title{convertICP2017}
 \usage{
-convertICP2017(subtype = "per_cap_expMER")
+convertICP2017(x, subtype = "per_cap_expMER")
 }
 \arguments{
+\item{x}{MAgPIE object containing original values}
+
 \item{subtype}{data subtype needed. Either "priceLevel", or "per_cap_exp"}
 }
 \value{
