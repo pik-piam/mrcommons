@@ -13,9 +13,6 @@
 #'
 convertICP2017 <- function(x, subtype = "per_cap_expMER") {
 
-  #remove aggregate categories
-  x <- x[,,c("GROSS DOMESTIC PRODUCT", "FOOD AND NON-ALCOHOLIC BEVERAGES", "FOOD", "NON-ALCOHOLIC BEVERAGES")]
-  
   #currency convert for expenditures
   if (subtype == "per_cap_expMER"){
 

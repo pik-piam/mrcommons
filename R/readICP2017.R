@@ -46,7 +46,10 @@ readICP2017 <- function(subtype = "per_cap_expMER") {
         as.magpie(spatial= 3, temporal = 1, tidy = TRUE)
   
   #remove aggregate countries with toolCountryFill
-  x <- toolCountryFill(x, fill = 0)        
+  x <- toolCountryFill(x, fill = 0, no_remove_warning = c("BON", "EAB", "ECB",
+                                                          "KSV", "LCB", "MEB",
+                                                          "NAB", "SAB", "SSB",
+                                                          "WLD"))        
  
     return(x[,,out])
   }
