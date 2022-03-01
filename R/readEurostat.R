@@ -31,7 +31,7 @@ readEurostat <- function(subtype = "emissions") {
 ######################################################################################
 readEurostatEmissions <- function() {
   #Reading Eurostat historical emissions 
-  type <- c("GHG","CO2","CH4","N2O","HFC","PFC","HFC_PFC_NSP","SF6","NF3")
+  type <- c("GHG", "CO2", "CH4", "CH4_native", "N2O", "N2O_native", "HFC", "PFC", "HFC_PFC_NSP", "SF6", "NF3")
   data <- NULL
   for (t in type){
     df <- read.csv(paste0("eurostat_",t,".csv"))[,-c(3,7)]

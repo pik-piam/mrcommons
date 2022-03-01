@@ -30,7 +30,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
     MAGtoLPJ      <- MAGtoLPJ[MAGtoLPJ$MAgPIE %in% MAGcroptypes, ]
     LPJCroptypes  <- levels(droplevels(factor(MAGtoLPJ$LPJmL)))
-    CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
     LPJYields      <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
@@ -88,7 +88,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
   } else if (sectoral == "pasture") {
 
     # Mappings
-    CountryToCell <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
     LPJYields           <- toolCoord2Isocell(

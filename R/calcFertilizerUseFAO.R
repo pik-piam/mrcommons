@@ -29,7 +29,7 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
   totalUseNutrients <- totalUseNutrients[, years, ]
   cropland <- cropland[, years, ]
   nutrientPerArea <- totalUseNutrients / cropland
-  nutrientPerArea[is.na(nutrientPerArea)] <- 0
+  nutrientPerArea[!is.finite(nutrientPerArea)] <- 0
 
   # fill gaps in nutrients per area data by using regional averages (scaled by a multiplicative correction coefficient
   # to match first observation of each country)

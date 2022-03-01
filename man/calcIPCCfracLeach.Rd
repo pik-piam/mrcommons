@@ -17,9 +17,8 @@ calculates the leaching rate FRAC_LEACH as defined by the IPCC Guidelines for Na
 Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction. Alterra. http://library.wur.nl/WebQuery/wurpubs/406284.
 }
 \examples{
-
-\dontrun{ 
-a<-calcOutput("IPCCfracLeach",cellular=FALSE)
+\dontrun{
+a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 }
 
 }

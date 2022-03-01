@@ -25,10 +25,8 @@ data
 Calculates data for aboveground and belowground residues production with other usage
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResFieldBalancePast")
-
 }
 
 }

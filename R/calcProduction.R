@@ -32,11 +32,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
     missing       <- c("betr", "begr")
     MAGcroptypes  <- setdiff(MAGcroptypes, missing)
 
-    if(!cellular){
-      if(irrigation){stop("Irrigation not yet implemented for this resolution")}
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,"production"][,,MAGcroptypes])
-      MAGProduction <- add_columns(MAGProduction,addnm = missing,dim = 3.1)
-      MAGProduction[,,missing]<-0
+    if (!cellular) {
+      if (irrigation) {
+stop("Irrigation not yet implemented for this resolution")
+}
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , "production"][, , MAGcroptypes])
+      MAGProduction <- add_columns(MAGProduction, addnm = missing, dim = 3.1)
+      MAGProduction[, , missing] <- 0
 
     } else {
 
@@ -50,7 +52,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       # reduce to 59199 cells and rename
       LPJYields      <- toolCoord2Isocell(LPJYields)
 
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
       MAGtoLPJ       <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
       MAGtoLPJ       <- MAGtoLPJ[which(MAGtoLPJ$MAgPIE %in% MAGcroptypes), ]
 
@@ -152,11 +154,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       MAGProduction[, , missing] <- 0
     }
 
-  } else if (products=="pasture"){
-    if(irrigation){stop("Irrigation not yet implemented for this Product group")}
-    if(!cellular){
+  } else if (products == "pasture") {
+    if (irrigation) {
+stop("Irrigation not yet implemented for this Product group")
+}
+    if (!cellular) {
 
-      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate=FALSE)[,,"production"][,,"pasture"])
+      MAGProduction  <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "production"][, , "pasture"])
 
     } else {
 
@@ -171,7 +175,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
                             calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                       climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
                                       aggregate = FALSE, years = selectyears)[, , "mgrass.rainfed"]))
-      CountryToCell  <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+      CountryToCell  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
       if (calibrated == TRUE) {
 
@@ -237,10 +241,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
   } else if (products == "kli") {
 
     Livestocktypes <- findset("kli")
-    if(irrigation){stop("Irrigation not yet implemented for this Product group")}
-    if(!cellular){
+    if (irrigation) {
+stop("Irrigation not yet implemented for this Product group")
+}
+    if (!cellular) {
 
-      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate=FALSE)[,,Livestocktypes][,,"production"])
+      MAGProduction <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , Livestocktypes][, , "production"])
 
     } else {
 

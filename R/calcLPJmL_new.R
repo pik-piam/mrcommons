@@ -134,7 +134,8 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
         x          <- x * lakeShare
 
         # Transform units: liter/m^2 -> liter
-        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", type = "cell")
+        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+                                    type = "cell", where = "mrcommons")
         cellArea  <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         x         <- x * cellArea
 
@@ -178,6 +179,10 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- "C/C"
 
+    } else if (grepl("fpc", subtype)) {
+      
+      unit <- "ha/ha"
+      
     } else {
       stop(paste0("subtype ", subtype, " is not existing"))
     }

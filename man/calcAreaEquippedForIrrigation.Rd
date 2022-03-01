@@ -25,9 +25,8 @@ Calculates the area equipped for irrigation based on LU2v2 or other dataset.
 For LUH2v2, it assumes, that all cropland irrigated in the last 20 years at least once is equipped for irrigation.
 }
 \examples{
-
-\dontrun{ 
-calcOutput("AreaEquippedForIrrigation", source="LUH2v2", cellular=TRUE, aggregate=FALSE)
+\dontrun{
+calcOutput("AreaEquippedForIrrigation", source = "LUH2v2", cellular = TRUE, aggregate = FALSE)
 }
 }
 \seealso{

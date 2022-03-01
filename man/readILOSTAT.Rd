@@ -14,6 +14,7 @@ Nov. 2020 (thousands)"
 \item \code{WeeklyHoursByActivity}: "Mean weekly hours actually worked per employed person by sex
 and economic activity"
 \item \code{HourlyLaborCostsByActivity}: "Mean nominal hourly labour cost per employee by economic activity"
+\item \code{EmplByISIC2}: "Employment by sex and economic activity - ISIC level 2 (thousands) | Annual"
 \item \code{EmplByActivityMonthly}: "Employment by sex and economic activity (thousands) | Monthly"
 \item \code{EmplByActivityMonthlyAdj}: "Employment by sex and economic activity, seasonally adjusted
 series (thousands) | Monthly"
@@ -21,6 +22,14 @@ series (thousands) | Monthly"
 (thousands) | Annual"
 \item \code{WeeklyHoursByActivityMonthly}: "Mean weekly hours actually worked per employee by sex and economic
 activity | Monthly"
+\item \code{WeeklyHoursByISIC2}: "Mean weekly hours actually worked per employed person by sex and economic
+activity - ISIC level 2 | Annual"
+\item \code{WeeklyHoursEmployeesByISIC2}: "Mean weekly hours actually worked per employee by sex and economic
+activity - ISIC level 2 | Annual"
+\item \code{LaborIncomeShareGDPModelled}: "Labour income share as a percent of GDP -- ILO modelled estimates,
+July 2019 (\%) | Annual"
+\item \code{OutputPerWorkerModelled}: "Output per worker (GDP constant 2010 US $) -- ILO modelled estimates,
+Nov. 2020 | Annual"
 }}
 }
 \value{

@@ -162,7 +162,9 @@ readFAO_online <- function(subtype) {
   # convert data frame into named vector as required by toolCountry2isocode
   FAOiso_faocode <- structure(as.character(FAOiso_faocode$ISO),names=as.character(FAOiso_faocode$Country))
   # look up ISO codes using central definition and extra FAO mapping from line above
-  FAO$ISO <- toolCountry2isocode(FAO$Country,mapping = FAOiso_faocode)
+  # ignore warnings from FAO aggregate regions being dropped
+  FAO_aggregate_regions <- toolGetMapping("FAO_aggregate_regions.csv", where = "mrcommons")
+  FAO$ISO <- toolCountry2isocode(FAO$Country,mapping = FAOiso_faocode, ignoreCountries = FAO_aggregate_regions$Region)
   # remove country aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
   FAO <- FAO[as.integer(levels(FAO$CountryCode)[FAO$CountryCode])<5000,]
   # remove countries with missing ISO code

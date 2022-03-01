@@ -72,7 +72,7 @@ readSoilGrids <- function(subtype) {
   lat <- rev(seq(-89.75, 89.75, by = 0.5))
 
   # Load celliso names for 1:59199 magpie cells
-  mapping   <- toolGetMapping(type = "cell", name = "CountryToCellMapping.csv")
+  mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
   cellNames <- mapping$celliso
 
   # Change longitude and latitude

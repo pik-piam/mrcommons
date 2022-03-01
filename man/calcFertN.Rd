@@ -28,10 +28,8 @@ MAgPIE objects
 Provides FertN data for N.No changes to the content have been done.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FertN")
-
 }
 }
 \seealso{

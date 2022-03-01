@@ -16,5 +16,5 @@ List of magpie objects with results on country level, weight, unit and descripti
 download EDGAR 5 and 6 emission data
 }
 \author{
-Benjamin Leon Bodirsky,
+Benjamin Leon Bodirsky, Michael S. Crawford
 }

@@ -94,46 +94,54 @@ convertFAO_online <- function(x,subtype) {
 
   # ---- Section for country specific treatment ----
 
-  ## data for Eritrea ERI added with 0 if not existing in the dimensionality of
-  ## Ethiopia, to make toolISOhistorical work
-  if(any(getRegions(x)=="XET") & any(getRegions(x)=="ETH") & !any(getRegions(x)=="ERI")) {
+  ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
+  ## to make toolISOhistorical work
+  if(any(getItems(x,dim=1.1)=="XET") & any(getItems(x,dim=1.1)=="ETH") & !any(getItems(x,dim=1.1)=="ERI")) {
     xERI <- x["ETH",,]
     xERI[,,] <- 0
     getRegions(xERI) <- "ERI"
     x <- magpiesort(mbind(x,xERI))
   }
-
+  
+  if(any(getItems(x,dim=1.1)=="XSD") & any(getItems(x,dim=1.1)=="SDN") & !any(getItems(x,dim=1.1)=="SSD")) {
+    xSSD <- x["SDN",,]
+    xSSD[,,] <- 0
+    getRegions(xSSD) <- "SSD"
+    x <- magpiesort(mbind(x, xSSD))
+  }
+  
+  
   ## add additional mappings
   additional_mapping <- list()
 
   # Eritrea ERI and Ethiopia ETH
-  if (all(c("XET","ETH","ERI") %in% getRegions(x))) {
+  if (all(c("XET","ETH","ERI") %in% getItems(x,dim=1.1))) {
     additional_mapping <- append(additional_mapping, list(c("XET","ETH","y1992"),c("XET","ERI","y1992")))
   }
 
   # Belgium-Luxemburg
-  if (all(c("XBL","BEL","LUX") %in% getRegions(x))) {
+  if (all(c("XBL","BEL","LUX") %in% getItems(x,dim=1.1))) {
     additional_mapping <- append(additional_mapping, list(c("XBL","BEL","y1999"), c("XBL","LUX", "y1999")))
-  } else if(("XBL" %in% getRegions(x)) & !("BEL" %in% getRegions(x))) {
-    getRegions(x)[getRegions(x)=="XBL"] <- "BEL"
+  } else if(("XBL" %in% getItems(x,dim=1.1)) & !("BEL" %in% getItems(x,dim=1.1))) {
+    getCells(x)[getItems(x,dim=1.1)=="XBL"] <- "BEL"
   }
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
-  if (all(c("XSD", "SSD", "SDN") %in% getRegions(x))){
+  if (all(c("XSD", "SSD", "SDN") %in% getItems(x,dim=1.1))){
     additional_mapping <- append(additional_mapping, list(c("XSD","SSD","y2011"), c("XSD", "SDN","y2011")))
-  } else if ("XSD" %in% getRegions(x) & !any(c("SSD", "SDN") %in% getRegions(x)) ) {
-    getRegions(x)[getRegions(x) == "XSD"] <- "SDN"
-  }
+  } else if ("XSD" %in% getItems(x,dim=1.1) & !any(c("SSD", "SDN") %in% getItems(x,dim=1.1)) ) {
+    getCells(x)[getItems(x,dim=1.1) == "XSD"] <- "SDN"
+  } 
 
   ## if XCN exists, replace CHN with XCN.
-  if ("XCN" %in% getRegions(x)) {
-    if ("CHN" %in% getRegions(x)) x <- x["CHN",,,invert=TRUE]
+  if ("XCN" %in% getItems(x,dim=1.1)) {
+    if ("CHN" %in% getItems(x,dim=1.1)) x <- x["CHN",,,invert=TRUE]
       getItems(x, dim=1)[getItems(x, dim=1)=="XCN"] <- "CHN"
   }
 
   ## data for the Netherlands Antilles is currently removed because currently no
   ## information for its successors SXM, CUW, ABW is available as input for toolISOhistorical
-  if(any(getRegions(x) == "ANT")) {
+  if(any(getItems(x,dim=1.1) == "ANT")) {
     x <- x["ANT",,,invert=T]
   }
 
@@ -142,9 +150,9 @@ convertFAO_online <- function(x,subtype) {
   # Micronesia, Federated States of (FM, FSM, 583)
   # Northern Mariana Islands (MP, MNP, 580)
   # Palau (PW, PLW, 585)
-  if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getRegions(x))){
+  if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x,dim=1.1))){
     additional_mapping <- append(additional_mapping, list(c("PCI","MHL","y1991"), c("PCI", "FSM","y1991"), c("PCI", "MNP","y1991"), c("PCI", "PLW","y1991")))
-  } else if ("PCI" %in% getRegions(x)) {
+  } else if ("PCI" %in% getItems(x,dim=1.1)) {
     x <- x["PCI",,invert=T]
   }
 
@@ -153,7 +161,7 @@ convertFAO_online <- function(x,subtype) {
   if(subtype %in% c("EmisAgRiceCult","Fertilizer", "FertilizerNutrients", "EmisAgCultOrgSoil","EmisLuCrop","EmisLuGrass","EmisAgSynthFerti")) {
     ISOhistorical <- read.csv2(system.file("extdata","ISOhistorical.csv",package = "madrat"),stringsAsFactors = F)
     former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"),"toISO"]
-    missing <- former[!former %in% getRegions(x)]
+    missing <- former[!former %in% getItems(x,dim=1.1)]
     x2 <- new.magpie(cells_and_regions = missing, years=getYears(x), names = getNames(x))
     x2[,getYears(x2)[getYears(x2, as.integer = T)>=1992],] <- 0
     x <- mbind(x,x2)
@@ -241,7 +249,7 @@ convertFAO_online <- function(x,subtype) {
     possible_names <- toolSubtypeSelect(subtype,possible_names)
     x <- collapseNames(x[,,possible_names[possible_names %in% getItems(x,dim=3.2)]])
     ## Serbia and Montenegro split
-    if(all(c("SCG","SRB") %in% getRegions(x)) & !"MNE" %in% getRegions(x)){
+    if(all(c("SCG","SRB") %in% getItems(x,dim=1.1)) & !"MNE" %in% getItems(x,dim=1.1)){
       mne <- x["SRB",,]
       dimnames(mne)[[1]] <- "MNE"
       x <- mbind(x, mne)
@@ -251,7 +259,7 @@ convertFAO_online <- function(x,subtype) {
     for(item in mapping$FAO_carcass){
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
       countries <- getRegions(which(!is.na(x[,,item]),arr.ind=TRUE))
-      countries <- setdiff(getRegions(x), countries)
+      countries <- setdiff(getItems(x,dim=1.1), countries)
       x[countries,,item] <- x[countries,,litem]/mapping$Price_factor[grep(item, mapping$FAO_carcass)]
     }
     x[is.na(x)] <- 0

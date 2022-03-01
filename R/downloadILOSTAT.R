@@ -1,21 +1,6 @@
 #' @title downloadILOSTAT
 #' @description Download data from ILOSTAT
-#'
 #' @param subtype Type of ILOSTAT data that should be downloaded
-#' \itemize{
-#' \item `EmplByActivityModelled`: "Employment by sex and economic activity -- ILO modelled estimates,
-#' Nov. 2020 (thousands)"
-#' \item `WeeklyHoursByActivity`: "Mean weekly hours actually worked per employed person by sex
-#' and economic activity"
-#' \item `HourlyLaborCostsByActivity`: "Mean nominal hourly labour cost per employee by economic activity"
-#' \item `EmplByActivityMonthly`: "Employment by sex and economic activity (thousands) | Monthly"
-#' \item `EmplByActivityMonthlyAdj`: "Employment by sex and economic activity, seasonally adjusted
-#' series (thousands) | Monthly"
-#' \item `EmplByActivityAndStatus`: "Employment by sex, status in employment and economic activity
-#' (thousands) | Annual"
-#' \item `WeeklyHoursByActivityMonthly`: "Mean weekly hours actually worked per employee by sex and economic
-#'  activity | Monthly"
-#' }
 #' @return metadata entry
 #' @author Debbora Leip
 #' @examples
@@ -33,10 +18,15 @@ downloadILOSTAT <- function(subtype) {
     EmplByActivityModelled       = "EMP_2EMP_SEX_ECO_NB_A",
     WeeklyHoursByActivity        = "HOW_TEMP_SEX_ECO_NB_A",
     HourlyLaborCostsByActivity   = "LAC_4HRL_ECO_CUR_NB_A",
+    EmplByISIC2                  = "EMP_TEMP_SEX_EC2_NB_A",
     EmplByActivityMonthly        = "EMP_TEMP_SEX_ECO_NB_M",
     EmplByActivityMonthlyAdj     = "EMP_TEM1_SEX_ECO_NB_M",
     EmplByActivityAndStatus      = "EMP_TEMP_SEX_STE_ECO_NB_A",
-    WeeklyHoursByActivityMonthly = "HOW_XEES_SEX_ECO_NB_M"
+    WeeklyHoursByActivityMonthly = "HOW_XEES_SEX_ECO_NB_M",
+    WeeklyHoursByISIC2           = "HOW_TEMP_SEX_EC2_NB_A",
+    WeeklyHoursEmployeesBYISIC2  = "HOW_XEES_SEX_EC2_NB_A",
+    LaborIncomeShareGDPModelled  = "LAP_2GDP_NOC_RT_A",
+    OutputPerWorkerModelled      = "GDP_205U_NOC_NB_A"
   )
   indicatorID <- toolSubtypeSelect(subtype, indicatorIDs)
 

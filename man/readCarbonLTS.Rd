@@ -16,10 +16,9 @@ magpie object of the FRA 2015 data
 Read-in an Long term carbon storage data for historical period.
 }
 \examples{
-
-\dontrun{ a <- readSource("CarbonLTS","Lauk_et_al")
+\dontrun{
+a <- readSource("CarbonLTS", "Lauk_et_al")
 }
-
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}

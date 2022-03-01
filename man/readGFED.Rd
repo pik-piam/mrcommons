@@ -18,7 +18,9 @@ this function only calculates a small sample of the total emissions (CH4, N2O, N
 burning partitions (AGRI), which are currently being used for validation.
 }
 \examples{
-\dontrun{ a <- readSource("GFED") }
+\dontrun{
+a <- readSource("GFED")
+}
 
 }
 \seealso{
