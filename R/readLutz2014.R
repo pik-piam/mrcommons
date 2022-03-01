@@ -41,7 +41,7 @@ readLutz2014 <- function() {
       out <- acast(d, Area ~ Year ~ Sex ~ Age ~ Education, value.var = names(d)[6])
       out <- as.magpie(out)
       out <- add_dimension(out, dim = 3.1, add = "Scenario", nm = scenario)
-      merge[length(merge) + 1] <- out
+      merge[[length(merge) + 1]] <- out
     }
   }
   merge <- do.call(mbind, merge)
