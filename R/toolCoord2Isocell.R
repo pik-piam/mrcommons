@@ -10,6 +10,7 @@
 #' @param cells Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param fillMissing if NULL cells missing from the total 59199 are just being ignore. If set to a value
 #' missing cells will be added with this value (e.g. all set to 0 if fillMissing is 0)
+#' @param warnMissing Switch which controls whether missing cells should trigger a warning or not
 #' @importFrom magpiesets addLocation
 #' @importFrom madrat toolOrderCells
 #' @importFrom magclass collapseDim
@@ -17,14 +18,14 @@
 #'
 #' @export
 
-toolCoord2Isocell <- function(x, cells = "magpiecell", fillMissing = NULL) {
+toolCoord2Isocell <- function(x, cells = "magpiecell", fillMissing = NULL, warnMissing = TRUE) {
   if (cells == "magpiecell") {
     removedim <- setdiff(unlist(strsplit(names(getItems(x))[1], "\\.")), c("x", "y"))
     x <- collapseDim(x, dim = removedim)
     x <- addLocation(x, fillMissing = fillMissing, naCellNumber = "NA")
     x <- collapseDim(x, dim = c("x", "y"))
     x <- toolOrderCells(x, na.rm = TRUE)
-    if (length(getCells(x)) != 59199) warning("Some cells out of the 59199 standard cells are missing.")
+    if (warnMissing && length(getCells(x)) != 59199) warning("Some cells out of the 59199 standard cells are missing.")
   } else if (cells == "lpjcell") {
     getItems(x, dim = "cell",   maindim = 1) <- 1:67420
     x <- collapseDim(x, dim = c("x", "y"))

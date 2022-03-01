@@ -5,7 +5,12 @@
 \title{\preformatted{  toolCoord2Isocell
 }}
 \usage{
-toolCoord2Isocell(x, cells = "magpiecell", fillMissing = NULL)
+toolCoord2Isocell(
+  x,
+  cells = "magpiecell",
+  fillMissing = NULL,
+  warnMissing = TRUE
+)
 }
 \arguments{
 \item{x}{object to be transformed from coordinates to (old) magpie isocell standard}
@@ -14,6 +19,8 @@ toolCoord2Isocell(x, cells = "magpiecell", fillMissing = NULL)
 
 \item{fillMissing}{if NULL cells missing from the total 59199 are just being ignore. If set to a value
 missing cells will be added with this value (e.g. all set to 0 if fillMissing is 0)}
+
+\item{warnMissing}{Switch which controls whether missing cells should trigger a warning or not}
 }
 \value{
 magpie object with 59199 cells in isocell naming
