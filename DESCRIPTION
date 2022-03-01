@@ -41,7 +41,6 @@ Depends:
     mrdrivers (>= 0.2.1),
     mstools
 Imports:
-    countrycode,
     data.table,
     dplyr,
     hdf5r,
