@@ -26,8 +26,9 @@ calcPopulationPast function.
 Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 }
 \examples{
-
-\dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
+\dontrun{
+a <- readSource("FAO", "Crop", convert = TRUE)
+}
 }
 \seealso{
 \code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},

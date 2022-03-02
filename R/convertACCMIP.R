@@ -13,7 +13,7 @@
 #' }
 convertACCMIP <- function(x) {
   map <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-  getRegions(x) <- map$cell
+  getItems(x, dim = 1, raw = TRUE) <- map$cell
   y <- toolAggregate(x, map, from = 1, to = 3, dim = 1)
   y <- toolCountryFill(y, fill = NA)
   return(y)
