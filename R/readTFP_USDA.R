@@ -54,11 +54,8 @@ readTFP_USDA <- function() { # nolint
   # Creates magpie object (184 countries)
   x <- magpiesort(as.magpie(x, spatial = 1, temporal = 2, datacol = 4))
 
-  # use data from historical countries for modern counterparts
-  x <- toolISOhistorical(x)
-
-  # Fills with zeros the countries that were not reported
-  x <- toolCountryFill(x, fill = 0, no_remove_warning = c("XBL", "XET", "XSD"))
+  # Fills with zeros the countries that were not reported, remove historical countries
+  x <- toolCountryFill(x, fill = 0, no_remove_warning = c("XBL", "XET", "XSD", "CSK", "SCG", "SUN", "YUG"))
 
   return(x)
 }
