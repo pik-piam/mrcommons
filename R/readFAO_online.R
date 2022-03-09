@@ -36,16 +36,16 @@
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
 #' @seealso [readSource()]
 #' @examples
-#'
-#'   \dontrun{ a <- readSource("FAO_online","Crop")
-#'   }
+#' \dontrun{
+#' a <- readSource("FAO_online", "Crop")
+#' }
 #' @importFrom tools file_ext
 #' @importFrom data.table fread
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
 
-readFAO_online <- function(subtype) {
+readFAO_online <- function(subtype) { # nolint
 
   # ---- Define subtypes and corresponding files ----
 
@@ -74,15 +74,17 @@ readFAO_online <- function(subtype) {
     EmisLuTotal             = c("Emissions_Land_Use_Land_Use_Total_E_All_Data.zip"),
     FSCrop                  = c("FoodSupply_Crops_E_All_Data.zip"),
     FSLive                  = c("FoodSupply_LivestockFish_E_All_Data.zip"),
-    FbsHistoric             = c("FoodBalanceSheetsHistoric_E_All_Data.zip" ),
-    Fbs                     = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"),#old and new FBS
-    Fertilizer              = c("Environment_Fertilizers_E_All_Data.zip"),# should not be used, use CB and FS or calcFAOharmonized() instead
+    FbsHistoric             = c("FoodBalanceSheetsHistoric_E_All_Data.zip"),
+    Fbs                     = c("FoodBalanceSheets_E_All_Data_(Normalized).zip"), # old and new FBS
+    # should not be used, use CB and FS or calcFAOharmonized() instead
+    Fertilizer              = c("Environment_Fertilizers_E_All_Data.zip"),
     FertilizerNutrients     = c("Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip"),
     FertilizerProducts      = c("Inputs_FertilizersProduct_E_All_Data_(Normalized).zip"),
     Fodder                  = c("Fodder.csv"),
     FoodSecurity            = c("Food_Security_Data_E_All_Data.zip"),
     ForestProdTrade         = c("Forestry_E_All_Data_(Normalized).zip"),
-    Land                    = c("Resources_Land_E_All_Data.zip","Inputs_LandUse_E_All_Data_(Normalized).zip"), # old source file: Resources_Land_E_All_Data.zip
+    # old source file: Resources_Land_E_All_Data.zip
+    Land                    = c("Resources_Land_E_All_Data.zip", "Inputs_LandUse_E_All_Data_(Normalized).zip"),
     LiveHead                = c("Production_Livestock_E_All_Data.zip"),
     LivePrim                = c("Production_LivestockPrimary_E_All_Data.zip"),
     LiveProc                = c("Production_LivestockProcessed_E_All_Data.zip"),
@@ -93,35 +95,36 @@ readFAO_online <- function(subtype) {
     )
 
 
-  file <- toolSubtypeSelect(subtype,files)
+  file <- toolSubtypeSelect(subtype, files)
 
   # ---- Read the first file you find, prefer normalized format ----
 
-  try_files <- NULL
+  tryFiles <- NULL
 
-  # Add an entry with "Normalized" in front of the current entry in the file list if the current entry does not contain "Normalized".
+  # Add an entry with "Normalized" in front of the current entry in the file list
+  # if the current entry does not contain "Normalized".
   for (fi in file) {
     extension <- file_ext(basename(fi))
-    if (grepl("Normalized",fi)) {
-      try_files <- c(try_files,fi)
+    if (grepl("Normalized", fi)) {
+      tryFiles <- c(tryFiles, fi)
     } else {
 
-      try_files <- c(paste0(file_path_sans_ext(fi),"_(Normalized).",extension),fi)
+      tryFiles <- c(paste0(file_path_sans_ext(fi), "_(Normalized).", extension), fi)
     }
   }
 
   # look for data in normalized (i.e. long) format first before looking for the wide format
   # decompress if it is zipped
-  for(file in try_files) {
+  for (file in tryFiles) {
     extension <- file_ext(basename(file))
-    csv_name <- paste0(file_path_sans_ext(file), ".csv")
-    if (file.exists(csv_name)) {
-      file <- csv_name
+    csvName <- paste0(file_path_sans_ext(file), ".csv")
+    if (file.exists(csvName)) {
+      file <- csvName
       break
-    } else if(extension=="zip" & file.exists(file)){
-      files_extracted <- unzip(file, exdir = tempdir()) # use the absolute path to the file in order to unzip when working in the function
-      file <- paste0(tempdir(), "/",csv_name)
-      on.exit(file.remove(files_extracted))
+    } else if (extension == "zip" & file.exists(file)) {
+      filesExtracted <- unzip(file, exdir = tempdir())
+      file <- paste0(tempdir(), "/", csvName)
+      on.exit(file.remove(filesExtracted)) # nolint
       break
     }
   }
@@ -129,99 +132,122 @@ readFAO_online <- function(subtype) {
   # ---- Select columns to be read from file and read file ----
 
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)
-  csvcolnames <- colnames(read.table(file, header=T, nrows=1, sep=","))
+  csvcolnames <- colnames(read.table(file, header = TRUE, nrows = 1, sep = ","))
 
   # check if data is in long or wide format
-  long <- ifelse("Year" %in% csvcolnames,TRUE,FALSE)
+  long <- ifelse("Year" %in% csvcolnames, TRUE, FALSE)
 
   # define vector with types corresponding to the columns in the file
-  readcolClass <- rep("NULL",length(csvcolnames))
-  readcolClass[csvcolnames %in% c("Area.Code","Country.Code","CountryCode","Item.Code","ItemCode","Element.Code","ElementCode")] <- "factor"
-  readcolClass[csvcolnames %in% c("Area","Country","Element","Item","Unit","Months")] <- "character"
-  readcolClass[csvcolnames %in% c("Value","Year")] <- NA
-  if (!long) readcolClass[grepl("Y[0-9]{4}$",csvcolnames)] <- NA
+  readcolClass <- rep("NULL", length(csvcolnames))
+  factorCols <- c("Area.Code", "Country.Code", "CountryCode", "Item.Code", "ItemCode", "Element.Code", "ElementCode")
+  readcolClass[csvcolnames %in% factorCols] <- "factor"
+  readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit", "Months")] <- "character"
+  readcolClass[csvcolnames %in% c("Value", "Year")] <- NA
+  if (!long) readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
 
-  FAO <- fread(input=file, header=F, skip=1, sep=",", colClasses=readcolClass, col.names= csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"", encoding = "Latin-1", showProgress = FALSE)
-  FAO <- as.data.frame(FAO)
+  fao <- fread(input = file, header = FALSE, skip = 1, sep = ",", colClasses = readcolClass,
+               col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"], quote = "\"",
+               encoding = "Latin-1", showProgress = FALSE)
+  fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
-  if (!long) FAO <- pivot_longer(FAO,cols = starts_with("Y"),names_to = "Year", names_pattern = "Y(.*)", names_transform = list("Year" = as.integer), values_to = "Value")
-  # subtype 'PricesProducerAnnual' contains annual and seasonal data. Select annual data only and delete 'Months' column afterwards
-  if ("Months" %in% names(FAO)) {
-    FAO <- FAO[FAO$Months == "Annual value",]
-    FAO <- FAO[,!names(FAO) %in% "Months"]
+  if (!long) {
+    fao <- pivot_longer(fao, cols = starts_with("Y"), names_to = "Year", names_pattern = "Y(.*)",
+                        names_transform = list("Year" = as.integer), values_to = "Value")
+  }
+  # subtype 'PricesProducerAnnual' contains annual and seasonal data. Select annual data only
+  # and delete 'Months' column afterwards
+  if ("Months" %in% names(fao)) {
+    fao <- fao[fao$Months == "Annual value", ]
+    fao <- fao[, !names(fao) %in% "Months"]
   }
 
-  names(FAO)[names(FAO) == "Area.Code"] <- "CountryCode"
-  names(FAO)[names(FAO) == "Area"] <- "Country"
-  names(FAO) <- gsub("\\.","",names(FAO))
+  names(fao)[names(fao) == "Area.Code"] <- "CountryCode"
+  names(fao)[names(fao) == "Area"] <- "Country"
+  names(fao) <- gsub("\\.", "", names(fao))
 
   # ---- Assigning the ISO codes to countries ----
 
   # Load FAO specific countries (not included in country2iso.csv in madrat)
-  FAOiso_faocode <- toolGetMapping("FAOiso_faocode_online.csv", where="mrcommons")
+  faoIsoFaoCode <- toolGetMapping("FAOiso_faocode_online.csv", where = "mrcommons")
   # convert data frame into named vector as required by toolCountry2isocode
-  FAOiso_faocode <- structure(as.character(FAOiso_faocode$ISO),names=as.character(FAOiso_faocode$Country))
+  faoIsoFaoCode <- structure(as.character(faoIsoFaoCode$ISO), names = as.character(faoIsoFaoCode$Country))
   # look up ISO codes using central definition and extra FAO mapping from line above
-  # ignore warnings from FAO aggregate regions being dropped
-  FAO_aggregate_regions <- toolGetMapping("FAO_aggregate_regions.csv", where = "mrcommons")
-  FAO$ISO <- toolCountry2isocode(FAO$Country,mapping = FAOiso_faocode, ignoreCountries = FAO_aggregate_regions$Region)
+  # ignore warnings from FAO aggregate and other irrelevant regions
+  ignoreRegions <- c("Africa", "Americas", "Asia", "Australia & New Zealand", "Caribbean",
+                     "Central America", "Central Asia", "Eastern Africa", "Eastern Asia",
+                     "Eastern Europe", "Europe", "European Union", "Land Locked Developing Countries",
+                     "Least Developed Countries", "Low Income Food Deficit Countries",
+                     "Melanesia", "Middle Africa", "Net Food Importing Developing Countries",
+                     "Netherlands Antilles (former)", "Northern Africa", "Northern America",
+                     "Northern Europe", "Oceania", "Small Island Developing States",
+                     "South America", "South-Eastern Asia", "Southern Africa", "Southern Asia",
+                     "Southern Europe", "Western Africa", "Western Asia", "Western Europe",
+                     "World", "Australia and New Zealand", "European Union (27)", "Antarctic Region",
+                     "European Union (28)", "South-eastern Asia", "East/South Asia and Pacific",
+                     "Annex I countries", "Non-Annex I countries", "OECD")
+
+  fao$ISO <- toolCountry2isocode(fao$Country, mapping = faoIsoFaoCode, ignoreCountries = ignoreRegions) # nolint
   # remove country aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
-  FAO <- FAO[as.integer(levels(FAO$CountryCode)[FAO$CountryCode])<5000,]
+  fao <- fao[as.integer(levels(fao$CountryCode)[fao$CountryCode]) < 5000, ]
   # remove countries with missing ISO code
-  FAO <- FAO[!is.na(FAO$ISO),]
+  fao <- fao[!is.na(fao$ISO), ]
 
   # ---- Convert units ----
 
   # define helper function for unit conversion
-  .convert.unit <- function(x, old_unit, new_unit, factor) {
-    replace <- x$Unit == old_unit
-    if(any(replace)){
-      x$Value[replace] <- x$Value[replace]*factor
-      x$Unit[replace] <- new_unit
+  .convertUnit <- function(x, oldUnit, newUnit, factor) {
+    replace <- x$Unit == oldUnit
+    if (any(replace)) {
+      x$Value[replace] <- x$Value[replace] * factor
+      x$Unit[replace] <- newUnit
     }
     return(x)
   }
 
   ### convert some units
-  FAO <- .convert.unit(x = FAO, old_unit = "1000 tonnes", new_unit = "tonnes", factor = 1000)
-  FAO <- .convert.unit(x = FAO, old_unit = "1000 Head",   new_unit = "Head",   factor = 1000)
-  FAO <- .convert.unit(x = FAO, old_unit = "1000 number", new_unit = "number", factor = 1000)
-  FAO <- .convert.unit(x = FAO, old_unit = "1000",        new_unit = "number", factor = 1000)
-  FAO <- .convert.unit(x = FAO, old_unit = "1000 Ha",     new_unit = "ha",     factor = 1000)
-  FAO <- .convert.unit(x = FAO, old_unit = "1000 persons",new_unit = "persons",factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 tonnes", newUnit = "tonnes", factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 Head",   newUnit = "Head",   factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 number", newUnit = "number", factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000",        newUnit = "number", factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 Ha",     newUnit = "ha",     factor = 1000)
+  fao <- .convertUnit(x = fao, oldUnit = "1000 persons", newUnit = "persons", factor = 1000)
 
   # ---- Reformat elements ----
 
-  elementShort <- toolGetMapping("FAOelementShort.csv", where="mrcommons")
+  elementShort <- toolGetMapping("FAOelementShort.csv", where = "mrcommons")
   # keep relevant rows only
-  elementShort <- elementShort[elementShort$ElementCode %in% FAO$ElementCode,]
+  elementShort <- elementShort[elementShort$ElementCode %in% fao$ElementCode, ]
 
   # make ElementShort a combination of Element and Unit, replace special characters, and replace multiple _ by one
-  tmp_element <- gsub("[\\.,;?\\+& \\/\\-]","_",FAO$Element, perl=TRUE)
-  tmp_unit    <- gsub("[\\.,;\\+& \\-]","_",    FAO$Unit, perl=TRUE)
-  tmp_elementshort <- paste0(tmp_element,"_(",tmp_unit,")")
-  FAO$ElementShort <- gsub("_{1,}","_", tmp_elementshort, perl = TRUE)
+  tmpElement <- gsub("[\\.,;?\\+& \\/\\-]", "_", fao$Element, perl = TRUE)
+  tmpUnit    <- gsub("[\\.,;\\+& \\-]", "_",    fao$Unit, perl = TRUE)
+  tmpElementShort <- paste0(tmpElement, "_(", tmpUnit, ")")
+  fao$ElementShort <- gsub("_{1,}", "_", tmpElementShort, perl = TRUE) # nolint
 
   ### replace ElementShort with the entries from ElementShort if the Unit is the same
   if (length(elementShort) > 0) {
-    for (i in 1:nrow(elementShort)) {
-      FAO$ElementShort[FAO$ElementCode == elementShort[i,"ElementCode"] & FAO$Unit == elementShort[i,"Unit"]] <- as.character(elementShort[i,"ElementShort"])
+    for (i in seq_len(nrow(elementShort))) {
+      j <- (fao$ElementCode == elementShort[i, "ElementCode"] & fao$Unit == elementShort[i, "Unit"])
+      fao$ElementShort[j] <- as.character(elementShort[i, "ElementShort"])
     }
   }
 
   # remove accent in Mate to avoid problems and remove other strange names
-  FAO$Item <- gsub("\u00E9","e",FAO$Item, perl=TRUE)
-  FAO$Item <- gsub("\n + (Total)", " + (Total)", FAO$Item, fixed = TRUE)
-  FAO$ItemCodeItem <- paste0(FAO$ItemCode,"|", gsub("\\.","",FAO$Item,perl=TRUE))
+  fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
+  fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
+  fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
 
-  FAO <- as.magpie(FAO[,c("Year","ISO","ItemCodeItem","ElementShort","Value")], temporal=1, spatial=2, datacol=5)
-  if(subtype %in% c("EmisAgBurnCropResid","EmisAgCropResid","EmisLuForest")) getNames(FAO, dim=1) <- gsub("\\r", "", getNames(FAO, dim=1))
-  if(subtype %in% c("CapitalStock")) getNames(FAO) <- gsub("[\\%]", "percentage", getNames(FAO))
-  if(subtype %in% c("CapitalStock")) getNames(FAO) <- gsub("[\\$]", "D", getNames(FAO))
+  fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
+                   temporal = 1, spatial = 2, datacol = 5)
+  if (subtype %in% c("EmisAgBurnCropResid", "EmisAgCropResid", "EmisLuForest")) {
+    getNames(fao, dim = 1) <- gsub("\\r", "", getNames(fao, dim = 1))
+  }
+  if (subtype %in% c("CapitalStock")) getNames(fao) <- gsub("[\\%]", "percentage", getNames(fao))
+  if (subtype %in% c("CapitalStock")) getNames(fao) <- gsub("[\\$]", "D", getNames(fao))
 
   gc()
 
-  FAO <- magpiesort(FAO)
+  fao <- magpiesort(fao)
 
-  return(FAO)
+  return(fao)
 }

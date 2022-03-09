@@ -7,7 +7,16 @@
 readICP2017(subtype = "per_cap_expMER")
 }
 \arguments{
-\item{subtype}{data subtype needed. Either "priceLevel", or "per_cap_exp"}
+\item{subtype}{data subtype to be read in. Available subtypes are:
+\itemize{
+\item \code{priceLevel} Price level index (World = 100)
+\item \code{expRatio} Expenditure component share of GDP (GDP = 100\%)
+\item \code{exp_LCU} Expenditure (local currency units, billions)
+\item \code{exp_MER} Expenditure, market exchange rate-based (US$, billions)
+\item \code{exp_PPP} Expenditure, PPP-based (US$, billions)
+\item \code{per_cap_expPPP} Expenditure per capita, PPP-based (US$)
+\item \code{per_cap_expMER} Expenditure per capita, market exchange rate-based (US$)
+}}
 }
 \value{
 magpie object of relative price levels (world = 100) or per capita expenditure (USD17 MER)

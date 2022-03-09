@@ -2,7 +2,16 @@
 #' @description  Reads data of World Bank ICP round, downloaded from here: https://databank.worldbank.org/source/icp-2017
 #' Reads  
 #'
-#' @param subtype data subtype needed. Either "priceLevel", or "per_cap_exp" 
+#' @param subtype data subtype to be read in. Available subtypes are:
+#' \itemize{
+#' \item `priceLevel` Price level index (World = 100)
+#' \item `expRatio` Expenditure component share of GDP (GDP = 100%)
+#' \item `exp_LCU` Expenditure (local currency units, billions)
+#' \item `exp_MER` Expenditure, market exchange rate-based (US$, billions)
+#' \item `exp_PPP` Expenditure, PPP-based (US$, billions)
+#' \item `per_cap_expPPP` Expenditure per capita, PPP-based (US$)
+#' \item `per_cap_expMER` Expenditure per capita, market exchange rate-based (US$)
+#' }
 #' @return magpie object of relative price levels (world = 100) or per capita expenditure (USD17 MER)
 #' @author David M Chen
 #' @importFrom dplyr %>% select mutate filter relocate
@@ -15,15 +24,18 @@
 #'
 readICP2017 <- function(subtype = "per_cap_expMER") {
   
-  file =  "31f72e60-7a0f-4d7e-8303-6482aedfdc6c_Data.csv"
+  file =  "418a4224-8694-47b3-a918-5200014d1728_Data.csv"
   
-  subtypes <- c(per_cap_expMER       = "Expenditure per capita, market exchange rate-based (US$)",
-             per_cap_expPPP    = "Expenditure per capita, PPP-based (US$)",
-             priceLevel         = "Price level index (World = 100)",
-             expRatio        =  "Expenditure component share of GDP (GDP = 100%)")
+  subtypes <- c( priceLevel = "Price level index (World = 100)",
+                 expRatio = "Expenditure component share of GDP (GDP = 100%)",
+                 exp_LCU = "Expenditure (local currency units, billions)",
+                 exp_MER = "Expenditure, market exchange rate-based (US$, billions)",
+                 exp_PPP = "Expenditure, PPP-based (US$, billions)",
+                 per_cap_expPPP = "Expenditure per capita, PPP-based (US$)",
+                 per_cap_expMER = "Expenditure per capita, market exchange rate-based (US$)")
+  
   # Subsetting based on type of requested output
   out <- toolSubtypeSelect(subtype, subtypes)
-  
   
   # Reads data
   data <- read.csv(file = file)

@@ -45,9 +45,9 @@ Files with exception of fodder.csv are aquired according to downloadFAO.
 Update 23-Jan-2017 - Added FAO Forestry production and trade data (Abhi)
 }
 \examples{
-
-  \dontrun{ a <- readSource("FAO_online","Crop")
-  }
+\dontrun{
+a <- readSource("FAO_online", "Crop")
+}
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}
