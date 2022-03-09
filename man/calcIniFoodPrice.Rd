@@ -24,9 +24,8 @@ for the initialization of the flexible demand model.
 The IMPACT projections start in 2005 and the prices are taken from that year.
 }
 \examples{
-
-\dontrun{ 
-calcOutput("IniFoodPrice", aggregate=FALSE)
+\dontrun{
+calcOutput("IniFoodPrice", aggregate = FALSE)
 }
 
 }

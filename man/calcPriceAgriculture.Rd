@@ -18,11 +18,10 @@ provides global prices from the IMPACT model projections, World Bank observation
 obersvations for MAgPIE commodities in $/tDM
 }
 \examples{
-
 \dontrun{
-calcOutput("PriceAgriculture", datasource="IMPACT3.2.2World_Price", aggregate=FALSE)
-calcOutput("PriceAgriculture", datasource="FAO")
-calcOutput("PriceAgriculture",datasource = "WBGEM",aggregate =  FALSE)
+calcOutput("PriceAgriculture", datasource = "IMPACT3.2.2World_Price", aggregate = FALSE)
+calcOutput("PriceAgriculture", datasource = "FAO")
+calcOutput("PriceAgriculture", datasource = "WBGEM", aggregate = FALSE)
 }
 
 }
