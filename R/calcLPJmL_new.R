@@ -134,7 +134,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
         x          <- x * lakeShare
 
         # Transform units: liter/m^2 -> liter
-        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+        cb        <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                     type = "cell", where = "mrcommons")
         cellArea  <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         x         <- x * cellArea
@@ -158,7 +158,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- toolSubtypeSelect(subtype, units)
 
-    } else if (grepl("*harvest*", subtype)) {
+    } else if (grepl("*harvest*|gpp_grass", subtype)) {
 
       yieldTransform <- 0.01 / 0.45
       x    <- x * yieldTransform
@@ -166,10 +166,18 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
     } else if (grepl("irrig|cwater_b", subtype)) {
 
+      # Transform units: liter/m^2 (= mm) -> m^3/ha
       irrigTransform  <- 10
       # select only irrigated
       x                <- x[, , "irrigated"] * irrigTransform # units are now: m^3 per ha per year
       unit             <- "m^3/ha"
+
+    } else if (grepl("et_grass", subtype)) {
+
+      # Transform units: liter/m^2 (= mm) -> m^3/ha
+      watTransform <- 10
+      x            <- x * watTransform
+      unit         <- "m^3/ha"
 
     } else if (grepl("input_lake", subtype)) {
 
@@ -180,11 +188,11 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "C/C"
 
     } else if (grepl("fpc", subtype)) {
-      
+
       unit <- "ha/ha"
-      
+
     } else {
-      stop(paste0("subtype ", subtype, " is not existing"))
+      stop(paste0("subtype ", subtype, " does not exist"))
     }
 
     ########## UNIT TRANSFORMATION ###############
