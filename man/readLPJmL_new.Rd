@@ -9,13 +9,14 @@ readLPJmL_new(
 )
 }
 \arguments{
-\item{subtype}{Switch between different input (eg. "LPJmL5.2_Pasture:IPSL_CM6A_LR:ssp126_co2_limN_00:soilc_past_hist")}
+\item{subtype}{Switch between different inputs
+(eg. "LPJmL5.2_Pasture:IPSL_CM6A_LR:ssp126_co2_limN_00:soilc_past_hist")}
 }
 \value{
 List of magpie objects with results on cellular level, weight, unit and description.
 }
 \description{
-Read LPJmL content
+Read in LPJmL outputs
 }
 \examples{
 \dontrun{
