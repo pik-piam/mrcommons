@@ -13,14 +13,15 @@ convertGTAP81 <- function(x, subtype) {
 
   # optimally GDP would be converted from constant 2005 US$MER to current US$MER, but as it is used as weight
   # this shouldn't have a big impact
-  GDPmer <- calcOutput("GDPPast", GDPPast = "IHME_USD05_MER_pc-MI", aggregate = FALSE)
+  GDPmer <- calcOutput("GDPPast", GDPPast = "WDI-MI", unit = "constant 2005 US$MER", aggregate = FALSE)
   GDPmer <- GDPmer[, getYears(x), , drop = TRUE]
   mapping <- toolGetMapping("regionmappingGTAP81.csv", type = "regional")
   x <- toolAggregate(x, rel = mapping, weight = GDPmer, from = "GTAPCode", to = "CountryCode", dim = 1)
 
   if ("REG2" %in% getSets(x)) {
-    weight <- new.magpie(cells_and_regions = "GLO", years = getYears(GDPmer), names = getRegions(GDPmer), fill = 0)
-    for (reg in getRegions(GDPmer)) {
+    weight <- new.magpie(cells_and_regions = "GLO", years = getYears(GDPmer),
+                         names = getItems(GDPmer, dim = 1), fill = 0)
+    for (reg in getItems(GDPmer, dim = 1)) {
       weight[, , reg] <- GDPmer[reg, , ]
     }
     x <- toolAggregate(x, rel = mapping, weight = weight, from = "GTAPCode", to = "CountryCode", dim = "REG2")

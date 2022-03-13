@@ -36,6 +36,9 @@ calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
   # aggregation to magpie objects (and livst_other)
   VoPlivst <- toolAggregate(VoP[, , items], rel = mappingFAO, from = "FAO_item", to = "kli", weight = NULL, dim = 3)
 
+  # VoP in North Korea too high? -> excluded
+  VoPlivst["PRK", , ] <- 0
+
   # filling gaps based on production and prices
   if (isTRUE(fillGaps)) {
     kli <- findset("kli")
@@ -44,7 +47,7 @@ calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
 
     # fill with region averages where possible
     pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = TRUE))
-    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping(getConfig()$regionmapping),
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping(getConfig("regionmapping")),
                                     from = "RegionCode", to = "CountryCode")
     prices[prices == 0] <- pricesRegional[prices == 0]
 

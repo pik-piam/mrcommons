@@ -17,7 +17,7 @@
 #' a <- calcOutput("VoP_crops")
 #' }
 #'
-calcVoP_crops <- function(output = "absolute", fillGaps = FALSE) {
+calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
 
   # Value of production for Agriculture, forestry and fishes
   VoP_AFF <- calcOutput("VoP_AFF", aggregate = FALSE)
@@ -43,6 +43,9 @@ calcVoP_crops <- function(output = "absolute", fillGaps = FALSE) {
   # Aggregation to magpie objects
   VoP_kcr_aggregated <- toolAggregate(VoP_All[, , itemsIntersect], rel = mappingFAO, from = "ProductionItem",
                                       to = "kcr", weight = NULL, dim = 3)
+
+  # VoP in North Korea too high? -> excluded
+  VoP_kcr_aggregated["PRK", , ] <- 0
 
   # filling gaps based on production and prices
   if (isTRUE(fillGaps)) {

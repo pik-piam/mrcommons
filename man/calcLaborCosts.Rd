@@ -7,6 +7,8 @@
 calcLaborCosts(
   datasource = "ILO",
   subsectors = TRUE,
+  inclFish = FALSE,
+  inclForest = FALSE,
   gtapVar = "NVFA",
   addSubsidies = FALSE
 )
@@ -18,6 +20,10 @@ on VoP from FAO), and GTAP}
 \item{subsectors}{boolean: should output be aggregated or split into available subsectors (crops, livst, forestry,
 fishery)}
 
+\item{inclFish}{boolean: should fish labor costs be included?}
+
+\item{inclForest}{boolean: should forestry labor costs be included (only available for ILO and GTAP)?}
+
 \item{gtapVar}{variable name to use from GTAP (only relevant if source is "GTAP")}
 
 \item{addSubsidies}{boolean: should subsidy data (from IFPRI) should be added to VoP before applying USDA cost
@@ -27,8 +33,8 @@ shares (only relevant if datasource is "USDA")}
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates total labor costs in mio. US$MER05 (coverage depends on source: crop and livestock
-production for USDA, and additionally forestry and fishery for GTAP and ILO)
+calculates total labor costs in mio. US$MER05 (coverage depends on source: crop, livestock and
+fish production for USDA, and additionally forestry for GTAP and ILO)
 }
 \examples{
 \dontrun{
