@@ -1,9 +1,11 @@
 #' @title calcEmisNitrogenPreagriculture
 #' @description
-#' Calculates nitrogenous emissions Nitrogen emissions from soils under 100% natural cover (even for crop and urban) assuming a pre-agricultural time.
+#' Calculates nitrogenous emissions Nitrogen emissions from soils under 100% natural cover
+#' (even for crop and urban) assuming a pre-agricultural time.
 #'
 #' @param cellular cellular or country outputs
-#' @param deposition if TRUE, losses include atmospheric deposition inputs that are lost afterwards. If false, only biological fixation is considered.
+#' @param deposition if TRUE, losses include atmospheric deposition inputs that are lost afterwards.
+#' If false, only biological fixation is considered.
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
@@ -42,31 +44,33 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # avoiding division by zero
   surplus[surplus < 10^-10] <- 10^-10
 
-  # emis_share=calcOutput("EmisNitrogenShareNature",aggregate = FALSE)
-  warning("to do: include emisnitrogenshareanture")
+  # to do: include EmisNitrogenShareNature
+  # (Benni suggested to convert the previous warning to this comment)
 
-  frac_leach <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
-  leaching_multiplicationfactor <- setYears(35 / dimSums(surplus * frac_leach, dim = c(1, 3))[, "y1965", ], NULL)
-  no3 <- surplus * frac_leach * leaching_multiplicationfactor
+  fracLeach <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+  leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
+  no3 <- surplus * fracLeach * leachingMultiplicationFactor
 
   # accumulation in deserts
 
-  deserts <- (frac_leach == 0)
-  accumulation_deserts <- surplus * deserts
-  surplus_nondeserts <- surplus - accumulation_deserts
-  inputs_nondesert <- inputs * (1 - deserts)
-  inputs_nondesert[inputs_nondesert == 0] <- 10^-10
+  deserts <- (fracLeach == 0)
+  accumulationDeserts <- surplus * deserts
+  surplusNonDeserts <- surplus - accumulationDeserts
+  inputsNonDesert <- inputs * (1 - deserts)
+  inputsNonDesert[inputsNonDesert == 0] <- 10^-10
 
   # gaseous losses ####
 
-  nox <- (1.6 + 2.9) / inputs_nondesert * surplus_nondeserts
-  nh3 <- (6 + 1.6) / inputs_nondesert * surplus_nondeserts
-  # 6.8 Tg from Bouwman, A. F., Fung, I., Matthews, E. & John, J. Global analysis of the potential for N2O production in natural soils. Global Biogeochemical Cycles 7, 557–597 (1993).
-  n2o <- (6.8) / inputs_nondesert * surplus_nondeserts
+  nox <- (1.6 + 2.9) / inputsNonDesert * surplusNonDeserts
+  nh3 <- (6 + 1.6) / inputsNonDesert * surplusNonDeserts
+  # 6.8 Tg from Bouwman, A. F., Fung, I., Matthews, E. & John, J. Global analysis
+  # of the potential for N2O production in natural soils. Global Biogeochemical
+  # Cycles 7, 557–597 (1993).
+  n2o <- (6.8) / inputsNonDesert * surplusNonDeserts
 
   # n2
 
-  n2 <- surplus - no3 - accumulation_deserts - nox - nh3 - n2o
+  n2 <- surplus - no3 - accumulationDeserts - nox - nh3 - n2o
 
   out <- mbind(
     add_dimension(no3, dim = 3.1, add = "form", nm = "no3_n"),
@@ -74,7 +78,7 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
     add_dimension(nox, dim = 3.1, add = "form", nm = "no2_n"),
     add_dimension(n2o, dim = 3.1, add = "form", nm = "n2o_n_direct"),
     add_dimension(n2, dim = 3.1, add = "form", nm = "n2_n"),
-    add_dimension(accumulation_deserts, dim = 3.1, add = "form", nm = "accumulation")
+    add_dimension(accumulationDeserts, dim = 3.1, add = "form", nm = "accumulation")
   )
 
   if (deposition == FALSE) {
