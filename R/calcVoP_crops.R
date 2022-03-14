@@ -60,7 +60,7 @@ calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
 
     # fill with region averages where possible
     pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = TRUE))
-    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping(getConfig()$regionmapping),
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping(getConfig("regionmapping")),
                                     from = "RegionCode", to = "CountryCode")[, , kPrices]
     prices[prices == 0] <- pricesRegional[prices == 0]
 
@@ -75,7 +75,8 @@ calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
     prices <- add_columns(prices, addnm = missingCommodities, dim = 3.1, fill = 0)[, , kcr]
 
     pricesGLOnormalized <- pricesGLO / setYears(pricesGLO[, 2005, ], NULL)
-    averagePriceDevelopment <- dimSums(pricesGLOnormalized, dim = 3) / length(kPrices)
+    weight <- dimSums(production, dim = 1)[, getYears(pricesGLOnormalized), getNames(pricesGLOnormalized)]
+    averagePriceDevelopment <- dimSums(pricesGLOnormalized * (weight / dimSums(weight, dim = 3)), dim = 3)
     iniPrice <- calcOutput("IniFoodPrice", products = missingCommodities, aggregate = FALSE)
     iniPrice <- iniPrice * averagePriceDevelopment
 
