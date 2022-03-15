@@ -9,13 +9,15 @@ calcEmisNitrogenPreagriculture(cellular = FALSE, deposition = TRUE)
 \arguments{
 \item{cellular}{cellular or country outputs}
 
-\item{deposition}{if TRUE, losses include atmospheric deposition inputs that are lost afterwards. If false, only biological fixation is considered.}
+\item{deposition}{if TRUE, losses include atmospheric deposition inputs that are lost afterwards.
+If false, only biological fixation is considered.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates nitrogenous emissions Nitrogen emissions from soils under 100\% natural cover (even for crop and urban) assuming a pre-agricultural time.
+Calculates nitrogenous emissions Nitrogen emissions from soils under 100\% natural cover
+(even for crop and urban) assuming a pre-agricultural time.
 }
 \examples{
 \dontrun{

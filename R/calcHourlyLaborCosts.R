@@ -3,6 +3,8 @@
 #' @param datasource either raw data from "ILO" or data calculated based on total labor costs from "USDA_FAO"
 #' @param fillWithRegression boolean: should missing values be filled based on a regression between ILO hourly labor
 #' costs and GDPpcMER (calibrated to countries)
+#' @param calibYear in case of fillWithRegression being TRUE, data after this year will be ignored and calculated using
+#' the regression (calibrated for each year to calibYear, or the most recent year with data before calibYear)
 #' @param projection either FALSE or SSP on which projections should be based. Only relevant if fillWithRegression is
 #' TRUE.
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
@@ -14,7 +16,8 @@
 #' @importFrom stringr str_split
 
 
-calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = TRUE, projection = FALSE) {
+calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = TRUE,
+                                 calibYear = 2010, projection = FALSE) {
 
   if (isFALSE(fillWithRegression)) {
     if (datasource == "ILO") { # data as reported by ILO (and CACP for India)
@@ -54,13 +57,13 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
       hourlyCosts[hourlyCosts > 100] <- 0
       hourlyCosts[c("HRV", "MUS"), , ] <- 0  # unreasonable low values
 
-    } else if (datasource == "USDA_FAO") { # from USDA/FAO labor costs for crop+livst+fish, ag. empl. and weekly hours
+    } else if (datasource == "USDA_FAO") { # from USDA/FAO labor costs for crop+livst, ag. empl. and weekly hours
       # ag. empl. from ILO
-      agEmpl <- calcOutput("AgEmplILO", subsectors = TRUE, aggregate = FALSE)[, , c("Livestock", "Crops", "Fisheries")]
+      agEmpl <- calcOutput("AgEmplILO", subsectors = TRUE, aggregate = FALSE)[, , c("Livestock", "Crops")]
 
-      # total labor costs calculated as VoP * labor cost share
-      totalLaborCosts <- calcOutput("LaborCosts", datasource = "USDA", addSubsidies = TRUE, aggregate = FALSE)
-      totalLaborCosts <- totalLaborCosts[, , c("Livestock", "Crops", "Fisheries")]
+      # total labor costs (calculated as VoP * labor cost share)
+      totalLaborCosts <- calcOutput("LaborCosts", datasource = "USDA", addSubsidies = TRUE, inclFish = FALSE,
+                                    aggregate = FALSE)
 
       # average weekly hours worked per week
       weeklyHours <- calcOutput("WeeklyHoursILO", aggregate = FALSE)
@@ -101,14 +104,20 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
     # add years with GDP data to hourlyCosts object
     hourlyCosts <- magpiesort(add_columns(hourlyCosts, dim = 2, fill = 0,
                               addnm = setdiff(getItems(GDPpcMER, dim = 2), getItems(hourlyCosts, dim = 2))))
-    hourlyCosts <- hourlyCosts[, getItems(GDPpcMER, dim = 2)]
+    hourlyCosts <- hourlyCosts[, getItems(GDPpcMER, dim = 2), ]
+
+    # set years after calibYear to 0 (as in MAgPIE we calibrate to last year of the set t_past, we need to remove data
+    # for later years here as well if results should be the same)
+    if (datasource == "USDA_FAO") {
+      hourlyCosts[, setdiff(getItems(hourlyCosts, dim = 2), paste0("y", 1900:calibYear)), ] <- 0
+    }
 
     # fill gaps with estimates using regression of HourlyLaborCost from ILO (US$MER05) ~ GDPpcMER
     # common slope, but calibrated to countries by shifting intercept depending on first and last hourly
-    # labor cost value. Gaps in the data are filled by interpolation
+    # labor cost value. Gaps within a timeseries are filled by interpolation
     regCoeff <- readSource("RegressionsILO", subtype = "HourlyLaborCosts")
 
-    years <- as.integer(str_split(getItems(hourlyCosts, dim = 2), "y", simplify = TRUE)[, 2])
+    years <- getYears(hourlyCosts, as.integer = TRUE)
     for (ctry in getItems(hourlyCosts, dim = 1)) {
       ctryEst <- regCoeff[, , "intercept", drop = TRUE] + regCoeff[, , "slope", drop = TRUE] * GDPpcMER[ctry, , ]
       y <- where(hourlyCosts[ctry, , ] != 0)$true$years
@@ -139,7 +148,6 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
     }
 
     hourlyCosts[hourlyCosts < regCoeff[, , "threshold"]] <- regCoeff[, , "threshold"]
-
   }
 
   hourlyCosts <- setNames(hourlyCosts, NULL)
@@ -157,6 +165,7 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
                                integrate_interpolated_years = TRUE, extrapolation_type = "constant")
   }
   weight <- weight[, getItems(hourlyCosts, dim = 2), ]
+  weight[hourlyCosts == 0] <- 0
 
   return(list(x = hourlyCosts,
               weight = weight,

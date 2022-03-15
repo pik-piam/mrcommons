@@ -4,11 +4,13 @@
 \alias{calcVoP_crops}
 \title{calcVoP_crops}
 \usage{
-calcVoP_crops(output = "absolute")
+calcVoP_crops(output = "absolute", fillGaps = TRUE)
 }
 \arguments{
 \item{output}{defines if output should be given as an "absolute" value or
 as a "fraction" of the overall value of production.}
+
+\item{fillGaps}{boolean: should gaps be filled using production * prices (where production data is available)?}
 }
 \value{
 magpie object. in mio. USD05 MER or fraction

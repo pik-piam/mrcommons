@@ -1,7 +1,7 @@
 #' @title calcWeeklyHoursILO
 #' @description calculates complete dataset of mean weekly hours worked by people employed in agriculture, forestry and
 #' fishery based on ILO dataset
-#' @param projections boolean, should weekly hours be projected up to 2100
+#' @param projections boolean, should weekly hours be projected up to 2100?
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Debbora Leip
 #' @examples
@@ -23,7 +23,7 @@ calcWeeklyHoursILO <- function(projections = FALSE) {
   }
 
   # fill gaps with estimates (for countries with at least 10 observations)
-  years <- as.integer(gsub("y", "", getItems(ilo, dim = 2)))
+  years <- getYears(ilo, as.integer = TRUE)
   minYear <- min(getYears(ilo, as.integer = TRUE))
   maxYear <- max(getYears(ilo, as.integer = TRUE))
   for (reg in getItems(ilo, dim = 1)) {
@@ -51,10 +51,8 @@ calcWeeklyHoursILO <- function(projections = FALSE) {
     }
   }
 
-  # agricultural employment as weight -> reduce time series to years that have data
+  # agricultural employment as weight (keep weight in missing years constant)
   agEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = FALSE)
-
-  # keep weight in missing years constant
   agEmpl <- time_interpolate(agEmpl, interpolated_year = setdiff(getItems(ilo, dim = 2), getItems(agEmpl, dim = 2)),
                              integrate_interpolated_years = TRUE, extrapolation_type = "constant")
 

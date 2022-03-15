@@ -7,6 +7,7 @@
 calcHourlyLaborCosts(
   datasource = "USDA_FAO",
   fillWithRegression = TRUE,
+  calibYear = 2010,
   projection = FALSE
 )
 }
@@ -15,6 +16,9 @@ calcHourlyLaborCosts(
 
 \item{fillWithRegression}{boolean: should missing values be filled based on a regression between ILO hourly labor
 costs and GDPpcMER (calibrated to countries)}
+
+\item{calibYear}{in case of fillWithRegression being TRUE, data after this year will be ignored and calculated using
+the regression (calibrated for each year to calibYear, or the most recent year with data before calibYear)}
 
 \item{projection}{either FALSE or SSP on which projections should be based. Only relevant if fillWithRegression is
 TRUE.}

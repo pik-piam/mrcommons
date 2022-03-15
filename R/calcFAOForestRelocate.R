@@ -121,9 +121,15 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
 
           t <- (catreduce != 0)
           if (any(t)) {
-            # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
-            p <- nleqslv(rep(1, nyears(luiso)), findweight, cellarea = t(as.array(luiso)[, , cat]),
-                         isoreduction = catreduce, cellweight = cellweight)$x
+            # determine correct parameter for weights for multiple cell countries
+            # (weights below zero indicate an error)
+            # only determine them for cases where something has to be removed
+            sol  <- nleqslv(rep(1, nyears(luiso[, t, ])), findweight,
+                            cellarea = t(as.array(luiso)[, t, cat]),
+                            isoreduction = catreduce[t], cellweight = cellweight[t, ])
+
+            p    <- rep(1, nyears(luiso))
+            p[t] <- sol$x
             names(p) <- rownames(cellweight)
             if (any(p[t] < 0)) vcat(2, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
             remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))

@@ -82,7 +82,7 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
 
     # out[,,"fish"]             <- 2067.626632 # OECD/FAO price of fish food traded in 2005
     out[, , "fish"]             <- 1400 # FAO FIGIS database, export value divided by export volume in 2005, rounded
-    out[, , "oilpalm"]          <- 100 # palmoilpoint.blogspot.de (527 malaysian ringgit   = 118 USD rounded to 100)
+    # out[, , "oilpalm"]          <- 100 # palmoilpoint.blogspot.de (527 malaysian ringgit   = 118 USD rounded to 100)
     out[, , "oilcakes"]         <- 300 # https://www.indexmundi.com/commodities/?commodity=soybean-meal&months=180
     out[, , "brans"]            <- 100 # quick google search
     out[, , "distillers_grain"] <- 200 # quick google search

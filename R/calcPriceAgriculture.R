@@ -3,8 +3,7 @@
 #' @description provides global prices from the IMPACT model projections, World Bank observations, and FAO
 #' obersvations for MAgPIE commodities in $/tDM
 #'
-#' @param datasource Options of the source of data:  `IMPACT3.2.2World_Price`
-#' , `FAO`, `FAOp` and `WBGEM`.
+#' @param datasource Options of the source of data:  `IMPACT3.2.2World_Price`, `FAO`, `FAOp` and `WBGEM`.
 #'
 #' @return List with a magpie object with commodity prices on global level.
 #' @author Mishko Stevanovic, Xiaoxi Wang
@@ -116,7 +115,15 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
     out <- readSource("FAO_online", "PricesProducerAnnual", convert = TRUE)
     aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
+    # production item for oilpalm exists twice: "254|Oil, palm fruit", "254|Oil palm fruit" - in out only the latter
+    aggregation <- aggregation[aggregation$ProductionItem != "254|Oil, palm fruit", ]
+
     qprod <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "production"])
+
+    # "2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake" need to be aggregated to get "oilpalm"
+    qprod <- add_columns(qprod, addnm = "oilpalm", dim = 3.1)
+    qprod[, , "oilpalm"] <- dimSums(qprod[, , c("2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake")])
+
     qprod <- toolAggregate(qprod, rel = aggregation, from = "FoodBalanceItem",
                            to = "ProductionItem", dim = 3, partrel = TRUE, verbosity = 2)
 

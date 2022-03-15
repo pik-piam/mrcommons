@@ -7,8 +7,7 @@
 calcPriceAgriculture(datasource = "IMPACT3.2.2World_Price")
 }
 \arguments{
-\item{datasource}{Options of the source of data:  \code{IMPACT3.2.2World_Price}
-, \code{FAO}, \code{FAOp} and \code{WBGEM}.}
+\item{datasource}{Options of the source of data:  \code{IMPACT3.2.2World_Price}, \code{FAO}, \code{FAOp} and \code{WBGEM}.}
 }
 \value{
 List with a magpie object with commodity prices on global level.

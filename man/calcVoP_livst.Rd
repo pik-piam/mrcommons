@@ -4,11 +4,13 @@
 \alias{calcVoP_livst}
 \title{calcVoP_livst}
 \usage{
-calcVoP_livst(other = FALSE)
+calcVoP_livst(other = FALSE, fillGaps = FALSE)
 }
 \arguments{
 \item{other}{boolean: should FAO livestock categories that can't be matched to MAgPIE categories (i.e. beeswax, wool,
 silkworms, and honey) be reported as "livst_other"?}
+
+\item{fillGaps}{boolean: should gaps be filled using production * prices (where production data is available)?}
 }
 \value{
 magpie object. in mio. USDMER05
