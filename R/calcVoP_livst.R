@@ -46,9 +46,10 @@ calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
     prices <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = FALSE))
 
     # fill with region averages where possible
-    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = TRUE))
-    rel <- toolGetMapping(getConfig("regionmapping"))
-    pricesRegional <- toolAggregate(pricesRegional, rel = rel, from = "RegionCode", to = "CountryCode")
+    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO",
+                                             aggregate = TRUE, regionmapping = "regionmappingH12.csv"))
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping("regionmappingH12.csv"),
+                                    from = "RegionCode", to = "CountryCode")
     prices[prices == 0] <- pricesRegional[prices == 0]
 
     # fill remaining gaps with global averages
