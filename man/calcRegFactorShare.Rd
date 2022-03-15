@@ -22,7 +22,6 @@ This function calculates the regression parameters (a and b) for the function Sh
 calcOutput("calcRegFactorShare")
 }
 
-
 }
 \seealso{
 \code{\link[=calcOutput]{calcOutput()}},\code{\link[=calcFactorIntensity]{calcFactorIntensity()}}

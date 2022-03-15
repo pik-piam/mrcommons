@@ -1,4 +1,4 @@
-#' @title calcVoP_crops
+#' @title calcVoPcrops
 #' @description Calculates the value of production of individual production items or
 #' its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
 #'
@@ -14,13 +14,13 @@
 #' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
-#' a <- calcOutput("VoP_crops")
+#' a <- calcOutput("VoPcrops")
 #' }
 #'
-calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
+calcVoPcrops <- function(output = "absolute", fillGaps = TRUE) {
 
   # Value of production for Agriculture, forestry and fishes
-  vopAff <- calcOutput("VoP_AFF", aggregate = FALSE)
+  vopAff <- calcOutput("VoPAFF", aggregate = FALSE)
   vopTotal <- dimSums(vopAff, dim = 3) # mio. 05USD MER
 
   # Value of production of individual items (current US$MER -> US$MER05)

@@ -40,7 +40,7 @@ calcNonMAgPIEFactorCosts <- function(subtype = "subsidies") {
                             extrapolation_type = "constant")
 
   } else if (subtype == "missingVoP") {
-    out <- calcOutput("VoP_livst", other = TRUE, aggregate = FALSE)[, , "livst_other"]
+    out <- calcOutput("VoPlivst", other = TRUE, aggregate = FALSE)[, , "livst_other"]
     out <- out[, 1991:2017, ] # no data before 1991, last two years incomplete
 
     # get factor cost share of VoP

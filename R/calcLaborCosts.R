@@ -53,19 +53,19 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
     if (isTRUE(inclForest)) stop("Forest labor costs not available for this datasource")
 
     # Value of Production for livestock in US$MER2005 (including FAO livst categories not mapped to MAgPIE categories)
-    VoP_livst <- calcOutput("VoP_livst", other = TRUE, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
-    VoP_livst <- setNames(dimSums(VoP_livst, dim = 3), "Livestock")
+    VoPlivst <- calcOutput("VoPlivst", other = TRUE, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
+    VoPlivst <- setNames(dimSums(VoPlivst, dim = 3), "Livestock")
 
     # Value of Production for crops in US$MER2005
-    VoP_crops <- calcOutput("VoP_crops", output = "absolute", fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
-    VoP_crops <- setNames(dimSums(VoP_crops, dim = 3), "Crops")
+    VoPcrops <- calcOutput("VoPcrops", output = "absolute", fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
+    VoPcrops <- setNames(dimSums(VoPcrops, dim = 3), "Crops")
 
     # no VoP data before 1991, data for 2019 incomplete (using fillGaps in calcVoP reduces years to 1991:2013 anyway)
-    years <- setdiff(getItems(VoP_livst, dim = 2), paste0("y", c(1960:1990, 2019)))
+    years <- setdiff(getItems(VoPlivst, dim = 2), paste0("y", c(1960:1990, 2019)))
 
     # VoP of fish (reduces years)
     if (isTRUE(inclFish)) {
-      VoP_fish <- calcOutput("VoP_AFF", aggregate = FALSE)[, , "Fisheries"]
+      VoP_fish <- calcOutput("VoPAFF", aggregate = FALSE)[, , "Fisheries"]
       years <- intersect(years, getItems(VoP_fish, dim = 2))
     }
 
@@ -78,12 +78,12 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
                                     integrate_interpolated_years = TRUE,
                                     extrapolation_type = "constant")
 
-      VoP_crops <- VoP_crops[, years, ] + subsidies[, years, "Crops"]
-      VoP_livst <- VoP_livst[, years, ] + subsidies[, years, "Livestock"]
+      VoPcrops <- VoPcrops[, years, ] + subsidies[, years, "Crops"]
+      VoPlivst <- VoPlivst[, years, ] + subsidies[, years, "Livestock"]
     }
 
     # combine VoP for crops and livestock (and fish)
-    VoP_agriculture <- mbind(VoP_livst[, years, ], VoP_crops[, years, ])
+    VoP_agriculture <- mbind(VoPlivst[, years, ], VoPcrops[, years, ])
     if (isTRUE(inclFish)) VoP_agriculture <- mbind(VoP_agriculture, VoP_fish[, years, ])
     VoP_agriculture[!is.finite(VoP_agriculture)] <- 0
 

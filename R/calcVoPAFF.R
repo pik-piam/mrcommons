@@ -1,4 +1,4 @@
-#' @title calcVoP_AFF
+#' @title calcVoPAFF
 #' @description Calculates the overall value of production of the agriculture,
 #' forestry and fisheries sectors. Forestry and Fisheries are calculated from exports values.
 #'
@@ -11,10 +11,10 @@
 #' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
-#' a <- calcOutput("VoP_AFF")
+#' a <- calcOutput("VoPAFF")
 #' }
 #'
-calcVoP_AFF <- function() {
+calcVoPAFF <- function() {
 
 #### Value of production for Agriculture (crops and livestock)
   agItems <- c("2041|Crops", "2044|Livestock")

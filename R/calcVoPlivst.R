@@ -1,4 +1,4 @@
-#' @title calcVoP_livst
+#' @title calcVoPlivst
 #' @description Calculates the value of production of individual livestock categories
 #'
 #' @param other boolean: should FAO livestock categories that can't be matched to MAgPIE categories (i.e. beeswax, wool,
@@ -12,10 +12,10 @@
 #' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
-#' a <- calcOutput("VoP_livst")
+#' a <- calcOutput("VoPlivst")
 #' }
 #'
-calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
+calcVoPlivst <- function(other = FALSE, fillGaps = FALSE) {
 
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
