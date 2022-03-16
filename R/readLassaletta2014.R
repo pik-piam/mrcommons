@@ -21,20 +21,18 @@ readLassaletta2014 <- function(subtype = "budget") {
   if (subtype == "budget") {
     out <- NULL
     for (sheetNumber in 3:8) {
-      data        <- as.data.frame(read_excel("BUDGET_N_Countries_1961_2009_Paper_NUE_Lassaletta_etal_ERL_3.xlsx",
-                                              sheet = sheetNumber, progress = FALSE))
+      data <- as.data.frame(read_excel("BUDGET_N_Countries_1961_2009_Paper_NUE_Lassaletta_etal_ERL_3.xlsx",
+                                       sheet = sheetNumber, progress = FALSE))
       names(data) <- gsub(" ", ".", names(data))
       tmp  <- strsplit(names(data), split = "\\.")
       year <- paste0("y", unlist(lapply(tmp, FUN = function(x) x[length(x)])))
+      stopifnot(length(year) >= 2)
       year <- year[2:length(year)]
       indicator <- strsplit(names(data)[2], split = "\\.")[[1]]
+      stopifnot(length(indicator) >= 2)
       indicator <- paste(indicator[1:(length(indicator) - 1)], collapse = "_")
       countries <- data[, 1]
-      countries <- toolCountry2isocode(countries, mapping = c(
-          "Belgium-Luxemburg" = "BEL",
-          "Ethiopia PDR" = "ETH",
-          "Sudan (former)" = "SDN"
-        ))
+      countries <- toolCountry2isocode(countries, mapping = c(`Belgium-Luxemburg` = "BEL"))
       rownames(data) <- countries
       data           <- data[, -1]
       colnames(data) <- year
@@ -52,10 +50,7 @@ readLassaletta2014 <- function(subtype = "budget") {
   } else if (subtype == "fert_to_cropland") {
     a <- read.csv(file = "erl502906suppdata1annex.csv", sep = ";", header = 1, row.names = 1)
     dimnames(a)[[2]] <- gsub(dimnames(a)[[2]], pattern = "X", replacement = "y")
-    dimnames(a)[[1]] <- toolCountry2isocode(dimnames(a)[[1]], mapping = c(
-      "Belgium-Luxemburg" = "BEL",
-      "Ethiopia PDR" = "ETH"
-    ))
+    dimnames(a)[[1]] <- toolCountry2isocode(dimnames(a)[[1]], mapping = c(`Belgium-Luxemburg` = "BEL"))
     out <- as.magpie(a)
   } else {
     stop("unknown subtype")
