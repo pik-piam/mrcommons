@@ -51,12 +51,11 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint
     data <- data[, c("ISO3", "Year", "Value")]
     data[, "Year"] <- as.numeric(data[, "Year"])
 
-    # converts to magpie object tonnes - live weight, current 1000 USD
     x <- magpiesort(as.magpie(data, temporal = 2, spatial = 1, datacol = 3))
-    # missing data for countries emerging from Czechoslovakia & Netherland Antilles (required for toolISOhistorical)
-    additionalWeights <- c(CZE = 10331, # value for CSK 1992 minus SVK 1993
-                           SXM = 35000, CUW = 152000, BES = 22000, # World Population Prospects: The 2019 Revision
-                           SSD = 37020, SDN = 41508) # production for 2012
+    additionalWeights <- c(SVK = 2773, CZE = 25712, # CZE = production CSK 1992 minus SVK 1993
+                           SXM = 1103.420, CUW = 3636.317, BES = 397.898, # gdp 2010
+                           SSD = 37020, SDN = 41508) # production in 2012
+
     x <- toolISOhistorical(x, overwrite = TRUE, additional_weight = as.magpie(additionalWeights))
     x <- toolCountryFill(x = x, fill = 0) # fill with zeros
     getNames(x) <- value
