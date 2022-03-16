@@ -55,6 +55,7 @@ readLassaletta2014 <- function(subtype = "budget") {
   } else {
     stop("unknown subtype")
   }
+  getSets(out)[1] <- "region"
   out <- clean_magpie(out)
   return(out)
 }
