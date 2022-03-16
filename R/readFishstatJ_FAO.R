@@ -29,8 +29,7 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint
   data <- read.csv(system.file("extdata", "sectoral", subtypeFile, package = "mrcommons"))
 
   # Function to clean-up the data
-  faoCleaning <- function(data = data, mapping = isocodeFAO,
-                          subsetvar = "Unit..Name.", unitVar = "Tonnes - live weight", value = "Production") {
+  faoCleaning <- function(data, mapping, unitVar, value) {
     yearsStats <- paste0("X.", 1984:2018, ".") # wide format
     data <- if (value == "Production") {
       data[, c("Country..Name.", "Unit..Name.", yearsStats)]
@@ -55,6 +54,8 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint
     additionalWeights <- c(SVK = 2773, CZE = 25712, # CZE = production CSK 1992 minus SVK 1993
                            SXM = 1103.420, CUW = 3636.317, BES = 397.898, # gdp 2010
                            SSD = 37020, SDN = 41508) # production in 2012
+    # note: confusingly SSD/South Sudan (which is a landlocked country) has a production
+    # comparable to SDN/Sudan according to the data
 
     x <- toolISOhistorical(x, overwrite = TRUE, additional_weight = as.magpie(additionalWeights))
     x <- toolCountryFill(x = x, fill = 0) # fill with zeros
@@ -65,14 +66,13 @@ readFishstatJ_FAO <- function(subtype = "Production") { # nolint
 
  # Cleaning based on output subtype selected
   if (subtype == "Production") {
-    x <- faoCleaning(data = data, mapping = isocodeFAO, subsetvar = "Unit..Name.",
-                     unitVar = "Tonnes - live weight", value = "Production")
+    x <- faoCleaning(data = data, mapping = isocodeFAO, unitVar = "Tonnes - live weight", value = "Production")
   } else if (subtype == "exportsQuantity") {
-    x <- faoCleaning(data = data, mapping = isocodeFAO, subsetvar = "Trade.flow..Name.",
-                     unitVar = "Export", value = "exportsQuantity")
+    # actual unit is tonnes; unitVar is used to access the data
+    x <- faoCleaning(data = data, mapping = isocodeFAO, unitVar = "Export", value = "exportsQuantity")
   } else if (subtype == "exportsValue") {
-    x <- faoCleaning(data = data, mapping = isocodeFAO, subsetvar = "Trade.flow..Name.",
-                     unitVar = "Export", value = "exportsValue")
+    # actual unit is 1000 current USD MER; unitVar is used to access the data
+    x <- faoCleaning(data = data, mapping = isocodeFAO, unitVar = "Export", value = "exportsValue")
   }
   return(x)
 }
