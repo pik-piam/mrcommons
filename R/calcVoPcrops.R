@@ -1,4 +1,4 @@
-#' @title calcVoP_crops
+#' @title calcVoPcrops
 #' @description Calculates the value of production of individual production items or
 #' its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
 #'
@@ -14,13 +14,13 @@
 #' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
-#' a <- calcOutput("VoP_crops")
+#' a <- calcOutput("VoPcrops")
 #' }
 #'
-calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
+calcVoPcrops <- function(output = "absolute", fillGaps = TRUE) {
 
   # Value of production for Agriculture, forestry and fishes
-  vopAff <- calcOutput("VoP_AFF", aggregate = FALSE)
+  vopAff <- calcOutput("VoPAFF", aggregate = FALSE)
   vopTotal <- dimSums(vopAff, dim = 3) # mio. 05USD MER
 
   # Value of production of individual items (current US$MER -> US$MER05)
@@ -59,9 +59,10 @@ calcVoP_crops <- function(output = "absolute", fillGaps = TRUE) {
     prices <- prices[, , kPrices]
 
     # fill with region averages where possible
-    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = TRUE))
-    rel <- toolGetMapping(getConfig("regionmapping"))
-    pricesRegional <- toolAggregate(pricesRegional, rel = rel, from = "RegionCode", to = "CountryCode")[, , kPrices]
+    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO",
+                                             aggregate = TRUE, regionmapping = "regionmappingH12.csv"))
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping("regionmappingH12.csv"),
+                                    from = "RegionCode", to = "CountryCode")[, , kPrices]
     prices[prices == 0] <- pricesRegional[prices == 0]
 
     # fill remaining gaps with global averages

@@ -1,4 +1,4 @@
-#' @title calcVoP_livst
+#' @title calcVoPlivst
 #' @description Calculates the value of production of individual livestock categories
 #'
 #' @param other boolean: should FAO livestock categories that can't be matched to MAgPIE categories (i.e. beeswax, wool,
@@ -12,10 +12,10 @@
 #' @seealso [calcOutput()]
 #' @examples
 #' \dontrun{
-#' a <- calcOutput("VoP_livst")
+#' a <- calcOutput("VoPlivst")
 #' }
 #'
-calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
+calcVoPlivst <- function(other = FALSE, fillGaps = FALSE) {
 
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
@@ -46,9 +46,10 @@ calcVoP_livst <- function(other = FALSE, fillGaps = FALSE) {
     prices <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = FALSE))
 
     # fill with region averages where possible
-    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO", aggregate = TRUE))
-    rel <- toolGetMapping(getConfig("regionmapping"))
-    pricesRegional <- toolAggregate(pricesRegional, rel = rel, from = "RegionCode", to = "CountryCode")
+    pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO",
+                                             aggregate = TRUE, regionmapping = "regionmappingH12.csv"))
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping("regionmappingH12.csv"),
+                                    from = "RegionCode", to = "CountryCode")
     prices[prices == 0] <- pricesRegional[prices == 0]
 
     # fill remaining gaps with global averages

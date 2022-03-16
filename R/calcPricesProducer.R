@@ -72,7 +72,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
   } else if (calculation == "VoP") {
 
     # Value of production already in 05USD ppp
-    ValueOfProduction <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE)
+    ValueOfProduction <- calcOutput("VoPcrops", output = "absolute", aggregate = FALSE)
     Production <- collapseNames(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
     years <- intersect(getYears(Production), getYears(ValueOfProduction))
     names <- intersect(getNames(Production), getNames(ValueOfProduction))

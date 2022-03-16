@@ -16,7 +16,6 @@ magpie object of the shares of the factor requirements in agriculture (capital, 
 Calculates the factor factor shares for crop production from USDA'S Inputs shares.
 }
 \examples{
-
 \dontrun{
 a <- calcOutput("FractionInputsUSDA")
 }

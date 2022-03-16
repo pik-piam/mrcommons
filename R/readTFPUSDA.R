@@ -1,4 +1,4 @@
-#' @title readTFP_USDA
+#' @title readTFPUSDA
 #' @description Reads the input shares from USDA's Agricultural total factor productivity growth indices assessment.
 #'
 #' @return magpie object with fractions of different input factors in the overall production value
@@ -10,7 +10,7 @@
 #' @seealso [readSource()]
 #' @importFrom readxl read_excel
 #' @importFrom stats reshape
-readTFP_USDA <- function() { # nolint
+readTFPUSDA <- function() { # nolint
   dataFile <- "AgTFPindividualcountries.xlsx"
 
   countries <- read_excel(dataFile, sheet = "Factor Shares", range = "D3:D190", progress = FALSE)
@@ -56,6 +56,5 @@ readTFP_USDA <- function() { # nolint
 
   # Fills with zeros the countries that were not reported, remove historical countries
   x <- toolCountryFill(x, fill = 0, no_remove_warning = c("XBL", "XET", "XSD", "CSK", "SCG", "SUN", "YUG"))
-
   return(x)
 }

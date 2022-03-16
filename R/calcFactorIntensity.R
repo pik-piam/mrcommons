@@ -29,16 +29,16 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
     # Production of crops. mio. ton
       crop_prod_dm_All  <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
 
-      VoP_crops <- calcOutput("VoP_crops", output = "absolute", aggregate = FALSE) # mio. 05USD MER
-      getNames(VoP_crops)[getNames(VoP_crops) == "oilpalm_fruit"] <- "oilpalm"
+      VoPcrops <- calcOutput("VoPcrops", output = "absolute", aggregate = FALSE) # mio. 05USD MER
+      getNames(VoPcrops)[getNames(VoPcrops) == "oilpalm_fruit"] <- "oilpalm"
 
-      gnames <- intersect(getNames(VoP_crops), getNames(crop_prod_dm_All))
-      gyears <- intersect(getYears(VoP_crops), getYears(crop_prod_dm_All))
-      gcells <- intersect(getCells(VoP_crops), getCells(crop_prod_dm_All))
+      gnames <- intersect(getNames(VoPcrops), getNames(crop_prod_dm_All))
+      gyears <- intersect(getYears(VoPcrops), getYears(crop_prod_dm_All))
+      gcells <- intersect(getCells(VoPcrops), getCells(crop_prod_dm_All))
 
       # Value of production per ton produced
 
-      VoP_perTon <- VoP_crops[gcells, gyears, gnames] / crop_prod_dm_All[gcells, gyears, gnames]
+      VoP_perTon <- VoPcrops[gcells, gyears, gnames] / crop_prod_dm_All[gcells, gyears, gnames]
       VoP_perTon[!is.finite(VoP_perTon)] <- 0
 
       # Fraction of each capital and labour input in overall value of production
@@ -76,15 +76,15 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
 
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
-          fraction_VoP_crop <- calcOutput("VoP_crops", output = "fraction", aggregate = FALSE)
+          fraction_VoP_crop <- calcOutput("VoPcrops", output = "fraction", aggregate = FALSE)
 
           # Existing capital stocks
           name <- "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_USD_2015_prices_(millions)"
           CapitalStocks_currentUSD <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
           CapitalStocks <- convertGDP(CapitalStocks_currentUSD, unit_in = "current US$MER", unit_out = "constant 2005 US$MER")
           # for countries with missing conversion factors we assume no inflation:
-          CapitalStocks[is.na(CapitalStocks)] <- CapitalStocks_currentUSD[is.na(CapitalStocks)] 
-          
+          CapitalStocks[is.na(CapitalStocks)] <- CapitalStocks_currentUSD[is.na(CapitalStocks)]
+
           years <- intersect(getYears(fraction_VoP_crop), getYears(CapitalStocks))
           region <- intersect(getCells(fraction_VoP_crop), getCells(CapitalStocks))
 
