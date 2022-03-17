@@ -54,7 +54,15 @@ readTFPUSDA <- function() { # nolint
   # Creates magpie object (184 countries)
   x <- magpiesort(as.magpie(x, spatial = 1, temporal = 2, datacol = 4))
 
+  # assume SSD/South Sudan and SDN/Sudan have same shares as XFS/Former Sudan
+  x <- add_columns(x, c("SSD", "SDN"), dim = 1.1)
+  x["SSD", , ] <- x["XFS", , ]
+  x["SDN", , ] <- x["XFS", , ]
+
+  # remove historical countries, data for corresponding new countries already exists
+  x <- x[c("SUN", "YUG", "XFS", "CSK", "SCG", "XBL", "XET"), , , invert = TRUE]
+
   # Fills with zeros the countries that were not reported, remove historical countries
-  x <- toolCountryFill(x, fill = 0, no_remove_warning = c("XBL", "XET", "XSD", "CSK", "SCG", "SUN", "YUG"))
+  x <- toolCountryFill(x, fill = 0)
   return(x)
 }
