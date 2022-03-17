@@ -4,7 +4,7 @@
 #'
 #' @param subtype data subtype needed. Either "exportsValue", "exportsQuantity", or "Production"
 #' @return magpie object of either tonnes of liveweight or 1000 current USD
-#' @author Edna J. Molina Bacca
+#' @author Edna J. Molina Bacca, Pascal Führlich
 #' @examples
 #' \dontrun{
 #' a <- readSource("FishstatJ_FAO", "Production")
