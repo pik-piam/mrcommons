@@ -22,11 +22,10 @@ a <- readSource("FishstatJ_FAO", "Production")
 a <- readSource("FishstatJ_FAO", "exportsQuantity")
 a <- readSource("FishstatJ_FAO", "exportsValue")
 }
-
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}
 }
 \author{
-Edna J. Molina Bacca
+Edna J. Molina Bacca, Pascal Führlich
 }
