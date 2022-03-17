@@ -17,7 +17,7 @@
 #' a <- calcOutput("VoPcrops")
 #' }
 #'
-calcVoPcrops <- function(output = "absolute", fillGaps = TRUE) {
+calcVoPcrops <- function(output = "absolute", fillGaps = FALSE) {
 
   # Value of production for Agriculture, forestry and fishes
   vopAff <- calcOutput("VoPAFF", aggregate = FALSE)

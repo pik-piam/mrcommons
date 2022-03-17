@@ -4,7 +4,7 @@
 \alias{calcVoPcrops}
 \title{calcVoPcrops}
 \usage{
-calcVoPcrops(output = "absolute", fillGaps = TRUE)
+calcVoPcrops(output = "absolute", fillGaps = FALSE)
 }
 \arguments{
 \item{output}{defines if output should be given as an "absolute" value or
