@@ -37,14 +37,14 @@ convertLassaletta2014 <- function(x, subtype) {
   gdpYUG1992 <- c(SVN = 29042.9637630123, HRV = 41524.1401730024, MKD = 13937.6578300527,
                   BIH = 4225.43827357223, SRB = 53038.6020554997, MNE = 4460.02417845057)
   gdpXET1996 <- c(ETH = 32238.1907959791, ERI = 5643.24672595384)
-  gdpXFS2012 <- c(SSD = 15084.7120285034, SDN = 132693.678886486)
+  gdpXSD2012 <- c(SSD = 15084.7120285034, SDN = 132693.678886486)
   gdpCSK1993 <- c(CZE = 155945.557514784, SVK = 52390.8486317272)
-  weight <- c(gdpSUN1992, gdpYUG1992, gdpXET1996, gdpXFS2012, gdpCSK1993)
+  weight <- c(gdpSUN1992, gdpYUG1992, gdpXET1996, gdpXSD2012, gdpCSK1993)
 
   mapping <- rbind(data.frame(from = "SUN", to = names(gdpSUN1992)),
                    data.frame(from = "YUG", to = names(gdpYUG1992)),
                    data.frame(from = "XET", to = names(gdpXET1996)),
-                   data.frame(from = "XFS", to = names(gdpXFS2012)),
+                   data.frame(from = "XSD", to = names(gdpXSD2012)),
                    data.frame(from = "CSK", to = names(gdpCSK1993)))
 
   historicalCountries <- unique(mapping$from)
