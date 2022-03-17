@@ -30,7 +30,7 @@ calcFacReqGLO <- function() {
   missing <- setdiff(kcr, getNames(x))
   x <- add_columns(x, addnm = missing, dim = 3.1)
   x[, , missing] <- x[, , "maiz"]
-
+  x[!is.finite(x)] <- x[, , "maiz"]
 
 
 
