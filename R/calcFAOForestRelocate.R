@@ -13,6 +13,7 @@
 #' "secdforest", "urban", "primother" and "secdother"
 #' }
 #' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
+#' @param parallel TRUE for parallel mode; FALSE for saving each time individually (long run time)
 #' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
 #' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze
 #' @examples
@@ -24,7 +25,7 @@
 #'
 #' @export
 
-calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell") {
+calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cells = "magpiecell", parallel = TRUE) {
 
   # Load cellular and country data
   countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "seven", fao_corr = TRUE,
@@ -124,13 +125,30 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
             # determine correct parameter for weights for multiple cell countries
             # (weights below zero indicate an error)
             # only determine them for cases where something has to be removed
-            sol  <- nleqslv(rep(1, nyears(luiso[, t, ])), findweight,
-                            cellarea = t(as.array(luiso)[, t, cat]),
-                            isoreduction = catreduce[t], cellweight = cellweight[t, ])
-
-            p    <- rep(1, nyears(luiso))
-            p[t] <- sol$x
-            names(p) <- rownames(cellweight)
+            
+            if (parallel == TRUE) {
+              
+              sol  <- nleqslv(rep(1, nyears(luiso[, t, ])), findweight,
+                              cellarea = t(as.array(luiso)[, t, cat]),
+                              isoreduction = catreduce[t], cellweight = cellweight[t, ])
+              p    <- rep(1, nyears(luiso))
+              p[t] <- sol$x
+              names(p) <- rownames(cellweight)
+              
+            } else {
+      
+              p        <- rep(1, nyears(luiso))
+              names(p) <- rownames(cellweight)
+              
+              for (ti in getYears(luiso[,t,])[1]) {
+                
+                sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
+                                cellarea = t(as.array(luiso)[, ti, cat]),
+                                isoreduction = catreduce[ti], cellweight = cellweight[ti, ])
+                p[ti] <- sol$x
+              }
+            }
+            
             if (any(p[t] < 0)) vcat(2, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
             remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
             remove[, !t, ] <- 0
@@ -166,9 +184,30 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
         add <- as.magpie(catincrease)
       } else {
         # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
-        p <- nleqslv(rep(1, nyears(luiso)), findweight, cellarea = t(as.array(luiso)[, , "to_be_allocated"]),
-                     isoreduction = -catincrease, cellweight = cellweight)$x
-        names(p) <- rownames(cellweight)
+       
+        if (parallel == TRUE) {
+
+          sol  <- nleqslv(rep(1, nyears(luiso[, t, ])), findweight,
+                          cellarea = t(as.array(luiso)[, t, "to_be_allocated"]),
+                          isoreduction = -catincrease[t], cellweight = cellweight[t, ])
+          p    <- rep(1, nyears(luiso))
+          p[t] <- sol$x
+          names(p) <- rownames(cellweight)
+          
+        } else {
+          
+          p        <- rep(1, nyears(luiso))
+          names(p) <- rownames(cellweight)
+          
+          for (ti in getYears(luiso[,t,])[1]) {
+            
+            sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
+                            cellarea = t(as.array(luiso)[, ti, "to_be_allocated"]),
+                            isoreduction = -catincrease[ti], cellweight = cellweight[ti, ])
+            p[ti] <- sol$x
+          }
+        }
+      
         if (any(p[t] < 0)) vcat(2, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
         add <- luiso[, , "to_be_allocated"] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
       }
