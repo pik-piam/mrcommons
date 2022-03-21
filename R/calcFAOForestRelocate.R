@@ -140,7 +140,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
               p        <- rep(1, nyears(luiso))
               names(p) <- rownames(cellweight)
               
-              for (ti in getYears(luiso[,t,])[1]) {
+              for (ti in getYears(luiso[,t,])) {
                 
                 sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
                                 cellarea = t(as.array(luiso)[, ti, cat]),
@@ -199,7 +199,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
           p        <- rep(1, nyears(luiso))
           names(p) <- rownames(cellweight)
           
-          for (ti in getYears(luiso[,t,])[1]) {
+          for (ti in getYears(luiso[,t,])) {
             
             sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
                             cellarea = t(as.array(luiso)[, ti, "to_be_allocated"]),
