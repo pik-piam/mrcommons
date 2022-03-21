@@ -122,6 +122,7 @@ convertFAO_online <- function(x, subtype) {
 
   # Belgium-Luxemburg
   if (all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.1))) {
+    # TODO check if BEL + LUX is reported together before 1999 and seperate after
     additional_mapping <- append(additional_mapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
   } else if (("XBL" %in% getItems(x, dim = 1.1)) & !("BEL" %in% getItems(x, dim = 1.1))) {
     getCells(x)[getItems(x, dim = 1.1) == "XBL"] <- "BEL"
@@ -136,8 +137,11 @@ convertFAO_online <- function(x, subtype) {
 
   ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getItems(x, dim = 1.1)) {
-    if ("CHN" %in% getItems(x, dim = 1.1)) x <- x["CHN", , , invert = TRUE]
-      getItems(x, dim = 1)[getItems(x, dim = 1) == "XCN"] <- "CHN"
+    if ("CHN" %in% getItems(x, dim = 1.1)) {
+      browser() # is XCH + MAC + HKG + TWN = CHN ?
+      x <- x["CHN", , , invert = TRUE]
+    }
+    getItems(x, dim = 1)[getItems(x, dim = 1) == "XCN"] <- "CHN"
   }
 
   ## data for the Netherlands Antilles is currently removed because currently no
@@ -173,15 +177,21 @@ convertFAO_online <- function(x, subtype) {
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
     if (subtype != "Fbs") {
-x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
-}
+      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    }
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "), "\n", "and would need a different treatment of NAs in convertFAO")
+    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
+      warning("The following elements could be relative: \n",
+              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
+              "\nand would need a different treatment of NAs in convertFAO")
+    }
 
   } else if (!is.null(relative_delete)) {
     x[is.na(x)] <- 0
     x <- x[, , relative_delete, invert = TRUE]
-    x <- if (subtype != "CapitalStock") toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping) else x # Capital Stock available starting from 1995 (no need for transitions)
+    if (subtype != "CapitalStock") { # Capital Stock available starting from 1995 (no need for transitions)
+      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    }
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (subtype != "CapitalStock") if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "), "\n", "and would need a different treatment of NAs in convertFAO")
 
