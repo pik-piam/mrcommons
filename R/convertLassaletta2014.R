@@ -24,10 +24,18 @@ convertLassaletta2014<-function(x,subtype){
     dimnames(x)[[1]][which(dimnames(x)[[1]]=="SUN")]<-"RUS"
     dimnames(x)[[1]][which(dimnames(x)[[1]]=="YUG")]<-"SRB"
     dimnames(x)[[1]][which(dimnames(x)[[1]]=="CSK")]<-"CZE"
+
+    # remove historical countries; a more adequate solution is work in progress
+    x <- x[c("XET", "XFS"), , , invert = TRUE]
+
     x<-toolCountryFill(x,fill = 0, verbosity = 2)
   } else if (subtype=="fert_to_cropland"){
     x<-x/100
-    x2<-toolCountryFill(x,fill = 0, verbosity = 2)
+
+    # remove historical countries; a more adequate solution is work in progress
+    x2 <- x[c("XET", "XFS", "CSK", "SUN", "YUG"), , , invert = TRUE]
+
+    x2<-toolCountryFill(x2,fill = 0, verbosity = 2)
     mapping <- read.csv2(system.file("extdata", "ISOhistorical.csv", 
                                      package = "madrat"), stringsAsFactors = F)
     
