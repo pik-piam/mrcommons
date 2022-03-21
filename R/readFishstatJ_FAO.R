@@ -44,6 +44,10 @@ readFishstatJ_FAO <- function(subtype = "Production") {
     data <- data[, c("ISO3", "Year", "Value")]
     data[, "Year"] <- as.numeric(data[, "Year"])
     x <- magpiesort(as.magpie(data, temporal = 2, spatial = 1, datacol = 3)) # converts to magpie object tonnes - live weight, current 1000 USD
+
+    # remove historical countries; a more adequate solution is work in progress
+    x <- x[c("ANT", "CSK", "SCG", "XET", "XSD"), , , invert = TRUE]
+
     x <- toolCountryFill(x = x, fill = 0) # fill with zeros
     getNames(x) <- Value
 
