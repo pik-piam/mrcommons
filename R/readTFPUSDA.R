@@ -61,6 +61,9 @@ readTFPUSDA <- function() {
   # Creates magpie object (184 countries)
   x <- magpiesort(as.magpie(data, spatial = 1, temporal = 2, datacol = 4))
 
+  # remove historical countries; a more adequate solution is work in progress
+  x <- x[c("CSK", "SCG", "SUN", "XBL", "XET", "XSD", "YUG"), , , invert = TRUE]
+
   # Fills with zeros the countries that were not reported
   x <- toolCountryFill(x, fill = 0)
 
