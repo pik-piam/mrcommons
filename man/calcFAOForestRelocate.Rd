@@ -7,7 +7,8 @@
 calcFAOForestRelocate(
   selectyears = "past",
   nclasses = "seven",
-  cells = "magpiecell"
+  cells = "magpiecell",
+  parallel = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ secondary non-forest vegetation and therefore returns "crop", "past", "range", "
 }}
 
 \item{cells}{if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
+
+\item{parallel}{TRUE for parallel mode; FALSE for saving each time individually (long run time)}
 }
 \value{
 List of magpie object with results on cellular level, weight on cellular level, unit and description.
