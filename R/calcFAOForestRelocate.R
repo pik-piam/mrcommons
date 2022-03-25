@@ -131,11 +131,31 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
 
               sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
                               cellarea = t(as.array(luiso)[, ti, cat]),
-                              isoreduction = catreduce[ti], cellweight = cellweight[ti, ])
+                              isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
+                              control = list(allowSingular = TRUE))
               p[ti] <- sol$x
+              msg   <- sol$message
+              criticalWarnings  <- c("Jacobian is singular (1/condition=0.0e+00) (see allowSingular option)",
+                                     "Jacobian is completely unusable (all zero entries?)",
+                                     "Iteration limit exceeded")
+
+              if (msg %in% criticalWarnings) {
+
+                vcat(2, paste0("No solution for ", iso, ", ", cat, ", ", msg, ".",
+                     "Restart from higher intial guess."))
+
+                sol  <- nleqslv(rep(10^10, nyears(luiso[, ti, ])), findweight,
+                                cellarea = t(as.array(luiso)[, ti, cat]),
+                                isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
+                                control = list(allowSingular = TRUE))
+                p[ti] <- sol$x
+                msg   <- sol$message
+                if (msg %in% criticalWarnings) warning("No solution for ", iso, ", ", cat, ", ", msg, ".")
+
+              }
             }
 
-            if (any(p[t] < 0)) vcat(2, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
+            if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
             remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
             remove[, !t, ] <- 0
           } else {
@@ -182,7 +202,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
           p[ti] <- sol$x
         }
 
-        if (any(p[t] < 0)) vcat(2, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
+        if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
         add <- luiso[, , "to_be_allocated"] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
       }
       add[, !t, ] <- 0
@@ -258,7 +278,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
   }
 
   if (!any(round(dimSums(out, dim = c(1, 3)) - round(totalarea, 3), 3) != 0)) {
-    vcat(2, "Something went wrong. Missmatch in total land cover area after reallocation.")
+    vcat(1, "Something went wrong. Missmatch in total land cover area after reallocation.")
   }
 
   return(list(
