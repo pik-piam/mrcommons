@@ -5,10 +5,13 @@
 \title{\preformatted{  toolGetMappingCoord2Country
 }}
 \usage{
-toolGetMappingCoord2Country(pretty = FALSE)
+toolGetMappingCoord2Country(pretty = FALSE, extended = FALSE)
 }
 \arguments{
 \item{pretty}{If TRUE, coordinate data is returned as numeric 'lon' and 'lat' columns}
+
+\item{extended}{If TRUE, additional cells missing in the original 67420 data set will be
+returned as well.}
 }
 \value{
 data frame of mapping
