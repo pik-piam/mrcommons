@@ -19,10 +19,10 @@ A MAgPIE object containing the Eurostat historical emissions (MtCO2)
 Converts Eurostat historical emissions
 }
 \examples{
-
-\dontrun{ a <- convertEurostat(x,subtype="emissions")
+\dontrun{
+a <- convertEurostat(x, subtype = "emissions")
 }
- 
+
 }
 \author{
 Renato Rodrigues
