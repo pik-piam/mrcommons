@@ -24,49 +24,49 @@
 calcFactorIntensity <- function(output = "intensities", method = "USDA") {
 
 
-  if (method == "USDA") { # using USDA mehod
+  if (method == "USDA") { # using USDA method
 
     # Production of crops. mio. ton
-      crop_prod_dm_All  <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
+      cropProdDMall  <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
 
-      VoPcrops <- calcOutput("VoPcrops", output = "absolute", aggregate = FALSE) # mio. 05USD MER
-      getNames(VoPcrops)[getNames(VoPcrops) == "oilpalm_fruit"] <- "oilpalm"
+      vopCrops <- calcOutput("VoPcrops", output = "absolute", aggregate = FALSE) # mio. 05USD MER
+      getNames(vopCrops)[getNames(vopCrops) == "oilpalm_fruit"] <- "oilpalm"
 
-      gnames <- intersect(getNames(VoPcrops), getNames(crop_prod_dm_All))
-      gyears <- intersect(getYears(VoPcrops), getYears(crop_prod_dm_All))
-      gcells <- intersect(getCells(VoPcrops), getCells(crop_prod_dm_All))
+      gnames <- intersect(getNames(vopCrops), getNames(cropProdDMall))
+      gyears <- intersect(getYears(vopCrops), getYears(cropProdDMall))
+      gcells <- intersect(getCells(vopCrops), getCells(cropProdDMall))
 
       # Value of production per ton produced
 
-      VoP_perTon <- VoPcrops[gcells, gyears, gnames] / crop_prod_dm_All[gcells, gyears, gnames]
-      VoP_perTon[!is.finite(VoP_perTon)] <- 0
+      vopPerTon <- vopCrops[gcells, gyears, gnames] / cropProdDMall[gcells, gyears, gnames]
+      vopPerTon[!is.finite(vopPerTon)] <- 0
 
       # Fraction of each capital and labour input in overall value of production
-      fraction_inputs <- calcOutput("FractionInputsUSDA", aggregate = FALSE)[, , c("Capital", "Labor")]
+      fractionInputs <- calcOutput("FractionInputsUSDA", aggregate = FALSE)[, , c("Capital", "Labor")]
 
-      fyears <- intersect(getYears(fraction_inputs), getYears(VoP_perTon))
+      fyears <- intersect(getYears(fractionInputs), getYears(vopPerTon))
 
 
       # Calculation of capital and labor intensities, and Capital share between the two
-      Intensity <- fraction_inputs[, fyears, ] * VoP_perTon[, fyears, ]
-      Share_Capital <- fraction_inputs[, fyears, c("Capital")] / dimSums(fraction_inputs[, fyears, ], dim = 3.1)
+      intensity <- fractionInputs[, fyears, ] * vopPerTon[, fyears, ]
+      shareCapital <- fractionInputs[, fyears, c("Capital")] / dimSums(fractionInputs[, fyears, ], dim = 3.1)
 
 
 
        # assuming a 4% interest rate and 5% depreciation
-       x <- if (output == "intensities") Intensity else if (output == "requirements") Intensity[, , c("Capital", "Labor")] /
-         (0.04 + 0.05) else if (output == "CapitalShare") Share_Capital else stop("Output not supported")
+       x <- if (output == "intensities") intensity else if (output == "requirements") intensity[, , c("Capital",
+          "Labor")] / (0.04 + 0.05) else if (output == "CapitalShare") shareCapital else stop("Output not supported")
        x["PHL", , ] <- 0 # inconsistent data in Philippines
        x[!is.finite(x)] <- 0
        weight <- x
 
        if (output != "CapitalShare") {
-         weight[, , "Capital"] <- crop_prod_dm_All[, fyears, gnames]
-         weight[, , "Labor"] <- crop_prod_dm_All[, fyears, gnames]
+         weight[, , "Capital"] <- cropProdDMall[, fyears, gnames]
+         weight[, , "Labor"] <- cropProdDMall[, fyears, gnames]
          weight[!is.finite(x)] <- 0
          weight[x == 0] <- 0
        } else {
-         weight[, , "Capital"] <- dimSums(crop_prod_dm_All[, fyears, ], dim = 3)
+         weight[, , "Capital"] <- dimSums(cropProdDMall[, fyears, ], dim = 3)
          weight[!is.finite(x)] <- 0
          weight[x == 0] <- 0
 
@@ -76,34 +76,36 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
    } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
 
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
-          fraction_VoP_crop <- calcOutput("VoPcrops", output = "fraction", aggregate = FALSE)
+          fractionVoPcrop <- calcOutput("VoPcrops", output = "fraction", aggregate = FALSE)
 
           # Existing capital stocks
           name <- "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_USD_2015_prices_(millions)"
-          CapitalStocks_currentUSD <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
-          CapitalStocks <- convertGDP(CapitalStocks_currentUSD, unit_in = "current US$MER", unit_out = "constant 2005 US$MER")
+          capitalStocksCurrentUSD <- readSource("FAO_online", "CapitalStock", convert = TRUE)[, , name]
+          capitalStocks <- suppressWarnings(convertGDP(capitalStocksCurrentUSD,
+                                                       unit_in = "current US$MER",
+                                                       unit_out = "constant 2005 US$MER"))
           # for countries with missing conversion factors we assume no inflation:
-          CapitalStocks[is.na(CapitalStocks)] <- CapitalStocks_currentUSD[is.na(CapitalStocks)]
+          capitalStocks[is.na(capitalStocks)] <- capitalStocksCurrentUSD[is.na(capitalStocks)]
 
-          years <- intersect(getYears(fraction_VoP_crop), getYears(CapitalStocks))
-          region <- intersect(getCells(fraction_VoP_crop), getCells(CapitalStocks))
+          years <- intersect(getYears(fractionVoPcrop), getYears(capitalStocks))
+          region <- intersect(getCells(fractionVoPcrop), getCells(capitalStocks))
 
           # Capital stocks per crop
-          CapitalStocks_crop <- collapseDim(CapitalStocks[region, years, ] *
-                                              fraction_VoP_crop[region, years, ])
+          capitalStocksCrop <- collapseDim(capitalStocks[region, years, ] *
+                                              fractionVoPcrop[region, years, ])
 
           # Production
-          Production <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE)[, , "dm"])
+          production <- collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE)[, , "dm"])
 
 
           if (output %in% c("requirements", "intensities")) {
 
-              names <- intersect(getNames(Production), getNames(CapitalStocks_crop))
-              years <- intersect(getYears(Production), getYears(CapitalStocks_crop))
-              cells <- intersect(getCells(Production), getCells(CapitalStocks_crop))
+              names <- intersect(getNames(production), getNames(capitalStocksCrop))
+              years <- intersect(getYears(production), getYears(capitalStocksCrop))
+              cells <- intersect(getCells(production), getCells(capitalStocksCrop))
 
               # Capital stock requirements
-              x <- CapitalStocks_crop[cells, years, names] / Production[cells, years, names]
+              x <- capitalStocksCrop[cells, years, names] / production[cells, years, names]
               x[!is.finite(x)] <- 0
 
           } else {
@@ -118,7 +120,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
           x["PHL", , ] <- 0
 
           weight <- x
-          weight[, , ] <- Production[, getYears(x), getNames(x)]
+          weight[, , ] <- production[, getYears(x), getNames(x)]
           weight[!is.finite(x)] <- 0
           weight[x == 0] <- 0
 
