@@ -9,7 +9,7 @@
 #' @importFrom ncdf4 nc_open
 #' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
 #' @importFrom magclass as.magpie mbind
-#' @importFrom stringr str_match str_count
+#' @importFrom stringr str_match str_count str_subset
 
 readLUH2v2 <- function(subtype) {
 
@@ -61,44 +61,40 @@ readLUH2v2 <- function(subtype) {
     ncFile <- nc_open(fTrans)
     luTrans <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     luTrans <- grep("to", luTrans, value = TRUE)
-    luTrans <- luTrans[str_count(luTrans, "c[3/4]") == 1]
-    fromCrop <- grep("^c", luTrans, value = TRUE)
-    toCrop   <- setdiff(luTrans, fromCrop)
-
-    # Land area
+    
+    LU <- list(crop  = c("c3ann", "c3per", "c4ann", "c4per", "c3nfx"),
+               past  = c("pastr", "range"), 
+               nat   = c("primf", "primn", "secdf", "secdn"), 
+               urban = c("urban"))
+   
+    luTransReduced <- luTrans
+    for(i in 1:length(LU)){
+      luTransReduced <- gsub(paste(LU[[i]], collapse="|"), names(LU[i]), luTransReduced)
+    }
+   
+    zeroTrans <- grepl(paste(paste(names(LU), names(LU), sep ="_to_"), 
+                             collapse = "|"), luTransReduced)    
+   # Land area
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
 
-    lucToCrop   <- new.magpie(fill = 0)
-    lucFromCrop <- new.magpie(fill = 0)
+    x <- new.magpie(map$coords, timeSel, unique(luTransReduced[!zeroTrans]), fill = 0)
 
-    for (item in toCrop) {
-      shr <- subset(brick(fTrans, varname = item), timeSel - offset - 1)
-      mag <- aggregate(shr * carea, fact = 2, fun = sum)
-      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
-      getNames(mag) <- item
-      getCells(mag) <- paste(map$coords, map$iso, sep = ".")
-      getYears(mag) <- timeSel
-      getSets(mag)  <- c("x.y.iso", "t", "data")
-      lucToCrop     <- collapseNames(lucToCrop + mag)
-    }
+    for (item in 1:length(luTrans)) {
 
-    for (item in fromCrop) {
       # This attributes LUC to the year resulting from it
-      shr <- subset(brick(fTrans, varname = item), timeSel - offset - 1)
-      mag <- aggregate(shr * carea, fact = 2, fun = sum)
-      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
-      getNames(mag) <- item
-      getCells(mag) <- paste(map$coords, map$iso, sep = ".")
-      getYears(mag) <- timeSel
-      getSets(mag)  <- c("x.y.iso", "t", "data")
-      lucFromCrop   <- collapseNames(lucFromCrop + mag)
+      print(luTrans[item])
+      if(!zeroTrans[item]) {
+        shr <- subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1)
+        mag <- aggregate(shr * carea, fact = 2, fun = sum)
+        mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+        getNames(mag) <- luTransReduced[item]
+        getCells(mag) <- paste(map$coords, map$iso, sep = ".")
+        getYears(mag) <- timeSel
+        getSets(mag)  <- c("x.y.iso", "t", "data")
+        x[ , , luTransReduced[item]] <- collapseNames(x[ , , luTransReduced[item]] + mag) 
+      }
     }
-
-    x <- mbind(setNames(lucFromCrop, "from_crop"),
-               setNames(lucToCrop,   "to_crop"))
-
-    # Convert from km^2 to Mha
     x <- x / 10000
 
   } else if (grepl("irrigation", subtype)) {
