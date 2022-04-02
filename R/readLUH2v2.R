@@ -95,6 +95,10 @@ readLUH2v2 <- function(subtype) {
         x[ , , luTransReduced[item]] <- collapseNames(x[ , , luTransReduced[item]] + mag) 
       }
     }
+
+    getCells(x)  <- getCells(mag)
+    getSets(x)   <- getSets(mag)
+
     x <- x / 10000
 
   } else if (grepl("irrigation", subtype)) {
