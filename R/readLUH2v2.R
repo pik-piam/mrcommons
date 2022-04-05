@@ -43,7 +43,7 @@ readLUH2v2 <- function(subtype) {
     x  <- NULL
     for (item in data) {
       shr <- subset(brick(fStates, varname = item), timeSel - offset)
-      mag <- suppressWarnings(aggregate(shr * carea, fact = 2, fun = sum))
+      mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -117,7 +117,7 @@ readLUH2v2 <- function(subtype) {
       shr    <- subset(brick(fStates, varname = data[data[, 1] == item, 2]), timeSel - offset)
       irShr <- subset(brick(fMan,    varname = item), timeSel - offset)
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
-      mag <- aggregate(shr * carea * irShr, fact = 2, fun = sum)
+      mag <- suppressWarnings(aggregate(shr * carea * irShr, fact = 2, fun = sum))
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getYears(mag) <- timeSel
