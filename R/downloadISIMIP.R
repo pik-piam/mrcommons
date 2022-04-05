@@ -76,7 +76,7 @@ if (grepl("yields",subtype)) {
 
 
   x <- toolSplitSubtype(subtype, list(dataset = "yields",
-                                      model   = c("LPJmL", "EPIC-IIASA", "pDSSAT", "CYGMA1p74"),
+                                      model   = c("LPJmL", "EPIC-IIASA", "pDSSAT", "CYGMA1p74","PROMET","CROVER"),
                                       gcm     = c("gfdl-esm4", "ipsl-cm6a-lr", "mpi-esm1-2-hr", "mri-esm2-0", "ukesm1-0-ll"),
                                       scen    = c("historical", "ssp126", "ssp370", "ssp585"),
                                       co2     = c("default", "2015co2"),

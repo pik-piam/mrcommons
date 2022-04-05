@@ -10,7 +10,7 @@ calcFractionInputsUSDA(products = "kcr")
 \item{products}{either "kcr" for crops, or "kli" for livestock}
 }
 \value{
-magpie object of the shares of the factor requirements in agriculture (capital, labor, revenue, materials, land).
+magpie object of the shares of the factor requirements in agriculture (capital, labor, materials, land).
 }
 \description{
 Calculates the factor factor shares for crop production from USDA'S Inputs shares.

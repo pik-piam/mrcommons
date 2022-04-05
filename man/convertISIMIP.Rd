@@ -19,7 +19,7 @@ convert data to ISO country level
 }
 \examples{
 \dontrun{
-a <- readSource("ISIMIP", convert=TRUE)
+a <- readSource("ISIMIP", convert = TRUE)
 }
 
 }
