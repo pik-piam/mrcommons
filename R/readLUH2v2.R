@@ -43,7 +43,7 @@ readLUH2v2 <- function(subtype) {
     x  <- NULL
     for (item in data) {
       shr <- subset(brick(fStates, varname = item), timeSel - offset)
-      mag <- aggregate(shr * carea, fact = 2, fun = sum)
+      mag <- suppressWarnings(aggregate(shr * carea, fact = 2, fun = sum))
       mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -61,30 +61,30 @@ readLUH2v2 <- function(subtype) {
     ncFile <- nc_open(fTrans)
     luTrans <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     luTrans <- grep("to", luTrans, value = TRUE)
-    
-    LU <- list(crop  = c("c3ann", "c3per", "c4ann", "c4per", "c3nfx"),
-               past  = c("pastr", "range"), 
-               nat   = c("primf", "primn", "secdf", "secdn"), 
+
+    lu <- list(crop  = c("c3ann", "c3per", "c4ann", "c4per", "c3nfx"),
+               past  = c("pastr", "range"),
+               nat   = c("primf", "primn", "secdf", "secdn"),
                urban = c("urban"))
-   
+
     luTransReduced <- luTrans
-    for(i in 1:length(LU)){
-      luTransReduced <- gsub(paste(LU[[i]], collapse="|"), names(LU[i]), luTransReduced)
+    for (i in seq_along(lu)) {
+      luTransReduced <- gsub(paste(lu[[i]], collapse = "|"), names(lu[i]), luTransReduced)
     }
-   
-    zeroTrans <- grepl(paste(paste(names(LU), names(LU), sep ="_to_"), 
-                             collapse = "|"), luTransReduced)    
+
+    zeroTrans <- grepl(paste(paste(names(lu), names(lu), sep = "_to_"),
+                             collapse = "|"), luTransReduced)
    # Land area
     carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
     extent(carea) <- c(-180, 180, -90, 90)
 
     x <- new.magpie(map$coords, timeSel, unique(luTransReduced[!zeroTrans]), fill = 0)
 
-    for (item in 1:length(luTrans)) {
+    for (item in seq_along(luTrans)) {
 
       # This attributes LUC to the year resulting from it
       print(luTrans[item])
-      if(!zeroTrans[item]) {
+      if (!zeroTrans[item]) {
         shr <- subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1)
         mag <- aggregate(shr * carea, fact = 2, fun = sum)
         mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
@@ -92,7 +92,7 @@ readLUH2v2 <- function(subtype) {
         getCells(mag) <- paste(map$coords, map$iso, sep = ".")
         getYears(mag) <- timeSel
         getSets(mag)  <- c("x.y.iso", "t", "data")
-        x[ , , luTransReduced[item]] <- collapseNames(x[ , , luTransReduced[item]] + mag) 
+        x[, , luTransReduced[item]] <- collapseNames(x[, , luTransReduced[item]] + mag)
       }
     }
 
