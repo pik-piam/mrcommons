@@ -7,7 +7,8 @@
 readFAO_FRA2015(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "production" or "fac" (forest area and characteristics) or "biodiversity" or "anndat" (Annual Data)}
+\item{subtype}{data subtype. Either "production" or "fac" (forest area and characteristics)
+or "biodiversity" or "anndat" (Annual Data)}
 }
 \value{
 magpie object of the FRA 2015 data
