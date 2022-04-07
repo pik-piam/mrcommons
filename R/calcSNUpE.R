@@ -54,6 +54,3 @@ calcSNUpE<-function(max_snupe=0.85,cellular=FALSE,rev=0.1){
     description="Soil nitrogen uptake efficiency",
     isocountries =!cellular))
 }
-
-
-

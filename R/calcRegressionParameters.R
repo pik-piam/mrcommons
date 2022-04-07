@@ -44,4 +44,3 @@ calcRegressionParameters<-function(regression="bmi_shr")
               isocountries = FALSE)
   )
 } 
-

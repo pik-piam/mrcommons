@@ -54,4 +54,3 @@ calcExcretionIPCC<-function(products="IPCC"){
               description="Excreted nitrogen per animal type and animal waste management system")
   )                   
 }
-

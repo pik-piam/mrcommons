@@ -22,5 +22,3 @@ toolPregnant  <- function (demo, reproductive) {
 
   return(out)
 }
-
-

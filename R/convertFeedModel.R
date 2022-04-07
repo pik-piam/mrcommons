@@ -61,4 +61,3 @@ convertFeedModel <- function(x,subtype="FeedBaskets") {
   
   return(x)
 }
-

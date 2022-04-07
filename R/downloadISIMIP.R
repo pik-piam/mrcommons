@@ -102,6 +102,3 @@ if (grepl("yields",subtype)) {
   }
 
 }
-
-
-

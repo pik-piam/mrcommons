@@ -15,4 +15,3 @@ calcFAOLand <- function() {
                 unit        = "mio. ha", 
                 description = "land-use categories from FAOSTAT"))
 }
-

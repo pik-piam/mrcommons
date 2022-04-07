@@ -33,6 +33,3 @@ readIFA <- function(subtype){
     
   return(data)
 }
-
-
-

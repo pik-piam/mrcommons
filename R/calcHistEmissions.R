@@ -117,4 +117,3 @@ calcHistEmissions <- function(subtype="sector"){
               description=description             
   )) 
 }
-

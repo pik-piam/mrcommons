@@ -12,5 +12,3 @@ convertBodirsky2018 <- function(x,subtype) {
   if (subtype!="scenarios") {stop("No convert script for this subtype!")}
   return(x)
 }  
-
-

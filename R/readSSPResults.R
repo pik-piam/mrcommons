@@ -21,4 +21,3 @@ readSSPResults <- function() {
   
   return(data)
 }
-

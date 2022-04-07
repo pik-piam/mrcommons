@@ -7,4 +7,3 @@ calcResCombustEff<-function(){
     unit="share",
     description="Share of nitrogen in biomass that is combusted when crop residues are set on fire."))
 }
-

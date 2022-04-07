@@ -66,4 +66,3 @@ calcFeedPast<-function(balanceflow=TRUE, cellular=FALSE, products="kall",nutrien
           isocountries=!cellular)
   )                   
 }
-

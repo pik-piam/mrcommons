@@ -92,4 +92,3 @@ calcForestArea <- function(selectyears="past"){
               description="Forest are and its subcategories")
   )
 }
-

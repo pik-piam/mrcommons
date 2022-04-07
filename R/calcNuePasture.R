@@ -40,6 +40,3 @@ calcNuePasture<-function(cellular=FALSE){
     description="Soil nitrogen uptake efficiency",
     isocountries=!cellular))
 }
-
-
-

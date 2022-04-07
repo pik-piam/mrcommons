@@ -94,4 +94,3 @@ calcFoodSupplyPast<-function(per_capita=TRUE, products=NULL, product_aggr=FALSE,
               )
   ) 
 }
-

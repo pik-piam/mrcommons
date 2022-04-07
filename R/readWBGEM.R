@@ -26,7 +26,3 @@ readWBGEM <- function(){
   dimnames(out)[[1]] <- "GLO"
   return(out)
 }
-
-
-
-

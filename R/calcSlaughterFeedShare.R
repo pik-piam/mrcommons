@@ -42,5 +42,3 @@ calcSlaughterFeedShare<-function(balanceflow=TRUE){
               max=0.85)
   )                   
 }
-
-

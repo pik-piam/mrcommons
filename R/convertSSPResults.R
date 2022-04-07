@@ -162,4 +162,3 @@ convertSSPResults<- function(x){
   return(out) 
   
 }
-

@@ -48,7 +48,3 @@ calcAWMSconfShrPast<-function(products="magpie"){
               max=1)
   )                   
 }
-
-
-
-

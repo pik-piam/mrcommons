@@ -40,5 +40,3 @@ readBodirsky2018 <- function(subtype="bmi_shr") {
   }
   return(out)
 }  
-
-
