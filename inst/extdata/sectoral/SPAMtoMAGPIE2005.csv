@@ -1,0 +1,43 @@
+crop #,full name,SPAM,Magpie
+1,wheat,WHEA,tece
+2,rice,RICE,rice_pro
+3,maize,MAIZ,maiz
+4,barley,BARL,tece
+5,pearl millet,PMIL,trce
+6,small millet,SMIL,trce
+7,sorghum,SORG,trce
+8,other cereals,OCER,tece
+9,potato,POTA,potato
+10,sweet potato,SWPO,cassav_sp
+11,yams,YAMS,cassav_sp
+12,cassava,CASS,cassav_sp
+13,other roots,ORTS,cassav_sp
+14,bean,BEAN,others
+15,chickpea,CHIC,puls_pro
+16,cowpea,COWP,puls_pro
+17,pigeonpea,PIGE,puls_pro
+18,lentil,LENT,puls_pro
+19,other pulses,OPUL,puls_pro
+20,soybean,SOYB,soybean
+21,groundnut,GROU,groundnut
+22,coconut,CNUT,rapeseed
+23,oilpalm,OILP,oilpalm
+24,sunflower,SUNF,sunflower
+25,rapeseed,RAPE,rapeseed
+26,sesameseed,SESA,rapeseed
+27,other oil crops,OOIL,rapeseed
+28,sugarcane,SUGC,sugr_cane
+29,sugarbeet,SUGB,sugr_beet
+30,cotton,COTT,cottn_pro
+31,other fiber crops,OFIB,others
+32,arabica coffee,ACOF,others
+33,robusta coffee,RCOF,others
+34,cocoa,COCO,others
+35,tea,TEAS,others
+36,tobacco,TOBA,others
+37,banana,BANA,cassav_sp
+38,plantain,PLNT,cassav_sp
+39,tropical fruit,TROF,others
+40,temperate fruit,TEMF,others
+41,vegetables,VEGE,others
+42,rest of crops,REST,remaining
