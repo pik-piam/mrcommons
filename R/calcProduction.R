@@ -84,7 +84,7 @@ stop("Irrigation not yet implemented for this resolution")
 
       if (any(isoMismatch != 0)) {
 
-        # correct items with no area
+        # correct items with no cropspecific area
         isoMAGCroparea   <- noMAGCroparea <- toolAggregate(MAGCroparea, rel = CountryToCell,
                                                            from = "celliso", to = "iso")
         noMAGCroparea[]  <- (isoMAGCroparea == 0) * isoMismatch
@@ -107,6 +107,17 @@ stop("Irrigation not yet implemented for this resolution")
                           from = "iso", to = "celliso")
         }
 
+        # correct item with no total cropland area for known data mismatches - so far known: 
+        # * MUS (Mauritius) as non align LUH (no area at all) and FAO data
+
+        isoMAGTotCrop  <- dimSums(isoMAGCroparea, dim = 3)
+        noMAGTotCrop   <- (isoMAGTotCrop == 0) * isoMismatch
+
+        if (any(noMAGTotCrop["MUS", , ] != 0)) {
+
+           MAGProduction["MUS", , "rainfed"]  <- FAOProduction["MUS", , ]
+        }
+        
         # correct items with no yields
         isoMAGYields   <- noMAGYields <- toolAggregate(MAGYields, weight = MAGCroparea, rel = CountryToCell,
                                                        from = "celliso", to = "iso")
@@ -138,6 +149,7 @@ stop("Irrigation not yet implemented for this resolution")
       isoMAGProduction  <- isoMismatch <- toolAggregate(dimSums(MAGProduction, dim = 3.2), rel = CountryToCell,
                                                         from = "celliso", to = "iso")
       isoMismatch[]     <- abs(round(isoMAGProduction - toolIso2CellCountries(FAOProduction), 4)) > 0
+
       if (any(isoMismatch != 0)) warning("Cellular data to FAO production mismatch after generic fix. Please check.")
       #####################################################################
 
