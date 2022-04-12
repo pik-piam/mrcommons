@@ -70,7 +70,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
     order <- order(file.info(files_out)$ctime, decreasing =T)
     files_out <- files_out[order]
     output_files <- output_files[order]
-    x <- sapply(files_out, readLines)
+    x <- sapply(files_out, function(x) list(readLines(x)))
     out <- sapply(x, function(x) any(stringr::str_detect(x, file)))
     return(output_files[out][1])
   }
