@@ -25,7 +25,8 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
   fertByProduc_currentUSD <- fertByProduct
   fertByProduct[, , currencyDims] <- convertGDP(fertByProduc_currentUSD[, , currencyDims],
                                                 unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER") * 1000
+                                                unit_out = "constant 2005 US$MER",
+                                                replace_NAs = "no_conversion") * 1000
   # for countries with missing conversion factors we assume no inflation:
   fertByProduct[is.na(fertByProduct)] <- fertByProduc_currentUSD[is.na(fertByProduct)]
 

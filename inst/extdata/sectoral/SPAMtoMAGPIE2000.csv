@@ -1,0 +1,22 @@
+crop #,full name,SPAM,Magpie
+1,wheat,WHEA,tece
+2,rice,RICE,rice_pro
+3,maize,MAIZ,maiz
+4,barley,BARL,tece
+5,millet,MILL,trce
+6,sorghum,SORG,trce
+6,potato,POTA,potato
+8,sweet potato and yams,SWPY,cassav_sp
+9,cassava,CASS,cassav_sp
+10,bananas and plantains,BANP,cassav_sp
+11,soybean,SOYB,soybean
+12,bean,BEAN,others
+13,other pulses,OPUL,puls_pro
+14,sugarcane,SUGC,sugr_cane
+15,sugarbeet,SUGB,sugr_beet
+16,coffee,COFF,others
+17,cotton,COTT,cottn_pro
+18,other fibre crops,OFIB,others
+19,groundnuts,GROU,groundnut
+20,other oil crops,OOIL,rapeseed
+21,other crops,OTHE,others

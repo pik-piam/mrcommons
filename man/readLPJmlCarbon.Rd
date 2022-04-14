@@ -16,9 +16,8 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Read LPJmL contant
 }
 \examples{
-
-\dontrun{ 
-readSource("LPJmlCarbon", subtype="historical.nat_veg.soilc_layer", convert="onlycorrect")
+\dontrun{
+readSource("LPJmlCarbon", subtype = "historical.nat_veg.soilc_layer", convert = "onlycorrect")
 }
 
 }

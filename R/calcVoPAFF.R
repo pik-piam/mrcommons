@@ -24,7 +24,8 @@ calcVoPAFF <- function() {
   VoP_ag_curMER <- dimSums(readSource("FAO_online", "ValueOfProd")[, , list(agItems, unit)] / 1000, dim = 3) # mio. US$
   VoP_ag <- convertGDP(VoP_ag_curMER,
                        unit_in = "current US$MER",
-                       unit_out = "constant 2005 US$MER")
+                       unit_out = "constant 2005 US$MER",
+                       replace_NAs = "no_conversion")
   # for countries with missing conversion factor we assume no inflation:
   VoP_ag[is.na(VoP_ag)] <- VoP_ag_curMER[is.na(VoP_ag)]
   getNames(VoP_ag) <- "Agriculture"
@@ -53,7 +54,8 @@ calcVoPAFF <- function() {
              production_fish_tonNet[cells_fish, years_fish, ] / 1000  # mio. current USD
   VoP_fish <- convertGDP(VoP_fish_currentUSD,
                          unit_in = "current US$MER",
-                         unit_out = "constant 2005 US$MER")
+                         unit_out = "constant 2005 US$MER",
+                         replace_NAs = "no_conversion")
   # for countries with missing inflation factors we assume no inflation
   VoP_fish[is.na(VoP_fish)] <- VoP_fish_currentUSD[is.na(VoP_fish)]
 
@@ -75,7 +77,8 @@ calcVoPAFF <- function() {
   # Base year change for exports value
   price_forestry <- convertGDP(price_forestry_currentUSD,
                                unit_in = "current US$MER",
-                               unit_out = "constant 2005 US$MER")
+                               unit_out = "constant 2005 US$MER",
+                               replace_NAs = "no_conversion")
   # for countries with missing inflation factors we assume no inflation
   price_forestry[is.na(price_forestry)] <- price_forestry_currentUSD[is.na(price_forestry)]
 

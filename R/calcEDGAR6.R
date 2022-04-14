@@ -14,7 +14,7 @@ calcEDGAR6 <- function(non_country = FALSE, nutrient = TRUE) { # nolint
   out <- list()
   itemnames <- NULL
   commonyears <- NULL
-  pollutants <- c("n2o", "ch4", "co2_short", "co2_excl_short",
+  pollutants <- c("n2o", "ch4", "co2_incl_short", "co2_excl_short",
                 "nh3", "no2", "bc", "co", "oc", "nmvoc", "pm10", "pm25", "so2")
   for (subtype in pollutants) {
     if (non_country %in% c("SEA", "AIR")) {
