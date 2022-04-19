@@ -5,7 +5,7 @@
 #'
 downloadTravelTimeNelson2019 <- function() {
   url <- "https://figshare.com/ndownloader/articles/7638134/versions/3"
-  download.file(url, "TravelTimeNelson2019.zip", mode = "wb")
+  download.file(url, "TravelTimeNelson2019.zip", mode = "curl")
   unzip("TravelTimeNelson2019.zip", exdir = "TravelTimeNelson_unzipped")
 
 
@@ -13,8 +13,7 @@ downloadTravelTimeNelson2019 <- function() {
     title = "Travel time to cities and ports in the year 2015",
     url = "https://figshare.com/ndownloader/articles/7638134/versions/3",
     doi = "10.6084/m9.figshare.7638134.v3",
-    description = paste("GHG food system emissions (kt CO2eq, GWP-100 AR5),",
-                        "including LULUC (Land use, Land Use Change)."),
+    description = paste("Travel Time to Cities and Ports"),
     unit = "minutes",
     version = "3",
     author  = person("Nelson", "Andy"),
