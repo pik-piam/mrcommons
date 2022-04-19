@@ -1,7 +1,7 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.8.13
+Version: 1.8.14
 Date: 2022-04-19
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -71,7 +71,8 @@ Suggests:
     Rilostat,
     rmarkdown,
     testthat,
-    XML
+    XML,
+    zip
 License: LGPL-3 | file LICENSE
 URL:
     https://github.com/pik-piam/mrcommons,

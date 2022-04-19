@@ -5,9 +5,8 @@
 #'
 downloadTravelTimeNelson2019 <- function() {
   url <- "https://figshare.com/ndownloader/articles/7638134/versions/3"
-  download.file(url, "TravelTimeNelson2019.zip", mode = "curl")
-  unzip("TravelTimeNelson2019.zip", exdir = "TravelTimeNelson_unzipped")
-
+  download.file(url, destfile = "TravelTimeNelson2019.zip")
+  zip::unzip("TravelTimeNelson2019.zip", exdir = "TravelTimeNelson_unzipped")
 
    meta <- list(
     title = "Travel time to cities and ports in the year 2015",
