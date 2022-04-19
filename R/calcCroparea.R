@@ -27,13 +27,12 @@
 #' @importFrom magclass setNames getCells collapseDim getItems
 #' @importFrom magpiesets findset addLocation
 #' @importFrom madrat toolAggregate toolGetMapping
+#' @importFrom withr local_options
 
 calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
                          cells = "magpiecell", irrigation = FALSE) {
 
-  sizelimit <- getOption("magclass_sizeLimit")
-  options(magclass_sizeLimit = 1e+10)
-  on.exit(options(magclass_sizeLimit = sizelimit))
+  local_options(magclass_sizeLimit = 1e+10)
 
   if (!cellular) {
 

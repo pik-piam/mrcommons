@@ -44,6 +44,7 @@
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
+#' @importFrom withr local_tempdir
 
 readFAO_online <- function(subtype) { # nolint
 
@@ -122,9 +123,9 @@ readFAO_online <- function(subtype) { # nolint
       file <- csvName
       break
     } else if (extension == "zip" & file.exists(file)) {
-      filesExtracted <- unzip(file, exdir = tempdir())
-      file <- paste0(tempdir(), "/", csvName)
-      on.exit(file.remove(filesExtracted)) # nolint
+      tempfolder <- local_tempdir()
+      filesExtracted <- unzip(file, exdir = tempfolder)
+      file <- file.path(tempfolder, csvName)
       break
     }
   }
