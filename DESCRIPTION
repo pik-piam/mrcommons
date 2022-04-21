@@ -1,4 +1,4 @@
-Package: mrcommons
+﻿Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
 Version: 1.8.14
@@ -71,8 +71,7 @@ Suggests:
     Rilostat,
     rmarkdown,
     testthat,
-    XML,
-    zip
+    XML
 License: LGPL-3 | file LICENSE
 URL:
     https://github.com/pik-piam/mrcommons,
