@@ -1,6 +1,6 @@
 {
   "title": "mrcommons: MadRat commons Input Data Library",
-  "version": "1.8.15",
+  "version": "1.8.16",
   "description": "<p>Provides useful functions and a common structure to all the input data required to run models like MAgPIE\n    and REMIND of model input data.<\/p>",
   "creators": [
     {
@@ -85,10 +85,10 @@
       "name": "Soergel, Bjoern"
     },
     {
-      "name": "Führlich, Pascal"
+      "name": "FÃ¼hrlich, Pascal"
     },
     {
-      "name": "Hötten, David"
+      "name": "HÃ¶tten, David"
     },
     {
       "name": "Dietrich, Jan Philipp"
