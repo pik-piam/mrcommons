@@ -53,6 +53,22 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
                             0.2672, 0.3097, 0.3336, 0.3568, 0.3795, 0.3903, 0.3956, 0.4008)
       hourlyCosts["IND", setdiff(2000:2017, 2006), ] <- hourlyCostsIndia
 
+      # add data for China, aggregated using production as weight (provided by Xiaoxi)
+      hourlyCostsChina <- readSource("HourlyLaborCostsChina", convert = FALSE)
+      prodkcr <- collapseDim(calcOutput("Production", products = "kcr", attributes = "dm", aggregate = FALSE))
+      prodkli <- collapseDim(calcOutput("Production", products = "kli", attributes = "dm", aggregate = FALSE))
+      prod <- mbind(prodkcr["CHN", , intersect(getNames(prodkcr), getNames(hourlyCostsChina))],
+                    prodkli["CHN", , intersect(getNames(prodkli), getNames(hourlyCostsChina))])
+      hourlyCostsChina <- hourlyCostsChina[, , getNames(prod)]
+      prod <- time_interpolate(prod, interpolated_year = setdiff(getYears(hourlyCostsChina), getYears(prod)),
+                               integrate_interpolated_years = TRUE, extrapolation_type = "constant")
+      weight <- (prod / dimSums(prod, dim = 3))[, getYears(hourlyCostsChina), ]
+      hourlyCostsChina <- dimSums(hourlyCostsChina * weight, dim = 3)
+      hourlyCostsChina[!is.finite(hourlyCostsChina)] <- 0
+
+      years <- intersect(getYears(hourlyCosts), getYears(hourlyCostsChina))
+      hourlyCosts["CHN", years, ] <- hourlyCostsChina[, years, ]
+
       # remove outliers
       hourlyCosts[hourlyCosts > 100] <- 0
       hourlyCosts[c("HRV", "MUS"), , ] <- 0  # unreasonable low values
@@ -89,22 +105,22 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
     hourlyCosts <- calcOutput("HourlyLaborCosts", datasource = datasource,
                               fillWithRegression = FALSE, aggregate = FALSE)
 
-    # calculate GDPpcMER for regression
-    GDPpcMER <- calcOutput("GDPpc", GDPpcCalib = "calibSSPs", GDPpcPast = "WDI-MI",
+    # calculate GDP pc [USD05MER] for regression
+    gdpMERpc <- calcOutput("GDPpc", GDPpcCalib = "calibSSPs", GDPpcPast = "WDI-MI",
                            GDPpcFuture = "SSPs-MI", unit = "constant 2005 US$MER",
                            FiveYearSteps = FALSE, naming = "scenario", aggregate = FALSE)
 
     if (!isFALSE(projection)) {
-      years <- setdiff(getItems(GDPpcMER, dim = 2), paste0("y", seq(2105, 2150, 5)))
-      GDPpcMER <- GDPpcMER[, years, projection]
+      years <- setdiff(getItems(gdpMERpc, dim = 2), paste0("y", seq(2105, 2150, 5)))
+      gdpMERpc <- gdpMERpc[, years, projection]
     } else {
-      GDPpcMER <- GDPpcMER[, getItems(hourlyCosts, dim = 2), "SSP2"]
+      gdpMERpc <- gdpMERpc[, getItems(hourlyCosts, dim = 2), "SSP2"]
     }
 
     # add years with GDP data to hourlyCosts object
     hourlyCosts <- magpiesort(add_columns(hourlyCosts, dim = 2, fill = 0,
-                              addnm = setdiff(getItems(GDPpcMER, dim = 2), getItems(hourlyCosts, dim = 2))))
-    hourlyCosts <- hourlyCosts[, getItems(GDPpcMER, dim = 2), ]
+                              addnm = setdiff(getItems(gdpMERpc, dim = 2), getItems(hourlyCosts, dim = 2))))
+    hourlyCosts <- hourlyCosts[, getItems(gdpMERpc, dim = 2), ]
 
     # set years after calibYear to 0 (as in MAgPIE we calibrate to last year of the set t_past, we need to remove data
     # for later years here as well if results should be the same)
@@ -119,7 +135,7 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
 
     years <- getYears(hourlyCosts, as.integer = TRUE)
     for (ctry in getItems(hourlyCosts, dim = 1)) {
-      ctryEst <- regCoeff[, , "intercept", drop = TRUE] + regCoeff[, , "slope", drop = TRUE] * GDPpcMER[ctry, , ]
+      ctryEst <- regCoeff[, , "intercept", drop = TRUE] + regCoeff[, , "slope", drop = TRUE] * gdpMERpc[ctry, , ]
       y <- where(hourlyCosts[ctry, , ] != 0)$true$years
       if (length(y) == 0) {
         hourlyCosts[ctry, , ] <- ctryEst
@@ -152,19 +168,12 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
 
   hourlyCosts <- setNames(hourlyCosts, NULL)
 
-  # total hours worked as weight for aggregation to world regions
+  # total hours worked (in calibration year for consistency with MAgPIE) as weight for aggregation to world regions
   agEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = FALSE)
   weeklyHours <- calcOutput("WeeklyHoursILO", aggregate = FALSE)
-  years <- intersect(getItems(agEmpl, dim = 2), getItems(weeklyHours, dim = 2))
-  weight <- agEmpl[, years, ] * weeklyHours[, years, ]
+  weight <- hourlyCosts
+  weight[, , ] <- agEmpl[, calibYear, ] * weeklyHours[, calibYear, ]
 
-  # keeping weights constant for future years (for projections)
-  years <- setdiff(getYears(hourlyCosts), getYears(weight))
-  if (length(years) > 0) {
-    weight <- time_interpolate(dataset = weight, interpolated_year = years,
-                               integrate_interpolated_years = TRUE, extrapolation_type = "constant")
-  }
-  weight <- weight[, getItems(hourlyCosts, dim = 2), ]
   weight[hourlyCosts == 0] <- 0
 
   return(list(x = hourlyCosts,
