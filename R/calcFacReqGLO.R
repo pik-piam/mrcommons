@@ -16,6 +16,8 @@
 #'
 calcFacReqGLO <- function() {
 
+  .Deprecated("calcOutput(\"FacReq\", aggregate = \"GLO\", years = 2005)")
+
   # Reads factor requirements in USD05ppp
   factors <- dimSums(calcOutput("FactorIntensity", aggregate = FALSE, years = 2005), dim = 3.1)
 
