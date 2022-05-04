@@ -53,20 +53,20 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
     if (isTRUE(inclForest)) stop("Forest labor costs not available for this datasource")
 
     # Value of Production for livestock in US$MER2005 (including FAO livst categories not mapped to MAgPIE categories)
-    VoPlivst <- calcOutput("VoPlivst", other = TRUE, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
-    VoPlivst <- setNames(dimSums(VoPlivst, dim = 3), "Livestock")
+    vopLivst <- calcOutput("VoPlivst", other = TRUE, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
+    vopLivst <- setNames(dimSums(vopLivst, dim = 3), "Livestock")
 
     # Value of Production for crops in US$MER2005
-    VoPcrops <- calcOutput("VoPcrops", output = "absolute", fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
-    VoPcrops <- setNames(dimSums(VoPcrops, dim = 3), "Crops")
+    vopCrops <- calcOutput("VoPcrops", fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
+    vopCrops <- setNames(dimSums(vopCrops, dim = 3), "Crops")
 
     # no VoP data before 1991, data for 2019 incomplete (using fillGaps in calcVoP reduces years to 1991:2013 anyway)
-    years <- setdiff(getItems(VoPlivst, dim = 2), paste0("y", c(1960:1990, 2019)))
+    years <- setdiff(getItems(vopLivst, dim = 2), paste0("y", c(1960:1990, 2019)))
 
     # VoP of fish (reduces years)
     if (isTRUE(inclFish)) {
-      VoP_fish <- calcOutput("VoPAFF", aggregate = FALSE)[, , "Fisheries"]
-      years <- intersect(years, getItems(VoP_fish, dim = 2))
+      vopFish <- calcOutput("VoPAFF", aggregate = FALSE)[, , "Fisheries"]
+      years <- intersect(years, getItems(vopFish, dim = 2))
     }
 
     # add subsidies to VoP
@@ -78,36 +78,36 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
                                     integrate_interpolated_years = TRUE,
                                     extrapolation_type = "constant")
 
-      VoPcrops <- VoPcrops[, years, ] + subsidies[, years, "Crops"]
-      VoPlivst <- VoPlivst[, years, ] + subsidies[, years, "Livestock"]
+      vopCrops <- vopCrops[, years, ] + subsidies[, years, "Crops"]
+      vopLivst <- vopLivst[, years, ] + subsidies[, years, "Livestock"]
     }
 
     # combine VoP for crops and livestock (and fish)
-    VoP_agriculture <- mbind(VoPlivst[, years, ], VoPcrops[, years, ])
-    if (isTRUE(inclFish)) VoP_agriculture <- mbind(VoP_agriculture, VoP_fish[, years, ])
-    VoP_agriculture[!is.finite(VoP_agriculture)] <- 0
+    vopAg <- mbind(vopLivst[, years, ], vopCrops[, years, ])
+    if (isTRUE(inclFish)) vopAg <- mbind(vopAg, vopFish[, years, ])
+    vopAg[!is.finite(vopAg)] <- 0
 
     # USDA labor cost shares
-    shares_kcr <- calcOutput("FractionInputsUSDA", products = "kcr", aggregate = FALSE)[, , "Labor"]
-    shares_kli <- calcOutput("FractionInputsUSDA", products = "kli", aggregate = FALSE)[, , "Labor"]
+    sharesCrops <- calcOutput("FractionInputsUSDA", products = "kcr", aggregate = FALSE)[, , "Labor"]
+    sharesLivst <- calcOutput("FractionInputsUSDA", products = "kli", aggregate = FALSE)[, , "Labor"]
 
     # closest 5-year step before and after start of VoP data needed for interpolation of shares
-    years_int <- as.integer(stringr::str_split(years, "y", simplify = TRUE)[, 2])
-    y <- intersect(paste0("y", seq(min(years_int) - min(years_int) %% 5, max(years_int) - max(years_int) %% 5 + 5, 5)),
-                   getItems(shares_kcr, dim = 2))
+    yearsInt <- as.integer(stringr::str_split(years, "y", simplify = TRUE)[, 2])
+    y <- intersect(paste0("y", seq(min(yearsInt) - min(yearsInt) %% 5, max(yearsInt) - max(yearsInt) %% 5 + 5, 5)),
+                   getItems(sharesCrops, dim = 2))
 
     # filling missing values with region average, using production as weight
     h12 <- toolGetMapping("regionmappingH12.csv", type = "regional")
     weight <- dimSums(collapseDim(calcOutput("Production", aggregate = FALSE)[, , "dm"]), dim = 3.1)
     weight <- time_interpolate(weight, interpolated_year = setdiff(y, getItems(weight, dim = 2)),
                                extrapolation_type = "constant", integrate_interpolated_years = TRUE)[, y, ]
-    shares_kcr <- toolFillWithRegionAvg(shares_kcr[, y, ], valueToReplace = 0, weight = weight,
+    sharesCrops <- toolFillWithRegionAvg(sharesCrops[, y, ], valueToReplace = 0, weight = weight,
                                         regionmapping = h12, verbose = FALSE, warningThreshold = 1)
-    shares_kli <- toolFillWithRegionAvg(shares_kli[, y, ], valueToReplace = 0, weight = weight,
+    sharesLivst <- toolFillWithRegionAvg(sharesLivst[, y, ], valueToReplace = 0, weight = weight,
                                         regionmapping = h12, verbose = FALSE, warningThreshold = 1)
-    shares <- setNames(mbind(shares_kli, shares_kcr), c("Livestock", "Crops"))
+    shares <- setNames(mbind(sharesLivst, sharesCrops), c("Livestock", "Crops"))
     # assume livestock labor cost share for fish
-    if (isTRUE(inclFish)) shares <- mbind(shares, setNames(shares_kli, "Fisheries"))
+    if (isTRUE(inclFish)) shares <- mbind(shares, setNames(sharesLivst, "Fisheries"))
 
     # for REF in 1990 no country has a value, so toolFillWithRegionAvg assigns NA. Use values from 1995 instead:
     if ("y1990" %in% y) { # subsidy data starts only in 2005
@@ -122,7 +122,7 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
                                integrate_interpolated_years = TRUE)[, years, ]
 
     # estimate total labor costs as share of VoP
-    out <- VoP_agriculture[, years, ] * shares
+    out <- vopAg[, years, ] * shares
 
     # aggregate if subsectors is FALSE
     if (isFALSE(subsectors)) out <- dimSums(out, dim = 3)
@@ -152,14 +152,14 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
 
     # get sectors according to function inputs
     sectors <- list(kcr, kli)
-    sector_names <- c("Crops", "Livestock")
+    sectorNames <- c("Crops", "Livestock")
     if (isTRUE(inclFish)) {
       sectors <- c(sectors, fish)
-      sector_names <- c(sector_names, "Fisheries")
+      sectorNames <- c(sectorNames, "Fisheries")
     }
     if (isTRUE(inclForest)) {
       sectors <- c(sectors, forest)
-      sector_names <- c(sector_names, "Forestry")
+      sectorNames <- c(sectorNames, "Forestry")
     }
 
     .getSector <- function(items, name) {
@@ -167,14 +167,14 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
                               dim = c("DEMD_COMM", "PROD_COMM")), name))
     }
 
-    laborCosts <- mbind(Map(.getSector, items = sectors, name = sector_names))
+    laborCosts <- mbind(Map(.getSector, items = sectors, name = sectorNames))
 
     # aggregate if subsectors == FALSE
     if (isFALSE(subsectors)) laborCosts <- dimSums(laborCosts, dim = 3)
 
     # convert to USDMER05 (for countries missing the inflation factor, we assume no inflation)
-    out <- suppressWarnings(convertGDP(laborCosts, unit_in = "current US$MER", unit_out = "constant 2005 US$MER"))
-    out[is.na(out)] <- laborCosts[is.na(out)]
+    out <- convertGDP(laborCosts, unit_in = "current US$MER",
+                      unit_out = "constant 2005 US$MER", replace_NAs = "no_conversion")
 
   } else {
     stop("Data source not available")

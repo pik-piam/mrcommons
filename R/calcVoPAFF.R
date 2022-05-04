@@ -17,88 +17,76 @@
 calcVoPAFF <- function() {
 
 #### Value of production for Agriculture (crops and livestock)
-  agItems <- c("2041|Crops", "2044|Livestock")
-  unit <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
+  vopCrops <- calcOutput("VoPcrops", aggregate = FALSE)
+  vopLivst <- calcOutput("VoPlivst", other = TRUE, aggregate = FALSE)
 
-  # conversion from current USD MER to constant 2005 USD MER
-  VoP_ag_curMER <- dimSums(readSource("FAO_online", "ValueOfProd")[, , list(agItems, unit)] / 1000, dim = 3) # mio. US$
-  VoP_ag <- convertGDP(VoP_ag_curMER,
-                       unit_in = "current US$MER",
-                       unit_out = "constant 2005 US$MER",
-                       replace_NAs = "no_conversion")
-  # for countries with missing conversion factor we assume no inflation:
-  VoP_ag[is.na(VoP_ag)] <- VoP_ag_curMER[is.na(VoP_ag)]
-  getNames(VoP_ag) <- "Agriculture"
+  vopAg <- setNames(dimSums(vopCrops, dim = 3) + dimSums(vopLivst, dim = 3), "Agriculture")
 
 #### Value of production fisheries
 
   # export value and quantity of fish and other aquatic products
-  export_fish_value <- readSource("FishstatJ_FAO", subtype = "exportsValue") # 1000 current USD MER
-  export_fish_tonNet <- readSource("FishstatJ_FAO", subtype = "exportsQuantity") # ton_net
+  exportFishValue <- readSource("FishstatJ_FAO", subtype = "exportsValue") # 1000 current USD MER
+  exportFishTonNet <- readSource("FishstatJ_FAO", subtype = "exportsQuantity") # ton_net
 
-  Fish_Cat <- c("2961|Aquatic Products, Other + (Total).production",
+  fishCat <- c("2961|Aquatic Products, Other + (Total).production",
               "2960|Fish, Seafood + (Total).production")
 
-  production_fish_tonNet <- dimSums(readSource("FAO", "CBLive")[, , Fish_Cat], dim = 3.1) # ton net
+  prodFishTonNet <- dimSums(readSource("FAO", "CBLive")[, , fishCat], dim = 3.1) # ton net
 
 
   # common years
-  years_fish <- intersect(intersect(getYears(export_fish_value),
-                                    getYears((export_fish_tonNet))), getYears(production_fish_tonNet))
-  cells_fish <- intersect(intersect(getCells(export_fish_value),
-                                    getCells((export_fish_tonNet))), getCells(production_fish_tonNet))
+  yearsFish <- intersect(intersect(getYears(exportFishValue),
+                                    getYears((exportFishTonNet))), getYears(prodFishTonNet))
+  cellsFish <- intersect(intersect(getCells(exportFishValue),
+                                    getCells((exportFishTonNet))), getCells(prodFishTonNet))
 
 
   # Value of production for fish and aquatic products -> Production*export_price
-  VoP_fish_currentUSD <- export_fish_value[cells_fish, years_fish, ] / export_fish_tonNet[cells_fish, years_fish, ] *
-             production_fish_tonNet[cells_fish, years_fish, ] / 1000  # mio. current USD
-  VoP_fish <- convertGDP(VoP_fish_currentUSD,
+  vopFish <- exportFishValue[cellsFish, yearsFish, ] / exportFishTonNet[cellsFish, yearsFish, ] *
+             prodFishTonNet[cellsFish, yearsFish, ] / 1000  # mio. current USD
+  vopFish <- convertGDP(vopFish,
                          unit_in = "current US$MER",
                          unit_out = "constant 2005 US$MER",
                          replace_NAs = "no_conversion")
-  # for countries with missing inflation factors we assume no inflation
-  VoP_fish[is.na(VoP_fish)] <- VoP_fish_currentUSD[is.na(VoP_fish)]
 
-  VoP_fish[!is.finite(VoP_fish)] <- 0
-  getNames(VoP_fish) <- "Fisheries"
+  vopFish[!is.finite(vopFish)] <- 0
+  getNames(vopFish) <- "Fisheries"
 
 
 #### Value of production forestry
 
-  Forest_cat <- c("Roundwood.Export_Value_(Mio_US$)",
+  forestCat <- c("Roundwood.Export_Value_(Mio_US$)",
                 "Roundwood.Export_Quantity_(m3)",
                 "Roundwood.Production_(m3)")
 
-  VoP_forestry_data <- readSource("FAO", "ForestProdTrade")[, , Forest_cat]
+  vopForestryData <- readSource("FAO", "ForestProdTrade")[, , forestCat]
 
-  price_forestry_currentUSD <- VoP_forestry_data[, , "Roundwood.Export_Value_(Mio_US$)"] /
-                VoP_forestry_data[, , "Roundwood.Export_Quantity_(m3)"]
+  priceForestry <- vopForestryData[, , "Roundwood.Export_Value_(Mio_US$)"] /
+                vopForestryData[, , "Roundwood.Export_Quantity_(m3)"]
 
   # Base year change for exports value
-  price_forestry <- convertGDP(price_forestry_currentUSD,
+  priceForestry <- convertGDP(priceForestry,
                                unit_in = "current US$MER",
                                unit_out = "constant 2005 US$MER",
                                replace_NAs = "no_conversion")
-  # for countries with missing inflation factors we assume no inflation
-  price_forestry[is.na(price_forestry)] <- price_forestry_currentUSD[is.na(price_forestry)]
 
-  price_forestry[!is.finite(price_forestry)] <- 0
+  priceForestry[!is.finite(priceForestry)] <- 0
 
 
-  years <- intersect(getYears(price_forestry), getYears(VoP_forestry_data))
+  years <- intersect(getYears(priceForestry), getYears(vopForestryData))
 
-  VoP_forestry <- toolCountryFill(x = VoP_forestry_data[, years, "Roundwood.Production_(m3)"] *
-                                    price_forestry[, years, ], fill = 0) # mio. constant 2005 US$MER
-  getNames(VoP_forestry) <- "Forestry"
+  vopForestry <- toolCountryFill(x = vopForestryData[, years, "Roundwood.Production_(m3)"] *
+                                    priceForestry[, years, ], fill = 0) # mio. constant 2005 US$MER
+  getNames(vopForestry) <- "Forestry"
 
 ################
 
   # magpie object to return
-  years_VoP <- intersect(intersect(getYears(VoP_ag), getYears((VoP_fish))), getYears(VoP_forestry))
-  cells_VoP <- intersect(intersect(getCells(VoP_ag), getCells((VoP_fish))), getCells(VoP_forestry))
+  yearsVoP <- intersect(intersect(getYears(vopAg), getYears((vopFish))), getYears(vopForestry))
+  cellsVoP <- intersect(intersect(getCells(vopAg), getCells((vopFish))), getCells(vopForestry))
 
-  x <- mbind(VoP_ag[cells_VoP, years_VoP, ], VoP_fish[cells_VoP, years_VoP, ],
-             VoP_forestry[cells_VoP, years_VoP, ])
+  x <- mbind(vopAg[cellsVoP, yearsVoP, ], vopFish[cellsVoP, yearsVoP, ],
+             vopForestry[cellsVoP, yearsVoP, ])
   x[!is.finite(x)] <- 0
 
 

@@ -4,12 +4,9 @@
 \alias{calcVoPcrops}
 \title{calcVoPcrops}
 \usage{
-calcVoPcrops(output = "absolute", fillGaps = FALSE)
+calcVoPcrops(fillGaps = TRUE)
 }
 \arguments{
-\item{output}{defines if output should be given as an "absolute" value or
-as a "fraction" of the overall value of production.}
-
 \item{fillGaps}{boolean: should gaps be filled using production * prices (where production data is available)?}
 }
 \value{

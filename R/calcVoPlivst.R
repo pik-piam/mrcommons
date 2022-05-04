@@ -15,16 +15,14 @@
 #' a <- calcOutput("VoPlivst")
 #' }
 #'
-calcVoPlivst <- function(other = FALSE, fillGaps = FALSE) {
+calcVoPlivst <- function(other = FALSE, fillGaps = TRUE) {
 
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
-  vopCurrentMER <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. current US$MER
-  vop <- suppressWarnings(convertGDP(vopCurrentMER,
-                                     unit_in = "current US$MER",
-                                     unit_out = "constant 2005 US$MER"))
-  # for countries with missing inflation factors we assume no inflation:
-  vop[is.na(vop)] <- vopCurrentMER[is.na(vop)]
+  vop <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. current US$MER
+  vop <- convertGDP(vop, unit_in = "current US$MER",
+                         unit_out = "constant 2005 US$MER",
+                         replace_NAs = "no_conversion")
 
   # mapping for aggregation
   mappingFAO <- toolGetMapping("FAO_VoP_kli.csv", type = "sectoral", where = "mrcommons")
@@ -61,13 +59,14 @@ calcVoPlivst <- function(other = FALSE, fillGaps = FALSE) {
 
     # fill gaps in VoP (where production is available)
     years <- intersect(getYears(prices), getYears(production))
-    vopLivst <- vopLivst[, years, ]
     if (isTRUE(other)) {
       vopOther <- vopLivst[, , "livst_other"]
       vopLivst <- vopLivst[, , "livst_other", invert = TRUE]
     }
     calculatedVop <- prices[, years, getNames(vopLivst)] * production[, years, getNames(vopLivst)]
-    vopLivst[vopLivst == 0] <- calculatedVop[vopLivst == 0]
+    tmp <- vopLivst[, years, ]
+    tmp[tmp == 0] <- calculatedVop[tmp == 0]
+    vopLivst[, years, ] <- tmp
     if (isTRUE(other)) vopLivst <- mbind(vopLivst, vopOther)
   }
 

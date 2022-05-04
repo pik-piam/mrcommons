@@ -4,7 +4,7 @@
 \alias{calcVoPlivst}
 \title{calcVoPlivst}
 \usage{
-calcVoPlivst(other = FALSE, fillGaps = FALSE)
+calcVoPlivst(other = FALSE, fillGaps = TRUE)
 }
 \arguments{
 \item{other}{boolean: should FAO livestock categories that can't be matched to MAgPIE categories (i.e. beeswax, wool,

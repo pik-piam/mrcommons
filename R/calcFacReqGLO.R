@@ -17,22 +17,21 @@
 calcFacReqGLO <- function() {
 
   # Reads factor requirements in USD05ppp
-  Factors <- dimSums(calcOutput("FactorIntensity", aggregate = FALSE, years = 2005), dim = 3.1)
+  factors <- dimSums(calcOutput("FactorIntensity", aggregate = FALSE, years = 2005), dim = 3.1)
 
   # Reads production as weight
   weight <- collapseDim(calcOutput("Production", aggregate = FALSE, attributes = "dm", years = 2005))
+  weight <- weight[, , getNames(factors)]
+  weight[factors == 0] <- 0
 
   # Aggregated to global resolution
-  x <- superAggregate(Factors, aggr_type = "weighted_mean", level = "glo", weight = weight[, , getNames(Factors)])
+  x <- superAggregate(factors, aggr_type = "weighted_mean", level = "glo", weight = weight)
 
-  # fills begr,betr and foddr with maiz values
+  # fill missing crops with maiz values
   kcr <- findset("kcr")
-  missing <- setdiff(kcr, getNames(x))
-  x <- add_columns(x, addnm = missing, dim = 3.1)
+  missing <- c(where(!is.finite(x))$true$data, setdiff(kcr, getNames(x)))
+  x <- add_columns(x, addnm = setdiff(kcr, getNames(x)), dim = 3.1)
   x[, , missing] <- x[, , "maiz"]
-  x[!is.finite(x)] <- x[, , "maiz"]
-
-
 
   return(list(x = x,
               weight = NULL,

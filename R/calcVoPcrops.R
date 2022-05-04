@@ -2,8 +2,6 @@
 #' @description Calculates the value of production of individual production items or
 #' its fraction compared to overall Value of Production (Agriculture,Fish,Forestry).
 #'
-#' @param output defines if output should be given as an "absolute" value or
-#' as a "fraction" of the overall value of production.
 #' @param fillGaps boolean: should gaps be filled using production * prices (where production data is available)?
 #' @return magpie object. in mio. USD05 MER or fraction
 #' @author Edna J. Molina Bacca, Debbora Leip
@@ -17,20 +15,14 @@
 #' a <- calcOutput("VoPcrops")
 #' }
 #'
-calcVoPcrops <- function(output = "absolute", fillGaps = FALSE) {
-
-  # Value of production for Agriculture, forestry and fishes
-  vopAff <- calcOutput("VoPAFF", aggregate = FALSE)
-  vopTotal <- dimSums(vopAff, dim = 3) # mio. 05USD MER
+calcVoPcrops <- function(fillGaps = TRUE) {
 
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
-  vopAllCurrentMER <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. current US$MER
-  vopAll <- suppressWarnings(convertGDP(vopAllCurrentMER,
-                                         unit_in = "current US$MER",
-                                         unit_out = "constant 2005 US$MER"))
-  # for countries with missing inflation factors we assume no inflation:
-  vopAll[is.na(vopAll)] <- vopAllCurrentMER[is.na(vopAll)]
+  vopAll <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. current US$MER
+  vopAll <- convertGDP(vopAll, unit_in = "current US$MER",
+                               unit_out = "constant 2005 US$MER",
+                               replace_NAs = "no_conversion")
 
   getNames(vopAll) <- gsub("\\..*", "", getNames(vopAll))
   getNames(vopAll)[getNames(vopAll) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
@@ -47,7 +39,7 @@ calcVoPcrops <- function(output = "absolute", fillGaps = FALSE) {
   # VoP in North Korea too high? -> excluded
   vopKcrAggregated["PRK", , ] <- 0
 
-  # filling gaps based on production and prices
+  # filling gaps based on production and prices (only works for 1991-2013, other years stay the same)
   if (isTRUE(fillGaps)) {
     kcr <- findset("kcr")
     vopKcrAggregated <- add_columns(vopKcrAggregated, setdiff(kcr, getNames(vopKcrAggregated)), dim = 3, fill = 0)
@@ -86,37 +78,17 @@ calcVoPcrops <- function(output = "absolute", fillGaps = FALSE) {
     # fill gaps in VoP (where production is available)
     years <- intersect(getYears(prices), getYears(production))
     calculatedVoP <- prices[, years, getNames(vopKcrAggregated)] * production[, years, getNames(vopKcrAggregated)]
-    vopKcrAggregated <- vopKcrAggregated[, years, ]
-    vopKcrAggregated[vopKcrAggregated == 0] <- calculatedVoP[vopKcrAggregated == 0]
+    tmp <- vopKcrAggregated[, years, ]
+    tmp[tmp == 0] <- calculatedVoP[tmp == 0]
+    vopKcrAggregated[, years, ] <- tmp
   }
 
-  years <- intersect(getYears(vopKcrAggregated), getYears(vopTotal))
+  vopKcrAggregated[!is.finite(vopKcrAggregated)] <- 0
 
-  # if desired output is fraction over overall value of production (Agriculture, forestry, fishery) or absolute value
-  x <- if (output == "fraction") vopKcrAggregated[, years, ] / vopTotal[, years, ] else vopKcrAggregated
+  weight <- NULL
+  units <- "USD05 MER"
 
-  x[!is.finite(x)] <- 0
-
-  if (output == "absolute") {
-    weight <- NULL
-    units <- "USD05 MER"
-  } else if (output == "fraction") {
-    production <- collapseNames(calcOutput("Production", aggregate = FALSE, products = "kcr", attributes = "dm"))
-    years <- intersect(getYears(production), getYears(x))
-    names <- intersect(getNames(production), getNames(x))
-
-    weight <- production[, years, names]
-    x <- x[, years, names]
-    weight[x == 0] <- 0
-    units <- "fraction"
-
-  } else {
-    stop("Output not supported")
-  }
-
-
-
- return(list(x = x,
+ return(list(x = vopKcrAggregated,
             weight = weight,
             mixed_aggregation = NULL,
             unit = units,
