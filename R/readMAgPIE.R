@@ -91,7 +91,13 @@ readMAgPIE <- function(subtype) {
                         "f30_bioen_price_SSP5-NDC-NDC_replaced_flat_",
                         "f30_bioen_price_SSP5-NDC-PkBudg1300_replaced_flat_",
                         "f30_bioen_price_SSP5-NDC-PkBudg900_replaced_flat_",
-                        "f30_bioen_price_SSP5-NPI-Base_replaced_flat_")
+                        "f30_bioen_price_SSP5-NPI-Base_replaced_flat_",
+                        "f30_bioen_price_SSP2-NDC-nocc-NDC_replaced_flat_",
+                        "f30_bioen_price_SSP2-NPI-nocc-Base_replaced_flat_",
+                        "f30_bioen_price_SSP2-NPI-nocc-NPI_replaced_flat_",
+                        "f30_bioen_price_SSP2-NDC-nocc-PkBudg500_replaced_flat_",
+                        "f30_bioen_price_SSP2-NDC-nocc-PkBudg1150_replaced_flat_"
+                        )
 
 
     fileList <- paste0(scenarioNames, regcode, ".cs4r")
