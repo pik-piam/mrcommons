@@ -4,12 +4,15 @@
 \alias{calcNonMAgPIEFactorCosts}
 \title{calcNonMAgPIEFactorCosts}
 \usage{
-calcNonMAgPIEFactorCosts(subtype = "subsidies")
+calcNonMAgPIEFactorCosts(subtype = "subsidies", aggSubsidies = FALSE)
 }
 \arguments{
 \item{subtype}{either factor cost share of "subsidies" (which don't enter MAgPIE labor costs as they should not
 affect prices), or of "missingVoP" (which refers to livestock VoP that can't be mapped to MAgPIE livestock
 categories, i.e. wool, beeswax, honey, silk-worms)}
+
+\item{aggSubsidies}{boolean: if subtype is "subsidies", should crop and livestock subsidies be reported separately
+or as aggregate?}
 }
 \value{
 magpie object. in mio. USDMER05

@@ -13,7 +13,6 @@
 calcWeeklyHoursILO <- function(projections = FALSE) {
 
   ilo <- readSource("ILOSTAT", "WeeklyHoursByActivity")[, , list("Total", "Aggregate: Agriculture"), drop = TRUE]
-  getNames(ilo) <-  "Agriculture, forestry and fishing"
   ilo <- ilo[, where(ilo != 0)$true$years, ]
   ilo[ilo == 0] <- NA
 

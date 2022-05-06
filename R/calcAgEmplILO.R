@@ -14,7 +14,6 @@
 calcAgEmplILO <- function(subsectors = TRUE) {
 
   iloEmpl <- readSource("ILOSTAT", "EmplByActivityModelled")[, , list("Total", "Aggregate: Agriculture"), drop = TRUE]
-  getNames(iloEmpl) <- "Agriculture, forestry and fishing"
   iloEmpl[iloEmpl == 0] <- NA
 
   # from thousands to millions
@@ -25,11 +24,11 @@ calcAgEmplILO <- function(subsectors = TRUE) {
   # above a certain value of GDPpcPPP, the share of people employed in agriculture is kept constant
   regCoeff <- readSource("RegressionsILO", "AgEmpl")
 
-  GDPpc <- calcOutput("GDPpcPast", GDPpcPast = "WDI-MI", unit = "constant 2005 Int$PPP", aggregate = FALSE)
+  gdpPPPpc <- calcOutput("GDPpcPast", GDPpcPast = "WDI-MI", unit = "constant 2005 Int$PPP", aggregate = FALSE)
 
-  estShare <- (regCoeff[, , "slope", drop = TRUE] * log10(GDPpc) + regCoeff[, , "intercept", drop = TRUE]) ** 2
+  estShare <- (regCoeff[, , "slope", drop = TRUE] * log10(gdpPPPpc) + regCoeff[, , "intercept", drop = TRUE]) ** 2
   const <- (regCoeff[, , "slope"] * log10(regCoeff[, , "threshold"]) + regCoeff[, , "intercept"]) ** 2
-  estShare[GDPpc > regCoeff[, , "threshold"]] <- const
+  estShare[gdpPPPpc > regCoeff[, , "threshold"]] <- const
 
   pop <- calcOutput("PopulationPast", aggregate = FALSE) # million people
   years <- intersect(getItems(estShare, dim = 2), getItems(pop, dim = 2))
@@ -128,10 +127,10 @@ calcAgEmplILO <- function(subsectors = TRUE) {
     # shares between crop and livestock based on VoP (in mio. current USD, as currency is irrelevant for shares between
     # sectors)
     ag <- list(c("2041|Crops", "2044|Livestock"), "Gross_Production_Value_(current_thousand_US$)_(1000_US$)")
-    VoP <- readSource("FAO_online", "ValueOfProd")[, , ag, drop = TRUE] / 1000 # mio current USD
-    getNames(VoP) <- str_split(getNames(VoP), "\\|", simplify = TRUE)[, 2]
-    VoP[VoP == 0] <- NA
-    sharesVoP <- .calcShares(VoP)
+    vop <- readSource("FAO_online", "ValueOfProd")[, , ag, drop = TRUE] / 1000 # mio current USD
+    getNames(vop) <- str_split(getNames(vop), "\\|", simplify = TRUE)[, 2]
+    vop[vop == 0] <- NA
+    sharesVoP <- .calcShares(vop)
 
     # combine shares
     years <- intersect(getItems(sharesVoP, dim = 2), getItems(sharesAgEmpl, dim = 2))

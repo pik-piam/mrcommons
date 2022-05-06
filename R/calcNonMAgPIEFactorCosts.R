@@ -4,6 +4,8 @@
 #' @param subtype either factor cost share of "subsidies" (which don't enter MAgPIE labor costs as they should not
 #' affect prices), or of "missingVoP" (which refers to livestock VoP that can't be mapped to MAgPIE livestock
 #' categories, i.e. wool, beeswax, honey, silk-worms)
+#' @param aggSubsidies boolean: if subtype is "subsidies", should crop and livestock subsidies be reported separately
+#' or as aggregate?
 #' @return magpie object. in mio. USDMER05
 #' @author Debbora Leip
 #' @seealso [calcOutput()]
@@ -12,7 +14,7 @@
 #' a <- calcOutput("NonMAgPIEFactorCosts", subtype = "subsidies")
 #' }
 #'
-calcNonMAgPIEFactorCosts <- function(subtype = "subsidies") {
+calcNonMAgPIEFactorCosts <- function(subtype = "subsidies", aggSubsidies = FALSE) {
 
   # factor cost share
   fractionCrops <- calcOutput("FractionInputsUSDA", products = "kcr", aggregate = FALSE)
@@ -39,8 +41,10 @@ calcNonMAgPIEFactorCosts <- function(subtype = "subsidies") {
                             integrate_interpolated_years = TRUE,
                             extrapolation_type = "constant")
 
+    if (aggSubsidies) out <- dimSums(out, dim = 3)
+
   } else if (subtype == "missingVoP") {
-    out <- calcOutput("VoPlivst", other = TRUE, aggregate = FALSE)[, , "livst_other"]
+    out <- calcOutput("VoPlivst", other = TRUE, aggregate = FALSE)[, , "livst_other", drop = TRUE]
     out <- out[, 1991:2017, ] # no data before 1991, last two years incomplete
 
     # get factor cost share of VoP
