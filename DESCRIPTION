@@ -46,7 +46,6 @@ Imports:
     dplyr,
     hdf5r,
     GDPuc,
-    lazyeval,
     lpjclass,
     luscale,
     magpiesets (>= 0.44.2),
