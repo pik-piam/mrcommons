@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.9.3
-Date: 2022-05-06
+Version: 1.10.0
+Date: 2022-05-20
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -55,12 +55,14 @@ Imports:
     quitte,
     R.utils,
     raster,
+    terra,
     readxl,
     reshape2,
     rlang,
     SPEI,
     stringr,
     tidyr,
+    withr,
     zoo
 Suggests:
     covr,
@@ -78,6 +80,6 @@ URL:
 BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
