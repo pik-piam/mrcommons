@@ -17,9 +17,6 @@ calcLivstFactorCostCalib <- function() {
                                             attributes = "dm", aggregate = FALSE))[, 2005, ]
   factorCostsLivst <- calcOutput("FactorCostsLivst", aggregate = FALSE)[, 2005, ]
 
-  # remove outliers
-  productivity["HKG", , "livst_rum"] <- 0
-
   # livestock factor cost regression with productivity so far used in MAgpIE:
   categories <- c("livst_chick", "livst_egg", "livst_milk", "livst_pig", "livst_rum", "fish")
   interceptsOld <- c(1500, 1500, 165, 1500, 1042.7, 5258.4)

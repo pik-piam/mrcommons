@@ -9,6 +9,7 @@ calcLaborCosts(
   subsectors = TRUE,
   inclFish = FALSE,
   inclForest = FALSE,
+  otherLivst = TRUE,
   gtapVar = "NVFA",
   addSubsidies = FALSE
 )
@@ -23,6 +24,9 @@ fishery)}
 \item{inclFish}{boolean: should fish labor costs be included?}
 
 \item{inclForest}{boolean: should forestry labor costs be included (only available for ILO and GTAP)?}
+
+\item{otherLivst}{boolean: should other_livst category (i.e. beeswax, wool, silkworms, and honey) be included
+in livestock (only relevant for datasource USDA)?}
 
 \item{gtapVar}{variable name to use from GTAP (only relevant if source is "GTAP")}
 

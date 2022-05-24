@@ -4,11 +4,14 @@
 \alias{calcFactorCostsLivst}
 \title{calcFactorCostsLivst}
 \usage{
-calcFactorCostsLivst(datasource = "USDA")
+calcFactorCostsLivst(datasource = "USDA", otherLivst = FALSE)
 }
 \arguments{
 \item{datasource}{only source available is "USDA" (calculates factor costs by applying factor cost share from USDA
 to VoP from FAO)}
+
+\item{otherLivst}{boolean: should FAO livestock categories that can't be matched to MAgPIE categories (i.e. beeswax,
+wool, silkworms, and honey) be reported as "livst_other"?}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

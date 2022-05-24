@@ -7,6 +7,8 @@
 #' fishery)
 #' @param inclFish boolean: should fish labor costs be included?
 #' @param inclForest boolean: should forestry labor costs be included (only available for ILO and GTAP)?
+#' @param otherLivst boolean: should other_livst category (i.e. beeswax, wool, silkworms, and honey) be included
+#' in livestock (only relevant for datasource USDA)?
 #' @param gtapVar variable name to use from GTAP (only relevant if source is "GTAP")
 #' @param addSubsidies boolean: should subsidy data (from IFPRI) should be added to VoP before applying USDA cost
 #' shares (only relevant if datasource is "USDA")
@@ -20,7 +22,7 @@
 #' @importFrom GDPuc convertGDP
 
 calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FALSE, inclForest = FALSE,
-                           gtapVar = "NVFA", addSubsidies = FALSE) {
+                           otherLivst = TRUE, gtapVar = "NVFA", addSubsidies = FALSE) {
 
   # get data from specified source
   if (datasource == "ILO") {
@@ -53,7 +55,7 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
     if (isTRUE(inclForest)) stop("Forest labor costs not available for this datasource")
 
     # Value of Production for livestock in US$MER2005 (including FAO livst categories not mapped to MAgPIE categories)
-    vopLivst <- calcOutput("VoPlivst", other = TRUE, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
+    vopLivst <- calcOutput("VoPlivst", other = otherLivst, fillGaps = TRUE, aggregate = FALSE) # mio. US$MER05
     vopLivst <- setNames(dimSums(vopLivst, dim = 3), "Livestock")
 
     # Value of Production for crops in US$MER2005
