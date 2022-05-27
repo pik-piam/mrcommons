@@ -44,6 +44,7 @@
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
+#' @importFrom dplyr summarise filter group_by %>%
 
 readFAO_online <- function(subtype) { # nolint
 
@@ -91,6 +92,8 @@ readFAO_online <- function(subtype) { # nolint
     Pop                     = c("Population_E_All_Data.zip"),
     PricesProducerAnnual    = c("Prices_E_All_Data.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
+    Trade                   = "Trade_CropsLivestock_E_All_Data_(Normalized).zip",
+    TradeMatrix             = "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip",
     ValueOfProd             = c("Value_of_Production_E_All_Data.zip")
     )
 
@@ -184,7 +187,26 @@ readFAO_online <- function(subtype) { # nolint
                      "Southern Europe", "Western Africa", "Western Asia", "Western Europe",
                      "World", "Australia and New Zealand", "European Union (27)", "Antarctic Region",
                      "European Union (28)", "South-eastern Asia", "East/South Asia and Pacific",
-                     "Annex I countries", "Non-Annex I countries", "OECD")
+                     "Annex I countries", "Non-Annex I countries", "OECD", " Africa (excluding intra-trade) ",
+                     "Americas (excluding intra-trade)", "Asia (excluding intra-trade)",
+                     "Australia and New Zealand (excluding intra-trade)",
+                     "Caribbean (excluding intra-trade)", "Central America (excluding intra-trade)",
+                     "Central Asia (excluding intra-trade)", "China (excluding intra-trade)",
+                     "Eastern Africa (excluding intra-trade)", "Eastern Asia (excluding intra-trade)",
+                     "Eastern Europe (excluding intra-trade)", "Europe (excluding intra-trade)",
+                     "European Union (12) (excluding intra-trade)", "European Union (15) (excluding intra-trade)",
+                     "European Union (25) (excluding intra-trade)", "European Union (27) (excluding Croatia) (excluding intra-trade)",
+                     "European Union (27) (excluding intra-trade)", "European Union (28) (excluding intra-trade)",
+                     "Land Locked Developing Countries (excluding intra-trade)", "Least Developed Countries (excluding intra-trade)",
+                     "Africa (excluding intra-trade)", "Low Income Food Deficit Countries (excluding intra-trade)",
+                     "Melanesia (excluding intra-trade)", "Micronesia (excluding intra-trade)",
+                     "Middle Africa (excluding intra-trade)", "Net Food Importing Developing Countries (excluding intra-trade)",
+                     "Northern Africa (excluding intra-trade)", "Northern America (excluding intra-trade)",
+                     "Northern Europe (excluding intra-trade)", "Oceania (excluding intra-trade)", "Polynesia (excluding intra-trade)",
+                     "Small Island Developing States (excluding intra-trade)", "South-Eastern Asia (excluding intra-trade)",
+                     "South America (excluding intra-trade)", "Southern Africa (excluding intra-trade)", "Southern Asia (excluding intra-trade)",
+                     "Southern Europe (excluding intra-trade)", "Western Africa (excluding intra-trade)", "Western Asia (excluding intra-trade)",
+                     "Western Europe (excluding intra-trade)")
 
   fao$ISO <- toolCountry2isocode(fao$Country, mapping = faoIsoFaoCode, ignoreCountries = ignoreRegions) # nolint
   # remove country aggregates (CountryCode >= 5000, formerly had '(Total)' in their name)
@@ -212,6 +234,7 @@ readFAO_online <- function(subtype) { # nolint
   fao <- .convertUnit(x = fao, oldUnit = "1000 Ha",     newUnit = "ha",     factor = 1000)
   fao <- .convertUnit(x = fao, oldUnit = "1000 persons", newUnit = "persons", factor = 1000)
 
+
   # ---- Reformat elements ----
 
   elementShort <- toolGetMapping("FAOelementShort.csv", where = "mrcommons")
@@ -236,6 +259,19 @@ readFAO_online <- function(subtype) { # nolint
   fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
   fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
   fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
+
+  #trade data has element codes 5608 5609 for "Import_Quantity_(Head)"
+  # and codes 5908 5909 for "Export_Quantity_(Head)" for the "Other food" product,
+  # despite all other characteristics being the same
+  # this leads to duplicate rows when converting to magclass, sum these up first below
+
+  if (subtype == "Trade"){
+  tmp <- fao %>% filter(.data$ItemCodeItem == "1848|Other food") %>%
+                 group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
+                  summarise("Value" = sum(.data$Value, na.rm = TRUE))
+  fao <-  rbind(fao[which(fao[,"ItemCodeItem"] != "1848|Other food"),
+                    c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
+                  tmp) }
 
   fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
                    temporal = 1, spatial = 2, datacol = 5)

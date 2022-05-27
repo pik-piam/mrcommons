@@ -1,13 +1,13 @@
-#' Download FAO data 
-#' 
+#' Download FAO data
+#'
 #' Downloads the latest data and meta data form the FAOStat website.
-#' 
+#'
 #' @param subtype Type of FAO data that should be read.
-#' 
+#'
 #' @importFrom utils download.file unzip person
 
 downloadFAO_online <- function(subtype) {
-  
+
   if (!requireNamespace("XML", quietly = TRUE)) {
     stop("The 'XML' package is required to download data from FAO. Please install it.")
   }
@@ -15,7 +15,7 @@ downloadFAO_online <- function(subtype) {
   # Additional information not accessed by this function but potentially interesting.
   # DEFINITION AND CLASSIFICATION OF COMMODITIES
   #    http://www.fao.org/es/faodef/fdef11e.htm
-  # LICENSING INFORMATION 
+  # LICENSING INFORMATION
   #    http://www.fao.org/3/ca7570en/ca7570en.pdf
   # META DATA PRINTED AS TABLE
   #    http://fenixservices.fao.org/faostat/static/releasecalendar/Default.aspx
@@ -60,17 +60,19 @@ downloadFAO_online <- function(subtype) {
     Pop                     = "Population_E_All_Data_(Normalized).zip",
     PricesProducerAnnual    = "Prices_E_All_Data_(Normalized).zip",
     PricesProducerAnnualLCU = "Prices_E_All_Data_(Normalized).zip",
+    Trade                   = "Trade_CropsLivestock_E_All_Data_(Normalized).zip",
+    TradeMatrix             = "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip",
     ValueOfProd             = "Value_of_Production_E_All_Data_(Normalized).zip"
   )
 
   file <- toolSubtypeSelect(subtype,files)
-  
+
   # Download meta data (e.g. name, description, release date, file path) for all FAO data sets currently available
   fao_meta_xmlfile <- "FAO_datasets_E.xml"
   download.file(url = "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml", destfile = fao_meta_xmlfile)
   fao_meta <- XML::xmlToDataFrame(fao_meta_xmlfile,stringsAsFactors = F)
   unlink(fao_meta_xmlfile)
-  
+
   # extract the data set for the selected subtype by searching for the file name
   fao_meta <- fao_meta[grepl(pattern = file,fao_meta$FileLocation,fixed = T),]
 

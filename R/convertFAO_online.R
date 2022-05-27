@@ -30,7 +30,7 @@ convertFAO_online <- function(x, subtype) {
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs", "FbsHistoric",
-                "FertilizerProducts", "FertilizerNutrients")
+                "FertilizerProducts", "FertilizerNutrients", "Trade", "TradeMatrix")
 
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
