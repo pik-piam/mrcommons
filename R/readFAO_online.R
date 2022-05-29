@@ -44,7 +44,7 @@
 #' @importFrom utils unzip
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer starts_with
-#' @importFrom dplyr summarise filter group_by %>%
+#' @importFrom dplyr summarise filter group_by ungroup %>%
 
 readFAO_online <- function(subtype) { # nolint
 
@@ -268,10 +268,12 @@ readFAO_online <- function(subtype) { # nolint
   if (subtype == "Trade"){
   tmp <- fao %>% filter(.data$ItemCodeItem == "1848|Other food") %>%
                  group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
-                  summarise("Value" = sum(.data$Value, na.rm = TRUE))
-  fao <-  rbind(fao[which(fao[,"ItemCodeItem"] != "1848|Other food"),
-                    c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
-                  tmp) }
+                  summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
+               ungroup()
+  fao <-  fao[which(fao[,"ItemCodeItem"] != "1848|Other food"),
+              c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
+  fao <- rbind(tmp, fao)
+  }
 
   fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
                    temporal = 1, spatial = 2, datacol = 5)
