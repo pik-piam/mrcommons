@@ -7,7 +7,7 @@
 calcFAOTradePrices(aggregation = "k")
 }
 \arguments{
-\item{aggregation}{"none", "k", or "springmann" the last uses Marco Springmann's custom product mapping}
+\item{aggregation}{"none", "k", "fbs" or "springmann" the last uses Marco Springmann's custom product mapping}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
