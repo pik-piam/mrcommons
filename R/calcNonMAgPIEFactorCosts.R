@@ -6,6 +6,7 @@
 #' categories, i.e. wool, beeswax, honey, silk-worms)
 #' @param aggSubsidies boolean: if subtype is "subsidies", should crop and livestock subsidies be reported separately
 #' or as aggregate?
+#' @param extrapolate boolean: should values be extrapolate (by keeping constant) until 2150?
 #' @return magpie object. in mio. USDMER05
 #' @author Debbora Leip
 #' @seealso [calcOutput()]
@@ -14,7 +15,7 @@
 #' a <- calcOutput("NonMAgPIEFactorCosts", subtype = "subsidies")
 #' }
 #'
-calcNonMAgPIEFactorCosts <- function(subtype = "subsidies", aggSubsidies = FALSE) {
+calcNonMAgPIEFactorCosts <- function(subtype = "subsidies", aggSubsidies = FALSE, extrapolate = TRUE) {
 
   # factor cost share
   fractionCrops <- calcOutput("FractionInputsUSDA", products = "kcr", aggregate = FALSE)
@@ -35,11 +36,13 @@ calcNonMAgPIEFactorCosts <- function(subtype = "subsidies", aggSubsidies = FALSE
     out <- out * fractions
 
     # extrapolate
-    addYears <- setdiff(paste0("y", seq(1965, 2100, 5)), getItems(out, dim = 2))
-    out <- time_interpolate(dataset = out,
-                            interpolated_year = addYears,
-                            integrate_interpolated_years = TRUE,
-                            extrapolation_type = "constant")
+    if (isTRUE(extrapolate)) {
+      addYears <- setdiff(paste0("y", seq(1965, 2150, 5)), getItems(out, dim = 2))
+      out <- time_interpolate(dataset = out,
+                              interpolated_year = addYears,
+                              integrate_interpolated_years = TRUE,
+                              extrapolation_type = "constant")
+    }
 
     if (aggSubsidies) out <- dimSums(out, dim = 3)
 
@@ -56,11 +59,14 @@ calcNonMAgPIEFactorCosts <- function(subtype = "subsidies", aggSubsidies = FALSE
     out <- out * collapseDim(fractions, dim = 3)
 
     # extrapolate
-    addYears <- setdiff(paste0("y", seq(1965, 2100, 5)), getItems(out, dim = 2))
-    out <- time_interpolate(dataset = out,
+    if (isTRUE(extrapolate)) {
+      addYears <- setdiff(paste0("y", seq(1965, 2150, 5)), getItems(out, dim = 2))
+      out <- time_interpolate(dataset = out,
                             interpolated_year = addYears,
                             integrate_interpolated_years = TRUE,
                             extrapolation_type = "constant")
+    }
+
   }
 
   return(list(x = out,

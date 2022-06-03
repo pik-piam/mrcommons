@@ -4,7 +4,11 @@
 \alias{calcNonMAgPIEFactorCosts}
 \title{calcNonMAgPIEFactorCosts}
 \usage{
-calcNonMAgPIEFactorCosts(subtype = "subsidies", aggSubsidies = FALSE)
+calcNonMAgPIEFactorCosts(
+  subtype = "subsidies",
+  aggSubsidies = FALSE,
+  extrapolate = TRUE
+)
 }
 \arguments{
 \item{subtype}{either factor cost share of "subsidies" (which don't enter MAgPIE labor costs as they should not
@@ -13,6 +17,8 @@ categories, i.e. wool, beeswax, honey, silk-worms)}
 
 \item{aggSubsidies}{boolean: if subtype is "subsidies", should crop and livestock subsidies be reported separately
 or as aggregate?}
+
+\item{extrapolate}{boolean: should values be extrapolate (by keeping constant) until 2150?}
 }
 \value{
 magpie object. in mio. USDMER05
