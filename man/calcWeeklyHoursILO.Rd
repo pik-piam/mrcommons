@@ -7,7 +7,7 @@
 calcWeeklyHoursILO(projections = FALSE)
 }
 \arguments{
-\item{projections}{boolean, should weekly hours be projected up to 2100?}
+\item{projections}{boolean, should weekly hours be projected (by keeping constant) up to 2150?}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

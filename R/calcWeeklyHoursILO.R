@@ -1,7 +1,7 @@
 #' @title calcWeeklyHoursILO
 #' @description calculates complete dataset of mean weekly hours worked by people employed in agriculture, forestry and
 #' fishery based on ILO dataset
-#' @param projections boolean, should weekly hours be projected up to 2100?
+#' @param projections boolean, should weekly hours be projected (by keeping constant) up to 2150?
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Debbora Leip
 #' @examples
@@ -17,7 +17,7 @@ calcWeeklyHoursILO <- function(projections = FALSE) {
   ilo[ilo == 0] <- NA
 
   if (isTRUE(projections)) {
-    addYears <- setdiff(paste0("y", seq(1965, 2100, 5)), getItems(ilo, dim = 2))
+    addYears <- setdiff(paste0("y", seq(1965, 2150, 5)), getItems(ilo, dim = 2))
     ilo <- magpiesort(add_columns(ilo, addnm = addYears, dim = 2, fill = NA))
   }
 
