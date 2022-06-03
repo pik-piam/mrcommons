@@ -11,7 +11,7 @@
 convertILOSTAT <- function(x) {
 
   # fill missing countries
-  x <- toolCountryFill(x, fill = 0)
+  x <- toolCountryFill(x, fill = 0, no_remove_warning = c("KOS", "CHA"))
 
   # transform currencies if applicable
   if ("currency" %in% getSets(x)) {
