@@ -4,14 +4,17 @@
 #' @param subsectors boolean: should overall values be split into the sub-sectors agriculture, forestry and fishery
 #' based on their relative share of people employed, and agriculture further split into crops and livestock based
 #' on VoP
+#' @param inclFish boolean: should employment in fisheries be included?
+#' @param inclForest boolean: should emplyoment in forestry be included?
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
+#' @importFrom stringr str_split
 #' @author Debbora Leip
 #' @examples
 #' \dontrun{
 #' calcOutput("AgEmplILO")
 #' }
 
-calcAgEmplILO <- function(subsectors = TRUE) {
+calcAgEmplILO <- function(subsectors = TRUE, inclFish = FALSE, inclForest = FALSE) {
 
   iloEmpl <- readSource("ILOSTAT", "EmplByActivityModelled")[, , list("Total", "Aggregate: Agriculture"), drop = TRUE]
   iloEmpl[iloEmpl == 0] <- NA
@@ -98,50 +101,55 @@ calcAgEmplILO <- function(subsectors = TRUE) {
   }
 
   # disaggregate total ag. empl (crop, livst, forestry, fishery) into sectors based on more detailed employment data
-  # for agriculture (crop+livst), forestry and fishery; and further disaggregating crops and livestock based on VoP
-  if (isTRUE(subsectors)) {
+  # for agriculture (crop+livst), forestry and fishery; and further disaggregating crops and livestock based on VoP:
 
-    # shares between agriculture, forestry, fishery based on ag. empl.
-    agEmplISIC2 <- readSource("ILOSTAT", "EmplByISIC2")[, , "Total", drop = TRUE]
+  # shares between agriculture, forestry, fishery based on ag. empl.
+  agEmplISIC2 <- readSource("ILOSTAT", "EmplByISIC2")[, , "Total", drop = TRUE]
 
-    agEmpltotal <- new.magpie(cells_and_regions = getItems(agEmplISIC2, dim = 1),
-                         years = getItems(agEmplISIC2, dim = 2),
-                         names = c("Agriculture", "Forestry", "Fisheries"))
+  agEmpltotal <- new.magpie(cells_and_regions = getItems(agEmplISIC2, dim = 1),
+                       years = getItems(agEmplISIC2, dim = 2),
+                       names = c("Agriculture", "Forestry", "Fisheries"))
 
-    namesAgriculture <- c("ISIC_Rev31: 01 - Agriculture, hunting and related service activities",
-                          "ISIC_Rev4: 01 - Crop and animal production, hunting and related service activities")
-    namesForestry    <- c("ISIC_Rev31: 02 - Forestry, logging and related service activities",
-                          "ISIC_Rev4: 02 - Forestry and logging")
-    namesFisheries   <- c("ISIC_Rev31: 05 - Fishing, aquaculture and service activities incidental to fishing",
-                          "ISIC_Rev4: 03 - Fishing and aquaculture")
+  namesAgriculture <- c("ISIC_Rev31: 01 - Agriculture, hunting and related service activities",
+                        "ISIC_Rev4: 01 - Crop and animal production, hunting and related service activities")
+  namesForestry    <- c("ISIC_Rev31: 02 - Forestry, logging and related service activities",
+                        "ISIC_Rev4: 02 - Forestry and logging")
+  namesFisheries   <- c("ISIC_Rev31: 05 - Fishing, aquaculture and service activities incidental to fishing",
+                        "ISIC_Rev4: 03 - Fishing and aquaculture")
 
-    agEmpltotal[, , "Agriculture"] <- dimSums(agEmplISIC2[, , namesAgriculture], dim = 3)
-    agEmpltotal[, , "Forestry"] <- dimSums(agEmplISIC2[, , namesForestry], dim = 3)
-    agEmpltotal[, , "Fisheries"] <- dimSums(agEmplISIC2[, , namesFisheries], dim = 3)
+  agEmpltotal[, , "Agriculture"] <- dimSums(agEmplISIC2[, , namesAgriculture], dim = 3)
+  agEmpltotal[, , "Forestry"] <- dimSums(agEmplISIC2[, , namesForestry], dim = 3)
+  agEmpltotal[, , "Fisheries"] <- dimSums(agEmplISIC2[, , namesFisheries], dim = 3)
 
-    agEmpltotal[agEmpltotal == 0] <- NA
-    agEmpltotal["USA", , ] <- NA # remove ag. empl. for USA as ratio between agriculture and fishery seems unrealistic
+  agEmpltotal[agEmpltotal == 0] <- NA
+  agEmpltotal["USA", , ] <- NA # remove ag. empl. for USA as ratio between agriculture and fishery seems unrealistic
 
-    sharesAgEmpl <- .calcShares(agEmpltotal)
+  sharesAgEmpl <- .calcShares(agEmpltotal)
 
-    # shares between crop and livestock based on VoP (in mio. current USD, as currency is irrelevant for shares between
-    # sectors)
-    ag <- list(c("2041|Crops", "2044|Livestock"), "Gross_Production_Value_(current_thousand_US$)_(1000_US$)")
-    vop <- readSource("FAO_online", "ValueOfProd")[, , ag, drop = TRUE] / 1000 # mio current USD
-    getNames(vop) <- str_split(getNames(vop), "\\|", simplify = TRUE)[, 2]
-    vop[vop == 0] <- NA
-    sharesVoP <- .calcShares(vop)
+  # shares between crop and livestock based on VoP (in mio. current USD, as currency is irrelevant for shares between
+  # sectors)
+  ag <- list(c("2041|Crops", "2044|Livestock"), "Gross_Production_Value_(current_thousand_US$)_(1000_US$)")
+  vop <- readSource("FAO_online", "ValueOfProd")[, , ag, drop = TRUE] / 1000 # mio current USD
+  getNames(vop) <- str_split(getNames(vop), "\\|", simplify = TRUE)[, 2]
+  vop[vop == 0] <- NA
+  sharesVoP <- .calcShares(vop)
 
-    # combine shares
-    years <- intersect(getItems(sharesVoP, dim = 2), getItems(sharesAgEmpl, dim = 2))
-    sharesVoP <- sharesVoP[, years, ] * sharesAgEmpl[, years, "Agriculture", drop = TRUE]
+  # combine shares
+  years <- intersect(getItems(sharesVoP, dim = 2), getItems(sharesAgEmpl, dim = 2))
+  sharesVoP <- sharesVoP[, years, ] * sharesAgEmpl[, years, "Agriculture", drop = TRUE]
 
-    shares <- mbind(sharesVoP, sharesAgEmpl[, years, c("Forestry", "Fisheries")])
+  shares <- mbind(sharesVoP, sharesAgEmpl[, years, c("Forestry", "Fisheries")])
 
-    # apply shares to total labor costs
-    years <- intersect(getItems(shares, dim = 2), getItems(iloEmpl, dim = 2))
-    iloEmpl <- iloEmpl[, years, , drop = TRUE] * shares[, years, ]
-  }
+  # apply shares to total labor costs
+  years <- intersect(getItems(shares, dim = 2), getItems(iloEmpl, dim = 2))
+  iloEmpl <- iloEmpl[, years, , drop = TRUE] * shares[, years, ]
+
+  # remove subsectors that should not be included
+  if (isFALSE(inclFish)) iloEmpl <- iloEmpl[, , "Fisheries", invert = TRUE]
+  if (isFALSE(inclForest)) iloEmpl <- iloEmpl[, , "Forestry", invert = TRUE]
+
+  # aggregate subsectors
+  if (isFALSE(subsectors)) iloEmpl <- setNames(dimSums(iloEmpl, dim = 3), NULL)
 
   return(list(x = iloEmpl,
               weight = NULL,

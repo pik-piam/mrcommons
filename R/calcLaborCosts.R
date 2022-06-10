@@ -28,10 +28,8 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
   if (datasource == "ILO") {
 
     # ILO employment in agriculture (mio. people)
-    iloEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = TRUE)
-    if (isFALSE(inclFish)) iloEmpl <- iloEmpl[, , "Fisheries", invert = TRUE]
-    if (isFALSE(inclForest)) iloEmpl <- iloEmpl[, , "Forestry", invert = TRUE]
-    if (isFALSE(subsectors)) iloEmpl <- dimSums(iloEmpl, dim = 3)
+    iloEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = subsectors,
+                          inclFish = inclFish, inclForest = inclForest)
 
     # ILO mean weekly hours actually worked per employed person in agriculture (h)
     iloWeeklyHours <- calcOutput("WeeklyHoursILO", aggregate = FALSE)
