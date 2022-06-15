@@ -7,7 +7,7 @@
 #' @author Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
 #'
 #' @importFrom ncdf4 nc_open
-#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix extract
+#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix
 #' @importFrom magclass as.magpie mbind
 #' @importFrom stringr str_match str_count str_subset
 
@@ -44,7 +44,7 @@ readLUH2v2 <- function(subtype) {
     for (item in data) {
       shr <- subset(brick(fStates, varname = item), timeSel - offset)
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
-      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
       getYears(mag) <- timeSel
@@ -87,7 +87,7 @@ readLUH2v2 <- function(subtype) {
       if (!zeroTrans[item]) {
         shr <- subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1)
         mag <- aggregate(shr * carea, fact = 2, fun = sum)
-        mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+        mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
         getNames(mag) <- luTransReduced[item]
         getCells(mag) <- paste(map$coords, map$iso, sep = ".")
         getYears(mag) <- timeSel
@@ -120,7 +120,7 @@ readLUH2v2 <- function(subtype) {
       tmp <- shr
       for (i in seq_len(dim(tmp)[3])) tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
       mag <- aggregate(tmp, fact = 2, fun = sum)
-      mag <- as.magpie(extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
       getYears(mag) <- timeSel
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -141,7 +141,7 @@ readLUH2v2 <- function(subtype) {
     r50     <- raster(res = 0.5)
     ccode50 <- projectRaster(ccode25, r50, over = TRUE, method = "ngb") # re-project to regular grid
 
-    x <- as.magpie(extract(ccode50, map[c("lon", "lat")]), spatial = 1)
+    x <- as.magpie(raster::extract(ccode50, map[c("lon", "lat")]), spatial = 1)
     getYears(x) <- 2000
     getNames(x) <- "ccode"
     getCells(x) <- paste(map$coords, map$iso, sep = ".")

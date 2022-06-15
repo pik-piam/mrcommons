@@ -51,7 +51,7 @@ readTNC2019 <- function() {
   for (m in biome_id) {
     BiomeMag <- mbind(
       BiomeMag,
-      as.magpie(extract(BiomeRealmRast[[m]], map[c("lon", "lat")])[, m], spatial = 1)
+      as.magpie(raster::extract(BiomeRealmRast[[m]], map[c("lon", "lat")])[, m], spatial = 1)
     )
   }
 
