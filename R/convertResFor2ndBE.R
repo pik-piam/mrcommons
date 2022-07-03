@@ -20,11 +20,11 @@ convertResFor2ndBE <- function(x, subtype = subtype) {
     getItems(x, dim = 1) <- "GLO"
 
     ### disaggregate residue to county level using forestry areas and agricultural production of y1995
-    landuse <- calcOutput("LanduseInitialisation", nclasses = "seven", fao_corr = TRUE, aggregate = FALSE)[, "y1995", c("forestry", "crop")]
+    landuse <- calcOutput("LanduseInitialisation", nclasses = "seven", fao_corr = TRUE, aggregate = FALSE)[,"y1995",]
     GLO2iso <- as.data.frame(list(rep("GLO", length(getCells(landuse))), getCells(landuse)))
     names(GLO2iso) <- c("GLO", "iso")
 
-    res_wood <- toolAggregate(x[, , "res_wood"], rel = GLO2iso, weight = landuse[, , "forestry"], from = "GLO", to = "iso")
+    res_wood <- toolAggregate(x[, , "res_wood"], rel = GLO2iso, weight = dimSums(landuse[, , c("primforest","secdforest","forestry")],dim=3), from = "GLO", to = "iso")
     res_crop <- toolAggregate(x[, , "res_crop"], rel = GLO2iso, weight = landuse[, , "crop"], from = "GLO", to = "iso")
     out <- toolCountryFill(mbind(res_crop, res_wood), fill = 0, verbosity = 0)
 
