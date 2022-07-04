@@ -76,6 +76,33 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
 
   }
 
+  else if (source == "PBL_MACC_2022") {
+    unit <- "Tax level 200 steps each 20$/tC"
+    description <- "N2O PBL_MACC_2022"
+
+    wantedYears <- seq(2010, 2100, by = 5)
+
+    n2o <- NULL
+    for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
+      for (scentype in c("Default","Optimistic","Pessimistic")) {
+        x <- readSource("PBL_MACC_2022", subtype)
+        existingYears <- getYears(x, as.integer = T)
+        tmp <- setdiff(wantedYears, existingYears)
+        missingYears <- tmp[tmp < existingYears[1]]
+        x <- x[, intersect(wantedYears, existingYears), ]
+        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+        y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
+        names(dimnames(y)) <- names(dimnames(x))
+        n2o <- mbind(n2o, y)
+      }
+    }
+
+    # weight for the aggregation
+    baseline <- readSource("PBL_MACC_2019", "baseline_sources")
+    w <- baseline[, 2010, getNames(n2o, dim = 1)]
+
+  }
+
   # asigning a very small number to countries with zero emissions so if regions that are resulting from
   # zero emission country aggergations still have a value associated
   w[w == 0] <- 1e-10
