@@ -85,7 +85,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     n2o <- NULL
     for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
       for (scentype in c("Default","Optimistic","Pessimistic")) {
-        x <- readSource("PBL_MACC_2022", subtype)
+        x <- readSource("PBL_MACC_2022", subtype, scentype)
         existingYears <- getYears(x, as.integer = T)
         tmp <- setdiff(wantedYears, existingYears)
         missingYears <- tmp[tmp < existingYears[1]]

@@ -15,13 +15,13 @@ convertResFor2ndBE(x, subtype = subtype)
 List of magpie objects with results on country level
 }
 \description{
-Convert old ReMIND use of residues for 2nd generation bioenergy to country level data
+Convert old ReMIND use of residues for 2nd generation
+bioenergy to country level data
 }
 \examples{
 \dontrun{
 a <- readSource("ResFor2ndBE", subtype = "oldReMIND", convert = TRUE)
 }
-
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}

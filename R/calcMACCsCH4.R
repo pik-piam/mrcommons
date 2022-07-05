@@ -95,7 +95,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     ch4 <- NULL
     for (subtype in c("ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst")) {
       for (scentype in c("Default","Optimistic","Pessimistic")) {
-        x <- readPBL_MACC_2022(subtype,scentype)
+        x <- readSource("PBL_MACC_2022",subtype,scentype)
         existingYears <- getYears(x, as.integer = T)
         tmp <- setdiff(wantedYears, existingYears)
         missingYears <- tmp[tmp < existingYears[1]]
