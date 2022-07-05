@@ -30,5 +30,5 @@ calcOutput("MACCsN2O")
 \code{\link[=convertImageMacc]{convertImageMacc()}}
 }
 \author{
-Nele Steinmetz, Florian Humpenoeder
+Nele Steinmetz, Florian Humpenoeder, Michael Windisch
 }

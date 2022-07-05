@@ -10,7 +10,7 @@
 #' @param sector "all" or "landuse"; "all" includes energy_industry and landuse
 #' @param source "ImageMacc" or "PBL_MACC_2019"
 #' @return MAgPIE object
-#' @author Nele Steinmetz, Florian Humpenoeder
+#' @author Nele Steinmetz, Florian Humpenoeder, Michael Windisch
 #' @seealso [calcOutput()], [readImageMacc()],
 #' [convertImageMacc()]
 #' @examples
@@ -110,7 +110,9 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
 
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
-    w <- baseline[, 2010, getNames(ch4, dim = 1)]
+    w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
+    w[,,] <-setYears(w[,2010,],NULL)
+
 
   }
 
