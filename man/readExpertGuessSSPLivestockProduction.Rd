@@ -7,7 +7,7 @@
 readExpertGuessSSPLivestockProduction(subtype)
 }
 \arguments{
-\item{subtype}{: Available subtypes are: ssp1 to 5 Data for the SSP Scenario}
+\item{subtype}{: Available subtypes are the combination of data source and ssps 1 to 5. E.g. "default:ssp1"}
 }
 \value{
 magpie object containing the expert guesses
@@ -25,5 +25,5 @@ a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")
 \code{\link[=readSource]{readSource()}}
 }
 \author{
-Stephen Wirth
+Stephen Wirth, Marcos Alves
 }

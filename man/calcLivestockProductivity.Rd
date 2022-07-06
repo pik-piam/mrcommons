@@ -4,10 +4,12 @@
 \alias{calcLivestockProductivity}
 \title{Calculate Yields for Livestock}
 \usage{
-calcLivestockProductivity(future = TRUE)
+calcLivestockProductivity(future = TRUE, expertGuesses = "default")
 }
 \arguments{
 \item{future}{if TRUE calculates Constant future and linear trends based on SSP Expert guesses}
+
+\item{expertGuesses}{temporary parameter}
 }
 \value{
 MAgPIE-FEED data for livestock-yields and corresonding weights as a
@@ -20,7 +22,7 @@ besides renaming and providing weights.
 }
 \examples{
 \dontrun{
-calcOutput("LivestockProductivity")
+calcOutput("LivestockProductivity",expertGuesses = "default")
 }
 }
 \seealso{
