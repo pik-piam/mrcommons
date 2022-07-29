@@ -74,6 +74,30 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
 
+  } else if (source == "PBL_MACC_SSP2_2019") {
+    #relative to PBL IMAGE SSP2 BASELINE emissions
+    unit <- "Tax level 200 steps each 20$/tC"
+    description <- "N2O PBL_MACC_SSP2_2019"
+
+    wantedYears <- seq(2010, 2100, by = 5)
+
+    n2o <- NULL
+    for (subtype in c("SSP2_n2otrans", "SSP2_n2oadac", "SSP2_n2onitac", "SSP2_n2ofert", "SSP2_n2oanwst", "SSP2_n2owaste")) {
+      x <- readSource("PBL_MACC_2019", subtype)
+      existingYears <- getYears(x, as.integer = T)
+      tmp <- setdiff(wantedYears, existingYears)
+      missingYears <- tmp[tmp < existingYears[1]]
+      x <- x[, intersect(wantedYears, existingYears), ]
+      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+      y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
+      names(dimnames(y)) <- names(dimnames(x))
+      n2o <- mbind(n2o, y)
+    }
+
+    # weight for the aggregation
+    baseline <- readSource("PBL_MACC_2019", "baseline_sources")
+    w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
+
   }
 
   else if (source == "PBL_MACC_2022") {
