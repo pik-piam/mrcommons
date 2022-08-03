@@ -9,7 +9,7 @@
 
 calcHistBioplasticProd <- function() {
 
-  globalProd <- readSource("HistBioplasticProd")
+  globalProd <- readSource("IfBB")
 
   # linear extrapolation to the past
   globalProd <- time_interpolate(globalProd,
