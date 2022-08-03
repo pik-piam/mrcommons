@@ -1,6 +1,6 @@
-#' @title readHistBioplasticProd
+#' @title readIfBB
 #' @description reads data on historic bioplastic production from csv
-#' (source: "Biopolymers facts and statistics 2021" page 58, IfBB)
+#' source: "Biopolymers facts and statistics 2021" page 58, Institute for Bioplastics and Biocomposites (IfBB)
 #' @return data as MAgPIE object
 #' @author Debbora Leip
 #' @examples
@@ -8,7 +8,7 @@
 #'   readSource("HistBioplasticProd")
 #' }
 
-readHistBioplasticProd <- function() {
+readIfBB <- function() {
 
   x <- read.csv("HistBioplasticProd.csv", skip = 5)
   x <- as.magpie(x)
