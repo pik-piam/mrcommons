@@ -8,10 +8,11 @@
 #' @param subtype data subtype. Either "EnergyBalances" or "CHPreport"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
+#' @importFrom dplyr %>% filter
 
 convertIEA <- function(x, subtype) {
 
-  if (subtype == "EnergyBalances") {
+  if (subtype %in% c("EnergyBalances", "EnergyBalancesLegacy")) {
 
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
@@ -33,8 +34,9 @@ convertIEA <- function(x, subtype) {
 
     # disaggregating Other Africa (IAF), Other non-OECD Americas (ILA) and Other non-OECD Asia (IAS) regions to countries
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA.csv", returnPathOnly = TRUE)
-    mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE)
-    xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mappingfile, weight = w[as.vector(mapping[[1]]), , ])
+    mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
+      filter(!(CountryCode %in% getItems(x, dim = 1))) #TODO: maybe remove directly from the mapping file?
+    xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])
     x <- x[setdiff(getItems(x, dim = 1), as.vector(unique(mapping[[2]]))), , ]
     x <- mbind(x, xadd)
 
