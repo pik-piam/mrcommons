@@ -1,13 +1,19 @@
 #' @title calcAreaEquippedForIrrigation
-#' @description Calculates the area equipped for irrigation based on LU2v2 or other dataset.
-#' For LUH2v2, it assumes, that all cropland irrigated in the last 20 years at least once is equipped for irrigation.
+#' @description Calculates the area equipped for irrigation based on LU2v2 or
+#'              Siebert or Mehta data sets.
+#'              For LUH2v2, it assumes, that all cropland irrigated in the last
+#'              20 years at least once is equipped for irrigation.
 #'
-#' @param cellular if true, dataset is returned on 0.5 degree resolution
-#' @param source switch between different data sources
+#' @param cellular    if true, dataset is returned on 0.5 degree resolution
+#' @param cells       number of cells to be returned: magpiecell (59199), lpjcell (67420)
+#' @param source      switch between different data sources
 #' @param selectyears default on "past"
 #'
-#' @return List of magpie objects with results on country/cellular level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky, Kristine Karstens
+#' @return List of magpie objects with results on country/cellular level,
+#'         weight on country level, unit and description.
+#'
+#' @author Benjamin Leon Bodirsky, Kristine Karstens, Felicitas Beier
+#'
 #' @seealso
 #' [calcLanduseInitialisation()]
 #' @examples
@@ -17,16 +23,19 @@
 #' @importFrom luscale groupAggregate
 
 
-calcAreaEquippedForIrrigation <- function(cellular = FALSE, source = "LUH2v2", selectyears = "past") {
+calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell",
+                                          source = "LUH2v2", selectyears = "past") {
 
   selectyears <- sort(findset(selectyears, noset = "original"))
 
   if (source == "LUH2v2") {
 
-    years_needed <- as.integer(substring(selectyears, 2))
-    years_needed <- (years_needed[1] - 20):tail(years_needed, 1)
+    yearsNeeded <- as.integer(substring(selectyears, 2))
+    yearsNeeded <- (yearsNeeded[1] - 20):tail(yearsNeeded, 1)
 
-    x     <- calcOutput("LUH2v2", landuse_types = "magpie", irrigation = TRUE, cellular = TRUE, selectyears = years_needed, aggregate = FALSE)[, , "irrigated"]
+    x     <- calcOutput("LUH2v2", landuse_types = "magpie", irrigation = TRUE,
+                        cellular = TRUE, cells = cells,
+                        selectyears = yearsNeeded, aggregate = FALSE)[, , "irrigated"]
     x     <- dimSums(x, dim = 3)
     years <- as.numeric(substring(selectyears, 2))
     out   <- NULL
@@ -41,19 +50,37 @@ calcAreaEquippedForIrrigation <- function(cellular = FALSE, source = "LUH2v2", s
 
     out   <- readSource("Siebert", convert = "onlycorrect")
 
-  } else stop("Unknown source for calcAreaEquippedForIrrigation")
+    if (cells == "lpjcell") {
+      stop("Old Siebert data is not available at this resolution.
+           Please consider using the updated data set Mehta et al. 2022")
+    }
 
+  } else if (source == "Mehta2022") {
+
+    out   <- readSource("Mehta2022", convert = "onlycorrect")
+
+    if (cells == "magpiecell") {
+
+      out <- toolCoord2Isocell(out)
+
+    }
+
+  } else {
+    stop("Unknown source for calcAreaEquippedForIrrigation")
+  }
 
   if (!cellular) {
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    out     <- toolAggregate(out, rel = mapping, from = "celliso", to = "iso", dim = 1)
+    mapping <- toolGetMapping(name = "CountryToCellMapping.rds",
+                              where = "mrcommons")
+    out     <- toolCoord2Isocell(out) # To do: transform directly from 67k cells to iso
+    out     <- toolAggregate(out, rel = mapping,
+                             from = "celliso", to = "iso", dim = 1)
     out     <- toolCountryFill(out, fill = 0)
   }
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Million ha",
-    description = "Area equpped for irrigation in million hectare.",
-    isocountries = !cellular))
+  return(list(x            = out,
+              weight       = NULL,
+              unit         = "Million ha",
+              description  = "Area equipped for irrigation in million hectares",
+              isocountries = !cellular))
 }

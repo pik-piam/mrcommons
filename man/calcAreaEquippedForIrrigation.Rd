@@ -6,6 +6,7 @@
 \usage{
 calcAreaEquippedForIrrigation(
   cellular = FALSE,
+  cells = "magpiecell",
   source = "LUH2v2",
   selectyears = "past"
 )
@@ -13,16 +14,21 @@ calcAreaEquippedForIrrigation(
 \arguments{
 \item{cellular}{if true, dataset is returned on 0.5 degree resolution}
 
+\item{cells}{number of cells to be returned: magpiecell (59199), lpjcell (67420)}
+
 \item{source}{switch between different data sources}
 
 \item{selectyears}{default on "past"}
 }
 \value{
-List of magpie objects with results on country/cellular level, weight on country level, unit and description.
+List of magpie objects with results on country/cellular level,
+weight on country level, unit and description.
 }
 \description{
-Calculates the area equipped for irrigation based on LU2v2 or other dataset.
-For LUH2v2, it assumes, that all cropland irrigated in the last 20 years at least once is equipped for irrigation.
+Calculates the area equipped for irrigation based on LU2v2 or
+Siebert or Mehta data sets.
+For LUH2v2, it assumes, that all cropland irrigated in the last
+20 years at least once is equipped for irrigation.
 }
 \examples{
 \dontrun{
@@ -33,5 +39,5 @@ calcOutput("AreaEquippedForIrrigation", source = "LUH2v2", cellular = TRUE, aggr
 \code{\link[=calcLanduseInitialisation]{calcLanduseInitialisation()}}
 }
 \author{
-Benjamin Leon Bodirsky, Kristine Karstens
+Benjamin Leon Bodirsky, Kristine Karstens, Felicitas Beier
 }
