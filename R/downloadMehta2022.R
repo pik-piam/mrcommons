@@ -4,28 +4,39 @@
 #' @author  Felicitas Beier
 #' @seealso [downloadSource()] [readMehta2022()]
 #' @examples
-#'
-#' \dontrun{ a <- downloadSource()
+#' \dontrun{
+#' a <- downloadSource()
 #' }
-
+#'
 #' @importFrom utils download.file
+#' @importFrom withr with_options
 
 downloadMehta2022 <- function() {
 
   aeiURL <- "https://zenodo.org/record/6886564"
 
-  years  <- c(seq(1900, 1970, by = 10),
-              seq(1980, 2015, by = 5))
+  years <- c(seq(1900, 1970, by = 10),
+             seq(1980, 2015, by = 5))
   years1 <- years[years < 2000]
   years2 <- years[years >= 2000]
 
-  files  <- c(paste0("G_AEI_", years1, ".ASC"),
-              paste0("G_AEI_", years2, ".asc"))
+  files <- c(paste0("G_AEI_", years1, ".ASC"),
+             paste0("G_AEI_", years2, ".asc"))
 
+  maxcount <- 10
+  count    <- 0
   for (file in files) {
+    repeat {
 
-    download.file(paste0(aeiURL, "/files/", file), destfile = file)
+      withr::with_options(list(timeout = NULL),
+                          code = try(download.file(paste0(aeiURL, "/files/", file),
+                                                   destfile = file)))
 
+      count <- count + 1
+      if (file.exists(file) || count >= maxcount) {
+        break
+      }
+    }
   }
 
   return(list(url          = aeiURL,

@@ -70,17 +70,30 @@ calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell"
   }
 
   if (!cellular) {
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds",
-                              where = "mrcommons")
-    out     <- toolCoord2Isocell(out) # To do: transform directly from 67k cells to iso
-    out     <- toolAggregate(out, rel = mapping,
-                             from = "celliso", to = "iso", dim = 1)
-    out     <- toolCountryFill(out, fill = 0)
+
+    if (length(getItems(out, dim = 1)) == 67420) {
+
+      # aggregate to iso level
+      if (getSets(out)["d1.1"] == "cell") {
+        out <- dimSums(x, dim = "cell")
+      } else {
+        out <- dimSums(out, dim = c("x", "y"))
+      }
+    } else {
+
+      mapping <- toolGetMapping(name = "CountryToCellMapping.rds",
+                                where = "mrcommons")
+
+      out     <- toolAggregate(out, rel = mapping,
+                               from = "celliso", to = "iso", dim = 1)
+    }
+
+    out <- toolCountryFill(out, fill = 0)
   }
 
   return(list(x            = out,
               weight       = NULL,
               unit         = "Million ha",
-              description  = "Area equipped for irrigation in million hectares",
+              description  = "Area equipped for irrigation",
               isocountries = !cellular))
 }

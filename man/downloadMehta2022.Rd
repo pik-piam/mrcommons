@@ -10,9 +10,10 @@ downloadMehta2022()
 download Global Area Equipped for Irrigation Dataset 1900-2015 from Mehta et al. (2022)
 }
 \examples{
-
-\dontrun{ a <- downloadSource()
+\dontrun{
+a <- downloadSource()
 }
+
 }
 \seealso{
 \code{\link[=downloadSource]{downloadSource()}} \code{\link[=readMehta2022]{readMehta2022()}}
