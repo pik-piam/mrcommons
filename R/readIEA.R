@@ -11,7 +11,7 @@
 #' a <- readSource(type = "IEA", subtype = "EnergyBalances")
 #' }
 #'
-#' @importFrom data.table fread
+#' @importFrom data.table fread :=
 #' @importFrom dplyr %>%
 #' @importFrom madrat toolCountry2isocode
 #' @importFrom R.utils decompressFile
@@ -73,10 +73,10 @@ readIEA <- function(subtype) {
       "OTHERLATIN" = "ILA"
     )
 
-    data$COUNTRY <- toolCountry2isocode(data$COUNTRY, mapping = customMapping) # TODO, warn = FALSE)
+    data$COUNTRY <- toolCountry2isocode(data$COUNTRY, mapping = customMapping, warn = FALSE)
     data <- data %>%
       filter(!is.na(!!sym("ktoe")), !is.na(!!sym("COUNTRY"))) %>%
-      mutate(ktoe := as.numeric(!!sym("ktoe")))
+      mutate(!!sym("ktoe") := as.numeric(!!sym("ktoe")))
 
     mdata <- as.magpie(data,
                        datacol = dim(data)[2], spatial = which(colnames(data) == "COUNTRY"),

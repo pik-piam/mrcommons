@@ -21,7 +21,7 @@ convertIEA <- function(x, subtype) {
     x <- x[c("KOS"), , , invert = TRUE]
 
     # convert electricity outputs (unit conversion between ktoe and GWh)
-    x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] * 0.0859845
+    x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAI)NC", "ELAUTOC")] * 0.0859845
 
     # calculate weight to be used for regional disaggregations
     wp <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FALSE)[, 2010, "pop_SSP2"]
@@ -35,7 +35,7 @@ convertIEA <- function(x, subtype) {
     # disaggregating Other Africa (IAF), Other non-OECD Americas (ILA) and Other non-OECD Asia (IAS) regions to countries
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA.csv", returnPathOnly = TRUE)
     mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
-      filter(!(CountryCode %in% getItems(x, dim = 1))) #TODO: maybe remove directly from the mapping file?
+      filter(!(!!sym("CountryCode") %in% getItems(x, dim = 1)))
     xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])
     x <- x[setdiff(getItems(x, dim = 1), as.vector(unique(mapping[[2]]))), , ]
     x <- mbind(x, xadd)
