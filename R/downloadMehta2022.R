@@ -12,7 +12,7 @@
 
 downloadMehta2022 <- function() {
 
-  aeiURL <- "https://zenodo.org/record/6886564#.Yu0RL2RBxaQ"
+  aeiURL <- "https://zenodo.org/record/6886564"
 
   years  <- c(seq(1900, 1970, by = 10),
               seq(1980, 2015, by = 5))
@@ -21,7 +21,7 @@ downloadMehta2022 <- function() {
 
   for (file in files) {
 
-    download.file(aeiURL, destfile = file)
+    download.file(paste0(aeiURL, "/files/", file), destfile = file)
 
   }
 
