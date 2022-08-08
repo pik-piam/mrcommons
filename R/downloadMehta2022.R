@@ -16,8 +16,11 @@ downloadMehta2022 <- function() {
 
   years  <- c(seq(1900, 1970, by = 10),
               seq(1980, 2015, by = 5))
+  years1 <- years[years < 2000]
+  years2 <- years[years >= 2000]
 
-  files  <- paste0("G_AEI_", years, ".ASC")
+  files  <- c(paste0("G_AEI_", years1, ".ASC"),
+              paste0("G_AEI_", years2, ".asc"))
 
   for (file in files) {
 
