@@ -8,25 +8,27 @@
 #' \dontrun{ a <- readSource("Mehta2022")
 #' }
 
-#' @importFrom raster brick raster projectRaster
+#' @importFrom raster brick
 #' @importFrom terra aggregate project rast
 #' @importFrom magclass as.magpie
-#' @importFrom magpiesets Cell2Country
 
 readMehta2022 <- function() {
 
   years  <- c(seq(1900, 1970, by = 10),
               seq(1980, 2015, by = 5))
+  years1 <- years[years < 2000]
+  years2 <- years[years >= 2000]
 
-  files  <- paste0("G_AEI_", years, ".asc")
+  files  <- c(paste0("G_AEI_", years1, ".ASC"),
+              paste0("G_AEI_", years2, ".asc"))
 
   .transformObject <- function(x) {
 
-    resolution <- rast(res = 0.5)
+    resolution <- terra::rast(res = 0.5)
 
-    x <- aggregate(x, fact = 6, fun = "sum")
-    x <- (project(x, resolution))
-    x <- as.magpie(brick(x))
+    x <- terra::aggregate(x, fact = 6, fun = "sum")
+    x <- (terra::project(x, resolution))
+    x <- as.magpie(raster::brick(x))
 
     return(x)
   }
@@ -35,20 +37,25 @@ readMehta2022 <- function() {
   out <- NULL
   for (file in files) {
 
-    aei <- rast(file)
+    aei <- terra::rast(file)
     aei <- .transformObject(x = aei)
 
     getItems(aei, dim = 2) <- gsub("G_AEI_", "y", getItems(aei, dim = 3))
     getItems(aei, dim = 3) <- "AEI"
 
     out <- mbind(out, aei)
-
   }
 
   # reduce number of cells
   map67420 <- readRDS(system.file("extdata", "mapLPJcells2Coords.rds",
                                   package = "magpiesets"))
   out      <- out[map67420$coords, , ]
+
+  # rename cells
+  map           <- toolGetMappingCoord2Country()
+  out           <- out[map$coords, , ]
+  getCells(out) <- paste(map$coords, map$iso, sep = ".")
+  getSets(out)  <- c("x", "y", "iso", "year", "data")
 
   # transform units to Mha
   out <- out * 1e-06
