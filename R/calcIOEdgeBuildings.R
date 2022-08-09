@@ -43,9 +43,22 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   ieapname <- "iea_product"
   ieafname <- "iea_flows"
 
+  ieamatch <- ieamatch %>% unite('product.flow', c('iea_product', 'iea_flows'),sep = '.', remove = F)
+  missing <- setdiff(ieamatch$product.flow, getNames(data))
+
+  if (length(missing) > 0) {
+    warning(paste0("calcIOEdgeBuildings: missing product flows in IEA data: ", paste0(missing, collapse = ", ")))
+  }
+
+  ieamatch <- ieamatch %>% filter(product.flow %in% getNames(data))
+
+  # TODO: clean up
   reminditems <-  do.call(mbind,
                           lapply(magpieNames, function(item) {
                             testdf <- ieamatch[ieamatch$target == item, c(ieapname, ieafname, "Weight")]
+                            if (nrow(testdf) == 0) {
+                              return()
+                            }
                             prfl <- paste(testdf[, ieapname], testdf[, ieafname], sep = ".")
                             vec <- as.numeric(ieamatch[rownames(testdf), "Weight"])
                             names(vec) <- prfl
@@ -97,5 +110,5 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
   return(list(x = reminditems, weight = NULL, unit = "EJ",
               description = paste("Historic final energy demand from buildings (and industry)",
-                                  "based on the 2017 IEA World Energy Balances")))
+                                  "based on the 2022 IEA World Energy Balances")))
 }
