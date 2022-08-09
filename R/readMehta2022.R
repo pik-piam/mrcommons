@@ -24,11 +24,11 @@ readMehta2022 <- function() {
 
   .transformObject <- function(x) {
 
-    resolution <- rast(res = 0.5)
+    resolution <- terra::rast(res = 0.5)
 
     x <- terra::aggregate(x, fact = 6, fun = "sum")
-    x <- (project(x, resolution))
-    x <- as.magpie(brick(x))
+    x <- (terra::project(x, resolution))
+    x <- as.magpie(raster::brick(x))
 
     return(x)
   }
@@ -37,7 +37,7 @@ readMehta2022 <- function() {
   out <- NULL
   for (file in files) {
 
-    aei <- rast(file)
+    aei <- terra::rast(file)
     aei <- .transformObject(x = aei)
 
     getItems(aei, dim = 2) <- gsub("G_AEI_", "y", getItems(aei, dim = 3))
@@ -54,8 +54,8 @@ readMehta2022 <- function() {
   # rename cells
   map           <- toolGetMappingCoord2Country()
   out           <- out[map$coords, , ]
-  getCells(out) <- paste(map$iso, map$coords, sep = ".")
-  getSets(out)  <- c("iso", "x", "y", "year", "data")
+  getCells(out) <- paste(map$coords, map$iso, sep = ".")
+  getSets(out)  <- c("x", "y", "iso", "year", "data")
 
   # transform units to Mha
   out <- out * 1e-06

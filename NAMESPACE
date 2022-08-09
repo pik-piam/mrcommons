@@ -2,6 +2,7 @@
 
 export(calc1stBioenergyPast)
 export(calcAdjustGrassi2021)
+export(calcAreaEquippedForIrrigation)
 export(calcBodyHeight)
 export(calcConstructionWoodDemand)
 export(calcDemography)
