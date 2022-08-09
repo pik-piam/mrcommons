@@ -21,7 +21,7 @@ convertIEA <- function(x, subtype) {
     x <- x[c("KOS"), , , invert = TRUE]
 
     # convert electricity outputs (unit conversion between ktoe and GWh)
-    x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAI)NC", "ELAUTOC")] * 0.0859845
+    x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] * 0.0859845
 
     # calculate weight to be used for regional disaggregations
     wp <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FALSE)[, 2010, "pop_SSP2"]
