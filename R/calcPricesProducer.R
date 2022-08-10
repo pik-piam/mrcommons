@@ -2,8 +2,6 @@
 #' @description producer prices for agricultural products. 05USDppp/tDM
 #'
 #'
-#'
-#'
 #' @param products either "kcr" or "kcl"
 #' @param calculation type of calculation "FAO" (directly reads the data), "VoP"
 #' calculates as VoP/Production, only "FAO" available for "kli" products.
@@ -20,23 +18,19 @@
 #'
 calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
 
-  ## Conversion of current USD MER to 05USDppp
-  gdpPPP <- calcOutput("GDP", aggregate = FALSE, FiveYearSteps = FALSE)[, , "gdp_SSP2"]
-  gdpMER <- readSource("WDI", "NY.GDP.MKTP.CD")
-  years <- intersect(getYears(gdpPPP), getYears(gdpMER))
-  gdpConMER <- setYears(gdpMER[, 2005, ] / gdpMER[, years, ], years)
-  gdp <- setNames(gdpConMER * setYears(gdpPPP[, 2005, ] / gdpMER[, 2005, ], NULL), NULL)
+
   # Read Prices producer with FAO format
 
   if (products == "kcr") {
   if (calculation == "FAO") {
 
     # items for aggregation
-    pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USD per ton
-    years <- intersect(getYears(pricesProdFAO), getYears(gdp))
-    pricesProdFAO <- pricesProdFAO[, years, ] * gdp[, years, ] # USD per ton
-    pricesProdFAO [!is.finite(pricesProdFAO)] <- 0
-
+    pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USDMER per ton wet matter
+    #convert to PPP
+    pricesProdFAO <- convertGDP(pricesProdFAO, unit_in = "constant 2005 US$MER",
+                           unit_out = "constant 2005 Int$PPP",
+                           replace_NAs = "no_conversion")
+    
     getNames(pricesProdFAO)[getNames(pricesProdFAO) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
     mappingFAO <- toolGetMapping("FAO2LUH2MAG_croptypes.csv", type = "sectoral", where = "mrcommons")
     itemsIntersect <- intersect(getNames(pricesProdFAO), unique(mappingFAO$ProductionItem))
@@ -57,6 +51,11 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
     # Fill with maiz' value the missing crops (betr,begr,foddr)
     pricesProdFAOkcr <- add_columns(pricesProdFAOkcr, addnm = missing, dim = 3.1)
     pricesProdFAOkcr[, , missing] <- pricesProdFAOkcr[, , "maiz"]
+
+    #convert from wet matter to dry matter
+    attributes <- collapseNames(calcOutput("Attributes", aggregate = F)[,,"wm"])
+    citems <- intersect(getItems(pricesProdFAOkcr, dim = 3), getItems(attributes, dim = 3))
+    pricesProdFAOkcr <- pricesProdFAOkcr[,,citems] * attributes[,,citems]
 
     # output
     x <- pricesProdFAOkcr
@@ -100,23 +99,31 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP") {
   } else if (products == "kli") {
 
     if (calculation == "FAO") {
+    
+    #convert to PPP
+    pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USD per ton
+    pricesProdFAO <- convertGDP(pricesProdFAO, unit_in = "constant 2005 US$MER",
+                           unit_out = "constant 2005 Int$PPP",
+                           replace_NAs = "no_conversion")
+    #get mapping
+    mappingFAO <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder") # Reads mapping
+    itemsIntersect <- intersect(getNames(pricesProdFAO), unique(mappingFAO$ProductionItem))
 
-      pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USD per ton
-      years <- intersect(getYears(pricesProdFAO), getYears(gdp))
-      pricesProdFAO <- pricesProdFAO[, years, ] * gdp[, years, ] # 05USDppp per ton
-      pricesProdFAO [!is.finite(pricesProdFAO)] <- 0
-      mappingFAO <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder") # Reads mapping
-      itemsIntersect <- intersect(getNames(pricesProdFAO), unique(mappingFAO$ProductionItem))
-
-      weightProd <- collapseNames(readSource("FAO", "LivePrim")[, , "production"]) # Prod. of livestock primary prod
+    weightProd <- collapseNames(readSource("FAO", "LivePrim")[, , "production"]) # Prod. of livestock primary prod
       # subseting of items
-      names <- intersect(getNames(weightProd), getNames(pricesProdFAO[, , itemsIntersect]))
-      years <- intersect(getYears(weightProd), getYears(pricesProdFAO[, , itemsIntersect]))
-      mappingFAO <- mappingFAO[mappingFAO$ProductionItem %in% names, ]
+    names <- intersect(getNames(weightProd), getNames(pricesProdFAO[, , itemsIntersect]))
+    years <- intersect(getYears(weightProd), getYears(pricesProdFAO[, , itemsIntersect]))
+    mappingFAO <- mappingFAO[mappingFAO$ProductionItem %in% names, ]
 
       # Aggregation to magpie objects
-      pricesProdFAOkli <- toolAggregate(pricesProdFAO[, years, names], rel = mappingFAO, from = "ProductionItem",
+    pricesProdFAOkli <- toolAggregate(pricesProdFAO[, years, names], rel = mappingFAO, from = "ProductionItem",
                                            to = "k", weight = weightProd[, years, names], dim = 3, wdim = 3)
+
+   #convert from wet matter to dry matter
+    attributes <- collapseNames(calcOutput("Attributes", aggregate = F)[,,"wm"])
+    citems <- intersect(getItems(pricesProdFAOkli, dim = 3), getItems(attributes, dim = 3))
+    pricesProdFAOkli <- pricesProdFAOkli[,,citems] * attributes[,,citems]
+
 
       # weight setup
       weight <- collapseNames(calcOutput("Production", products = "kli", aggregate = FALSE, attributes = "dm"))
