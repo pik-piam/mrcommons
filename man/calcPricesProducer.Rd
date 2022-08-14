@@ -4,13 +4,19 @@
 \alias{calcPricesProducer}
 \title{calcPricesProducer}
 \usage{
-calcPricesProducer(products = "kcr", calculation = "VoP")
+calcPricesProducer(
+  products = "kcr",
+  calculation = "VoP",
+  weighting = "production"
+)
 }
 \arguments{
 \item{products}{either "kcr" or "kcl"}
 
 \item{calculation}{type of calculation "FAO" (directly reads the data), "VoP"
 calculates as VoP/Production, only "FAO" available for "kli" products.}
+
+\item{weighting}{either "production" (default) or "consumption" based weighting}
 }
 \value{
 magpie object. prices in year specific annual
