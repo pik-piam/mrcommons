@@ -80,7 +80,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
       } else if (weighting == "consumption") {
                 kcr <- findset("kcr")
       weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance", aggregate = FALSE)[,,"dm"][,,c("food", "flour1")],
-                         dim = 3.2))[,,"kcr"]
+                         dim = 3.2))[,,kcr]
     } else {stop ("invalid type")}
 
     # years and names subseting
