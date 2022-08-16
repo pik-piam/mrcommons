@@ -1,5 +1,5 @@
 #' @title calcPricesProducer
-#' @description producer prices for agricultural products. 05USDppp/tDM
+#' @description producer prices for agricultural products. 05USDMER/tDM prices from FAO, no currency conversion
 #'
 #'
 #' @param products either "kcr" or "kcl"
@@ -23,13 +23,9 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
 
   if (products == "kcr") {
   if (calculation == "FAO") {
-
     # items for aggregation
     pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USDMER per ton wet matter
-    #convert to PPP
-    pricesProdFAO <- convertGDP(pricesProdFAO, unit_in = "constant 2005 US$MER",
-                           unit_out = "constant 2005 Int$PPP",
-                           replace_NAs = "no_conversion")
+
     
     getNames(pricesProdFAO)[getNames(pricesProdFAO) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
    
@@ -94,9 +90,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
 
     # Value of production (USD05MER -> USD05PPP)
     vop <- calcOutput("VoPcrops", aggregate = FALSE)
-    vop <- convertGDP(vop, unit_in = "constant 2005 US$MER",
-                           unit_out = "constant 2005 Int$PPP",
-                           replace_NAs = "no_conversion")
+ 
     production <- collapseNames(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
 
     years <- intersect(getYears(production), getYears(vop))
@@ -124,9 +118,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
     
     #convert to PPP
     pricesProdFAO <- readSource("FAO_online", "PricesProducerAnnual") # USD per ton
-    pricesProdFAO <- convertGDP(pricesProdFAO, unit_in = "constant 2005 US$MER",
-                           unit_out = "constant 2005 Int$PPP",
-                           replace_NAs = "no_conversion")
+   
     #get mapping
     mappingFAO <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder") # Reads mapping
    
@@ -185,7 +177,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
     }
   }
 
-  units <- "05USDppp/tDM"
+  units <- "05USDMER/tDM"
 
   return(list(x = x,
               weight = weight,

@@ -22,7 +22,7 @@ calculates as VoP/Production, only "FAO" available for "kli" products.}
 magpie object. prices in year specific annual
 }
 \description{
-producer prices for agricultural products. 05USDppp/tDM
+producer prices for agricultural products. 05USDMER/tDM prices from FAO, no currency conversion
 }
 \examples{
 \dontrun{
