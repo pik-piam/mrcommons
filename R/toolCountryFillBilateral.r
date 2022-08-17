@@ -11,6 +11,6 @@ toolCountryFillBilateral <- function(x, fill = NA) {
   full <- expand.grid(countrylist, countrylist)
   full <- paste0(as.character(full[[1]]), ".", as.character(full[[2]]))
   missing <- setdiff(full, getItems(x, dim = 1))
-  return(mbind(x, new.magpie(cells_and_regions = missing, years = getYears(x), fill = fill)))
+  return(mbind(x, new.magpie(cells_and_regions = missing, years = getYears(x), names = getNames(x), fill = fill)))
 }
 
