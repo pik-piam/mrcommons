@@ -23,4 +23,6 @@ mag <- add_dimension(mag, dim = 3.2, add = "irr", nm = irr)
 
 x <- mbind(x, mag)}}
 
+x <- toolCoord2Isocell(x)
+
 return(x)    }
