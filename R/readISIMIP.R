@@ -49,8 +49,10 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
 
   if (grepl("yield", subtype)){
     files <- Sys.glob("*.nc")
-    r <- stack(files)
+    if(length(file) < 1) stop("Not able to identify input file!")
+    r <- suppressWarnings(stack(files))
 
+#raster renaming
     names(r) <- sub("^(.*)\\.(.*)$","\\2..\\1",names(r))
     names(r) <- gsub("X", "y", names(r))
     names(r) <- gsub("yield\\.", "", names(r))
@@ -68,6 +70,7 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     } else { offset <- 2014 }
 
     x <- as.magpie(r)
+
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer=TRUE) + offset
 
