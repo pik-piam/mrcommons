@@ -23,6 +23,25 @@ mag <- add_dimension(mag, dim = 3.2, add = "irr", nm = irr)
 
 x <- mbind(x, mag)}}
 
+#wheat 
+wheatMasks <- rast("winter_and_spring_wheat_areas_phase3.nc4")
+swh <- subset(wheatMasks, "swh_mask")
+wwh <- subset(wheatMasks, "wwh_mask")
+
+swh <- as.magpie(raster(swh))
+wwh <- as.magpie(raster(wwh))
+
+wheat <- mbind(swh, wwh)
+getNames(wheat) <- gsub("_mask", "", getNames(wheat))
+wheat <- add_dimension(wheat, dim = 3.2, add = "irr", nm = c("ir", "rf"))
+#fill missing cells in wheat
+  missing_cells <- setdiff(getItems(x, dim = 1), getItems(wheat, dim=1))
+  fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(wheat), names=getNames(wheat),  fill=0)
+  wheat <- mbind(wheat, fill)
+
+  x <- mbind(x, wheat)
+
+
 x <- toolCoord2Isocell(x)
 
 return(x)    }
