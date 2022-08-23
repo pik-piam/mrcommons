@@ -10,7 +10,8 @@ calcFAOYield(
   irrigation = FALSE,
   cellular = FALSE,
   cut = FALSE,
-  average = 5
+  average = 5,
+  areaSource = "FAO"
 )
 }
 \arguments{
@@ -22,9 +23,12 @@ calcFAOYield(
 
 \item{cellular}{if TRUE value is calculate on cellular level}
 
-\item{cut}{FALSE (default) - do not cut off yields, number between 0 and 1 to define percentile value for cut off}
+\item{cut}{FALSE (default) - do not cut off yields,
+number between 0 and 1 to define percentile value for cut off}
 
 \item{average}{averaging period in years (if NULL no averaging is used)}
+
+\item{areaSource}{data source for croparea used in calculation: FAO or Toolbox}
 }
 \value{
 MAgPIE object of yields
@@ -33,5 +37,5 @@ MAgPIE object of yields
 calculates the yield based on FAO data
 }
 \author{
-Debbora Leip, Jan Philipp Dietrich
+Debbora Leip, Jan Philipp Dietrich, Kristine Karstens, Felicitas Beier
 }

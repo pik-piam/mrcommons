@@ -2,15 +2,11 @@
 % Please edit documentation in R/downloadGGCMIHarvestAreaMask.r
 \name{downloadGGCMIHarvestAreaMask}
 \alias{downloadGGCMIHarvestAreaMask}
-\title{downloadGGCMIHarvestArea
-Download ISIMIP GGCMI harvested area mask information for rice 1 and rice 2, as well as spring/winter wheat
-
-Downloads harvested area}
+\title{downloadGGCMIHarvestArea}
 \usage{
 downloadGGCMIHarvestAreaMask()
 }
 \description{
-downloadGGCMIHarvestArea
 Download ISIMIP GGCMI harvested area mask information for rice 1 and rice 2, as well as spring/winter wheat
 
 Downloads harvested area
