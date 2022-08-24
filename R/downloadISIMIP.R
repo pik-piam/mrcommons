@@ -41,7 +41,7 @@ downloadISIMIP <- function(subtype) {
       err <- try(suppressWarnings(download.file(paste0(storage,path),
                                                 destfile = basename(path), mode = "wb",
                                                 quiet = FALSE)), silent = TRUE)
-      if(class(err)=="try-error") stop("Data for requested subtype \"",subtype,"\" could not be found!")
+      if(inherits(err, "try-error")) stop("Data for requested subtype \"",subtype,"\" could not be found!")
     }
     .getMetadata <- function(dataset, version) {
       out <- list(doi = NULL, version = NULL, title = NULL, description = NULL)

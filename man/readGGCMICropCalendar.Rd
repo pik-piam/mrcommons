@@ -4,18 +4,21 @@
 \alias{readGGCMICropCalendar}
 \title{readGGCMICropCalendar}
 \usage{
-readGGCMICropCalendar(subtype)
+readGGCMICropCalendar(subtype = "fraction_of_harvested_area")
 }
 \arguments{
-\item{subtype}{"cal" for the basic calendar "wheat_areas" for swh and wwh growing areas, "rice_areas" for}
+\item{subtype}{variable or vector of variables to read from the crop calendar set. Options:
+("planting_day","maturity_day","fraction_of_harvested_area","cal" (which is a combination of planting_day,
+maturity_day and harvest_day)), wheat areas and rice_areas}
 }
 \value{
-A MAgPIE object, day of the year
+MAgPIE object with the requested data
 }
 \description{
-Reads in planting, maturity, and harvest date based on GGCMI hybrid product of crop calendars.
-Note that 0 means crop is not harvested in a given grid cell.
+Reads in GGCMI fraction of Harvested Area masks for rice 1 and rice 2
+(other crops available too, see path in download function), or other variables available in
+the GGCMI crop calendar.
 }
 \author{
-David Chen
+David M Chen, Edna Molina Bacca
 }
