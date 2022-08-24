@@ -29,15 +29,6 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     selectyears <- paste0("y", selectyears)
   }
 
-  if (!cellular) {
-    cropArea <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
-                           irrigation = irrigation, selectyears = selectyears,
-                           cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-    cropArea <- dimSums(cropArea, dim = c("x", "y"))
-    cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
-                                       conditions = "is.na()", replaceby = 0)
-  }
-
   harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
   nonCrops      <- c("pasture")
   harvestedArea <- harvestedArea[, , nonCrops, invert = TRUE]
@@ -134,6 +125,16 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     cropArea <- cropArea[, selectyears, ]
   } else {
     stop("The selected years are not supported (0nly 1950 - 2017).")
+  }
+
+  # Aggregation to iso-level
+  if (!cellular) {
+    cropArea <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
+                           irrigation = irrigation, selectyears = selectyears,
+                           cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+    cropArea <- dimSums(cropArea, dim = c("x", "y"))
+    cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
+                                       conditions = "is.na()", replaceby = 0)
   }
 
   return(list(x = cropArea,
