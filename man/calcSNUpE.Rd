@@ -4,7 +4,7 @@
 \alias{calcSNUpE}
 \title{calcSNUpE}
 \usage{
-calcSNUpE(max_snupe = 0.85, cellular = FALSE, rev = 0.1)
+calcSNUpE(max_snupe = 0.85, cellular = FALSE, rev = 0.1, maccbase = TRUE)
 }
 \arguments{
 \item{max_snupe}{Maximum realistic SNUPE. All values above will be limited to this value. Only holds for past values; future scneario values can exceed this number.}
@@ -12,6 +12,8 @@ calcSNUpE(max_snupe = 0.85, cellular = FALSE, rev = 0.1)
 \item{cellular}{disaggregated to 0.5 degree grid}
 
 \item{rev}{revision number of madrat run}
+
+\item{maccbase}{whether future scenarios should be expressed as base efficiency, excluding additional macc improvemetns (new default)}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -21,7 +23,7 @@ calculates the soil nitrogen uptake efficiency. This is the nitrogen taken up fr
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("SNUpE")
 }
 

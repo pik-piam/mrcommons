@@ -1,23 +1,40 @@
 #' @title calcFAOYield
 #'
 #' @description calculates the yield based on FAO data
-#' @param physical physical area or havested area
+#' @param physical   physical area or havested area
 #' @param attributes in dm, wm, ge, nr, p, k
-#' @param cellular if TRUE value is calculate on cellular level
+#' @param cellular   if TRUE value is calculate on cellular level
+#' @param areaSource data source for croparea used in calculation: FAO or Toolbox
 #' @param irrigation distinguish irrigation or not
-#' @param cut FALSE (default) - do not cut off yields, number between 0 and 1 to define percentile value for cut off
-#' @param average averaging period in years (if NULL no averaging is used)
+#' @param cut        FALSE (default) - do not cut off yields,
+#'                   number between 0 and 1 to define percentile value for cut off
+#' @param average    averaging period in years (if NULL no averaging is used)
 #' @return MAgPIE object of yields
-#' @author Debbora Leip, Jan Philipp Dietrich
+#' @author Debbora Leip, Jan Philipp Dietrich, Kristine Karstens, Felicitas Beier
 #' @importFrom stats quantile
 
 calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
-                         cellular = FALSE, cut = FALSE, average = 5) {
+                         cellular = FALSE, cut = FALSE, average = 5, areaSource = "FAO") {
 
-  area       <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                           irrigation = irrigation, aggregate = FALSE, cellular = cellular)
   production <- calcOutput("Production", aggregate = FALSE, attributes = attributes,
                            irrigation = irrigation, cellular = cellular, products = "kcr")
+  selectyears <- getItems(production, dim = "year")
+
+  if (areaSource == "FAO") {
+
+    area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
+                        irrigation = irrigation, aggregate = FALSE, cellular = cellular)
+
+  } else if (areaSource == "Toolbox") {
+
+    area <- calcOutput("CropareaToolbox", sectoral = "kcr", physical = physical,
+                        irrigation = irrigation, selectyears = selectyears,
+                        cellular = cellular, cells = "lpjcell", aggregate = FALSE)
+  } else {
+    stop("Please specify which area should be used for calculation.
+         Note: Toolbox should be FAO-consistent.")
+  }
+
   faoyears   <- intersect(getYears(production), getYears(area))
 
   yield      <- collapseNames(production[, faoyears, ]) / area[, faoyears, ]
@@ -27,9 +44,9 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
   if (cut != FALSE) {
     for (k in getNames(yield)) {
       # define cut off, depending on 'cut' value ('cut'-percentile)
-      cut_k <- quantile(yield[, , k], cut, na.rm = TRUE)
+      cutK <- quantile(yield[, , k], cut, na.rm = TRUE)
       # set all values above the threshold to cut off value
-      yield[, , k][yield[, , k] > cut_k] <- cut_k
+      yield[, , k][yield[, , k] > cutK] <- cutK
     }
   }
 
@@ -50,8 +67,8 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
   yield[na] <- low[na]
 
   if (!is.null(average)) {
-    area      <- toolTimeAverage(area, average)
-    yield     <- toolTimeAverage(yield, average)
+    area    <- toolTimeAverage(area, average)
+    yield   <- toolTimeAverage(yield, average)
   }
 
   years <- findset("past")

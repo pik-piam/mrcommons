@@ -20,7 +20,7 @@
 #' \dontrun{
 #'  readSource("ISIMIP", convert=TRUE)
 #' }
-#' 
+#'
 #' @importFrom magclass getCoords
 #' @importFrom raster brick subset stack
 
@@ -28,29 +28,53 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
 
   if  (grepl("airww",subtype)) {
 
-  .timevector <- function(start,end) {
-    years      <- paste0("y",c(start:end))
-    months    <- c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec")
-    return(paste0(rep(years,each=12),".",months))
-  }
+    .timevector <- function(start,end) {
+      years      <- paste0("y",c(start:end))
+      months    <- c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec")
+      return(paste0(rep(years,each=12),".",months))
+    }
 
-  file <- Sys.glob("*.nc4")
-  if(length(file)!=1) stop("Not able to identify input file!")
-  years <- tail(strsplit(sub("\\..*$","",file),split="_")[[1]],2)
+    file <- Sys.glob("*.nc4")
+    if(length(file)!=1) stop("Not able to identify input file!")
+    years <- tail(strsplit(sub("\\..*$","",file),split="_")[[1]],2)
 
-  r        <- brick(file)
-  names(r) <- .timevector(years[1],years[2])
-  r        <- subset(r,.timevector(max(years[1],1961),years[2]))
+    r        <- brick(file)
+    names(r) <- .timevector(years[1],years[2])
+    r        <- subset(r,.timevector(max(years[1],1961),years[2]))
 
-  x <- as.magpie(r, temporal=1)
-  getSets(x,fulldim = FALSE)[2] <- "year.month"
+    x <- as.magpie(r, temporal=1)
+    getSets(x,fulldim = FALSE)[2] <- "year.month"
   }
 
 
   if (grepl("yield", subtype)){
     files <- Sys.glob("*.nc")
-    r <- stack(files)
+    if(length(file) < 1) stop("Not able to identify input file!")
 
+    if(grepl("LDNDC", subtype, fixed = TRUE)){
+      r<-NULL
+      layers<-c("soy-noirr","soy-firr","wwh-noirr","wwh-firr","swh-noirr","swh-firr",
+                "ri2-noirr","ri2-firr","ri1-noirr","ri1-firr","mai-noirr","mai-firr")
+      for(f in files){
+        for(la in layers){
+
+          if(grepl(la, f, fixed = TRUE)){
+            r_aux<- suppressWarnings(stack(f))
+            names(r_aux)<- if(grepl("historical", subtype)) paste0("yield",".",la,".",1:165) else paste0("yield",".",la,".",1:86)
+
+            r<- if(is.null(r)) r_aux else stack(r,r_aux)
+            r_aux<-NULL
+          }
+        }
+      }
+    }else{
+      r <- suppressWarnings(stack(files))
+    }
+
+
+
+
+    #raster renaming
     names(r) <- sub("^(.*)\\.(.*)$","\\2..\\1",names(r))
     names(r) <- gsub("X", "y", names(r))
     names(r) <- gsub("yield\\.", "", names(r))
@@ -68,14 +92,15 @@ readISIMIP <- function(subtype="airww:LPJmL:gfdl-esm2m:2b"){
     } else { offset <- 2014 }
 
     x <- as.magpie(r)
+
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer=TRUE) + offset
 
-#fill missing cells with 0
-  map <- toolGetMappingCoord2Country()
-  missing_cells <- setdiff(map$coords, getItems(x, dim=1))
-  fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(x), names=getNames(x),  fill=0)
-  x <- mbind(x, fill)
+    #fill missing cells with 0
+    map <- toolGetMappingCoord2Country()
+    missing_cells <- setdiff(map$coords, getItems(x, dim=1))
+    fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(x), names=getNames(x),  fill=0)
+    x <- mbind(x, fill)
   }
 
   return(x)

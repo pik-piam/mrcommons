@@ -2,8 +2,8 @@
 % Please edit documentation in R/correctLPJmLInputs.R
 \name{correctLPJmLInputs}
 \alias{correctLPJmLInputs}
-\title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  correctLPJmLInputs
-}\if{html}{\out{</div>}}}
+\title{\preformatted{  correctLPJmLInputs
+}}
 \usage{
 correctLPJmLInputs(x)
 }

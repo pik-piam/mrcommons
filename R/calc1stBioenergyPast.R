@@ -20,6 +20,9 @@ calc1stBioenergyPast <- function() {
   # Unit conversion from ktoe to PJ
   df <- df[, , c("biogas", "ethanol", "oils", "woodfuel")] * 0.041868
 
+  # not yet implemented, but could be used to derive biogas yields:
+  # https://www.ieabioenergy.com/wp-content/uploads/2011/10/Update_Energy_crop_2011.pdf
+
   return(list(x = df,
               weight = NULL,
               unit = "PJ",

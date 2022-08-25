@@ -1,21 +1,22 @@
 #' @title calcNuePasture
 #' @description calculates the soil nitrogen uptake efficiency of pastures. This is the nitrogen taken up from the soil (N in crop biomass minus biological fixation minus seed N) divided by the soil N inputs (fertilizer, manure etc). For the future, NUE scenarios are added.
 #' @param cellular cellular disaggreagation or national values
+#' @param maccbase whether future scenarios should be expressed as base efficiency, excluding additional macc improvemetns (new default)
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
 #' [calcSNUpE()]
 #' [calcNitrogenBudgetPasture()]
 #' @examples
-#' 
-#' \dontrun{ 
+#'
+#' \dontrun{
 #' calcOutput("NuePasture")
 #' }
-#' 
+#'
 
 
 
-calcNuePasture<-function(cellular=FALSE){
+calcNuePasture<-function(cellular=FALSE,maccbase=TRUE){
   a<-calcOutput("NitrogenBudgetPasture",aggregate = F,cellular=cellular,deposition="Nsurplus2")
   outputs<-c(
     "harvest")
@@ -26,13 +27,13 @@ calcNuePasture<-function(cellular=FALSE){
   outputs<-dimSums(a[,,outputs],dim=3.1)
   inputs<-dimSums(a[,,inputs],dim=3.1)
   NUE<-outputs/inputs
-  
+
   #future
   zhang <- readSource("Zhang2015")
-  data<-toolNUEscenarios(x=NUE,weight=inputs,zhang=zhang)
+  data<-toolNUEscenarios(x=NUE,weight=inputs,zhang=zhang,maccbase=maccbase)
   weight=data$weight
   out=data$x
-  
+
   return(list(
     x=out,
     weight=weight,

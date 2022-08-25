@@ -3,20 +3,21 @@
 #' @param max_snupe Maximum realistic SNUPE. All values above will be limited to this value. Only holds for past values; future scneario values can exceed this number.
 #' @param cellular disaggregated to 0.5 degree grid
 #' @param rev revision number of madrat run
+#' @param maccbase whether future scenarios should be expressed as base efficiency, excluding additional macc improvemetns (new default)
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
 #' [calcNitrogenBudgetCropland()]
 #' @examples
-#' 
-#' \dontrun{ 
+#'
+#' \dontrun{
 #' calcOutput("SNUpE")
 #' }
-#' 
+#'
 
 
 
-calcSNUpE<-function(max_snupe=0.85,cellular=FALSE,rev=0.1){
+calcSNUpE<-function(max_snupe=0.85, cellular=FALSE, rev=0.1, maccbase=TRUE){
 
   a<-calcOutput("NitrogenBudgetCropland",max_snupe=max_snupe,aggregate = F,deposition="Nsurplus2",cellular=cellular)
 
@@ -40,13 +41,13 @@ calcSNUpE<-function(max_snupe=0.85,cellular=FALSE,rev=0.1){
   SNUpE[is.infinite(SNUpE)]=0
   SNUpE[SNUpE<0]=0
   #future
-  
+
   zhang <- readSource("Zhang2015")
-  data<-toolNUEscenarios(x=SNUpE,weight=inputs, rev=rev, zhang=zhang)
-  
+  data<-toolNUEscenarios(x=SNUpE,weight=inputs, rev=rev, zhang=zhang, maccbase=maccbase)
+
   weight=data$weight
   out=data$x
-  
+
   return(list(
     x=out,
     weight=weight,
