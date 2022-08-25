@@ -4,10 +4,12 @@
 \alias{calcNuePasture}
 \title{calcNuePasture}
 \usage{
-calcNuePasture(cellular = FALSE)
+calcNuePasture(cellular = FALSE, maccbase = TRUE)
 }
 \arguments{
 \item{cellular}{cellular disaggreagation or national values}
+
+\item{maccbase}{whether future scenarios should be expressed as base efficiency, excluding additional macc improvemetns (new default)}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -17,7 +19,7 @@ calculates the soil nitrogen uptake efficiency of pastures. This is the nitrogen
 }
 \examples{
 
-\dontrun{ 
+\dontrun{
 calcOutput("NuePasture")
 }
 
