@@ -2,8 +2,8 @@
 % Please edit documentation in R/toolCoord2Isocell.R
 \name{toolCoord2Isocell}
 \alias{toolCoord2Isocell}
-\title{\preformatted{  toolCoord2Isocell
-}}
+\title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  toolCoord2Isocell
+}\if{html}{\out{</div>}}}
 \usage{
 toolCoord2Isocell(
   x,

@@ -26,9 +26,10 @@ readMehta2022 <- function() {
 
     resolution <- terra::rast(res = 0.5)
 
-    x <- terra::aggregate(x, fact = 6, fun = "sum")
+    x <- suppressWarnings(terra::aggregate(x, fact = 6, fun = "sum"))
     x <- suppressWarnings(terra::project(x, resolution))
-    x <- as.magpie(raster::brick(x))
+    x <- suppressWarnings(raster::brick(x))
+    x <- as.magpie(x)
 
     return(x)
   }
