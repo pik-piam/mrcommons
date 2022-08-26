@@ -13,7 +13,8 @@ model ("cwatm","h08","lpjml","matsiro","mpi-hm","pcr-globwb"),
 GCM ("ipsl-cm5a-lr","gfdl-esm2m","miroc5","hadgem2-es")
 and database version ("2a","2b","3a","3b"), separated by ":"
 (e.g. "airww:LPJmL:gfdl-esm2m:2b")
-#' Similaryly for ISIMIP GGCMI phase3b data,  with scenarios and CO2 fert setting, downloads for all crops and irrigation settings
+Similaryly for ISIMIP GGCMI phase3b data,  with scenarios and CO2 fert setting,
+downloads for all crops and irrigation settings
 models ("LPJmL", "EPIC-IIASA", "pDSSAT", "CYGMA1p74"),
 gcms ("gfdl-esm4", "ipsl-cm6a-lr", "mpi-esm1-2-hr", "mri-esm2-0", "ukesm1-0-ll"),
 scenarios  ("historical", "ssp126", "ssp370", "ssp585"),
@@ -32,7 +33,7 @@ Values for years before 1961 will be ignored to reduce overall object size
 }
 \examples{
 \dontrun{
- readSource("ISIMIP", convert=TRUE)
+readSource("ISIMIP", convert = TRUE)
 }
 
 }
