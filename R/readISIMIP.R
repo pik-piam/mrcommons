@@ -22,7 +22,7 @@
 #' readSource("ISIMIP", convert = TRUE)
 #' }
 #'
-#' @importFrom magclass getCoords
+#' @importFrom magclass getCoords time_interpolate
 #' @importFrom raster brick subset stack
 
 readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
@@ -87,7 +87,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
 
     # subset to year 1961 (1849+112) for faster processing
     if (grepl("historical", subtype)) {
-      r <- subset(r, which(as.numeric(gsub("\\D+", "", names(r))) > 111))
+      r <- subset(r, which(as.numeric(gsub("\\D+", "", names(r))) > 110))
       offset <- 1849
     } else {
       offset <- 2014
@@ -104,6 +104,74 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     fill <- new.magpie(cells_and_regions = missingCells, years = getYears(x),
                        names = getNames(x), fill = 0)
     x    <- mbind(x, fill)
+
+    x <- toolCoord2Isocell(x)
+
+    nameClean <- function(x, subtype, order = FALSE) {
+
+      if ((grepl("pDSSAT", subtype) | grepl("LPJmL", subtype)) & order == TRUE) {
+        x <- collapseNames(x)
+        x <- dimOrder(x = x, perm = c(2, 1))
+      } else {
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   |
+                               getNames(x, dim = 1) == "maize" |
+                               getNames(x, dim = 1) == "Maize"] <- "maiz"
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "soy" |
+                               getNames(x, dim = 1) == "Soybean"] <- "soybean"
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri1" |
+                               getNames(x, dim = 1) == "riceA"] <- "ricea"
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri2" |
+                               getNames(x, dim = 1) == "riceB"] <- "riceb"
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "swh" |
+                               getNames(x, dim = 1) == "Springwheat"] <- "springwheat"
+
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "wwh" |
+                               getNames(x, dim = 1) == "Winterwheat"] <- "winterwheat"
+
+        getNames(x, dim = 2)[getNames(x, dim = 2) == "fullyirrigated" |
+                               getNames(x, dim = 2) == "firr" |
+                               getNames(x, dim = 2) == "ir"] <- "irrigated"
+
+        getNames(x, dim = 2)[getNames(x, dim = 2) == "noirrigation" |
+                               getNames(x, dim = 2) == "noirr" |
+                               getNames(x, dim = 2) == "rf"] <- "rainfed"
+
+      }
+
+      return(x)
+    }
+
+    x <- nameClean(x, subtype, order = TRUE)
+
+    # Harvest year correction. If maturity day<planting date values correspond to y+1
+    plantDay <- collapseNames(readSource("GGCMICropCalendar",
+                                         subtype = "planting_day")[, , c("ri1", "ri2", "wwh",
+                                                                         "swh", "soy", "mai")][, , c("rf", "ir")])
+    maturityDay <- collapseNames(readSource("GGCMICropCalendar",
+                                            subtype = "maturity_day")[, , c("ri1", "ri2", "wwh",
+                                                                            "swh", "soy", "mai")][, , c("rf", "ir")])
+
+    diff <- maturityDay - plantDay
+    diff <- nameClean(diff, subtype, order = FALSE)
+    xCorrected <- x
+
+    for (n in getNames(x)) {
+      cellsCorr <- where(diff[, , n] < 0)$true$regions
+      xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(x[cellsCorr, 1:(length(getYears(x)) - 1), n],
+                                                                  getYears(xCorrected[cellsCorr,
+                                                                                      2:length(getYears(x)), n]))
+      xCorrected[cellsCorr, 1, n] <-NA
+      xCorrected[cellsCorr, 1, n] <- time_interpolate(xCorrected[cellsCorr,2:length(getYears(x)),n],"y2015",FALSE,"lineal")
+    }
+
+    x <- xCorrected
+
+
   }
 
   return(x)

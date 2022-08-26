@@ -11,12 +11,12 @@
 #' @importFrom raster raster
 #' @importFrom terra rast subset
 #'
-readGGCMICropCalendar <- function(subtype="fraction_of_harvested_area"){
+readGGCMICropCalendar <- function(subtype = "fraction_of_harvested_area") {
 
 x <- NULL
 
-    if(subtype %in% c("fraction_of_harvested_area","wheat_areas","rice_areas")){
-       for (crop in c("ri1", "ri2")){
+    if (subtype %in% c("fraction_of_harvested_area", "wheat_areas", "rice_areas")) {
+       for (crop in c("ri1", "ri2")) {
         for (irr in c("ir", "rf")) {
 
           mask <- rast(paste0(crop, "_", irr, "_ggcmi_crop_calendar_phase3_v1.01.nc4"))
@@ -25,9 +25,11 @@ x <- NULL
           getNames(mag) <- crop
           mag <- add_dimension(mag, dim = 3.2, add = "irr", nm = irr)
           mag <- add_dimension(mag, dim = 3.3, add = "var", nm = subtype)
-          x <- mbind(x, mag)}}
+          x <- mbind(x, mag)
+}
+}
 
-          #Wheat
+          # Wheat
           wheatMasks <- rast("winter_and_spring_wheat_areas_phase3.nc4")
           swh <- subset(wheatMasks, "swh_mask")
           wwh <- subset(wheatMasks, "wwh_mask")
@@ -37,28 +39,28 @@ x <- NULL
 
           wheat <- mbind(swh, wwh)
           getNames(wheat) <- gsub("_mask", "", getNames(wheat))
-
-          #fill missing cells in wheat
-            missing_cells <- setdiff(getItems(x, dim = 1), getItems(wheat, dim=1))
-            fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(wheat), names=getNames(wheat),  fill=0)
+          wheat <- add_dimension(wheat, dim = 3.2, add = "irr", nm = c("ir", "rf"))
+          # fill missing cells in wheat
+            missing_cells <- setdiff(getItems(x, dim = 1), getItems(wheat, dim = 1))
+            fill <- new.magpie(cells_and_regions = missing_cells, years = getYears(wheat), names = getNames(wheat),  fill = 0)
             wheat <- mbind(wheat, fill)
             wheat <- add_dimension(wheat, dim = 3.3, add = "var", nm = subtype)
             x <- mbind(x, wheat)
 
-         }else if(!(subtype %in% c("fraction_of_harvested_area","cal"))){
+         } else if (!(subtype %in% c("fraction_of_harvested_area", "cal"))) {
 
          for (crop in c("bar", "bea", "cas", "cot", "mai", "mil",
                       "nut", "pea", "pot", "rap", "ri1", "ri2", "rye",
-                      "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")){
-          for (irr in c("ir","rf")) {
+                      "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")) {
+          for (irr in c("ir", "rf")) {
           mask <- rast(paste0(crop, "_", irr, "_ggcmi_crop_calendar_phase3_v1.01.nc4"))
           mask <- subset(mask, subtype)
           mag <- as.magpie(raster(mask))
           getNames(mag) <- crop
-          missing_cells <- setdiff(getItems(x, dim = 1), getItems(mag, dim=1))
+          missing_cells <- setdiff(getItems(x, dim = 1), getItems(mag, dim = 1))
 
-            if(length(missing_cells)>0){
-            fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(mag), names=getNames(mag),  fill=NA)
+            if (length(missing_cells) > 0) {
+            fill <- new.magpie(cells_and_regions = missing_cells, years = getYears(mag), names = getNames(mag),  fill = NA)
             mag <- mbind(mag, fill)
             }
             mag <- add_dimension(mag, dim = 3.2, add = "irr", nm = irr)
@@ -66,21 +68,21 @@ x <- NULL
             x <- mbind(x, mag)
          }
          }
-         }else if(subtype=="cal"){
+         } else if (subtype == "cal") {
 
            for (crop in c("bar", "bea", "cas", "cot", "mai", "mil",
                           "nut", "pea", "pot", "rap", "ri1", "ri2", "rye",
-                          "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")){
-             for (irr in c("ir","rf")) {
-               for (subtype2 in c("planting_day", "maturity_day")){
+                          "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")) {
+             for (irr in c("ir", "rf")) {
+               for (subtype2 in c("planting_day", "maturity_day")) {
                mask <- rast(paste0(crop, "_", irr, "_ggcmi_crop_calendar_phase3_v1.01.nc4"))
                mask <- subset(mask, subtype2)
                mag <- as.magpie(raster(mask))
                getNames(mag) <- crop
-               missing_cells <- setdiff(getItems(x, dim = 1), getItems(mag, dim=1))
+               missing_cells <- setdiff(getItems(x, dim = 1), getItems(mag, dim = 1))
 
-               if(length(missing_cells)>0){
-                 fill <- new.magpie(cells_and_regions = missing_cells, years=getYears(mag), names=getNames(mag),  fill=NA)
+               if (length(missing_cells) > 0) {
+                 fill <- new.magpie(cells_and_regions = missing_cells, years = getYears(mag), names = getNames(mag),  fill = NA)
                  mag <- mbind(mag, fill)
                }
                mag <- add_dimension(mag, dim = 3.2, add = "irr", nm = irr)
@@ -105,6 +107,7 @@ x <- NULL
 
 
       x <- toolCoord2Isocell(x)
-      x <-if (subtype=="wheat_areas") collapseNames(x[,,c("wwh","swh")]) else if (subtype=="rice_areas") collapseNames(x[,,c("ri1","ri2")][,,"ir"]) else x
+      x <- if (subtype == "wheat_areas") collapseNames(x[, , c("wwh", "swh")]) else if (subtype == "rice_areas") collapseNames(x[, , c("ri1", "ri2")][, , "ir"]) else x
 
-return(x)    }
+return(x)
+    }
