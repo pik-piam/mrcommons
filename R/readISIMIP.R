@@ -105,8 +105,6 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
                        names = getNames(x), fill = 0)
     x    <- mbind(x, fill)
 
-    x <- toolCoord2Isocell(x)
-
     nameClean <- function(x, subtype, order = FALSE) {
 
       if ((grepl("pDSSAT", subtype) | grepl("LPJmL", subtype)) & order == TRUE) {
@@ -159,6 +157,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     diff <- maturityDay - plantDay
     diff <- nameClean(diff, subtype, order = FALSE)
     xCorrected <- x
+    xCorrected[is.na(x)]<-0
 
     for (n in getNames(x)) {
       cellsCorr <- where(diff[, , n] < 0)$true$regions
@@ -166,7 +165,6 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
                                                                   getYears(xCorrected[cellsCorr,
                                                                                       2:length(getYears(x)), n]))
       xCorrected[cellsCorr, 1, n] <-NA
-      xCorrected[cellsCorr, 1, n] <- time_interpolate(xCorrected[cellsCorr,2:length(getYears(x)),n],"y2015",FALSE,"lineal")
     }
 
     x <- xCorrected
