@@ -161,7 +161,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
 
     for (n in getNames(x)) {
       cellsCorr <- where(diff[, , n] < 0)$true$regions
-      xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(x[cellsCorr, 1:(length(getYears(x)) - 1), n],
+      xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(xCorrected[cellsCorr, 1:(length(getYears(x)) - 1), n],
                                                                   getYears(xCorrected[cellsCorr,
                                                                                       2:length(getYears(x)), n]))
       xCorrected[cellsCorr, 1, n] <-NA
