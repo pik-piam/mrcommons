@@ -110,7 +110,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
       if ((grepl("pDSSAT", subtype) | grepl("LPJmL", subtype)) & order == TRUE) {
         x <- collapseNames(x)
         x <- dimOrder(x = x, perm = c(2, 1))
-      } else {
+      }
 
         getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   |
                                getNames(x, dim = 1) == "maize" |
@@ -139,7 +139,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
                                getNames(x, dim = 2) == "noirr" |
                                getNames(x, dim = 2) == "rf"] <- "rainfed"
 
-      }
+
 
       return(x)
     }
