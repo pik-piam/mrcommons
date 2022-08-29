@@ -30,7 +30,7 @@ downloadMehta2022 <- function() {
 
       withr::with_options(list(timeout = NULL),
                           code = try(download.file(paste0(aeiURL, "/files/", file),
-                                                   destfile = file)))
+                                                   destfile = file, mode = "wb")))
 
       count <- count + 1
       if (file.exists(file) || count >= maxcount) {
