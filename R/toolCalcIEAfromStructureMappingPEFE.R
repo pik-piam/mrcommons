@@ -27,20 +27,11 @@ toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype 
   }
 
   rawMapping <- read.csv2(structureMapping, stringsAsFactors = FALSE)
-  ieamatch <- na.omit(rawMapping[c("iea_product", "iea_flows", targetName, "Weight")])
+  ieamatch <- na.omit(rawMapping[c("iea_product", "iea_flows", targetName, "Weight")]) %>%
+    unite('product.flow', c('iea_product', 'iea_flows'), sep = '.', remove = F) %>%
+    filter(!!sym("product.flow") %in% getNames(data))
 
-  ###
-
-  ieamatch <- ieamatch %>% unite('product.flow', c('iea_product', 'iea_flows'), sep = '.', remove = F)
-  missing <- setdiff(ieamatch$product.flow, getNames(data))
-
-  if (length(missing) > 0) {
-    warning(paste0("toolCalcIEAfromStructureMappingPEFE: missing product flows in IEA data: ", paste0(missing, collapse = ", ")))
-  }
-
-  ieamatch <- ieamatch %>% filter(product.flow %in% getNames(data))
-
-  # take only the items that are asigned to model categories
+  # take only the items that are assigned to model categories
   ieamatch <- subset(ieamatch, !grepl("not_used", ieamatch[[targetName]]))
 
   regions <- getItems(data, dim = 1.1)
@@ -57,7 +48,6 @@ toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype 
   targetitems <- as.magpie(array(dim = c(length(regions), length(years), length(outputnames)),
                                  dimnames = list(regions, years, outputnames)))
 
-  # TODO: consider refactoring
   for (item in getNames(targetitems, dim = 1)) {
     map <- ieamatch[ieamatch[[targetName]] == item, c("iea_product", "iea_flows")]
     mapSub <- paste(map[["iea_product"]], map[["iea_flows"]], sep = ".")

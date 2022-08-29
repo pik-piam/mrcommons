@@ -36,29 +36,19 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # delete NAs rows
   ieamatch <- ieamatch[c("iea_product", "iea_flows", target, "Weight")] %>%
     na.omit() %>%
-    unite("target", all_of(target), sep = ".")
+    unite("target", all_of(target), sep = ".") %>%
+    unite('product.flow', c('iea_product', 'iea_flows'),sep = '.', remove = F) %>%
+    filter(!!sym("product.flow") %in% getNames(data))
+
   magpieNames <- ieamatch[["target"]] %>% unique()
 
   # in case we include IEA categories in the output, iea categories in `ieamatch` got renamed
   ieapname <- "iea_product"
   ieafname <- "iea_flows"
 
-  ieamatch <- ieamatch %>% unite('product.flow', c('iea_product', 'iea_flows'),sep = '.', remove = F)
-  missing <- setdiff(ieamatch$product.flow, getNames(data))
-
-  if (length(missing) > 0) {
-    warning(paste0("calcIOEdgeBuildings: missing product flows in IEA data: ", paste0(missing, collapse = ", ")))
-  }
-
-  ieamatch <- ieamatch %>% filter(product.flow %in% getNames(data))
-
-  # TODO: clean up
   reminditems <-  do.call(mbind,
                           lapply(magpieNames, function(item) {
                             testdf <- ieamatch[ieamatch$target == item, c(ieapname, ieafname, "Weight")]
-                            if (nrow(testdf) == 0) {
-                              return()
-                            }
                             prfl <- paste(testdf[, ieapname], testdf[, ieafname], sep = ".")
                             vec <- as.numeric(ieamatch[rownames(testdf), "Weight"])
                             names(vec) <- prfl
