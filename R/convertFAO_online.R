@@ -285,9 +285,12 @@ stop("strange transition mapping")
          x <- convertGDP(x, unit_in = "current US$LCU",
                            unit_out = "constant 2005 US$LCU",
                            replace_NAs = "no_conversion")
-     }
 
-
+### currency convert VoP
+  }}  else if (subtype == "ValueOfProd") {
+                x <- convertGDP(x, unit_in = "current US$MER",
+                         unit_out = "constant 2005 US$MER",
+                         replace_NAs = "no_conversion")
 
   } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
