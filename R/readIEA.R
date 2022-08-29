@@ -14,26 +14,9 @@
 #' @importFrom data.table fread :=
 #' @importFrom dplyr %>%
 #' @importFrom madrat toolCountry2isocode
-#' @importFrom R.utils decompressFile
 #'
 readIEA <- function(subtype) {
-  if (subtype == "EnergyBalancesLegacy") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
-    energyBalancesFile <- tempfile(fileext = "csv")
-    decompressFile("IEA-Energy-Balances-2016/ExtendedEnergyBalances.csv.gz", energyBalancesFile, remove = FALSE, ext = "not_used", FUN = gzfile)
-    data <- fread(file = energyBalancesFile,
-                  col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
-                  colClasses = c("character", "character", "character", "numeric", "character"),
-                  sep = ";", stringsAsFactors = FALSE, na.strings = c("x", ".."), skip = 2, showProgress = FALSE)
-    unlink(energyBalancesFile)
-    # converting IEA country names to ISO codes
-    data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE) # nolint
-    # removing NAs and converting data to numeric type
-    data <- data[!is.na(data$ktoe), ]
-    data$ktoe <- suppressWarnings(as.numeric(data$ktoe))
-    # creating MAgPIE IEA energy balances object
-    mdata <- as.magpie(data, datacol = dim(data)[2], spatial = which(colnames(data) == "COUNTRY"),
-                       temporal = which(colnames(data) == "TIME"))
-  } else if (subtype == "EnergyBalances") { # IEA energy balances until 2020 (incomplete 2021) (data updated in August, 2022)
+  if (subtype == "EnergyBalances") { # IEA energy balances until 2020 (incomplete 2021) (data updated in August, 2022)
 
     energyBalancesFile <- "IEA-Energy-Balances-2022/worldbig.csv"
     data <- fread(

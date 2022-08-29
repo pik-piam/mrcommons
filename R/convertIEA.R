@@ -12,7 +12,7 @@
 
 convertIEA <- function(x, subtype) {
 
-  if (subtype %in% c("EnergyBalances", "EnergyBalancesLegacy")) {
+  if (subtype == "EnergyBalances") {
 
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
