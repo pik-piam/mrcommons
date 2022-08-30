@@ -2,8 +2,8 @@
 % Please edit documentation in R/toolGetMappingCoord2Country.R
 \name{toolGetMappingCoord2Country}
 \alias{toolGetMappingCoord2Country}
-\title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  toolGetMappingCoord2Country
-}\if{html}{\out{</div>}}}
+\title{\preformatted{  toolGetMappingCoord2Country
+}}
 \usage{
 toolGetMappingCoord2Country(pretty = FALSE, extended = FALSE)
 }
