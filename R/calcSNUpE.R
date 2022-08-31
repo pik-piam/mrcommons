@@ -176,7 +176,7 @@ calcSNUpE<-function(max_snupe=0.85, cellular=FALSE, rev=0.1, maccbase=TRUE){
     x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = y2070,start_year = "y2030",end_year = "y2070",type = "linear")
     x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = y2100,start_year = "y2070",end_year = "y2100",type = "linear")
 
-    scenarioname="maxeff_ZhangBy2050_start2020"
+    scenarioname="maxeff_ZhangBy2050"
     x<-add_columns(x,addnm = scenarioname,dim = 3.1)
     y2020=0.03
     y2020 <- y2020+setYears(x[,"y2010","constant"],NULL)
