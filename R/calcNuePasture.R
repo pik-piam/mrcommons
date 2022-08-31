@@ -55,6 +55,7 @@ calcNuePasture<-function(cellular=FALSE,maccbase=TRUE){
     x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = y2050,start_year = "y2020",end_year = "y2050",type = "linear")
     x[,,scenarioname]=convergence(origin = x[,,scenarioname],aim = y2100,start_year = "y2050",end_year = "y2100",type = "linear")
 
+    out=x
     out[is.na(out)] <- 0.5
     out[is.infinite(out)] <- 0.5
 
