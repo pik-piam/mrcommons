@@ -9,13 +9,13 @@
 #'
 #' @export
 
-toolExtrapolateFodder <- function(x, exyears=c(2004, 2009), average=5, endyear = 2015) {
+toolExtrapolateFodder <- function(x, exyears = c(2004, 2009), average = 5, endyear = 2015) {
 
-  if(endyear <= max(getYears(x, as.integer = TRUE))) return(x)
+  if (endyear <= max(getYears(x, as.integer = TRUE))) return(x)
 
-  dt  <- floor(average/2)
-  tmp <- time_interpolate(mbind(toolTimeAverage(x[,seq(exyears[1]-dt,exyears[1]+dt),],average),
-                                 toolTimeAverage(x[,seq(exyears[2]-dt,exyears[2]+dt),],average)),
+  dt  <- floor(average / 2)
+  tmp <- time_interpolate(mbind(toolTimeAverage(x[, seq(exyears[1] - dt, exyears[1] + dt), ], average),
+                                 toolTimeAverage(x[, seq(exyears[2] - dt, exyears[2] + dt), ], average)),
                            c(2012:endyear), extrapolation_type = "linear")
 
   tmp <- toolConditionalReplace(tmp, "<0", 0)
