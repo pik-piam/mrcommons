@@ -44,33 +44,33 @@ calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
     #################################
 
     if (!is.null(sectoral) & !(sectoral == "lpj")) {
-      
+
       CropPrim <- readSource("FAO_online", "Crop")[, , "area_harvested"]
       # use linear_interpolate
       Fodder   <- readSource("FAO", "Fodder")[, , "area_harvested"]
-      Fodder   <- toolExtrapolateFodder(Fodder)
+      Fodder   <- toolExtrapolateFodder(Fodder, endyear = max(getYears(CropPrim, as.integer= TRUE)))
       data     <- toolFAOcombine(CropPrim, Fodder) / 10^6 # convert to Mha
 
       if (sectoral %in% c("FoodBalanceItem", "kcr")) {
 
-        aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", 
+        aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral",
                                       where = "mappingfolder")
         remove      <- setdiff(getNames(data, dim = 1), aggregation$ProductionItem)
         data        <- data[, , remove, invert = TRUE]
         data        <- toolAggregate(data, rel = aggregation, from = "ProductionItem",
-                                     to = ifelse(sectoral == "kcr", "k", sectoral), 
+                                     to = ifelse(sectoral == "kcr", "k", sectoral),
                                      dim = 3.1, partrel = TRUE)
-        
+
         if (sectoral == "kcr") {
-          
+
           # add bioenergy with 0 values
           data <- add_columns(x = data, addnm = c("betr", "begr"), dim = 3.1)
           data[, , c("betr", "begr")] <- 0
-          
+
           # remove all non kcr items
           kcr    <- findset("kcr")
           remove <- setdiff(getItems(data, dim = 3.1), kcr)
-          
+
           if (length(remove) > 0) {
             remain_area <- mean(dimSums(data[, , "remaining.area_harvested"], dim = 1) /
                                   dimSums(dimSums(data[, , "area_harvested"], dim = 3), dim = 1))

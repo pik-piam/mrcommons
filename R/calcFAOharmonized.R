@@ -34,7 +34,7 @@ calcFAOharmonized <- function () {
   ## aggregate Prod to CB units
   aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where
                                 ="mappingfolder")
-  
+
     #remove  aggregate categories
   remove <- setdiff(getNames(Prod, dim=1), aggregation$ProductionItem)
   Prod <- Prod[,,remove,invert=T]
@@ -54,7 +54,7 @@ calcFAOharmonized <- function () {
   ### add Fodder data ###
 
   Fodder <- readSource("FAO", "Fodder")
-  Fodder <- toolExtrapolateFodder(Fodder)
+  Fodder <- toolExtrapolateFodder(Fodder, endyear = max(getYears(FAOdata, as.integer= TRUE)))
   Fodder <- add_columns(x = Fodder,addnm = "domestic_supply",dim = 3.2)
   Fodder[,,"domestic_supply"]<-Fodder[,,"feed"]
   Fodderaggregated <- toolAggregate(Fodder, rel=aggregation, from="ProductionItem",
