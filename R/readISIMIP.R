@@ -93,10 +93,15 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
       offset <- 2014
     }
 
-    x <- as.magpie(r)
+    x <- magpiesort(as.magpie(r))
 
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer = TRUE) + offset
+
+    #check in case the naming subseting does not work
+    yearsSub<-getYears(x,as.integer=TRUE)
+    yearsSub<-yearsSub[yearsSub>=1960]
+    x<-x[,yearsSub,]
 
     # fill missing cells with 0
     map  <- toolGetMappingCoord2Country()
