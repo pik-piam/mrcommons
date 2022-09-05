@@ -15,8 +15,11 @@
 #'
 readMAgPIE <- function(subtype) {
 
+  # input data version
+  ver <- "2020"
+
   if (subtype == "EmiAirPoll") {
-    x <- read.csv("emiAPexo.csv", row.names = 1)
+    x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
     # reorder the data frame
     x$var   <- x$value
     x$value <- NULL
@@ -24,7 +27,7 @@ readMAgPIE <- function(subtype) {
     x <- as.magpie(x, datacol = 6)
 
   } else if (subtype == "macBase") {
-    x <- read.csv("macBaseMagpie.csv", row.names = 1)
+    x <- read.csv(file.path(ver, "macBaseMagpie.csv"), row.names = 1)
     # reorder the data frame
     x$var   <- x$value
     x$value <- NULL
@@ -32,13 +35,13 @@ readMAgPIE <- function(subtype) {
     x <- as.magpie(x, datacol = 6)
 
   } else if (subtype == "macBaseCO2luc") {
-    x <- read.magpie("p_macBaseMagpie_co2luc_SSP2.cs4r")
+    x <- read.magpie(file.path(ver, "p_macBaseMagpie_co2luc_SSP2.cs4r"))
 
   } else if (subtype == "co2tax") {
-    x <- read.magpie("p_magpietax200.cs4r")
+    x <- read.magpie(file.path(ver, "p_magpietax200.cs4r"))
 
   } else if (subtype == "abatparam_co2") {
-    x <- read.magpie("p_abatparam_CO2.cs4r")
+    x <- read.magpie(file.path(ver, "p_abatparam_CO2.cs4r"))
 
   } else if (subtype == "MAgPIEReport_extensive") {
 
@@ -67,7 +70,7 @@ readMAgPIE <- function(subtype) {
 
     x <- NULL
     for (f in fileList) {
-      x <- mbind(x, read.report(f, as.list = FALSE))
+      x <- mbind(x, read.report(file.path(ver, f), as.list = FALSE))
     }
 
   } else if (subtype == "supplyCurve_magpie_40") {
@@ -100,7 +103,7 @@ readMAgPIE <- function(subtype) {
                         )
 
 
-    fileList <- paste0(scenarioNames, regcode, ".cs4r")
+    fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
     setnames  <- c("region", "year", "scenario", "char")
 
     if (!all(file.exists(fileList))) {
