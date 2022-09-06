@@ -23,6 +23,7 @@ readPBL_MACC_2022 <- function(subtype,subset) {
     x$steps <- x$steps/20+1
     x$year <- factor(x$year)
     x <- x[,c("region","year","type","scen","steps","value")]
+    x <- x[!is.na(x$year), ]
     x <- as.magpie(x,spatial=1,temporal=2,tidy=TRUE)
     names(dimnames(x))[3] <- "type.scen.steps"
     return(x)
