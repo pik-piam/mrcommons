@@ -55,9 +55,9 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
 
     if (share) {
 
-      out         <- floodedShr
+      out         <- 1 - floodedShr
       unit        <- "Share"
-      description <- "Share of rice area that is flooded"
+      description <- "Share of rice area that is non-flooded"
 
     } else {
 

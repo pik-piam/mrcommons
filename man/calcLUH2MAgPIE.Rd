@@ -7,7 +7,7 @@
 calcLUH2MAgPIE(
   share = "total",
   bioenergy = "ignore",
-  rice = "nonflooded",
+  rice = "non_flooded",
   selectyears = "past",
   missing = "ignore"
 )
@@ -19,7 +19,7 @@ MAGofLUH (for share of kcr within LUH types)}
 \item{bioenergy}{"ignore": 0 for share and totals,
 "fix": fixes betr and begr shares in LUHofMAG to 1 for c3per and c4per}
 
-\item{rice}{rice category: "nonflooded" or "total"}
+\item{rice}{rice category: "non_flooded" or "total"}
 
 \item{selectyears}{years to be returned (default: "past")}
 
