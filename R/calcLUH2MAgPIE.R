@@ -6,7 +6,7 @@
 #'                    MAGofLUH (for share of kcr within LUH types)
 #' @param bioenergy   "ignore": 0 for share and totals,
 #'                    "fix": fixes betr and begr shares in LUHofMAG to 1 for c3per and c4per
-#' @param rice        rice category: "nonflooded" or "total"
+#' @param rice        rice category: "non_flooded" or "total"
 #' @param selectyears years to be returned (default: "past")
 #' @param missing     "ignore" will leave data as is,
 #'                    "fill" will add proxy values for data gaps of FAO
@@ -19,7 +19,7 @@
 #'
 #' @importFrom magpiesets findset
 
-calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflooded",
+calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "non_flooded",
                            selectyears = "past", missing = "ignore") {
   past <- findset("past")
 
@@ -30,9 +30,9 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
     }
 
     FAOdata     <- calcOutput("Croparea", sectoral = "ProductionItem",
-                              physical = FALSE, aggregate = FALSE)[,past,]
+                              physical = FALSE, aggregate = FALSE)[, past, ]
 
-    if (rice == "nonflooded") {
+    if (rice == "non_flooded") {
       # Rice areas are pre-determined by areas reported as flooded in LUH.
       # All additional rice areas (according to FAO) are allocated using FAO data
       nonfloodedShr                 <- calcOutput("Ricearea", cellular = FALSE, share = TRUE, aggregate = FALSE)
@@ -77,7 +77,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
       noData       <- where(dimSums(toolIso2CellCountries(x), dim = 3) == 0)$true$individual
       proxyMapping <- c(ATF = "ISL", ESH = "MAR", FLK = "ISL", GRL = "ISL",
                         PSE = "ISR", SGS = "ISL", SJM = "NOR",
-                        CIV = "GHA", GUF = "SUR", REU = "MUS" ,SSD = "CAF", SDN = "TCD" )
+                        CIV = "GHA", GUF = "SUR", REU = "MUS", SSD = "CAF", SDN = "TCD")
 
       for (i in row(noData)[, 1]) {
         x[noData[i, "ISO"], noData[i, "Year"], ]  <- x[proxyMapping[noData[i, "ISO"]], noData[i, "Year"], ]
@@ -117,7 +117,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "nonflo
       noData       <- where(dimSums(toolIso2CellCountries(x), dim = 3) == 0)$true$individual
       proxyMapping <- c(ATF = "ISL", ESH = "MAR", FLK = "ISL", GRL = "ISL",
                         PSE = "ISR", SGS = "ISL", SJM = "NOR",
-                        CIV = "GHA", GUF = "SUR", REU = "MUS" ,SSD = "CAF", SDN = "TCD" )
+                        CIV = "GHA", GUF = "SUR", REU = "MUS", SSD = "CAF", SDN = "TCD")
       for (i in row(noData)[, 1]) {
         x[noData[i, "ISO"], noData[i, "Year"], ]  <- x[proxyMapping[noData[i, "ISO"]], noData[i, "Year"], ]
       }
