@@ -75,14 +75,6 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     cropArea <- physicalAreaCrop
   }
 
-  if (cells == "magpiecell") {
-    cropArea <- toolCoord2Isocell(cropArea)
-  } else if (cells == "lpjcell") {
-    # this is already the format of cropArea
-  } else {
-    stop("This value for the cell parameter not supported, choose between \"magpiecell\" and \"lpjcell\"")
-  }
-
   if (sectoral == "kcr") {
     # this is already the format of cropArea
   } else if (sectoral == "lpj") {
@@ -109,7 +101,6 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   # check consitency with calcFallowLand
   if (physical == TRUE) {
     fallow <- calcOutput("FallowLand", aggregate = FALSE)
-    if (cells == "magpiecell") fallow <-  toolCoord2Isocell(fallow)
 
     if (irrigation == TRUE) {
       physicalCropSum <- dimSums(cropArea, dim = c("crop", "irrigation"))
@@ -136,6 +127,15 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     cropArea <- dimSums(cropArea, dim = c("x", "y"))
     cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
                                        conditions = "is.na()", replaceby = 0)
+  } else {
+
+    if (cells == "magpiecell") {
+      cropArea <- toolCoord2Isocell(cropArea)
+    } else if (cells == "lpjcell") {
+      # this is already the format of cropArea
+    } else {
+      stop("This value for the cell parameter not supported, choose between \"magpiecell\" and \"lpjcell\"")
+    }
   }
 
   return(list(x = cropArea,
