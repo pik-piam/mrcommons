@@ -109,6 +109,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   # check consitency with calcFallowLand
   if (physical == TRUE) {
     fallow <- calcOutput("FallowLand", aggregate = FALSE)
+    if (cells == "magpiecell") fallow <-  toolCoord2Isocell(fallow)
 
     if (irrigation == TRUE) {
       physicalCropSum <- dimSums(cropArea, dim = c("crop", "irrigation"))

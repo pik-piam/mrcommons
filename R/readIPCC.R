@@ -120,9 +120,7 @@ readIPCC <- function(subtype) {
     value <- molten$value
     d <- new.magpie(years = "y2005", names = n,
                     sets = c("region", "years", "data"))
-    if (subtype == "efnsoil") {
-getYears(d) <- "y2005"
-}
+    if (subtype == "efnsoil") getYears(d) <- "y2005"
     d[, , ] <- value
     return(d)
   } else if (subtype == "emissionfactors" || subtype == "rescombusteff") {
