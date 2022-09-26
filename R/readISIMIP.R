@@ -98,6 +98,11 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer = TRUE) + offset
 
+    #check in case the naming subseting does not work
+    yearsSub<-getYears(x,as.integer=TRUE)
+    yearsSub<-yearsSub[yearsSub>=1960]
+    x<-magpiesort(x[,yearsSub,])
+
     # fill missing cells with 0
     map  <- toolGetMappingCoord2Country()
     missingCells <- setdiff(map$coords, getItems(x, dim = 1))

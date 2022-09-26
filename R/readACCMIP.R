@@ -120,8 +120,8 @@ glo <- FALSE
 
       ncFileData <- nc_open(ncFile)
 
-      sums <- vector(length = ncFileData$nvar)
-      dataNames <- vector(length = ncFileData$nvar)
+      sums <- vector(length = ncFileData$nvars)
+      dataNames <- vector(length = ncFileData$nvars)
 
       dataArea <- ncvar_get(ncFileData, varid = "area")
 
