@@ -39,13 +39,12 @@
 #' \dontrun{
 #' a <- readSource("FAO_online", "Crop")
 #' }
-#' @importFrom tools file_ext
 #' @importFrom data.table fread
-#' @importFrom utils unzip
-#' @importFrom tools file_path_sans_ext
-#' @importFrom tidyr pivot_longer starts_with
 #' @importFrom dplyr summarise filter group_by ungroup %>%
-
+#' @importFrom tidyr pivot_longer starts_with
+#' @importFrom tools file_ext file_path_sans_ext
+#' @importFrom utils unzip
+#' @importFrom withr local_tempdir
 readFAO_online <- function(subtype) { # nolint
 
   # ---- Define subtypes and corresponding files ----
@@ -124,10 +123,10 @@ readFAO_online <- function(subtype) { # nolint
     if (file.exists(csvName)) {
       file <- csvName
       break
-    } else if (extension == "zip" & file.exists(file)) {
-      filesExtracted <- unzip(file, exdir = tempdir())
-      file <- paste0(tempdir(), "/", csvName)
-      on.exit(file.remove(filesExtracted)) # nolint
+    } else if (extension == "zip" && file.exists(file)) {
+      tempfolder <- local_tempdir()
+      unzip(file, exdir = tempfolder)
+      file <- file.path(tempfolder, csvName)
       break
     }
   }

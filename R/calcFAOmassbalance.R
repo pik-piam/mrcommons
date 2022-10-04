@@ -17,12 +17,11 @@
 #' calcOutput("FAOmassbalance")
 #' }
 #' @importFrom magclass getNames<- as.magpie
+#' @importFrom withr local_options
 
 
 calcFAOmassbalance<-function(){
-  sizelimit <- getOption("magclass_sizeLimit")
-  options(magclass_sizeLimit=1e+12)
-  on.exit(options(magclass_sizeLimit=sizelimit))
+  local_options(magclass_sizeLimit=1e+12)
   past<-findset("past")
   
   
