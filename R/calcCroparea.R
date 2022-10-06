@@ -28,8 +28,6 @@
 #' @importFrom magpiesets findset addLocation
 #' @importFrom madrat toolAggregate toolGetMapping
 #' @importFrom withr local_options
-
-
 calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
                          cells = "magpiecell", irrigation = FALSE) {
 

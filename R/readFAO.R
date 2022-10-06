@@ -35,13 +35,13 @@
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic
 #' @seealso [readSource()]
 #' @examples
-#' 
+#'
 #'   \dontrun{ a <- readSource("FAO","Crop")
 #'   }
-#' @importFrom tools file_ext
 #' @importFrom data.table fread
+#' @importFrom tools file_path_sans_ext file_ext
 #' @importFrom utils unzip
-#' @importFrom tools file_path_sans_ext
+#' @importFrom withr local_tempdir
 
 readFAO <- function(subtype) {
   files <- c(
@@ -92,9 +92,9 @@ readFAO <- function(subtype) {
   if (file.exists(csv_name)) {
     file <- csv_name
   } else if(extension=="zip" & !file.exists(csv_name)){
-    unzip(file, exdir = tempdir())                       # use the absolute path to the file in order to unzip when working in the function
-    file <- paste0(tempdir(), "/",csv_name)
-    on.exit(file.remove(file))
+    tempfolder <- local_tempdir()
+    unzip(file, exdir = tempfolder) # use the absolute path to the file in order to unzip when working in the function
+    file <- file.path(tempfolder, csv_name)
   }
   
   ## efficient reading of csv file: read only needed columns in the needed type (codes as factor)

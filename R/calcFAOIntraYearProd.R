@@ -17,12 +17,11 @@
 #'
 #' @importFrom dplyr group_by count %>% mutate filter
 #' @importFrom magpiesets findset
+#' @importFrom withr local_options
 
 calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr", frequency = "monthly", attribute = "dm") {
-#
-   sizelimit <- getOption("magclass_sizeLimit")
-   options(magclass_sizeLimit = 1e+12)
-   on.exit(options(magclass_sizeLimit = sizelimit))
+
+  local_options(magclass_sizeLimit = 1e+12)
 
   #### load GGCMI crop calendar and use rainfed dates for now
 
