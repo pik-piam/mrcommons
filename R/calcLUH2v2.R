@@ -27,23 +27,21 @@ calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
                        cellular = FALSE, cells = "magpiecell", selectyears = "past") {
 
   selectyears <- sort(findset(selectyears, noset = "original"))
-  convert <- ifelse(cellular, "onlycorrect", TRUE)
 
   if (!all(landuse_types %in% c("magpie", "LUH2v2", "flooded"))) {
     stop("Unknown lanuses_types = \"", landuse_types, "\"")
   }
 
   if (landuse_types == "flooded") {
-    x <- readSource("LUH2v2", subtype = "irrigation", convert = convert)[, selectyears, "flood"]
+    x <- readSource("LUH2v2", subtype = "irrigation", convert = "onlycorrect")[, selectyears, "flood"]
   } else {
-    x <- readSource("LUH2v2", subtype = "states", convert = convert)[, selectyears, ]
-
+    x <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")[, selectyears, ]
     getSets(x, fulldim = FALSE)[3] <- "landuse"
     if (isFALSE(cellular)) getSets(x, fulldim = FALSE)[1] <- "iso"
 
     if (isTRUE(irrigation)) {
 
-      irrigLUH <- readSource("LUH2v2", subtype = "irrigation", convert = convert)[, selectyears, ]
+      irrigLUH <- readSource("LUH2v2", subtype = "irrigation", convert = "onlycorrect")[, selectyears, ]
 
       if (is.null(selectyears)) {
         vcat(verbosity = 3, "too many years may lead to memory problems if irrigation = TRUE")
@@ -87,6 +85,8 @@ calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
   #            from the data set!
   if (cellular) {
     x <- toolCoord2Isocell(x, cells = cells)
+  } else {
+    x <- toolConv2CountryByCelltype(x, cells = cells)
   }
 
   return(list(x            = x,
