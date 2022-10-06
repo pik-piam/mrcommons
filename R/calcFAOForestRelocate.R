@@ -43,11 +43,11 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
       rest <- c("forestry", "primforest", "secdforest", "urban", "other")
 
       # expand country data (cou) so that total area matches area of ini
-      ini <- dimSums(ini, dim=1.2)
+      ini <- dimSums(ini, dim = 1.2)
       i <- getItems(ini, dim = 1)
-      cou[i,,fixed] <- ini[,,fixed]
-      diffRest <- dimSums(ini[,,rest] - cou[i,,rest], dim = 3)
-      cou[i,,"other"] <- cou[i,,"other"] + diffRest
+      cou[i, , fixed] <- ini[, , fixed]
+      diffRest <- dimSums(ini[, , rest] - cou[i, , rest], dim = 3)
+      cou[i, , "other"] <- cou[i, , "other"] + diffRest
       return(cou)
     }
     countrydata <- .addMissingLand(countrydata, initLUH2)
@@ -245,7 +245,7 @@ calcFAOForestRelocate <- function(selectyears = "past", nclasses = "seven", cell
     maxDiff <- max(abs(dimSums(luiso[, , landuse], dim = 1) - countrydata[iso, , landuse]))
     if (maxDiff >= 0.001) {
       tmp <- abs(dimSums(luiso[, , landuse], dim = 1) - countrydata[iso, , landuse])
-      luMissmatches <- paste(landuse[unique(which(tmp >= 0.001, arr.ind=TRUE)[,3])], collapse=", ")
+      luMissmatches <- paste(landuse[unique(which(tmp >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
       warning("Missmatch (", round(maxDiff, 3), " Mha) in ", iso, " for ", luMissmatches)
     }
 
