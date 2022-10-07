@@ -8,6 +8,7 @@
 #'                      if false: total areas
 #' @param cellular      if true: dataset is returned on 0.5 degree resolution
 #' @param cells         Switch between "magpiecell" (59199) and "lpjcell" (67420)
+#'                      NOTE: This setting also affects the sums on country level!
 #' @param selectyears   years to be returned (default: "past")
 #'
 #' @return List of magpie objects with results on country level,
@@ -37,7 +38,6 @@ calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
   } else {
     x <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")[, selectyears, ]
     getSets(x, fulldim = FALSE)[3] <- "landuse"
-    if (isFALSE(cellular)) getSets(x, fulldim = FALSE)[1] <- "iso"
 
     if (isTRUE(irrigation)) {
 

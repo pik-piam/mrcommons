@@ -11,9 +11,5 @@
 toolConv2CountryByCelltype <- function(x, cells) {
   getSets(x, fulldim=FALSE)[1] <- "x.y.iso"
   out   <- toolCoord2Isocell(x, cells = cells)
-  map <- data.frame(from = getItems(out, dim = 1),
-                    to = getItems(out, dim = 1.1, full = TRUE))
-  out <- toolAggregate(out, map)
-  getSets(out, fulldim = FALSE)[1] <- "country"
-  return(toolCountryFill(out, fill = 0, verbosity = 2))
+  return(toolSum2Country(out))
 }
