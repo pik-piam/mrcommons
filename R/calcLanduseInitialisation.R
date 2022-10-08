@@ -13,7 +13,7 @@
 #' @param input_magpie applies area fix (set cell with zero area to minimal value to not disturb aggregating to clusters)
 #' @param selectyears default on "past"
 #' @return List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
-#' @author Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
+#' @author Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
 #' @examples
 #' \dontrun{
 #' calcOutput("LanduseInitialisation")
@@ -24,27 +24,44 @@
 calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_corr = TRUE, cells = "magpiecell", selectyears = "past", input_magpie = FALSE) {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
-  if (isTRUE(input_magpie)) {
-    out <- calcOutput("LanduseInitialisation", cellular = cellular, nclasses = "nine", fao_corr = fao_corr, cells = cells, selectyears = selectyears, input_magpie = FALSE,
-                      aggregate = FALSE)
-    # add some small area to completely empty cells to avoid
-    # problems in the further processing
-    out <- round(out, 8)
-    cellArea <- dimSums(out, dim = 3)
-    out[,,"secdother"][cellArea == 0] <- 10^-6
-    return(out)
+  # define output list
+  .out <- function(x, cellular) {
+    return(list(
+      x = x,
+      weight = NULL,
+      unit = "Mha",
+      min = 0,
+      max = 14900, ### global land area
+      description = "Land use initialisation data for different land pools",
+      isocountries = !cellular
+    ))
   }
 
-  if(nclasses != "nine") {
-    out <- calcOutput("LanduseInitialisation", cellular = cellular, nclasses = "nine", fao_corr = fao_corr, cells = cells, selectyears = selectyears, input_magpie = input_magpie,
-                      aggregate = FALSE)
-    map <- data.frame(nine  = c("crop", "past", "range", "forestry", "primforest", "secdforest", "urban", "primother", "secdother"),
-                      seven = c("crop", "past", "past", "forestry", "primforest", "secdforest", "urban", "other", "other"),
-                      six   = c("crop", "past", "past", "forestry", "forest", "forest", "urban", "other", "other"))
-    if(!(nclasses %in% names(map))) stop("unknown nclasses setting \"", nclasses, "\"")
-    return(toolAggregate(out, rel = map, dim = 3, from = "nine", to = nclasses))
+  # handle some common data postprocessings (input_magpie and nclasses) by reading in
+  # data from a default case (input_magpie = FALSE, nclasses = "nine") and put these computations on top
+  if (isTRUE(input_magpie) || nclasses != "nine") {
+    out <- calcOutput("LanduseInitialisation", cellular = cellular, nclasses = "nine", fao_corr = fao_corr,
+                      cells = cells, selectyears = selectyears, input_magpie = FALSE, aggregate = FALSE)
+
+    if(nclasses != "nine") {
+      map <- data.frame(nine  = c("crop", "past", "range", "forestry", "primforest", "secdforest", "urban", "primother", "secdother"),
+                        seven = c("crop", "past", "past", "forestry", "primforest", "secdforest", "urban", "other", "other"),
+                        six   = c("crop", "past", "past", "forestry", "forest", "forest", "urban", "other", "other"))
+      if(!(nclasses %in% names(map))) stop("unknown nclasses setting \"", nclasses, "\"")
+      out <- toolAggregate(out, rel = map, dim = 3, from = "nine", to = nclasses)
+    }
+
+    if(isTRUE(input_magpie)) {
+      # add some small area to completely empty cells to avoid
+      # problems in the further processing
+      out <- round(out, 8)
+      cellArea <- dimSums(out, dim = 3)
+      out[,,"secdother"][cellArea == 0] <- 10^-6
+    }
+    return(.out(out, cellular))
   }
 
+  ##### Here starts the core part of this function #####
 
   if (cellular == FALSE) {
     luh2v2 <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, selectyears = selectyears, cells = cells, cellular = FALSE, aggregate = FALSE)
@@ -136,16 +153,8 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       countrydata <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "seven", fao_corr = FALSE, selectyears = selectyears, cellular = FALSE)
       luh2v2 <- calcOutput("LUH2v2", aggregate = FALSE, cells = cells, landuse_types = "LUH2v2", irrigation = FALSE, cellular = TRUE, selectyears = selectyears)
       luh2v2 <- toolCell2isoCell(luh2v2, cells = cells)
-
-      if (cells == "lpjcell") {
-        mapping   <- toolGetMappingCoord2Country()
-        mapping   <- data.frame(mapping, "celliso" = paste(mapping$iso, 1:67420, sep = "."), stringsAsFactors = FALSE)
-        countries <- unique(mapping$iso)
-      } else {
-        mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-        countries <- unique(mapping$iso)
-      }
-      if (is.null(countries)) stop("There must be something wrong with CountryToCellMapping.rds! No country information found!")
+      countries <- getItems(luh2v2, dim = 1.1)
+      mapping   <- data.frame(iso=getItems(luh2v2, dim = 1.1, full = TRUE), celliso = getItems(luh2v2, dim = 1))
 
       # divide secondary forest into forestry and secdf.
       forestry_shr <- countrydata[, , "forestry"] / dimSums(countrydata[, , c("forestry", "secdforest")], dim = 3)
@@ -156,10 +165,6 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
 
       # calculate other landpools
       crop <- dimSums(luh2v2[, , c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")], dim = 3)
-      if (nclasses %in% c("seven", "six")) {
-        pasture <- dimSums(luh2v2[, , c("pastr", "range")], dim = 3)
-        other <- dimSums(luh2v2[, , c("primn", "secdn")], dim = 3)
-      }
 
       out <- mbind(
         setNames(crop, "crop"),
@@ -171,7 +176,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
         setNames(luh2v2[, , c("urban")], "urban"),
         setNames(luh2v2[, , c("primn")], "primother"),
         setNames(luh2v2[, , c("secdn")], "secdother"))
-      }
+
     } else if (fao_corr == TRUE) {
       out <- calcOutput("FAOForestRelocate", selectyears = selectyears, cells = cells, aggregate = FALSE)
       cat("Reallocation in land pools results in extremely low negative values for", unique((where(out < 0)$true$individual)[, 3]), "land in", where(out < 0)$true$regions, "with a range of", range(out[out < 0]))
@@ -180,13 +185,5 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     }
   }
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mha",
-    min = 0,
-    max = 14900, ### global land area
-    description = "Land use initialisation data for different land pools",
-    isocountries = !cellular
-  ))
+  return(.out(out, cellular))
 }
