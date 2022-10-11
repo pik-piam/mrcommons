@@ -9,7 +9,7 @@
 #' @author Jan Philipp Dietrich
 
 toolConv2CountryByCelltype <- function(x, cells) {
-  getSets(x, fulldim=FALSE)[1] <- "x.y.iso"
+  getSets(x, fulldim = FALSE)[1] <- "x.y.iso"
   out   <- toolCoord2Isocell(x, cells = cells)
   return(toolSum2Country(out))
 }

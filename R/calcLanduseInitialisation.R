@@ -43,20 +43,20 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
     out <- calcOutput("LanduseInitialisation", cellular = cellular, nclasses = "nine", fao_corr = fao_corr,
                       cells = cells, selectyears = selectyears, input_magpie = FALSE, aggregate = FALSE)
 
-    if(nclasses != "nine") {
+    if (nclasses != "nine") {
       map <- data.frame(nine  = c("crop", "past", "range", "forestry", "primforest", "secdforest", "urban", "primother", "secdother"),
                         seven = c("crop", "past", "past", "forestry", "primforest", "secdforest", "urban", "other", "other"),
                         six   = c("crop", "past", "past", "forestry", "forest", "forest", "urban", "other", "other"))
-      if(!(nclasses %in% names(map))) stop("unknown nclasses setting \"", nclasses, "\"")
+      if (!(nclasses %in% names(map))) stop("unknown nclasses setting \"", nclasses, "\"")
       out <- toolAggregate(out, rel = map, dim = 3, from = "nine", to = nclasses)
     }
 
-    if(isTRUE(input_magpie)) {
+    if (isTRUE(input_magpie)) {
       # add some small area to completely empty cells to avoid
       # problems in the further processing
       out <- round(out, 8)
       cellArea <- dimSums(out, dim = 3)
-      out[,,"secdother"][cellArea == 0] <- 10^-6
+      out[, , "secdother"][cellArea == 0] <- 10^-6
     }
     return(.out(out, cellular))
   }
@@ -154,7 +154,7 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
       luh2v2 <- calcOutput("LUH2v2", aggregate = FALSE, cells = cells, landuse_types = "LUH2v2", irrigation = FALSE, cellular = TRUE, selectyears = selectyears)
       luh2v2 <- toolCell2isoCell(luh2v2, cells = cells)
       countries <- getItems(luh2v2, dim = 1.1)
-      mapping   <- data.frame(iso=getItems(luh2v2, dim = 1.1, full = TRUE), celliso = getItems(luh2v2, dim = 1))
+      mapping   <- data.frame(iso = getItems(luh2v2, dim = 1.1, full = TRUE), celliso = getItems(luh2v2, dim = 1))
 
       # divide secondary forest into forestry and secdf.
       forestry_shr <- countrydata[, , "forestry"] / dimSums(countrydata[, , c("forestry", "secdforest")], dim = 3)
