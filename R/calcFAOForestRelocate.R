@@ -1,4 +1,4 @@
-#' @title calcFAOForestRelocate
+#' @title toolFAOForestRelocate
 #' @description Calculates the cellular MAgPIE forest and other land area correction based on FAO forestry data
 #' and LUH2v2.
 #'
@@ -6,30 +6,21 @@
 #' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
 #' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
-#' @examples
-#' \dontrun{
-#' calcOutput("FAOForestRelocate")
-#' }
 #' @importFrom magclass setNames new.magpie nyears
 #' @importFrom nleqslv nleqslv
 #'
 #' @export
 
-calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
+toolFAOForestRelocate <- function(luInit, luTargetCountry, vegC) {
 
-  # Load cellular and country data
-  luTargetCountry <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = TRUE,
-                            selectyears = selectyears, cellular = FALSE, cells = cells)
-  luInit <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = FALSE,
-                           selectyears = selectyears, cellular = TRUE, cells = cells)
-  luInitCountry <- toolSum2Country(luInit, cells = cells)
+  luInitCountry <- toolSum2Country(luInit)
 
-  cellvegc  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical",
-                          subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(luTargetCountry), ]
-  cellvegc <- toolCoord2Isocell(cellvegc, cells = cells)
+
+  #Todo: luInit and luTargetCountry are currently 9-class instead of 7-class!!!
+
 
   forests <- c("primforest", "secdforest", "forestry")
-  nature  <- c(forests, "other")
+  nature  <- c(forests, "other") # "primother", "secdother"
   landuse <- c(nature, "urban", "crop", "past")
 
   # reduce, if nessessary to FAO
@@ -41,7 +32,7 @@ calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
   luInit[, , "to_be_allocated"] <- 0
 
   # grep land areas dependent on vegetation carbon density
-  if (is.null(getYears(cellvegc))) getYears(cellvegc) <- getYears(luTargetCountry)
+  if (is.null(getYears(vegC))) getYears(vegC) <- getYears(luTargetCountry)
 
   # weight function to determine correct cellweights for area removal
   findweight <- function(p, cellarea, isoreduction, cellweight) {
@@ -54,10 +45,10 @@ calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
 
     luiso <- luInit[iso, , ]
 
-    cveg <- cellvegc[iso, , ]
+    vegCIso <- vegC[iso, , ]
 
     # normalized vegetation carbon (with small correction to ensure values between [0,1))
-    cellVegcN <- t(as.array(cveg / (as.magpie(apply(cveg, 2, max)) + 10^-10))[, , 1])
+    vegCN <- t(as.array(vegCIso / (as.magpie(apply(vegCIso, 2, max)) + 10^-10))[, , 1])
 
     ###########################
     ### Reduction procedure ###
@@ -72,15 +63,15 @@ calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
       if (any(catreduce != 0)) {
 
         # check for one cell countries
-        if (dim(cellVegcN)[1] == 1) {
+        if (dim(vegCN)[1] == 1) {
           # trivial case of one cell countries
           remove <- -as.magpie(catreduce)
         } else {
           # for other land cell with highest vegc and for all forest categories lowest vegc should be cleared first
           if (cat == "other") {
-            cellweight <- cellVegcN
+            cellweight <- vegCN
           } else {
-            cellweight <- (1 - 10^-16 - cellVegcN)
+            cellweight <- (1 - 10^-16 - vegCN)
           }
 
           # check for edge case in which all land of that category must be removed and treat it separately
@@ -154,10 +145,10 @@ calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
 
       t <- (catincrease != 0)
 
-      cellweight <- (1 - 10^-16 - cellVegcN)
+      cellweight <- (1 - 10^-16 - vegCN)
 
       # check for one cell countries
-      if (dim(cellVegcN)[1] == 1) {
+      if (dim(vegCN)[1] == 1) {
         # trivial case of one cell countries
         add <- as.magpie(catincrease)
       } else {
@@ -214,46 +205,34 @@ calcFAOForestRelocate <- function(selectyears = "past", cells = "magpiecell") {
 
   }
 
-  if (nclasses == "nine") {
-    noCorrLUH2 <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE,
-                                cellular = TRUE, selectyears = selectyears, cells = cells, round = 8)
+  noCorrLUH2 <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE,
+                           cellular = TRUE, selectyears = selectyears, cells = cells, round = 8)
 
-    # calculate shares of primary and secondary non-forest vegetation
-    totOtherLuh <- dimSums(noCorrLUH2[, , c("primn", "secdn")], dim = 3)
-    primOtherShr <- noCorrLUH2[, , "primn"] / setNames(totOtherLuh + 1e-10, NULL)
-    secdOtherShr <- noCorrLUH2[, , "secdn"] / setNames(totOtherLuh + 1e-10, NULL)
-    # where luh2 does not report other land, but we find other land after
-    # reallocation set share of secondary other land to 1
-    secdOtherShr[secdOtherShr == 0 & primOtherShr == 0] <- 1
-    # multiply shares of primary and secondary non-forest veg with corrected other land
-    primother <- primOtherShr * setNames(luInit[, , "other"], NULL)
-    secdother <- secdOtherShr * setNames(luInit[, , "other"], NULL)
+  # calculate shares of primary and secondary non-forest vegetation
+  totOtherLuh <- dimSums(noCorrLUH2[, , c("primn", "secdn")], dim = 3)
+  primOtherShr <- noCorrLUH2[, , "primn"] / setNames(totOtherLuh + 1e-10, NULL)
+  secdOtherShr <- noCorrLUH2[, , "secdn"] / setNames(totOtherLuh + 1e-10, NULL)
+  # where luh2 does not report other land, but we find other land after
+  # reallocation set share of secondary other land to 1
+  secdOtherShr[secdOtherShr == 0 & primOtherShr == 0] <- 1
+  # multiply shares of primary and secondary non-forest veg with corrected other land
+  primother <- primOtherShr * setNames(luInit[, , "other"], NULL)
+  secdother <- secdOtherShr * setNames(luInit[, , "other"], NULL)
 
-    out <- mbind(
-      luInit[, , "crop"],
-      setNames(noCorrLUH2[, , c("pastr")], "past"),
-      setNames(noCorrLUH2[, , c("range")], "range"),
-      luInit[, , "urban"],
-      luInit[, , forests],
-      setNames(primother, "primother"),
-      setNames(secdother, "secdother")
-    )
-  } else if (nclasses == "seven") {
-    out <- luInit[, , landuse]
-  } else if (nclasses == "six") {
-    out <- mbind(
-      luInit[, , "crop"],
-      luInit[, , "past"],
-      luInit[, , "urban"],
-      luInit[, , "forestry"],
-      setNames(luInit[, , "primforest"] + luInit[, , "secdforest"], "forest"),
-      luInit[, , "other"]
-    )
-  }
+  out <- mbind(
+    luInit[, , "crop"],
+    setNames(noCorrLUH2[, , c("pastr")], "past"),
+    setNames(noCorrLUH2[, , c("range")], "range"),
+    luInit[, , "urban"],
+    luInit[, , forests],
+    setNames(primother, "primother"),
+    setNames(secdother, "secdother")
+  )
+
 
   totalArea <- round(dimSums(luInitCountry, dim = c(1, 3)), 3)
   if (!any(round(dimSums(out, dim = c(1, 3)) - totalArea, 3) != 0)) {
-    vcat(1, "Something went wrong. Missmatch in total land cover area after reallocation.")
+    vcat(0, "Something went wrong. Missmatch in total land cover area after reallocation.")
   }
 
   return(list(
