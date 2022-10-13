@@ -10,7 +10,8 @@ calcRockNWeathering()
 MAgPIE object of amount of N (Mt)
 }
 \description{
-calculates amount of yearly N from rock weathering by country or global total, disaggregated by land use type (LUH2v2 6 class, with FAO forest correction)
+calculates amount of yearly N from rock weathering by country or global total,
+disaggregated by land use type (LUH2v2 6 class, with FAO forest correction)
 }
 \author{
 David M Chen

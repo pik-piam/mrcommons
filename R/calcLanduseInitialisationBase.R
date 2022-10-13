@@ -17,6 +17,9 @@
 calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "past") {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
+  luh2v2 <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, selectyears = selectyears, cells = cells, cellular = TRUE, aggregate = FALSE)
+  luh2v2 <- toolCell2isoCell(luh2v2, cells = cells)
+
   luTargetCountry <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = TRUE,
                                 selectyears = selectyears, cellular = FALSE, cells = cells)
   luInit <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = FALSE,

@@ -9,7 +9,6 @@ calcLanduseInitialisation(
   nclasses = "seven",
   fao_corr = TRUE,
   cells = "magpiecell",
-  country_level = FALSE,
   selectyears = "past",
   input_magpie = FALSE
 )
@@ -28,11 +27,9 @@ calcLanduseInitialisation(
 
 \item{cells}{if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 
-\item{country_level}{Whether output shall be returned at country level, requires cellular = TRUE}
-
 \item{selectyears}{default on "past"}
 
-\item{input_magpie}{applies area fix (set cell with zero area to minimal value to not distrube aggregating to clusters)}
+\item{input_magpie}{applies area fix (set cell with zero area to minimal value to not disturb aggregating to clusters)}
 }
 \value{
 List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
@@ -46,5 +43,5 @@ calcOutput("LanduseInitialisation")
 }
 }
 \author{
-Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
+Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
 }
