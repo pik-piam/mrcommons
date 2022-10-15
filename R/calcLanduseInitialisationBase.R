@@ -16,26 +16,27 @@
 calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "past") {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
-  .shr <- function(x) {
-    x <- x + 10^-10
-    return(x/dimSums(x, dim = 3))
-  }
-
-  .expand <- function(x, target) {
-    map <- data.frame(from = getItems(target, dim = 1.1, full = TRUE),
-                      to = getItems(target, dim = 1))
-    return(toolAggregate(x[getItems(target, dim = 1.1),,], map, from ="from", to = "to"))
-  }
-
   .luIni <- function(luh, forestArea) {
-    map <- data.frame(luh = c("c3ann", "c4ann", "c3per", "c4per", "c3nfx", "pastr", "range",      "primf",      "secdf",    "secdf", "urban",     "primn",     "secdn"),
-                      lu   = c("crop",  "crop",  "crop",  "crop",  "crop",  "past", "range", "primforest", "secdforest", "forestry", "urban", "primother", "secdother"))
+    .shr <- function(x) {
+      x <- x + 10^-10
+      return(x / dimSums(x, dim = 3))
+    }
+
+    .expand <- function(x, target) {
+      map <- data.frame(from = getItems(target, dim = 1.1, full = TRUE),
+                        to = getItems(target, dim = 1))
+      return(toolAggregate(x[getItems(target, dim = 1.1), , ], map, from = "from", to = "to"))
+    }
+    map <- data.frame(luh = c("c3ann", "c4ann", "c3per", "c4per", "c3nfx", "pastr", "range",
+                                   "primf",      "secdf",    "secdf", "urban",     "primn",     "secdn"),
+                      lu  = c("crop",  "crop",  "crop",  "crop",  "crop",  "past", "range",
+                              "primforest", "secdforest", "forestry", "urban", "primother", "secdother"))
     lu <- toolAggregate(luh, map, dim = 3)
-    # Attention: mapping maps secdf on both: secdforest and forestry (both contain after aggregation the full secondary forest area)!
-    #            next step will calculate proper shares and multiply it to compute correct areas
+    # Attention: mapping maps secdf on both: secdforest and forestry (both contain after aggregation the full secondary
+    #           forest area)! Next step will calculate proper shares and multiply it to compute correct areas
     secdf <- c("secdforest", "forestry")
-    forestShares <- .expand(.shr(forestArea[,,secdf]), lu)
-    lu[,,secdf] <- forestShares * lu[,,secdf]
+    forestShares <- .expand(.shr(forestArea[, , secdf]), lu)
+    lu[, , secdf] <- forestShares * lu[, , secdf]
     return(lu)
   }
 
@@ -49,7 +50,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
   vegC <- toolCoord2Isocell(vegC, cells = cells)
 
 
-  out <- toolFAOForestRelocate(luInit = luInit, forestArea = forestArea, vegC = vegC)
+  out <- toolFAOForestRelocate(luInit = lu, forestArea = forestArea, vegC = vegC)
   if (any(out < 0)) {
     out[out < 0] <- 0
     vcat(0, "Negativ land values detected and replaced by 0.")

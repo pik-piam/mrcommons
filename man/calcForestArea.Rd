@@ -22,5 +22,5 @@ calcOutput("ForestArea")
 }
 }
 \author{
-Kristine Karstens
+Kristine Karstens, Jan Philipp Dietrich
 }

@@ -3,7 +3,7 @@
 #' forest information
 #'
 #' @param luInit uncorrected landuse initialisation data set
-#' @param luTargetCountry target values on country level
+#' @param forestArea forest target values on country level
 #' @param vegC vegetation carbon data used as reallocation weight
 #' @return List of magpie object with results on cellular level
 #' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
@@ -134,7 +134,7 @@ toolFAOForestRelocate <- function(luInit, forestArea, vegC) {
     ### Allocation procedure ###
     ############################
 
-    for(oth in other) {
+    for (oth in other) {
 
       catincrease <- as.array(increase[iso, , oth])[, , 1]
 
@@ -194,9 +194,9 @@ toolFAOForestRelocate <- function(luInit, forestArea, vegC) {
     ### Check reallocation   ###
     ############################
 
-    maxDiff <- max(abs(dimSums(luiso, dim = 1) - luTargetCountry[iso,,]))
+    maxDiff <- max(abs(dimSums(luiso, dim = 1) - luTargetCountry[iso, , ]))
     if (maxDiff >= 0.001) {
-      tmp <- abs(dimSums(luiso, dim = 1) - luTargetCountry[iso,,])
+      tmp <- abs(dimSums(luiso, dim = 1) - luTargetCountry[iso, , ])
       landuse <- getItems(luiso, dim = 3)
       luMissmatches <- paste(landuse[unique(which(tmp >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
       warning("Missmatch (", round(maxDiff, 3), " Mha) in ", iso, " for ", luMissmatches)
