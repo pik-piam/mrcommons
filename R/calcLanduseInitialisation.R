@@ -68,35 +68,6 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
 
     if (fao_corr == FALSE) {
 
-      # divide secondary forest into forestry and secdf.
-      forestry_country <- readSource("FAO_FRA2015", "fac")[, , "PlantFor"]
-      forestry_country <- time_interpolate(forestry_country, interpolated_year = selectyears, integrate_interpolated_years = TRUE, extrapolation_type = "constant")
-      vcat(verbosity = 3, "Forestry is interpolated for missing years and held constant for the period before FAO starts")
-
-      secondary_forest <- luh2v2[, , "secdf"] - setNames(forestry_country[, getYears(luh2v2), ], NULL)
-      forestry_overflow <- secondary_forest
-      forestry_overflow[forestry_overflow > 0] <- 0
-      tmp <- dimSums(forestry_overflow, dim = 1)
-      if (any(tmp < 0)) {
-        vcat(verbosity = 2, paste("Mismatch of FAO forestry and Hurtt secondary forest:", paste(paste(getYears(tmp), round(tmp, 0), "Mha, "), collapse = " "), ". cut off."))
-      }
-      secondary_forest[secondary_forest < 0] <- 0
-      forestry <- luh2v2[, , "secdf"] - secondary_forest
-
-      # calculate other landpools
-      crop <- dimSums(luh2v2[, , c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")], dim = 3)
-
-      out <- mbind(
-        setNames(crop, "crop"),
-        setNames(luh2v2[, , c("pastr")], "past"),
-        setNames(luh2v2[, , c("range")], "range"),
-        setNames(forestry, "forestry"),
-        setNames(luh2v2[, , c("primf")], "primforest"),
-        setNames(secondary_forest, "secdforest"),
-        setNames(luh2v2[, , c("urban")], "urban"),
-        setNames(luh2v2[, , c("primn")], "primother"),
-        setNames(luh2v2[, , c("secdn")], "secdother"))
-
     } else if (fao_corr == TRUE) {
       FAOforest <- calcOutput("ForestArea", selectyears = selectyears, aggregate = FALSE)
 
@@ -122,9 +93,6 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", fao_
 
       # calculate other landpools
       crop <- dimSums(luh2v2[, , c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")], dim = 3)
-      if (nclasses %in% c("seven", "six")) {
-        pasture <- dimSums(luh2v2[, , c("pastr", "range")], dim = 3)
-      }
 
       # differentiate corrected other land into primary and secondary
       totother_luh <- dimSums(luh2v2[, , c("primn", "secdn")], dim = 3)

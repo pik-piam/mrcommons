@@ -1,30 +1,27 @@
 #' @title toolFAOForestRelocate
-#' @description Calculates the cellular MAgPIE forest and other land area correction based on FAO forestry data
-#' and LUH2v2.
+#' @description Reallocates cellular forest information from LUH2 to better match FAO
+#' forest information
 #'
-#' @param selectyears default on "past"
-#' @param cells    if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
-#' @return List of magpie object with results on cellular level, weight on cellular level, unit and description.
+#' @param luInit uncorrected landuse initialisation data set
+#' @param luTargetCountry target values on country level
+#' @param vegC vegetation carbon data used as reallocation weight
+#' @return List of magpie object with results on cellular level
 #' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
 #' @importFrom magclass setNames new.magpie nyears
 #' @importFrom nleqslv nleqslv
 #'
 #' @export
 
-toolFAOForestRelocate <- function(luInit, luTargetCountry, vegC) {
+toolFAOForestRelocate <- function(luInit, forestArea, vegC) {
 
   luInitCountry <- toolSum2Country(luInit)
 
-
-  #Todo: luInit and luTargetCountry are currently 9-class instead of 7-class!!!
-
-
   forests <- c("primforest", "secdforest", "forestry")
-  nature  <- c(forests, "other") # "primother", "secdother"
-  landuse <- c(nature, "urban", "crop", "past")
+  other   <- c("primother", "secdother")
+  nature  <- c(forests, other)
 
-  # reduce, if nessessary to FAO
-  reduce <- increase <- round(luTargetCountry - luInitcountry, 8)
+  # reduce, if necessary to FAO
+  reduce <- increase <- round(luTargetCountry - luInitCountry, 8)
   reduce[reduce > 0]     <- 0
   increase[increase < 0] <- 0
 
@@ -137,42 +134,45 @@ toolFAOForestRelocate <- function(luInit, luTargetCountry, vegC) {
     ### Allocation procedure ###
     ############################
 
-    catincrease <- as.array(increase[iso, , "other"])[, , 1]
+    for(oth in other) {
 
-    # relocate other land to areas with low vegetation carbon density
-    # check if other land has to be filled
-    if (any(catincrease != 0)) {
+      catincrease <- as.array(increase[iso, , oth])[, , 1]
 
-      t <- (catincrease != 0)
+      # relocate other land to areas with low vegetation carbon density
+      # check if other land has to be filled
+      if (any(catincrease != 0)) {
 
-      cellweight <- (1 - 10^-16 - vegCN)
+        t <- (catincrease != 0)
 
-      # check for one cell countries
-      if (dim(vegCN)[1] == 1) {
-        # trivial case of one cell countries
-        add <- as.magpie(catincrease)
-      } else {
-        # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
+        cellweight <- (1 - 10^-16 - vegCN)
 
-        p        <- rep(1, nyears(luiso))
-        names(p) <- rownames(cellweight)
+        # check for one cell countries
+        if (dim(vegCN)[1] == 1) {
+          # trivial case of one cell countries
+          add <- as.magpie(catincrease)
+        } else {
+          # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
 
-        for (ti in getYears(luiso[, t, ])) {
+          p        <- rep(1, nyears(luiso))
+          names(p) <- rownames(cellweight)
 
-          sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
-                          cellarea = t(as.array(luiso)[, ti, "to_be_allocated"]),
-                          isoreduction = -catincrease[ti], cellweight = cellweight[ti, ])
-          p[ti] <- sol$x
+          for (ti in getYears(luiso[, t, ])) {
+
+            sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
+                            cellarea = t(as.array(luiso)[, ti, "to_be_allocated"]),
+                            isoreduction = -catincrease[ti], cellweight = cellweight[ti, ])
+            p[ti] <- sol$x
+          }
+
+          if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
+          add <- luiso[, , "to_be_allocated"] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
         }
+        add[, !t, ] <- 0
 
-        if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
-        add <- luiso[, , "to_be_allocated"] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+        # move area from "to_be_allocated" area to other land
+        luiso[, , "other"] <- luiso[, , "other"] + add
+        luiso[, , "to_be_allocated"] <- luiso[, , "to_be_allocated"] - add
       }
-      add[, !t, ] <- 0
-
-      # move area from "to_be_allocated" area to other land
-      luiso[, , "other"] <- luiso[, , "other"] + add
-      luiso[, , "to_be_allocated"] <- luiso[, , "to_be_allocated"] - add
     }
 
     # relocate forest land to remaining "to_be_allocated" area
@@ -194,9 +194,10 @@ toolFAOForestRelocate <- function(luInit, luTargetCountry, vegC) {
     ### Check reallocation   ###
     ############################
 
-    maxDiff <- max(abs(dimSums(luiso[, , landuse], dim = 1) - luTargetCountry[iso, , landuse]))
+    maxDiff <- max(abs(dimSums(luiso, dim = 1) - luTargetCountry[iso,,]))
     if (maxDiff >= 0.001) {
-      tmp <- abs(dimSums(luiso[, , landuse], dim = 1) - luTargetCountry[iso, , landuse])
+      tmp <- abs(dimSums(luiso, dim = 1) - luTargetCountry[iso,,])
+      landuse <- getItems(luiso, dim = 3)
       luMissmatches <- paste(landuse[unique(which(tmp >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
       warning("Missmatch (", round(maxDiff, 3), " Mha) in ", iso, " for ", luMissmatches)
     }
@@ -205,41 +206,10 @@ toolFAOForestRelocate <- function(luInit, luTargetCountry, vegC) {
 
   }
 
-  noCorrLUH2 <- calcOutput("LUH2v2", aggregate = FALSE, landuse_types = "LUH2v2", irrigation = FALSE,
-                           cellular = TRUE, selectyears = selectyears, cells = cells, round = 8)
-
-  # calculate shares of primary and secondary non-forest vegetation
-  totOtherLuh <- dimSums(noCorrLUH2[, , c("primn", "secdn")], dim = 3)
-  primOtherShr <- noCorrLUH2[, , "primn"] / setNames(totOtherLuh + 1e-10, NULL)
-  secdOtherShr <- noCorrLUH2[, , "secdn"] / setNames(totOtherLuh + 1e-10, NULL)
-  # where luh2 does not report other land, but we find other land after
-  # reallocation set share of secondary other land to 1
-  secdOtherShr[secdOtherShr == 0 & primOtherShr == 0] <- 1
-  # multiply shares of primary and secondary non-forest veg with corrected other land
-  primother <- primOtherShr * setNames(luInit[, , "other"], NULL)
-  secdother <- secdOtherShr * setNames(luInit[, , "other"], NULL)
-
-  out <- mbind(
-    luInit[, , "crop"],
-    setNames(noCorrLUH2[, , c("pastr")], "past"),
-    setNames(noCorrLUH2[, , c("range")], "range"),
-    luInit[, , "urban"],
-    luInit[, , forests],
-    setNames(primother, "primother"),
-    setNames(secdother, "secdother")
-  )
-
-
   totalArea <- round(dimSums(luInitCountry, dim = c(1, 3)), 3)
-  if (!any(round(dimSums(out, dim = c(1, 3)) - totalArea, 3) != 0)) {
+  if (!any(round(dimSums(luInit, dim = c(1, 3)) - totalArea, 3) != 0)) {
     vcat(0, "Something went wrong. Missmatch in total land cover area after reallocation.")
   }
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mha",
-    description = "Cellular land use initialisation data for different land pools FAO forest corrected",
-    isocountries = FALSE
-  ))
+  return(luInit)
 }

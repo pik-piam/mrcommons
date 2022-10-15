@@ -12,28 +12,47 @@
 #' \dontrun{
 #' calcOutput("LanduseInitialisationBase")
 #' }
-
-
+#'
 calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "past") {
   selectyears <- sort(findset(selectyears, noset = "original"))
 
-  luh2v2 <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, selectyears = selectyears, cells = cells, cellular = TRUE, aggregate = FALSE)
-  luh2v2 <- toolCell2isoCell(luh2v2, cells = cells)
+  .shr <- function(x) {
+    x <- x + 10^-10
+    return(x/dimSums(x, dim = 3))
+  }
 
-  luTargetCountry <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = TRUE,
-                                selectyears = selectyears, cellular = FALSE, cells = cells)
-  luInit <- calcOutput("LanduseInitialisation", aggregate = FALSE, nclasses = "nine", fao_corr = FALSE,
-                       selectyears = selectyears, cellular = TRUE, cells = cells)
+  .expand <- function(x, target) {
+    map <- data.frame(from = getItems(target, dim = 1.1, full = TRUE),
+                      to = getItems(target, dim = 1))
+    return(toolAggregate(x[getItems(target, dim = 1.1),,], map, from ="from", to = "to"))
+  }
+
+  .luIni <- function(luh, forestArea) {
+    map <- data.frame(luh = c("c3ann", "c4ann", "c3per", "c4per", "c3nfx", "pastr", "range",      "primf",      "secdf",    "secdf", "urban",     "primn",     "secdn"),
+                      lu   = c("crop",  "crop",  "crop",  "crop",  "crop",  "past", "range", "primforest", "secdforest", "forestry", "urban", "primother", "secdother"))
+    lu <- toolAggregate(luh, map, dim = 3)
+    # Attention: mapping maps secdf on both: secdforest and forestry (both contain after aggregation the full secondary forest area)!
+    #            next step will calculate proper shares and multiply it to compute correct areas
+    secdf <- c("secdforest", "forestry")
+    forestShares <- .expand(.shr(forestArea[,,secdf]), lu)
+    lu[,,secdf] <- forestShares * lu[,,secdf]
+    return(lu)
+  }
+
+  luh <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, cellular = TRUE,
+                    selectyears = selectyears, cells = cells, aggregate = FALSE)
+  forestArea <- calcOutput("ForestArea", selectyears = selectyears, aggregate = FALSE)
+  lu <- .luIni(luh, forestArea)
 
   vegC  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical",
-                      subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, getYears(luTargetCountry), ]
+                      subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, selectyears, ]
   vegC <- toolCoord2Isocell(vegC, cells = cells)
 
 
-  out <- toolFAOForestRelocate(luInit = luInit, luTargetCountry = luTargetCountry, vegC = vegC)
-  if(any(out<0)) {
+  out <- toolFAOForestRelocate(luInit = luInit, forestArea = forestArea, vegC = vegC)
+  if (any(out < 0)) {
     out[out < 0] <- 0
-    vcat(0,"Negativ land values detected and replaced by 0.")
+    vcat(0, "Negativ land values detected and replaced by 0.")
   }
 
   return(list(
