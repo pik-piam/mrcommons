@@ -15,8 +15,8 @@
 
 toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
 
-  if(round(sum(lu) - sum(luCountry),4) != 0) warning("lu and luCountry differ in total land area")
-  if(round(sum(lu) - sum(luTarget),4) != 0) warning("lu and luCountry differ in total land area")
+  if (round(sum(lu) - sum(luCountry), 4) != 0) warning("lu and luCountry differ in total land area")
+  if (round(sum(lu) - sum(luTarget), 4) != 0) warning("lu and luCountry differ in total land area")
 
   forests <- c("primforest", "secdforest", "forestry")
   other   <- c("primother", "secdother")
@@ -172,7 +172,7 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
         add[, !t, ] <- 0
 
         # move area from "allocate" area to other land
-        luisoOtherShr <- (luiso[,,other] + 10e-10)/dimSums(luiso[,,other] + 10e-10, dim = 3)
+        luisoOtherShr <- (luiso[, , other] + 10e-10) / dimSums(luiso[, , other] + 10e-10, dim = 3)
         luiso[, , other] <- luiso[, , other] + luisoOtherShr * add
         luiso[, , "allocate"] <- luiso[, , "allocate"] - add
       }
@@ -208,7 +208,7 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
     lu[iso, , ] <- luiso
   }
 
-  lu <- lu[,,"allocate", invert = TRUE]
+  lu <- lu[, , "allocate", invert = TRUE]
 
   totalArea <- round(dimSums(luCountry, dim = c(1, 3)), 3)
   if (!any(round(dimSums(lu, dim = c(1, 3)) - totalArea, 3) != 0)) {
