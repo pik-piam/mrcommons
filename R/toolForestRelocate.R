@@ -18,6 +18,14 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
   if (round(sum(lu) - sum(luCountry), 4) != 0) warning("lu and luCountry differ in total land area")
   if (round(sum(lu) - sum(luTarget), 4) != 0) warning("lu and luCountry differ in total land area")
 
+  # store cell area to check later that it remains constant
+  luCellArea <- setItems(dimSums(lu[,1,], dim = 3), dim = 2, NULL)
+  error <- max(abs(dimSums(lu, dim = 3) - luCellArea))
+  if(error > 10e-6) {
+    warning("Cell areas in land use input data set not constant over time (max diff = ", error, "!")
+  }
+
+
   forests <- c("primforest", "secdforest", "forestry")
   other   <- c("primother", "secdother")
   nature  <- c(forests, other)
@@ -197,12 +205,11 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
     ### Check reallocation   ###
     ############################
 
-    maxDiff <- max(abs(dimSums(luiso, dim = 1) - luTarget[iso, , ]))
-    if (maxDiff >= 0.001) {
-      tmp <- abs(dimSums(luiso, dim = 1) - luTarget[iso, , ])
-      landuse <- getItems(luiso, dim = 3)
-      luMissmatches <- paste(landuse[unique(which(tmp >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
-      warning("Missmatch (", round(maxDiff, 3), " Mha) in ", iso, " for ", luMissmatches)
+    error <-abs(dimSums(luiso[,,"allocate", invert=TRUE], dim = 1) - luTarget[iso, , ])
+    if (max(error) >= 0.001) {
+      landuse <- getItems(error, dim = 3)
+      luMissmatches <- paste(landuse[unique(which(error >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
+      warning("Missmatch (", round(max(error), 3), " Mha) in ", iso, " for ", luMissmatches)
     }
 
     lu[iso, , ] <- luiso
@@ -210,9 +217,15 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
 
   lu <- lu[, , "allocate", invert = TRUE]
 
-  totalArea <- round(dimSums(luCountry, dim = c(1, 3)), 3)
-  if (!any(round(dimSums(lu, dim = c(1, 3)) - totalArea, 3) != 0)) {
-    vcat(0, "Something went wrong. Missmatch in total land cover area after reallocation.")
+
+  error <- abs(dimSums(lu, dim = 3) - luCellArea)
+  if(max(error) > 10e-6) {
+    warning("Cell areas in land use output not identical to area in input (max diff = ", max(error), "!")
+  }
+
+  error <- abs(toolSum2Country(lu) - luTarget)
+  if(max(error) > 10e-6) {
+    warning("Missmatch between computed and target land use (max error = ",max(error),")")
   }
 
   return(lu)
