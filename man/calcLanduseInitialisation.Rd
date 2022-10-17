@@ -7,35 +7,39 @@
 calcLanduseInitialisation(
   cellular = FALSE,
   nclasses = "seven",
-  fao_corr = TRUE,
   cells = "magpiecell",
   selectyears = "past",
   input_magpie = FALSE
 )
 }
 \arguments{
-\item{cellular}{cellular (TRUE) or country-level/regional (FALSE) data? For country-level vs regional data, remember to set "aggregate" to false.}
+\item{cellular}{cellular (TRUE) or country-level/regional (FALSE) data? For country-level vs regional data,
+remember to set "aggregate" to false.}
 
 \item{nclasses}{options are either "six", "seven" or "nine".
 \itemize{
 \item "six" includes the original land use classes "crop", "past", "forestry", "forest", "urban" and "other"
-\item "seven" separates primary and secondary forest and includes "crop", "past", "forestry", "primforest", "secdforest", "urban" and "other"
-\item "nine" adds the separation of pasture and rangelands, as well as a differentiation of primary and secondary non-forest vegetation and therefore returns "crop", "past", "range", "forestry", "primforest", "secdforest", "urban", "primother" and "secdother"
+\item "seven" separates primary and secondary forest and includes "crop", "past", "forestry", "primforest",
+"secdforest", "urban" and "other"
+\item "nine" adds the separation of pasture and rangelands, as well as a differentiation of primary
+and secondary non-forest vegetation and therefore returns "crop", "past", "range", "forestry", "primforest",
+"secdforest", "urban", "primother" and "secdother"
 }}
-
-\item{fao_corr}{if TRUE forest area is corrected with FAO data.}
 
 \item{cells}{if cellular is TRUE: "magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 
 \item{selectyears}{default on "past"}
 
-\item{input_magpie}{applies area fix (set cell with zero area to minimal value to not disturb aggregating to clusters)}
+\item{input_magpie}{applies area fix (set cells with zero area to minimal value to
+not disturb aggregating to clusters)}
 }
 \value{
-List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
+List of magpie object with results on country or cellular level, weight on cellular level,
+unit and description.
 }
 \description{
-Calculates the cellular MAgPIE landuse initialisation area. Data from FAO on forestry is used to split the secondary forest pool of the LU2v2 dataset into forestry and secd_forest.
+Calculates the cellular MAgPIE landuse initialisation area. Data from FAO on forestry is used
+to split the secondary forest pool of the LU2v2 dataset into forestry and secd_forest.
 }
 \examples{
 \dontrun{

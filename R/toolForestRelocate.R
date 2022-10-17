@@ -8,7 +8,7 @@
 #' @param vegC vegetation carbon data used as reallocation weight
 #' @return List of magpie object with results on cellular level
 #' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
-#' @importFrom magclass setNames new.magpie nyears
+#' @importFrom magclass setNames setItems new.magpie nyears
 #' @importFrom nleqslv nleqslv
 #'
 #' @export
@@ -19,12 +19,11 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
   if (round(sum(lu) - sum(luTarget), 4) != 0) warning("lu and luCountry differ in total land area")
 
   # store cell area to check later that it remains constant
-  luCellArea <- setItems(dimSums(lu[,1,], dim = 3), dim = 2, NULL)
+  luCellArea <- setItems(dimSums(lu[, 1, ], dim = 3), dim = 2, NULL)
   error <- max(abs(dimSums(lu, dim = 3) - luCellArea))
-  if(error > 10e-6) {
+  if (error > 10e-6) {
     warning("Cell areas in land use input data set not constant over time (max diff = ", error, "!")
   }
-
 
   forests <- c("primforest", "secdforest", "forestry")
   other   <- c("primother", "secdother")
@@ -205,7 +204,7 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
     ### Check reallocation   ###
     ############################
 
-    error <-abs(dimSums(luiso[,,"allocate", invert=TRUE], dim = 1) - luTarget[iso, , ])
+    error <- abs(dimSums(luiso[, , "allocate", invert = TRUE], dim = 1) - luTarget[iso, , ])
     if (max(error) >= 0.001) {
       landuse <- getItems(error, dim = 3)
       luMissmatches <- paste(landuse[unique(which(error >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
@@ -219,13 +218,13 @@ toolForestRelocate <- function(lu, luCountry, luTarget, vegC) {
 
 
   error <- abs(dimSums(lu, dim = 3) - luCellArea)
-  if(max(error) > 10e-6) {
+  if (max(error) > 10e-6) {
     warning("Cell areas in land use output not identical to area in input (max diff = ", max(error), "!")
   }
 
   error <- abs(toolSum2Country(lu) - luTarget)
-  if(max(error) > 10e-6) {
-    warning("Missmatch between computed and target land use (max error = ",max(error),")")
+  if (max(error) > 10e-6) {
+    warning("Missmatch between computed and target land use (max error = ", max(error), ")")
   }
 
   return(lu)
