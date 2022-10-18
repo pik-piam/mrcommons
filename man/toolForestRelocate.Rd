@@ -23,5 +23,5 @@ Reallocates cellular forest information from LUH2 to better match FAO
 forest information
 }
 \author{
-Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
+Kristine Karstens, Jan Philipp Dietrich, Felicitas Beier, Patrick v. Jeetze
 }

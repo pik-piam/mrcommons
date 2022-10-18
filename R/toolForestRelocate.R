@@ -7,13 +7,13 @@
 #' @param natTarget target natural land allocation on country level
 #' @param vegC vegetation carbon data used as reallocation weight
 #' @return List of magpie object with results on cellular level
-#' @author Kristine Karstens, Felicitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
+#' @author Kristine Karstens, Jan Philipp Dietrich, Felicitas Beier, Patrick v. Jeetze
 #' @importFrom magclass setNames setItems new.magpie nyears
 #' @importFrom nleqslv nleqslv
 #'
 #' @export
 
-toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
+toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
 
   forests <- c("primforest", "secdforest", "forestry")
   nature  <- c(forests, "other")
@@ -66,6 +66,9 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
         if (dim(vegCN)[1] == 1) {
           # trivial case of one cell countries
           remove <- -as.magpie(catreduce)
+        } else if (all(dimSums(l[[iso]][, , cat] != 0, dim = 1) == 1)) {
+          # trivial case in which in each year exactly one cell contains land in the category to be reduced
+          remove <- setNames(-1 * (l[[iso]][, , cat] != 0) * as.magpie(catreduce), NULL)
         } else {
           # for other land cell with highest vegc and for all forest categories lowest vegc should be cleared first
           if (cat == "other") {
@@ -151,6 +154,9 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
       if (dim(vegCN)[1] == 1) {
         # trivial case of one cell countries
         add <- as.magpie(catincrease)
+      } else if (all(dimSums(allocate != 0, dim = 1) == 1)) {
+        # trivial case in which in each year exactly one cell contains land in the category to be reduced
+        add <- setNames((allocate != 0) * as.magpie(catincrease), NULL)
       } else {
         # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
 
@@ -204,16 +210,18 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
 
   .checkCellArea <- function(lu, luCellArea) {
     map <- data.frame(from = getItems(lu, dim = 3), to = "sum")
-    error <- max(abs(toolAggregate(lu, map, dim = 3) - luCellArea))
-    if (error > 10e-6) {
-      warning("Total cell areas differ (max diff = ", error, "!")
+    error <- abs(toolAggregate(lu, map, dim = 3) - luCellArea)
+    cell <- rownames(which(error == max(error), arr.ind = TRUE))
+    if (max(error) > 10e-4) {
+      warning("Total cell areas differ (max diff = ", max(error), " in ", cell, ")!")
     }
   }
   .checkCellArea(lu, luCellArea)
 
   error <- abs(toolSum2Country(lu[, , nature]) - natTarget)
-  if (max(error) > 10e-6) {
-    warning("Missmatch between computed and target land use (max error = ", max(error), ")")
+  if (max(error) > 10e-4) {
+    country <- rownames(which(error == max(error), arr.ind = TRUE))
+    warning("Missmatch between computed and target land use (max error = ", max(error), " in ", country, ")")
   }
   getComment(lu) <- NULL
   return(lu)
