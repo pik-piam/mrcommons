@@ -13,7 +13,7 @@
 #' }
 #' @importFrom reshape2 melt
 #' @importFrom magclass as.magpie
-
+#' @importFrom utils capture.output
 readGTAP81 <- function(subtype) {
 
   # maps headers (variables) in BaseData, BaseRate, BaseView, TStrade, gsdvole, GTAPSam and CO2 to respective files
@@ -24,37 +24,42 @@ readGTAP81 <- function(subtype) {
   .readDataset <- function(file, subtype, year) {
     # load data
     if (requireNamespace("HARr", quietly = TRUE)) {
-      GTAP <- HARr::read_har(paste0("FilesGTAP81y", year, "/", file, ".har"))[subtype]
+      # suppress progress bar to prevent cluttering log files
+      capture.output({
+        suppressMessages({
+          gtap <- HARr::read_har(paste0("FilesGTAP81y", year, "/", file, ".har"))[subtype]
+        })
+      }, file = nullfile())
     } else {
       stop(paste("HARr is needed to read data from GTAP. You can install the package via",
                  "remotes::install_git('https://github.com/USDA-ERS/MTED-HARr.git')"))
     }
 
-    GTAP <- melt(GTAP)
-    GTAP$REG <- toupper(GTAP$REG)
-    if ("REG.1" %in% colnames(GTAP)) {
-      GTAP$REG.1 <- toupper(GTAP$REG.1)
-      colnames(GTAP)[colnames(GTAP) == "REG.1"] <- "REG2"
+    gtap <- melt(gtap)
+    gtap$REG <- toupper(gtap$REG)
+    if ("REG.1" %in% colnames(gtap)) {
+      gtap$REG.1 <- toupper(gtap$REG.1)
+      colnames(gtap)[colnames(gtap) == "REG.1"] <- "REG2"
     }
-    if ("YEAR" %in% colnames(GTAP)) GTAP$YEAR <- tolower(GTAP$YEAR)
+    if ("YEAR" %in% colnames(gtap)) gtap$YEAR <- tolower(gtap$YEAR)
 
     # transform to magclass object
-    if ("YEAR" %in% colnames(GTAP)) {
-      GTAP <- as.magpie(GTAP, spatial = "REG", temporal = "YEAR")
+    if ("YEAR" %in% colnames(gtap)) {
+      gtap <- as.magpie(gtap, spatial = "REG", temporal = "YEAR")
     } else {
-      GTAP <- as.magpie(GTAP, spatial = "REG")
+      gtap <- as.magpie(gtap, spatial = "REG")
     }
-    GTAP <- GTAP[, , , drop = TRUE]
-    return(GTAP)
+    gtap <- gtap[, , , drop = TRUE]
+    return(gtap)
   }
 
   if (subtype == "VTTS") { # trade time series covering years 1995 - 2009, identical for both GTAP 8.1 baseyears
-    GTAP <- .readDataset(file = file, subtype = subtype, year = 2007)
+    gtap <- .readDataset(file = file, subtype = subtype, year = 2007)
   } else {# all other variables only report one year, 2004 or 2007 depending on baseyear, which we combine here
-    GTAP04 <- setYears(.readDataset(file = file, subtype = subtype, year = 2004), "y2004")
-    GTAP07 <- setYears(.readDataset(file = file, subtype = subtype, year = 2007), "y2007")
-    GTAP <- mbind(GTAP04, GTAP07)
+    gtap04 <- setYears(.readDataset(file = file, subtype = subtype, year = 2004), "y2004")
+    gtap07 <- setYears(.readDataset(file = file, subtype = subtype, year = 2007), "y2007")
+    gtap <- mbind(gtap04, gtap07)
   }
 
-  return(GTAP)
+  return(gtap)
 }
