@@ -1,6 +1,7 @@
 #' @title calcRockNWeathering
 #'
-#' @description calculates amount of yearly N from rock weathering by country or global total, disaggregated by land use type (LUH2v2 6 class, with FAO forest correction)
+#' @description calculates amount of yearly N from rock weathering by country or global total,
+#' disaggregated by land use type (LUH2v2 6 class, with FAO forest correction)
 #' @return MAgPIE object of amount of N (Mt)
 #' @author David M Chen
 
@@ -12,15 +13,16 @@ x <- readSource("Houlton2018", convert = FALSE)
 # aggregate to country level
 x <- toolCoord2Isocell(x)
 
-landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, nclasses = "six", fao_corr = TRUE, selectyears = "past", input_magpie = FALSE, aggregate = FALSE)
-landuse_shr <- landuse / dimSums(landuse, dim = 3, na.rm = TRUE)
+landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, nclasses = "six",
+                      selectyears = "past", input_magpie = FALSE, aggregate = FALSE)
+landuseShr <- landuse / dimSums(landuse, dim = 3, na.rm = TRUE)
 
 # make past years - hold constant
 getYears(x) <- 1965
 x <- time_interpolate(x, interpolated_year = getYears(landuse), integrate_interpolated_years = TRUE)
 
 # split among landuse shares
-out <- x * landuse_shr
+out <- x * landuseShr
 # aggregate
 out[is.na(out)] <- 0
 rel  <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
