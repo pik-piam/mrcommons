@@ -4,14 +4,14 @@
 \alias{toolForestRelocate}
 \title{toolForestRelocate}
 \usage{
-toolForestRelocate(lu, luCountry, luTarget, vegC)
+toolForestRelocate(lu, luCountry, natTarget, vegC)
 }
 \arguments{
 \item{lu}{uncorrected landuse initialisation data set (cell level)}
 
 \item{luCountry}{uncorrected landuse initialisation on country level}
 
-\item{luTarget}{target landuse allocation on country level}
+\item{natTarget}{target natural land allocation on country level}
 
 \item{vegC}{vegetation carbon data used as reallocation weight}
 }

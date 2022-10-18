@@ -30,7 +30,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
     map <- data.frame(luh = c("c3ann", "c4ann", "c3per", "c4per", "c3nfx", "pastr", "range",
                                    "primf",      "secdf",    "secdf", "urban",     "primn",     "secdn"),
                       lu  = c("crop",  "crop",  "crop",  "crop",  "crop",  "past", "range",
-                              "primforest", "secdforest", "forestry", "urban", "primother", "secdother"))
+                              "primforest", "secdforest", "forestry", "urban", "other", "other"))
     lu <- toolAggregate(luh, map, dim = 3)
     # Attention: mapping maps secdf on both: secdforest and forestry (both contain after aggregation the full secondary
     #           forest area)! Next step will calculate proper shares and multiply it to compute correct areas
@@ -40,10 +40,10 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
     return(lu)
   }
 
-  .luTarget <- function(lu, forestArea) {
+  .natureTarget <- function(lu, forestArea) {
+    # compute target for primforest, secdforest and other (aggregate of primother and secdother)
     forests <- c("primforest", "secdforest", "forestry")
-    other   <- c("primother", "secdother")
-    nature  <- c(forests, other)
+    nature  <- c(forests, "other")
 
     # Correct for overflow effects (forestArea greater than forest and other land available in luInit)
     overflow <- forestArea[, , "forest"] - dimSums(lu[, , nature], dim = 3)
@@ -58,7 +58,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
     }
 
     # compute other land area (diff between total natural land and forest area)
-    otherArea <- setNames(dimSums(lu[, , nature], dim = 3) - forestArea[, , "forest"], NULL)
+    otherArea <- setNames(dimSums(lu[, , nature], dim = 3) - forestArea[, , "forest"], "other")
     if (any(otherArea < -10e-6)) {
       vcat(0, "Other land area is partly negative. This should not be the case! values will be corrected to 0.")
     }
@@ -66,13 +66,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
     # a warning is only triggered for values smaller than 10e-6
     otherArea[otherArea < 0] <- 0
 
-    # Split other area into primary and secondary based on shares in lu
-    otherShare <- (lu[, , other] + 10^-10) / dimSums(lu[, , other] + 10^-10, dim = 3)
-
-    # update other and forest areas
-    lu[, , other] <- otherShare * otherArea
-    lu[, , forests] <- forestArea[, , forests]
-    return(lu)
+    return(mbind(forestArea[, , forests], otherArea))
   }
 
   luh <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, cellular = TRUE,
@@ -81,17 +75,41 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
   # rename categories and split secondary forest into secondary forest and forestry
   # based on forestArea information (area sizes kept as reported by luh)
   lu <- .luIni(luh, forestArea)
+
   luCountry <- toolSum2Country(lu)
-  luTarget <- .luTarget(luCountry, forestArea)
+  natTarget <- .natureTarget(luCountry, forestArea)
 
   vegC  <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical",
                       subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, selectyears, ]
   vegC <- toolCoord2Isocell(vegC, cells = cells)
 
-  out <- toolForestRelocate(lu = lu, luCountry = luCountry, luTarget = luTarget, vegC = vegC)
+  lu2 <- toolForestRelocate(lu = lu, luCountry = luCountry, natTarget = natTarget, vegC = vegC)
+
+  .splitOther <- function(lu, luh) {
+    # split other land in primary and secondary other land
+    # try to adjust only secondary other land and only touch primary other land
+    # if total other land is smaller than primary other land
+    other <- setNames(luh[, , c("primn", "secdn")], c("primother", "secdother"))
+    secdother <- setNames(lu[, , "other"] - other[, , "primother"], NULL)
+    # handle cases in which the above calculation became negative
+    if (any(secdother < 0)) {
+      remove  <- -secdother
+      remove[remove < 0] <- 0
+      secdother[secdother < 0] <- 0
+      other[, , "primother"] <- other[, , "primother"] - remove
+    }
+    other[, , "secdother"] <- secdother
+    if (max(abs(dimSums(other, dim = 3) - lu[, , "other"])) > 10e-6) {
+      warning("splitted other land does not sum up to total other land!")
+    }
+    return(mbind(lu[, , "other", invert = TRUE], other))
+  }
+
+  out <- .splitOther(lu2, luh)
+
   if (any(out < 0)) {
+    if (min(out) < -10e-6) vcat(0, "Negativ land values detected and replaced by 0.")
     out[out < 0] <- 0
-    vcat(0, "Negativ land values detected and replaced by 0.")
   }
 
   return(list(
