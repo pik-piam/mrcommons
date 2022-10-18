@@ -5,13 +5,13 @@
 #'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
-#' @param subtype data subtype. Either "EnergyBalances" or "CHPreport"
+#' @param subtype data subtype. Either "EnergyBalances" or "Emissions"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
 #' @importFrom dplyr %>% filter
-
+#' @importFrom tidyr unite
+#'
 convertIEA <- function(x, subtype) {
-
   if (subtype == "EnergyBalances") {
 
     # aggregate Kosovo to Serbia
@@ -43,21 +43,15 @@ convertIEA <- function(x, subtype) {
     # disaggregating extinct countries USSR (SUN) and Yugoslavia (YUG)
     ISOhistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
     ISOhistorical <- ISOhistorical[!ISOhistorical$toISO == "SCG", ]
-    x <- toolISOhistorical(x, mapping = ISOhistorical,
+    x <- toolISOhistorical(x,
+      mapping = ISOhistorical,
       additional_weight = w[ISOhistorical[ISOhistorical$fromISO %in% c("YUG", "SUN"), "toISO"], , ]
     )
     x[is.na(x)] <- 0
 
     # filling missing country data
     x <- toolCountryFill(x, 0)
-
-  } else if (subtype == "CHPreport") {
-    # adjust the share for some region to avoid infeasibilities in the initial year
-    x["RUS", , ] <- 70
-    x[c("BGR", "CZE", "POL", "ROU", "SVK"), , ] <- 70
-    x[c("BEL", "LUX", "NLD"), , ] <- 40
   }
-
 
   return(x)
 }

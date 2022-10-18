@@ -2,7 +2,7 @@
 #'
 #' Read-in an IEA csv file as magpie object
 #'
-#' @param subtype data subtype. Either "EnergyBalances", "CHPreport" or "Emissions")
+#' @param subtype data subtype. Either "EnergyBalances" or "Emissions"
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
 #' @seealso [readSource()]
@@ -74,11 +74,7 @@ readIEA <- function(subtype) {
     if (names(data)[[5]] == "MtCO2") data <- data[!is.na(data$MtCO2), ]
     if (names(data)[[5]] == "MtCO2") data$MtCO2 <- suppressWarnings(as.numeric(data$MtCO2)) # nolint
     mdata <- as.magpie(data, datacol = dim(data)[2])
-  } else if (subtype == "CHPreport") {
-    data <- read.csv("CHPdata.csv", sep = ";", skip = 4)
-    data$CountryName <- NULL # nolint
-    mdata <- as.magpie(data, datacol = 2)
-    getNames(mdata) <- "chp share"
+
   } else {
     stop("Not a valid subtype!")
   }
