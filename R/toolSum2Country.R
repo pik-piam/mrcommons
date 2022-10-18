@@ -5,6 +5,7 @@
 #' @param x magpie object on cellular level with countries in dim 1.1
 #' @return return selected input data on ISO country level
 #' @author Jan Philipp Dietrich
+#' @export
 
 toolSum2Country <- function(x) {
   map <- data.frame(from = getItems(x, dim = 1),

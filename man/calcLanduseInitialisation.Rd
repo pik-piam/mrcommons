@@ -47,5 +47,5 @@ calcOutput("LanduseInitialisation")
 }
 }
 \author{
-Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
+Jan Philipp Dietrich, Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
 }

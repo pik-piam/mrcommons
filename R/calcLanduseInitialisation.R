@@ -19,7 +19,7 @@
 #' @param selectyears default on "past"
 #' @return List of magpie object with results on country or cellular level, weight on cellular level,
 #' unit and description.
-#' @author Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze, Jan Philipp Dietrich
+#' @author Jan Philipp Dietrich, Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze
 #' @examples
 #' \dontrun{
 #' calcOutput("LanduseInitialisation")

@@ -23,18 +23,11 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
 
   # store cell area to check later that it remains constant
   luCellArea <- setItems(dimSums(lu[, 1, ], dim = 3), dim = 2, NULL)
-  error <- max(abs(dimSums(lu, dim = 3) - luCellArea))
-  if (error > 10e-6) {
-    warning("Cell areas in land use input data set not constant over time (max diff = ", error, "!")
-  }
 
   # reduce, if necessary to FAO
   reduce <- increase <- round(natTarget - luCountry[, , nature], 8)
   reduce[reduce > 0]     <- 0
   increase[increase < 0] <- 0
-
-  lu <- add_columns(lu, "allocate", dim = 3.1)
-  lu[, , "allocate"] <- 0
 
   # grep land areas dependent on vegetation carbon density
   if (is.null(getYears(vegC))) getYears(vegC) <- getYears(natTarget)
@@ -46,9 +39,11 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
 
   # loop over countries
   countries <- getItems(lu, dim = 1.1)
+  l <- list()
   for (iso in countries) {
 
-    luiso <- lu[iso, , ]
+    l[[iso]] <- lu[iso, , ]
+    allocate <- setNames(l[[iso]][, , 1] * 0, NULL)
 
     vegCIso <- vegC[iso, , ]
 
@@ -80,11 +75,11 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
           }
 
           # check for edge case in which all land of that category must be removed and treat it separately
-          fullremoval <- (round(dimSums(luiso, dim = 1)[, , cat] + catreduce, 3) == 0)
+          fullremoval <- (round(dimSums(l[[iso]], dim = 1)[, , cat] + catreduce, 3) == 0)
           if (any(fullremoval)) {
-            luiso[, fullremoval, "allocate"] <- (luiso[, fullremoval, "allocate"]
-                                                        + setNames(luiso[, fullremoval, cat], NULL))
-            luiso[, fullremoval, cat] <- 0
+            allocate[, fullremoval, ] <- (allocate[, fullremoval, ]
+                                                        + setNames(l[[iso]][, fullremoval, cat], NULL))
+            l[[iso]][, fullremoval, cat] <- 0
             catreduce[fullremoval] <- 0
           }
 
@@ -93,13 +88,13 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
             # determine correct parameter for weights for multiple cell countries
             # (weights below zero indicate an error)
             # only determine them for cases where something has to be removed
-            p        <- rep(1, nyears(luiso))
+            p        <- rep(1, nyears(l[[iso]]))
             names(p) <- rownames(cellweight)
 
-            for (ti in getYears(luiso[, t, ])) {
+            for (ti in getYears(l[[iso]][, t, ])) {
 
-              sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
-                              cellarea = t(as.array(luiso)[, ti, cat]),
+              sol  <- nleqslv(rep(1, nyears(l[[iso]][, ti, ])), findweight,
+                              cellarea = t(as.array(l[[iso]])[, ti, cat]),
                               isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
                               control = list(allowSingular = TRUE))
               p[ti] <- sol$x
@@ -113,8 +108,8 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
                 vcat(2, paste0("No solution for ", iso, ", ", cat, ", ", msg, ".",
                      "Restart from higher intial guess."))
 
-                sol  <- nleqslv(rep(10^10, nyears(luiso[, ti, ])), findweight,
-                                cellarea = t(as.array(luiso)[, ti, cat]),
+                sol  <- nleqslv(rep(10^10, nyears(l[[iso]][, ti, ])), findweight,
+                                cellarea = t(as.array(l[[iso]])[, ti, cat]),
                                 isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
                                 control = list(allowSingular = TRUE))
                 p[ti] <- sol$x
@@ -125,7 +120,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
             }
 
             if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
-            remove <- luiso[, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+            remove <- l[[iso]][, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
             remove[, !t, ] <- 0
           } else {
             remove <- 0
@@ -133,8 +128,8 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
         }
 
         # remove area from cells and put to "allocate" area
-        luiso[, , cat] <- luiso[, , cat] - remove
-        luiso[, , "allocate"] <- luiso[, , "allocate"] + remove
+        l[[iso]][, , cat] <- l[[iso]][, , cat] - remove
+        allocate <- allocate + remove
       }
     }
 
@@ -159,25 +154,25 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
       } else {
         # determine correct parameter for weights for multiple cell countries (weights below zero indicate an error)
 
-        p        <- rep(1, nyears(luiso))
+        p        <- rep(1, nyears(l[[iso]]))
         names(p) <- rownames(cellweight)
 
-        for (ti in getYears(luiso[, t, ])) {
+        for (ti in getYears(l[[iso]][, t, ])) {
 
-          sol  <- nleqslv(rep(1, nyears(luiso[, ti, ])), findweight,
-                          cellarea = t(as.array(luiso)[, ti, "allocate"]),
+          sol  <- nleqslv(rep(1, nyears(l[[iso]][, ti, ])), findweight,
+                          cellarea = t(as.array(allocate)[, ti, ]),
                           isoreduction = -catincrease[ti], cellweight = cellweight[ti, ])
           p[ti] <- sol$x
         }
 
         if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
-        add <- luiso[, , "allocate"] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+        add <- allocate * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
       }
       add[, !t, ] <- 0
 
       # move area from "allocate" area to other land
-      luiso[, , "other"]    <- luiso[, , "other"]    + add
-      luiso[, , "allocate"] <- luiso[, , "allocate"] - add
+      l[[iso]][, , "other"]    <- l[[iso]][, , "other"]    + add
+      allocate <- allocate - add
     }
 
     # relocate forest land to remaining "allocate" area
@@ -186,41 +181,40 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) {
     catincrease <- increase[iso, , forests]
 
     if (any(catincrease != 0)) {
-
       # move area from "allocate" area to forests
       forestsShare <- catincrease / (setNames(dimSums(catincrease, dim = 3), NULL) + 10^-10)
-      luiso[, , forests] <- (luiso[, , forests] + setCells(forestsShare, "GLO")
-                             * setNames(luiso[, , "allocate"], NULL))
-
-      luiso[, , "allocate"] <- 0
+      l[[iso]][, , forests] <- (l[[iso]][, , forests] + setCells(forestsShare, "GLO") * allocate)
+      allocate[, , ] <- 0
     }
 
     ############################
     ### Check reallocation   ###
     ############################
 
-    error <- abs(dimSums(luiso[, , nature], dim = 1) - natTarget[iso, , ])
+    error <- abs(dimSums(l[[iso]][, , nature], dim = 1) - natTarget[iso, , ])
     if (max(error) >= 0.001) {
       landuse <- getItems(error, dim = 3)
       luMissmatches <- paste(landuse[unique(which(error >= 0.001, arr.ind = TRUE)[, 3])], collapse = ", ")
       warning("Missmatch (", round(max(error), 3), " Mha) in ", iso, " for ", luMissmatches)
     }
 
-    lu[iso, , ] <- luiso
   }
 
-  lu <- lu[, , "allocate", invert = TRUE]
+  lu[names(l), , ] <- mbind(l)
 
-
-  error <- abs(dimSums(lu, dim = 3) - luCellArea)
-  if (max(error) > 10e-6) {
-    warning("Cell areas in land use output not identical to area in input (max diff = ", max(error), "!")
+  .checkCellArea <- function(lu, luCellArea) {
+    map <- data.frame(from = getItems(lu, dim = 3), to = "sum")
+    error <- max(abs(toolAggregate(lu, map, dim = 3) - luCellArea))
+    if (error > 10e-6) {
+      warning("Total cell areas differ (max diff = ", error, "!")
+    }
   }
+  .checkCellArea(lu, luCellArea)
 
   error <- abs(toolSum2Country(lu[, , nature]) - natTarget)
   if (max(error) > 10e-6) {
     warning("Missmatch between computed and target land use (max error = ", max(error), ")")
   }
-
+  getComment(lu) <- NULL
   return(lu)
 }
