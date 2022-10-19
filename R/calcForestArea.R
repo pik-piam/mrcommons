@@ -4,7 +4,7 @@
 #'
 #' @param selectyears defaults to past
 #' @return List of magpie object with results on country level, weight, unit and description.
-#' @author Kristine Karstens
+#' @author Kristine Karstens, Jan Philipp Dietrich
 #' @examples
 #' \dontrun{
 #' calcOutput("ForestArea")
@@ -29,14 +29,14 @@ calcForestArea <- function(selectyears = "past") {
 
   ## Linear interpolation to missing year
   fra2020      <- time_interpolate(dataset = fra2020,
-                                    interpolated_year = missingYears,
-                                    integrate_interpolated_years = TRUE,
-                                    extrapolation_type = "linear")
+                                   interpolated_year = missingYears,
+                                   integrate_interpolated_years = TRUE,
+                                   extrapolation_type = "linear")
 
   ## Replace FRA2015 planted forest data with FRA 2020 data
   forest[, , "PlantFor"] <- fra2020[, getYears(forest), "plantedForest"]
 
-  # As planted forest data is now differen, we need to update overall forest area
+  # As planted forest data is now different, we need to update overall forest area
   # (sum of nat.reg.forest and planted forest)
   forest[, , "Forest"]   <- forest[, , "NatFor"] + forest[, , "PlantFor"]
 
@@ -52,54 +52,71 @@ calcForestArea <- function(selectyears = "past") {
   forest["PSE", , "PlantFor"]   <- 2 / 3 * forest["PSE", , "Forest"]
   forest["PSE", , "NatRegFor"]  <- 1 / 3 * forest["PSE", , "Forest"]
 
-  ### fixing inconstinicies assuming total forest areas and shares of subcategories are reported correctly
+  ### fixing inconsistencies assuming total forest areas and shares of subcategories are reported correctly
 
-  forestSumSub                       <- dimSums(forest[, , c("NatFor", "PlantFor")], dim = 3)
+  forestSumSub                  <- dimSums(forest[, , c("NatFor", "PlantFor")], dim = 3)
   forest[, , "PlantFor"]        <- toolNAreplace(forest[, , "PlantFor"] /
                                                    forestSumSub * setNames(forest[, , "Forest"], NULL))$x
   forest[, , "NatFor"]          <- toolNAreplace(forest[, , "NatFor"] /
                                                    forestSumSub * setNames(forest[, , "Forest"], NULL))$x
 
-  forestSumSubSub                    <- dimSums(forest[, , c("PrimFor", "NatRegFor")], dim = 3)
+  forestSumSubSub               <- dimSums(forest[, , c("PrimFor", "NatRegFor")], dim = 3)
   forest[, , "PrimFor"]         <- toolNAreplace(forest[, , "PrimFor"] /
                                                    forestSumSubSub * setNames(forest[, , "NatFor"], NULL))$x
   forest[, , "NatRegFor"]       <- toolNAreplace(forest[, , "NatRegFor"] /
                                                    forestSumSubSub * setNames(forest[, , "NatFor"], NULL))$x
 
+  ###########################
   # fixing missing data on split between PrimFor (primforest), NatRegFor (secdforest)
   # and PlantFor (forestry) with LUH data
 
-  landuseIni <- calcOutput("LanduseInitialisation", nclasses = "seven", fao_corr = FALSE, aggregate = FALSE,
-                           selectyears = selectyears, cellular = FALSE)[, , c("primforest", "secdforest", "forestry")]
+  luh <- calcOutput("LUH2v2", landuse_types = "LUH2v2", irrigation = FALSE, selectyears = selectyears,
+                    cells = "lpjcell", cellular = FALSE, aggregate = FALSE)[, , c("primf", "secdf")]
+
+  secondaryForest <- luh[, , "secdf"] - setNames(forest[, getYears(luh), "PlantFor"], NULL)
+  if (any(secondaryForest < 0)) {
+    tmp <- secondaryForest
+    tmp[tmp > 0] <- 0
+    tmp <- dimSums(tmp, dim = 1)
+    vcat(verbosity = 2, paste("Mismatch of FAO forestry and Hurtt secondary forest:",
+                              paste(paste(getYears(tmp), round(tmp, 0), "Mha, "), collapse = " "), ". cut off."))
+    secondaryForest[secondaryForest < 0] <- 0
+  }
+  forestry <- luh[, , "secdf"] - secondaryForest
+
+  luhForest <- mbind(setNames(forestry, "PlantFor"),
+                     setNames(luh[, , c("primf")], "PrimFor"),
+                     setNames(secondaryForest, "NatRegFor")) + 10^-10
+  # 10^-10 added to allow share estimation even under missing area information
+  luhForestShare <- luhForest / dimSums(luhForest, dim = 3)
+  luhNatForestShare <- luhForest[, , c("PrimFor", "NatRegFor")] / dimSums(luhForest[, , c("PrimFor", "NatRegFor")],
+                                                                          dim = 3)
 
   miss         <- where(round(dimSums(forest[, , c("NatFor", "PlantFor")], dim = 3), 6) !=
                           round(forest[, , "Forest"], 6))$true$regions
-  iniSum             <- dimSums(landuseIni, dim = 3)
-  forest[miss, , "PrimFor"]      <- toolNAreplace(setNames(landuseIni[miss, , "primforest"], "PrimFor") /
-                                                    iniSum[miss, , ] * setNames(forest[miss, , "Forest"], NULL))$x
-  forest[miss, , "NatRegFor"]    <- toolNAreplace(landuseIni[miss, , "secdforest"] / iniSum[miss, , ] *
-                                                    setNames(forest[miss, , "Forest"], NULL))$x
-  forest[miss, , "PlantFor"]     <- toolNAreplace(landuseIni[miss, , "forestry"] / iniSum[miss, , ] *
-                                                    setNames(forest[miss, , "Forest"], NULL))$x
-  forest[miss, , "NatFor"]       <- forest[miss, , "PrimFor"] + forest[miss, , "NatRegFor"]
+
+  if (length(miss) > 0) {
+    forest[miss, , c("PlantFor", "PrimFor", "NatRegFor")] <- luhForestShare[miss, , ] *
+      setNames(forest[miss, , "Forest"], NULL)
+    forest[miss, , "NatFor"] <- setNames(forest[miss, , "PrimFor"] + forest[miss, , "NatRegFor"], NULL)
+  }
 
   miss         <- where(round(dimSums(forest[, , c("PrimFor", "NatRegFor")], dim = 3), 6) !=
                           round(forest[, , "NatFor"], 6))$true$regions
-  iniSumsub          <- dimSums(landuseIni[, , c("primforest", "secdforest")], dim = 3)
-  forest[miss, , "PrimFor"]     <- toolNAreplace(landuseIni[miss, , "primforest"] / iniSumsub[miss, , ] *
-                                                   setNames(forest[miss, , "NatFor"], NULL))$x
-  forest[miss, , "NatRegFor"]   <- toolNAreplace(landuseIni[miss, , "secdforest"] / iniSumsub[miss, , ] *
-                                                   setNames(forest[miss, , "NatFor"], NULL))$x
-
-
-  if (any(round(dimSums(forest[, , c("NatFor", "PlantFor")], dim = 3), 4) != round(forest[, , "Forest"], 4)) ||
-     any(round(dimSums(forest[, , c("NatRegFor", "PrimFor")], dim = 3), 4) != round(forest[, , "NatFor"], 4))) {
-    vcat(verbosity = 2, "There are still inconsistencies within the forest area data set.")
+  if (length(miss > 0)) {
+    forest[miss, , c("PrimFor", "NatRegFor")] <- luhNatForestShare[miss, , ] * setNames(forest[miss, , "NatFor"], NULL)
   }
+
+  ####################################
 
   map <- data.frame(fao    = c("Forest", "NatFor",     "PrimFor",    "NatRegFor",  "PlantFor"),
                     magpie = c("forest", "natrforest", "primforest", "secdforest", "forestry"))
   out <- toolAggregate(forest, map, from = "fao", to = "magpie", dim = 3)
+
+  if (max(abs(dimSums(out[, , c("natrforest", "forestry")]) - out[, , "forest"])) > 10^-6 ||
+      max(abs(dimSums(out[, , c("secdforest", "primforest")], dim = 3) - out[, , "natrforest"])) > 10^-6) {
+    vcat(verbosity = 0, "There are inconsistencies within the forest area data set.")
+  }
 
   return(list(x = out,
               weight = NULL,

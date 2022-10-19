@@ -10,8 +10,8 @@ calcCropareaToolbox(
   cellular = FALSE,
   cells = "magpiecell",
   irrigation = FALSE,
-  selectyears = c("y1965", "y1970", "y1975", "y1980", "y1985", "y1990", "y1995", "y2000",
-    "y2005", "y2010")
+  selectyears = c("y1965", "y1970", "y1975", "y1980", "y1985", "y1990", "y1995",
+    "y2000", "y2005", "y2010")
 )
 }
 \arguments{
