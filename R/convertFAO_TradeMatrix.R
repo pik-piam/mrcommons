@@ -150,7 +150,7 @@ x2[, getYears(x2)[getYears(x2, as.integer = TRUE) >= 1992], ] <- 0
     x[is.na(x)] <- 0
 
     ### do ISOhistorical
-x1 <- toolISOhistorical(x, mapping = NULL, overwrite = TRUE, additional_mapping = additional_mapping)
+x <- toolISOhistorical(x, mapping = NULL, overwrite = TRUE, additional_mapping = additional_mapping)
 
 out <- toolCountryFillBilateral(x, fill = 0)
 rm(x)
