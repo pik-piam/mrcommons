@@ -44,7 +44,7 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
                 colClasses = readcolClass,
                col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
                quote = "\"",
-               encoding = "Latin-1", showProgress = TRUE)
+               encoding = "Latin-1", showProgress = FALSE)
   fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
   if (!long) {

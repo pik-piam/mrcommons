@@ -7,7 +7,7 @@
 #' @param x output from read function
 #' @param subtype subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 #' separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
-#' Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity" X c("kcr", "kli", "kothers"))
+#' Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
 #' import is import side reporting while export is export-sde reporting
 #' @return FAO data as MAgPIE object
 #' @author David C
@@ -150,7 +150,7 @@ x2[, getYears(x2)[getYears(x2, as.integer = TRUE) >= 1992], ] <- 0
     x[is.na(x)] <- 0
 
     ### do ISOhistorical
-x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+x1 <- toolISOhistorical(x, mapping = NULL, overwrite = TRUE, additional_mapping = additional_mapping)
 
 out <- toolCountryFillBilateral(x, fill = 0)
 rm(x)
