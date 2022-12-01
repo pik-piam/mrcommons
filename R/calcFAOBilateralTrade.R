@@ -117,9 +117,13 @@ unit <- "US$05/tDM"
  out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
                            to = "k" , partrel = T, dim = 3.1)
     
-    if(output == "qty"){
+    if (output == "qty") {
     attr <- calcOutput("Attributes", aggregate = FALSE)
     out <- out / collapseNames(attr[,,"wm"][,,getNames(out)])
+    unit <- "tDM"
+    } else if (output == "price") {
+    attr <- calcOutput("Attributes", aggregate = FALSE)
+    out <- out * collapseNames(attr[,,"wm"][,,getNames(out)])
     unit <- "tDM"
     }
  }
