@@ -6,7 +6,7 @@
 #' \dontrun{
 #' calcOutput("GTAPTotalTransportCosts")
 #' }
-
+#'
 calcGTAPTotalTransportCosts <- function() {
 
 nvfa <- readSource("GTAP81", subtype = "SF01")
@@ -22,21 +22,21 @@ nonTranspInputs <- c("pdr", "wht", "gro", "v_f", "osd", "c_b", "pfb",
                        "lea", "lum", "ppp", "p_c", "crp", "nmm", "i_s",
                        "nfm", "fmp")
 
-#sum imported and domestic inputs - very little imported transport inputs
+# sum imported and domestic inputs - very little imported transport inputs
 nvfa <- dimSums(nvfa, dim = 3.3, na.rm = TRUE)
 
 # subset to market expenditure (no taxes) and GTAP foods
-nvfa  <- collapseNames(nvfa[,, "mktexp"][,, list("PROD_COMM" = gtapFoods)])
+nvfa  <- collapseNames(nvfa[, , "mktexp"][, , list("PROD_COMM" = gtapFoods)])
 
-tcostInputs <- dimSums(nvfa[,, list("DEMD_COMM" = transpInputs)], dim = 3.1)
-nonTcostInputs <-  dimSums(nvfa[,, list("DEMD_COMM" = nonTranspInputs)], dim = 3.1)
+tcostInputs <- dimSums(nvfa[, , list("DEMD_COMM" = transpInputs)], dim = 3.1)
+nonTcostInputs <-  dimSums(nvfa[, , list("DEMD_COMM" = nonTranspInputs)], dim = 3.1)
 
-tcostPerUnitInput <- tcostInputs/nonTcostInputs
+tcostPerUnitInput <- tcostInputs / nonTcostInputs
 
 # where(tcostPerUnitInput[,,"wht"] > 3)$true # some high costs around the world
 
 
-tcostToSecondary <- tcostPerUnitInput * nvfa[,, list("DEMD_COMM" = gtapFoods)]
+tcostToSecondary <- tcostPerUnitInput * nvfa[, , list("DEMD_COMM" = gtapFoods)]
 tcostToSecondary <- dimSums(tcostToSecondary, dim = "DEMD_COMM")
 
 # half of transport of inputs to market and half of transport from market to consumer

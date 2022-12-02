@@ -1,110 +1,107 @@
 #' @title calcResBiomass
 #' @description Provides MAgPIE-FEED data for aboveground and belowground residues biomass
-#' 
+#'
 #' @param cellular If TRUE calculation and output on cellular level
 #' @param plantparts both, ag (aboveground) or belowground (bg). Both can have memory problems for cellular outputs
 #' @param irrigation if TRUE, distinguishes irrigated and non-irrigated crops
 #' @param attributes in dm, wm, ge, nr, p, k
-#' @param scenario define scenario switch for sensititvy analysis 
+#' @param scenario define scenario switch for sensititvy analysis
 #'                 for historical SOC budget
-#'                 
+#'
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
 #' @author Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky
 #' @seealso [calcOutput()], [readSource()]
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("ResBiomass")
-#' 
 #' }
-#' 
-calcResBiomass <- function(cellular=FALSE, plantparts="both",irrigation=FALSE,attributes="all",scenario="default") {
+#'
+calcResBiomass <- function(cellular = FALSE, plantparts = "both", irrigation = FALSE, attributes = "all", scenario = "default") {
   MAGcroptypes   <- findset("kcr")
-  
+
   # memory problems for cellular data
-  if(plantparts=="both"){
-    AboveGroundResidues   <- calcOutput("ResBiomass",cellular=cellular,aggregate = FALSE,plantparts="ag", irrigation=irrigation,attributes=attributes, scenario=scenario)
-    BelowGroundResidues   <- calcOutput("ResBiomass",cellular=cellular,aggregate = FALSE,plantparts="bg", irrigation=irrigation,attributes=attributes, scenario=scenario)
+  if (plantparts == "both") {
+    AboveGroundResidues   <- calcOutput("ResBiomass", cellular = cellular, aggregate = FALSE, plantparts = "ag", irrigation = irrigation, attributes = attributes, scenario = scenario)
+    BelowGroundResidues   <- calcOutput("ResBiomass", cellular = cellular, aggregate = FALSE, plantparts = "bg", irrigation = irrigation, attributes = attributes, scenario = scenario)
     ResidueProduction     <- mbind(AboveGroundResidues, BelowGroundResidues)
-    
-  } else if(plantparts %in% c("ag","bg")){
-    
+
+  } else if (plantparts %in% c("ag", "bg")) {
     # read in area harvested
-    HarvestedArea  <- calcOutput("Croparea", sectoral="kcr", physical=FALSE, 
-                                 cellular=cellular, irrigation=irrigation, aggregate=FALSE)
-    #cyears here above
-    CropProduction <- collapseNames(calcOutput("Production", products="kcr", cellular=cellular,attributes="dm", irrigation=irrigation, aggregate = FALSE))
+    HarvestedArea  <- calcOutput("Croparea", sectoral = "kcr", physical = FALSE,
+                                 cellular = cellular, irrigation = irrigation, aggregate = FALSE)
+    # cyears here above
+    CropProduction <- collapseNames(calcOutput("Production", products = "kcr", cellular = cellular, attributes = "dm", irrigation = irrigation, aggregate = FALSE))
     cyears         <- intersect(getYears(HarvestedArea), getYears(CropProduction))
-    
+
     CropProduction <- CropProduction[, cyears, ]
     HarvestedArea  <- HarvestedArea[, cyears, ]
-    
-    HarvestIndex   <- setYears(readSource("HI"), NULL)[,,MAGcroptypes] 
-    
-    if(grepl("freeze*", scenario)){
-      
+
+    HarvestIndex   <- setYears(readSource("HI"), NULL)[, , MAGcroptypes]
+
+    if (grepl("freeze*", scenario)) {
       # select year by scenario name
-      freeze_year <- as.integer(gsub("freeze","",scenario))
-    
+      freeze_year <- as.integer(gsub("freeze", "", scenario))
+
       # calculate yields and freeze yield levels
-      CropYields  <- toolConditionalReplace(CropProduction[, cyears, ] / HarvestedArea[, cyears, ], 
+      CropYields  <- toolConditionalReplace(CropProduction[, cyears, ] / HarvestedArea[, cyears, ],
                                             c("is.na()", "is.infinite()"), 0)
       CropYields  <- toolFreezeEffect(CropYields, freeze_year, constrain = "first_use")
-      
+
       # recalculate production
       CropProduction <- CropYields[, cyears, ] * HarvestedArea[, cyears, ]
     }
-    
-    if(plantparts=="ag"){
-      
-      # calculate residue production 
-      ResWithProduction     <- CropProduction * collapseNames(HarvestIndex[,,"slope"])                         
-      ResWithHarvestedArea  <- HarvestedArea  * collapseNames(HarvestIndex[,,"intercept"])                     
-      
-      AboveGroundResidues   <- (ResWithProduction[,cyears,]   + ResWithHarvestedArea[,cyears]) 
+
+    if (plantparts == "ag") {
+      # calculate residue production
+      ResWithProduction     <- CropProduction * collapseNames(HarvestIndex[, , "slope"])
+      ResWithHarvestedArea  <- HarvestedArea  * collapseNames(HarvestIndex[, , "intercept"])
+
+      AboveGroundResidues   <- (ResWithProduction[, cyears, ]   + ResWithHarvestedArea[, cyears])
       # read in residues attributes
-      AttributesAboveGround <- readSource("ProductAttributes", subtype = "AgResidues")[,,MAGcroptypes]
-      if(!all(attributes%in%"all")){# for problems with memory size
-        AttributesAboveGround=AttributesAboveGround[,,attributes]
+      AttributesAboveGround <- readSource("ProductAttributes", subtype = "AgResidues")[, , MAGcroptypes]
+      if (!all(attributes %in% "all")) { # for problems with memory size
+        AttributesAboveGround <- AttributesAboveGround[, , attributes]
       }
       AboveGroundResidues   <- AboveGroundResidues * AttributesAboveGround
-      ResidueProduction   <- add_dimension(AboveGroundResidues, dim = 3.1, add = "residues", nm = "ag") 
-      
-    } else if (plantparts=="bg") {
-      
-      AboveGroundResidues <- collapseNames(calcOutput("ResBiomass",cellular=cellular,plantparts="ag",attributes="dm", irrigation=irrigation,aggregate = FALSE, scenario=scenario))
-      # read harvest index 
-      BelowGroundResidues <- (AboveGroundResidues + CropProduction) * collapseNames(HarvestIndex[,,"bg_to_ag"])
+      ResidueProduction   <- add_dimension(AboveGroundResidues, dim = 3.1, add = "residues", nm = "ag")
+
+    } else if (plantparts == "bg") {
+
+      AboveGroundResidues <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", attributes = "dm", irrigation = irrigation, aggregate = FALSE, scenario = scenario))
+      # read harvest index
+      BelowGroundResidues <- (AboveGroundResidues + CropProduction) * collapseNames(HarvestIndex[, , "bg_to_ag"])
       # read in residues attributes
-      AttributesBelowGround <- readSource("ProductAttributes", subtype = "BgResidues")[,,MAGcroptypes]
-      
-      if(!all(attributes%in%getNames(AttributesBelowGround,dim=1))){ # for problems with memory size
+      AttributesBelowGround <- readSource("ProductAttributes", subtype = "BgResidues")[, , MAGcroptypes]
+
+      if (!all(attributes %in% getNames(AttributesBelowGround, dim = 1))) { # for problems with memory size
         ResidueProduction   <- BelowGroundResidues *  AttributesBelowGround
-        # add all product attribute to below ground residues (p, k, ge, wm with 0) 
-        AttributesBGResNames  <- getNames(AttributesBelowGround, dim=1)
+        # add all product attribute to below ground residues (p, k, ge, wm with 0)
+        AttributesBGResNames  <- getNames(AttributesBelowGround, dim = 1)
         AttributesNames       <- findset("attributes")
-        AttributesMissNames   <- setdiff(AttributesNames, AttributesBGResNames)  
+        AttributesMissNames   <- setdiff(AttributesNames, AttributesBGResNames)
         AttributesBelowGround   <- add_columns(AttributesBelowGround, addnm = AttributesMissNames, dim = 3.1)
-        AttributesBelowGround[,,AttributesMissNames] <- 0
-      } 
-      if(!all(attributes%in%"all")) {
-        AttributesBelowGround<-AttributesBelowGround[,,attributes]
+        AttributesBelowGround[, , AttributesMissNames] <- 0
       }
-      
+      if (!all(attributes %in% "all")) {
+        AttributesBelowGround <- AttributesBelowGround[, , attributes]
+      }
+
       ResidueProduction   <- BelowGroundResidues *  AttributesBelowGround
-      ResidueProduction   <- add_dimension(ResidueProduction, dim = 3.1, add = "residues", nm = "bg") 
+      ResidueProduction   <- add_dimension(ResidueProduction, dim = 3.1, add = "residues", nm = "bg")
     }
-  } else {stop("unkown plantpart")}
-  
-  if(!all(attributes%in%"all")){# for problems with memory size
-    ResidueProduction=ResidueProduction[,,attributes]
+  } else {
+stop("unkown plantpart")
+}
+
+  if (!all(attributes %in% "all")) { # for problems with memory size
+    ResidueProduction <- ResidueProduction[, , attributes]
   }
-  
+
   return(list(x            = ResidueProduction,
               weight       = NULL,
               unit         = "mio ton DM,Nr,P,K,WM",
               description  = "aboveground and belowground residues production",
-              isocountries =!cellular)
+              isocountries = !cellular)
         )
 }

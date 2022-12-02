@@ -6,20 +6,20 @@
 #' @author Kristine Karstens, Felicitas Beier
 #' @seealso
 #' [correctLPJmL()]
-#' 
+#'
 #' @examples
 #' \dontrun{
-#' readSource("LPJmL", subtype="soilc", convert="onlycorrect")
+#' readSource("LPJmL", subtype = "soilc", convert = "onlycorrect")
 #' }
 #'
 #' @importFrom lpjclass readLPJ
 
-correctLPJmL <- function(x){
+correctLPJmL <- function(x) {
 
-  x <- toolConditionalReplace(x, conditions = c("is.na()","<0"), replaceby = 0)
-  if (length(getCells(x))==59199) {
+  x <- toolConditionalReplace(x, conditions = c("is.na()", "<0"), replaceby = 0)
+  if (length(getCells(x)) == 59199) {
     x <- toolCell2isoCell(x)
   }
-  
+
   return(x)
 }

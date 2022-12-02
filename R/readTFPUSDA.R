@@ -16,7 +16,6 @@
 #' }
 #'
 readTFPUSDA <- function() {
-
  # File
   file <- "AgTFPindividualcountries.xlsx"
 

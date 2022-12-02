@@ -75,7 +75,6 @@ calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell"
   if (!cellular) {
 
     if (length(getItems(out, dim = 1)) == 67420) {
-
       # aggregate to iso level
       if (getSets(out)["d1.1"] == "cell") {
         out <- dimSums(x, dim = "cell")

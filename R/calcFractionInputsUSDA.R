@@ -19,7 +19,6 @@
 #' }
 #'
 calcFractionInputsUSDA <- function(products = "kcr") {
-
   # value of animals is directly covered in MAgPIE
   TFP_shares_raw <- readSource("TFPUSDA")[, , "Livestock", invert = TRUE]
 

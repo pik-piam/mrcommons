@@ -12,7 +12,6 @@
 convertIEA <- function(x, subtype) {
 
   if (subtype == "EnergyBalances") {
-
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
     getItems(x1, dim = 1) <- c("SRB")

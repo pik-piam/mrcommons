@@ -15,7 +15,6 @@
 #' @export
 
 calcConstructionWoodDemand <- function() {
-
   ## Read SSP data
   ssp_data <- readSource(type = "SSP", subtype = "all")[, , c("Population", "Population|Urban|Share")]
 

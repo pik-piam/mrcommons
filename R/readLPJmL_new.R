@@ -36,15 +36,15 @@ readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:histo
     file_type <- tail(unlist(strsplit(file_name, "\\.")), 1)
 
     if (file_type == "clm") {
-      filedata <- file(description = file_name, 
-                       open = "rb", 
-                       blocking = TRUE, 
+      filedata <- file(description = file_name,
+                       open = "rb",
+                       blocking = TRUE,
                        encoding = getOption("encoding"))
       seek(filedata, where = 15, origin = "start")
-      in_header <- as.numeric(readBin(filedata, 
-                                      what = integer(), 
-                                      size = 4, 
-                                      n = 5, 
+      in_header <- as.numeric(readBin(filedata,
+                                      what = integer(),
+                                      size = 4,
+                                      n = 5,
                                       endian = .Platform$endian))
       startYear <- in_header[1]
       nyear <- in_header[2]

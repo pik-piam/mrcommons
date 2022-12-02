@@ -98,10 +98,10 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer = TRUE) + offset
 
-    #check in case the naming subseting does not work
-    yearsSub<-getYears(x,as.integer=TRUE)
-    yearsSub<-yearsSub[yearsSub>=1960]
-    x<-magpiesort(x[,yearsSub,])
+    # check in case the naming subseting does not work
+    yearsSub <- getYears(x, as.integer = TRUE)
+    yearsSub <- yearsSub[yearsSub >= 1960]
+    x <- magpiesort(x[, yearsSub, ])
 
     # fill missing cells with 0
     map  <- toolGetMappingCoord2Country()
@@ -162,14 +162,14 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     diff <- maturityDay - plantDay
     diff <- nameClean(diff, subtype, order = FALSE)
     xCorrected <- x
-    xCorrected[is.na(x)]<-0
+    xCorrected[is.na(x)] <- 0
 
     for (n in getNames(x)) {
       cellsCorr <- where(diff[, , n] < 0)$true$regions
       xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(xCorrected[cellsCorr, 1:(length(getYears(x)) - 1), n],
                                                                   getYears(xCorrected[cellsCorr,
                                                                                       2:length(getYears(x)), n]))
-      xCorrected[cellsCorr, 1, n] <-NA
+      xCorrected[cellsCorr, 1, n] <- NA
     }
 
     x <- xCorrected

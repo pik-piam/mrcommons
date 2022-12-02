@@ -1,9 +1,9 @@
 
 
 #' MadRat commons Input Data Library
-#' 
+#'
 #' Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND of model input data.
-#' 
+#'
 #' @name mrcommons-package
 #' @aliases mrcommons-package mrcommons
 #' @docType package

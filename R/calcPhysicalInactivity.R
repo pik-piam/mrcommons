@@ -10,7 +10,7 @@ calcPhysicalInactivity <- function() {
   dem <- calcOutput("Demography", aggregate = FALSE, education = FALSE)
 
   inactivity <- add_dimension(x = dev, add = "sex", nm = "M")
-  inactivity <- add_columns(x = inactivity, addnm = "F", dim = 3.1)
+  inactivity <- add_columns(x = inactivity, addnm = "FALSE", dim = 3.1)
 
   # assumptions based on
   # http://apps.who.int/gho/data/view.main.2487?lang=en

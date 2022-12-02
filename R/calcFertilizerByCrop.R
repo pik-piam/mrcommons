@@ -10,53 +10,54 @@
 #' @seealso
 #' [calcNitrogenBudgetCropland()]
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("FertilizerByCrop")
 #' }
 #' @importFrom magpiesets findset
 
 
 
-calcFertilizerByCrop<-function(indicator="total",deposition="Nsurplus2",cellular=FALSE){
-  past<-findset("past")
-  nb<-calcOutput("NitrogenBudgetCropland",deposition=deposition,cellular=cellular,aggregate = FALSE)
-  kcr<-findset("kcr")
-  
-  withdrawal=calcOutput("NitrogenWithdrawalByCrop",cellular=cellular,aggregate=FALSE,indicator="total")
-  withdrawal=dimSums(withdrawal,dim=3.1)
-  inputs<-nb[,,c("fertilizer","som","deposition","manure_conf","bg_recycling","ag_recycling","ag_ash","fixation_freeliving")]  
-  
-  inputs_per_crop=inputs/dimSums(withdrawal,dim=3.1)*withdrawal
-  if (indicator=="by_physical_area"){
-    area<-collapseNames(calcOutput("Croparea",aggregate = FALSE,physical=TRUE,cellular=cellular,sectoral="kcr")[,past,])
-    out<-inputs_per_crop[,,getNames(area)]/area
-    weight<-out
-    weight[,,]<-area
-    data<-toolNAreplace(x=out,weight=weight)
-    weight=data$weight
-    out=data$x
-  } else if (indicator=="by_area_harvested"){
-    area<-collapseNames(calcOutput("Croparea",physical=FALSE,cellular=cellular,aggregate = FALSE,sectoral="kcr")[,past,])
-    out<-inputs_per_crop[,,getNames(area)]/area
-    weight<-out
-    weight[,,]<-area
-    data<-toolNAreplace(x=out,weight=weight)
-    weight=data$weight
-    out=data$x
-    unit="t Nr per ha area harvested"
-  } else if (indicator=="total") {
-    out<-inputs_per_crop
-    weight=NULL
-    out[is.na(out)]<-0
-    out[is.nan(out)]<-0
-    unit="Mt Nr"
-  } else {stop("unknown indicator")}
-  
-  return(list(x=out,
-              weight=weight,
-              unit=unit,
-              description="Nitrogen inputs by crop type",
-              isocountries =!cellular
+calcFertilizerByCrop <- function(indicator = "total", deposition = "Nsurplus2", cellular = FALSE) {
+  past <- findset("past")
+  nb <- calcOutput("NitrogenBudgetCropland", deposition = deposition, cellular = cellular, aggregate = FALSE)
+  kcr <- findset("kcr")
+
+  withdrawal <- calcOutput("NitrogenWithdrawalByCrop", cellular = cellular, aggregate = FALSE, indicator = "total")
+  withdrawal <- dimSums(withdrawal, dim = 3.1)
+  inputs <- nb[, , c("fertilizer", "som", "deposition", "manure_conf", "bg_recycling", "ag_recycling", "ag_ash", "fixation_freeliving")]
+
+  inputs_per_crop <- inputs / dimSums(withdrawal, dim = 3.1) * withdrawal
+  if (indicator == "by_physical_area") {
+    area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE, cellular = cellular, sectoral = "kcr")[, past, ])
+    out <- inputs_per_crop[, , getNames(area)] / area
+    weight <- out
+    weight[, , ] <- area
+    data <- toolNAreplace(x = out, weight = weight)
+    weight <- data$weight
+    out <- data$x
+  } else if (indicator == "by_area_harvested") {
+    area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular, aggregate = FALSE, sectoral = "kcr")[, past, ])
+    out <- inputs_per_crop[, , getNames(area)] / area
+    weight <- out
+    weight[, , ] <- area
+    data <- toolNAreplace(x = out, weight = weight)
+    weight <- data$weight
+    out <- data$x
+    unit <- "t Nr per ha area harvested"
+  } else if (indicator == "total") {
+    out <- inputs_per_crop
+    weight <- NULL
+    out[is.na(out)] <- 0
+    out[is.nan(out)] <- 0
+    unit <- "Mt Nr"
+  } else {
+stop("unknown indicator")
+}
+
+  return(list(x = out,
+              weight = weight,
+              unit = unit,
+              description = "Nitrogen inputs by crop type",
+              isocountries = !cellular
               ))
 }

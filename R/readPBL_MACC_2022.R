@@ -12,7 +12,7 @@
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
-readPBL_MACC_2022 <- function(subtype, subset) { #nolint
+readPBL_MACC_2022 <- function(subtype, subset) { # nolint
 
   readMMC1 <- function(sub, scen) {
     x <- as.data.table(read_xlsx("Data_MAC_CH4N2O_Harmsen et al_PBL.xlsx", sheet = paste0(sub, scen)))
@@ -23,8 +23,8 @@ readPBL_MACC_2022 <- function(subtype, subset) { #nolint
     x$year <- factor(x$year)
     x <- x[, c("region", "year", "type", "scen", "steps", "value")]
     x <- x[!is.na(x$year), ]
-    nsteps <- nrow(x[x$year==x$year[1] & x$region==x$region[1],])
-    x$steps <- seq(1,nsteps,by=1)
+    nsteps <- nrow(x[x$year == x$year[1] & x$region == x$region[1], ])
+    x$steps <- seq(1, nsteps, by = 1)
     x <- as.magpie(x, spatial = 1, temporal = 2, tidy = TRUE)
     names(dimnames(x))[3] <- "type.scen.steps"
     return(x)

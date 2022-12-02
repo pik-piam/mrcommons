@@ -25,7 +25,6 @@
 #' @importFrom rlang .data
 
 readGFED <- function() {
-
         # Functions ---------------------------------------------------------------
 
         # .calculate_year

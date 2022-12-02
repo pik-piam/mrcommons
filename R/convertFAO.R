@@ -27,7 +27,6 @@
 
 
 convertFAO <- function(x, subtype) {
-
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs")

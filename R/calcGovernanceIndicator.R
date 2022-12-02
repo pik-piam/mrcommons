@@ -19,12 +19,12 @@ calcGovernanceIndicator <- function() {
   x <- readSource("Andrijevic2019", subtype = "governance_obs_project")
 
   # fill missing years
-  out <- toolFillYears(x, years = seq(1995,2150,by=5))
+  out <- toolFillYears(x, years = seq(1995, 2150, by = 5))
 
-  pop <- calcOutput("Population",aggregate=FALSE)[,2010,1]
+  pop <- calcOutput("Population", aggregate = FALSE)[, 2010, 1]
   getYears(pop) <- NULL
   getNames(pop) <- NULL
-  
+
   return(list(x            = out,
               weight       = pop,
               unit         = "index",

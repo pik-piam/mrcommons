@@ -25,16 +25,14 @@ correctLUH2v2 <- function(x, subtype) {
   years <- getYears(x, as.integer = TRUE)
 
   if (grepl("states", subtype) & length(intersect(2001:2015, years)) > 0 & 2000 %in% years & 2005 %in% years) {
-
     # check, if in JPN pasture+rangeland is unnaturally low
     if (sum(x["JPN", "y2005", c("pastr", "range")]) < 0.01) {
-
       # if so correct all years since 2001 (first year of buggy data)
       # using secondary forest area as buffer
       bugged_years <- intersect(2001:2015, years)
       pasture      <- setYears(x["JPN", "y2000", c("pastr", "range")], NULL)
       x["JPN", bugged_years, "secdf"]            <- x["JPN", bugged_years, "secdf"] - dimSums(pasture, dim = 3)
-      x["JPN", bugged_years, c("pastr", "range")] <- x["JPN", bugged_years, c("pastr", "range")] + 
+      x["JPN", bugged_years, c("pastr", "range")] <- x["JPN", bugged_years, c("pastr", "range")] +
                                                       setYears(pasture, NULL)
 
       # correct for negative values (first in pasture than rangelands), if secondary forest is exceeded

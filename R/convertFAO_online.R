@@ -25,7 +25,6 @@
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
 
 convertFAO_online <- function(x, subtype) {
-
   # ---- Settings ----
 
   ## datasets that have only absolute values
@@ -281,13 +280,14 @@ stop("strange transition mapping")
                            unit_out = "constant 2005 US$MER",
                            replace_NAs = "no_conversion")
 
-     } else if (subtype == "PricesProducerAnnualLCU"){
+     } else if (subtype == "PricesProducerAnnualLCU") {
          x <- convertGDP(x, unit_in = "current LCU",
                            unit_out = "constant 2005 LCU",
                            replace_NAs = "no_conversion")
 
 ### currency convert VoP
-  }}  else if (subtype == "ValueOfProd") {
+  }
+} else if (subtype == "ValueOfProd") {
                 x <- convertGDP(x, unit_in = "current US$MER",
                          unit_out = "constant 2005 US$MER",
                          replace_NAs = "no_conversion")

@@ -12,7 +12,6 @@
 #'
 
 readTNC2019 <- function() {
-
   # Set up 'terra' options
   terraOptions(tempdir = local_tempdir(tmpdir = getConfig("tmpfolder")), todisk = TRUE, memfrac = 0.5)
   defer(terraOptions(tempdir = tempdir()))

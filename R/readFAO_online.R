@@ -259,17 +259,17 @@ readFAO_online <- function(subtype) { # nolint
   fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
   fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
 
-  #trade data has element codes 5608 5609 for "Import_Quantity_(Head)"
+  # trade data has element codes 5608 5609 for "Import_Quantity_(Head)"
   # and codes 5908 5909 for "Export_Quantity_(Head)" for the "Other food" product,
   # despite all other characteristics being the same
   # this leads to duplicate rows when converting to magclass, sum these up first below
 
-  if (subtype == "Trade"){
+  if (subtype == "Trade") {
   tmp <- fao %>% filter(.data$ItemCodeItem == "1848|Other food") %>%
                  group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
                   summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
                ungroup()
-  fao <-  fao[which(fao[,"ItemCodeItem"] != "1848|Other food"),
+  fao <-  fao[which(fao[, "ItemCodeItem"] != "1848|Other food"),
               c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
   fao <- rbind(tmp, fao)
   }
