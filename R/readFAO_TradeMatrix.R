@@ -13,7 +13,7 @@
 #' @seealso [readSource()]
 #' @examples
 #' \dontrun{
-#' a <- readSource("FAO_TradeMatrix", "import_value")
+#' a <- readSource("FAO_TradeMatrix", "import_value_kcr")
 #' }
 #' @importFrom data.table fread
 #' @importFrom tidyr pivot_longer starts_with
@@ -44,7 +44,8 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
                 colClasses = readcolClass,
                col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
                quote = "\"",
-               encoding = "Latin-1", showProgress = FALSE)
+               encoding = "Latin-1", showProgress = FALSE,
+              )
   fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
   if (!long) {
@@ -95,6 +96,14 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
   fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
   fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
+
+  #some small islands correspond to the same ISO3code, just remove them for now
+  fao <- filter(fao, !.data$ReporterCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
+                                                    "Wake Island"), 
+                       !.data$PartnerCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
+                                                    "Wake Island")                           )
+
+
 
 fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 

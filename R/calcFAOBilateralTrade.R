@@ -29,12 +29,14 @@ ex <- ex[,c(min(getYears(ex, as.integer = TRUE)):1994), inv = T]
    ex <- ex[,seq(1995,2020,5),]
   }
 
- .harmBilat <- function(im, ex){
+ .harmBilat <- function(im, ex, value){
+  
+  if(value){
   #imports generally reported on cif basis, use generic 12% (FAOSTAT) for now.
   fobCvn <- 1.12
   #convert exporter values to cif
   ex <- ex * fobCvn
-
+  }
 #remove missing items from intersect for now
  citems <- intersect(getNames(im), getNames(ex))
  im <- im[,,citems]
