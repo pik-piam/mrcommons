@@ -94,11 +94,17 @@ ex <- ex[,c(min(getYears(ex, as.integer = TRUE)):1994), inv = T]
   return(out)
 }
 
- out <- .harmBilat(ex = ex, im = im)
+if(output == "qty") {
+  value <- FALSE
+} else if (output == "value"){
+  value <- TRUE
+}
+ out <- .harmBilat(ex = ex, im = im, value = value)
  weight <- NULL
 
  if (output == "qty"){
-  unit <- "tWM"
+  out <- out/1e6 # convert million tonnes
+  unit <- "MtWM"
   } else if (output == "value"){
    out <- out/1e3 # in millions
    unit <- "million USD$05"
@@ -122,7 +128,7 @@ unit <- "US$05/tDM"
     if (output == "qty") {
     attr <- calcOutput("Attributes", aggregate = FALSE)
     out <- out / collapseNames(attr[,,"wm"][,,getNames(out)])
-    unit <- "tDM"
+    unit <- "MtDM"
     } else if (output == "price") {
     attr <- calcOutput("Attributes", aggregate = FALSE)
     out <- out * collapseNames(attr[,,"wm"][,,getNames(out)])

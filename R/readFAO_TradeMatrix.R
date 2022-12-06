@@ -101,7 +101,7 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   fao <- filter(fao, !.data$ReporterCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
                                                     "Wake Island"), 
                        !.data$PartnerCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
-                                                    "Wake Island")                           )
+                                                    "Wake Island"))
 
 
 
