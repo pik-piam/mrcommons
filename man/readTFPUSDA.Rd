@@ -16,7 +16,6 @@ Reads the input shares from USDA's Agricultural total factor productivity growth
 \dontrun{
 a <- readSource("TFP_USD")
 }
-
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}
