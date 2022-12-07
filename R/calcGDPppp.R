@@ -1,21 +1,21 @@
 #' calcGDPppp
-#' 
-#' @description 
+#'
+#' @description
 #' `r lifecycle::badge("deprecated")`
-#' 
+#'
 #' This function is defunct. Use [mrdrivers::calcGDP()] instead.
-#' 
+#'
 #' @param GDPpppCalib to what should be calibrated? past, future or a transition?
 #' @param GDPpppPast GDPppp past data source
 #' @param GDPpppFuture GDPppp future data source
 #' @param FiveYearSteps Only five year steps if TRUE, FALSE returns years from source data
 #' @param naming naming scheme
-#' 
+#'
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDP()]
-#' 
+#'
 calcGDPppp <- function(GDPpppCalib = NULL,
-                       GDPpppPast = NULL, 
+                       GDPpppPast = NULL,
                        GDPpppFuture = NULL,
                        FiveYearSteps = TRUE,
                        naming = NULL) {
@@ -24,8 +24,8 @@ calcGDPppp <- function(GDPpppCalib = NULL,
 
 
 #' calcGDPpppFuture
-#' 
-#' @description 
+#'
+#' @description
 #' `r lifecycle::badge('deprecated')`
 #'
 #' This function is defunct. Use [mrdrivers::calcGDPFuture()] instead.
@@ -38,8 +38,8 @@ calcGDPpppFuture <- function(GDPpppFuture = NULL) {
 }
 
 #' calcGDPpppPast
-#' 
-#' @description 
+#'
+#' @description
 #' `r lifecycle::badge('deprecated')`
 #'
 #' This function is defunct. Use [mrdrivers::calcGDPPast()] instead.
