@@ -69,11 +69,13 @@ convertImageMacc <- function(x, subtype) {
     w[, , "N2O Adipic acid production"] <- emiMac[, , "n2oacid"]
     w[, , "N2O Nitric acid production"] <- emiMac[, , "n2oacid"]
     w[, , "N2O Fertilizer"] <- dimSums(luMagpie[, , c(
-      "n2ofertin.SSP2.rcp26", "n2ofertcr.SSP2.rcp26",
+      "n2ofertin.SSP2.rcp26",
+      "n2ofertcr.SSP2.rcp26",
       "n2ofertsom.SSP2.rcp26"
     )])
     w[, , "N2O Animal waste"] <- dimSums(luMagpie[, , c(
-      "n2oanwstc.SSP2.rcp26", "n2oanwstm.SSP2.rcp26",
+      "n2oanwstc.SSP2.rcp26",
+      "n2oanwstm.SSP2.rcp26",
       "n2oanwstp.SSP2.rcp26"
     )])
     w[, , "N2O Domestic sewage"] <- emiMac[, , "n2owaste"]
