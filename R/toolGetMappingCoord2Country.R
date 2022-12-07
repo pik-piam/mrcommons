@@ -14,7 +14,6 @@
 #' @export
 
 toolGetMappingCoord2Country <- function(pretty = FALSE, extended = FALSE) {
-
   out <- toolGetMapping("mapCoords2Country.rds", where = "mrcommons")
 
   if (!extended) {
@@ -23,9 +22,12 @@ toolGetMappingCoord2Country <- function(pretty = FALSE, extended = FALSE) {
 
   if (pretty) {
     tmp <- gsub("p", "\\.", str_split(out$coords, "\\.", simplify = TRUE))
-    tmp <- as.data.frame(matrix(apply(tmp, 2, as.numeric), dim(tmp)[1], dim(tmp)[2],
-                                dimnames = list(NULL, c("lon", "lat"))),
-                         stringsAsFactors = FALSE)
+    tmp <- as.data.frame(
+      matrix(apply(tmp, 2, as.numeric), dim(tmp)[1], dim(tmp)[2],
+        dimnames = list(NULL, c("lon", "lat"))
+      ),
+      stringsAsFactors = FALSE
+    )
     out <- data.frame(out, tmp)
   }
 
