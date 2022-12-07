@@ -7,9 +7,7 @@
 readIPCC(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "awmsShr", "awmsEfCh4", "awmsParCh4",
-"nExcrRate", "awmsconfef3, "fracgasms", "fraclossms",
-"emissionfactors","rescombusteff", "efnsoil"}
+\item{subtype}{data subtype}
 }
 \value{
 magpie object of the IPCC data
@@ -24,26 +22,28 @@ Chapter 11: N2O Emissions from managed Soils and Co2 Emissions from Lime and
 Urea Application.  \item Read in IPCC efficiency factors for burning of
 residue. Source: IPCC Guidelines for Natinal Greenhouse Gas Inventories
 (2006); Chapter 02: Generic Methodologies applicable to multiple Land-use
-Categories. }
+Categories. \item Read in soil related stock change factors for carbon and
+manure parameterization. Source: IPCC Guidelines for National Greenhouse Gas
+Inventories (2006); Chapter 5: Cropland.}
 }
 \examples{
-
-\dontrun{ 
-a <- readSource("IPCC","awmsShr")
-a <- readSource("IPCC","awmsEfCh4")
-a <- readSource("IPCC","awmsParCh4")
-a <- readSource("IPCC","nExcrRate")
-a <- readSource("IPCC","awmsconfef3", convert=F)
-a <- readSource("IPCC","fracgasms", convert=F)
-a <- readSource("IPCC","fraclossms", convert=F)
-a <- readSource("IPCC","emissionfactors", convert=F)
-a <- readSource("IPCC","rescombusteff", convert=F)
-a <- readSource("IPCC","efnsoil", convert=F)
+\dontrun{
+a <- readSource("IPCC", "awmsShr")
+a <- readSource("IPCC", "awmsEfCh4")
+a <- readSource("IPCC", "awmsParCh4")
+a <- readSource("IPCC", "nExcrRate")
+a <- readSource("IPCC", "awmsconfef3", convert = FALSE)
+a <- readSource("IPCC", "fracgasms", convert = FALSE)
+a <- readSource("IPCC", "fraclossms", convert = FALSE)
+a <- readSource("IPCC", "emissionfactors", convert = FALSE)
+a <- readSource("IPCC", "rescombusteff", convert = FALSE)
+a <- readSource("IPCC", "efnsoil", convert = FALSE)
 }
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}
 }
 \author{
-Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich
+Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich,
+Kristine Karstens
 }

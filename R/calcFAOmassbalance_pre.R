@@ -17,6 +17,7 @@
 #' @importFrom graphics plot
 #' @importFrom magclass getSets as.magpie complete_magpie
 #' @importFrom utils read.csv
+#' @importFrom withr local_options
 
 calcFAOmassbalance_pre <- function(years = NULL) {
   #### Data input ####
@@ -778,9 +779,7 @@ calcFAOmassbalance_pre <- function(years = NULL) {
   #### Calculations ####
   
   # increase magclass sizelimit 
-  current_limit <- getOption("magclass_sizeLimit\n")
-  on.exit(options(magclass_sizeLimit = current_limit))
-  options(magclass_sizeLimit = 2e8)
+  local_options(magclass_sizeLimit = 2e8)
   
   # option splitting years to avoid memory issues
   # year_chunks <- split(years, ceiling(seq_along(years)/26))

@@ -275,19 +275,22 @@ stop("strange transition mapping")
     x[is.na(x)] <- 0
     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-     
+
      if (subtype == "PricesProducerAnnual") {
           x <- convertGDP(x, unit_in = "current US$MER",
                            unit_out = "constant 2005 US$MER",
                            replace_NAs = "no_conversion")
 
      } else if (subtype == "PricesProducerAnnualLCU"){
-         x <- convertGDP(x, unit_in = "current US$LCU",
-                           unit_out = "constant 2005 US$LCU",
+         x <- convertGDP(x, unit_in = "current LCU",
+                           unit_out = "constant 2005 LCU",
                            replace_NAs = "no_conversion")
-     }
 
-
+### currency convert VoP
+  }}  else if (subtype == "ValueOfProd") {
+                x <- convertGDP(x, unit_in = "current US$MER",
+                         unit_out = "constant 2005 US$MER",
+                         replace_NAs = "no_conversion")
 
   } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")

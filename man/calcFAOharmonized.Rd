@@ -10,14 +10,12 @@ calcFAOharmonized()
 FAO harmonized data, weight as NULL, and a description as as a list of MAgPIE objects
 }
 \description{
-Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas are taken from ProdSTAT.
-This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
+Calculate harmonized FAO Commodity Balance and Food Supply data based on CB, only harvested areas
+are taken from ProdSTAT. This functions adds the CBCrop, CBLive, FSCrop and FSLive data together.
 }
 \examples{
-
 \dontrun{
 a <- calcOutput("FAOharmonized")
-
 }
 }
 \author{

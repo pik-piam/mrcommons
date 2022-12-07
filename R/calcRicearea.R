@@ -12,12 +12,10 @@
 #' @author Felicitas Beier, Kristine Karstens
 #'
 #' @importFrom magpiesets findset
+#' @importFrom withr local_options
 
 calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
-
-  sizelimit <- getOption("magclass_sizeLimit")
-  options(magclass_sizeLimit = 1e+12)
-  on.exit(options(magclass_sizeLimit = sizelimit))
+  local_options(magclass_sizeLimit = 1e+12)
 
   selectyears <- findset("past")
 
@@ -55,9 +53,9 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
 
     if (share) {
 
-      out         <- floodedShr
+      out         <- 1 - floodedShr
       unit        <- "Share"
-      description <- "Share of rice area that is flooded"
+      description <- "Share of rice area that is non-flooded"
 
     } else {
 

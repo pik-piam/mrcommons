@@ -22,7 +22,7 @@
 #' readSource("ISIMIP", convert = TRUE)
 #' }
 #'
-#' @importFrom magclass getCoords
+#' @importFrom magclass getCoords time_interpolate
 #' @importFrom raster brick subset stack
 
 readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
@@ -99,49 +99,53 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer = TRUE) + offset
 
+    #check in case the naming subseting does not work
+    yearsSub<-getYears(x,as.integer=TRUE)
+    yearsSub<-yearsSub[yearsSub>=1960]
+    x<-magpiesort(x[,yearsSub,])
+
     # fill missing cells with 0
     map  <- toolGetMappingCoord2Country()
     missingCells <- setdiff(map$coords, getItems(x, dim = 1))
     fill <- new.magpie(cells_and_regions = missingCells, years = getYears(x),
                        names = getNames(x), fill = 0)
     x    <- mbind(x, fill)
-    x <- toolCoord2Isocell(x)
 
     nameClean <- function(x, subtype, order = FALSE) {
 
-      if ((grepl("pDSSAT", subtype) || grepl("LPJmL", subtype)) && order == TRUE) {
+      if ((grepl("pDSSAT", subtype) | grepl("LPJmL", subtype)) & order == TRUE) {
         x <- collapseNames(x)
         x <- dimOrder(x = x, perm = c(2, 1))
-      } else {
+      }
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   ||
-                               getNames(x, dim = 1) == "maize" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   |
+                               getNames(x, dim = 1) == "maize" |
                                getNames(x, dim = 1) == "Maize"] <- "maiz"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "soy" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "soy" |
                                getNames(x, dim = 1) == "Soybean"] <- "soybean"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri1" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri1" |
                                getNames(x, dim = 1) == "riceA"] <- "ricea"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri2" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri2" |
                                getNames(x, dim = 1) == "riceB"] <- "riceb"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "swh" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "swh" |
                                getNames(x, dim = 1) == "Springwheat"] <- "springwheat"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "wwh" ||
+        getNames(x, dim = 1)[getNames(x, dim = 1) == "wwh" |
                                getNames(x, dim = 1) == "Winterwheat"] <- "winterwheat"
 
-        getNames(x, dim = 2)[getNames(x, dim = 2) == "fullyirrigated" ||
-                               getNames(x, dim = 2) == "firr" ||
+        getNames(x, dim = 2)[getNames(x, dim = 2) == "fullyirrigated" |
+                               getNames(x, dim = 2) == "firr" |
                                getNames(x, dim = 2) == "ir"] <- "irrigated"
 
-        getNames(x, dim = 2)[getNames(x, dim = 2) == "noirrigation" ||
-                               getNames(x, dim = 2) == "noirr" ||
+        getNames(x, dim = 2)[getNames(x, dim = 2) == "noirrigation" |
+                               getNames(x, dim = 2) == "noirr" |
                                getNames(x, dim = 2) == "rf"] <- "rainfed"
 
-      }
+
 
       return(x)
     }
@@ -153,23 +157,24 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
                                          subtype = "planting_day")[, , c("ri1", "ri2", "wwh",
                                                                          "swh", "soy", "mai")][, , c("rf", "ir")])
     maturityDay <- collapseNames(readSource("GGCMICropCalendar",
-                                         subtype = "maturity_day")[, , c("ri1", "ri2", "wwh",
-                                                                         "swh", "soy", "mai")][, , c("rf", "ir")])
+                                            subtype = "maturity_day")[, , c("ri1", "ri2", "wwh",
+                                                                            "swh", "soy", "mai")][, , c("rf", "ir")])
 
     diff <- maturityDay - plantDay
     diff <- nameClean(diff, subtype, order = FALSE)
     xCorrected <- x
+    xCorrected[is.na(x)]<-0
 
     for (n in getNames(x)) {
-
       cellsCorr <- where(diff[, , n] < 0)$true$regions
-      xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(x[cellsCorr, 1:(length(getYears(x)) - 1), n],
-                                                                   getYears(xCorrected[cellsCorr,
-                                                                                        2:length(getYears(x)), n]))
-      xCorrected[cellsCorr, 1, n] <- NA
+      xCorrected[cellsCorr, 2:length(getYears(x)), n] <- setYears(xCorrected[cellsCorr, 1:(length(getYears(x)) - 1), n],
+                                                                  getYears(xCorrected[cellsCorr,
+                                                                                      2:length(getYears(x)), n]))
+      xCorrected[cellsCorr, 1, n] <-NA
     }
 
     x <- xCorrected
+
 
   }
 

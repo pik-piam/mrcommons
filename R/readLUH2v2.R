@@ -37,12 +37,12 @@ readLUH2v2 <- function(subtype) {
     ncFile <- nc_open(fStates)
     data    <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     # Land area
-    carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
+    carea         <-  suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
     extent(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
     for (item in data) {
-      shr <- subset(brick(fStates, varname = item), timeSel - offset)
+      shr <- suppressWarnings(subset(brick(fStates, varname = item), timeSel - offset))
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
       mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
       getNames(mag) <- item
@@ -75,7 +75,7 @@ readLUH2v2 <- function(subtype) {
     zeroTrans <- grepl(paste(paste(names(lu), names(lu), sep = "_to_"),
                              collapse = "|"), luTransReduced)
    # Land area
-    carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
+    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
     extent(carea) <- c(-180, 180, -90, 90)
 
     x <- new.magpie(map$coords, timeSel, unique(luTransReduced[!zeroTrans]), fill = 0)
@@ -85,7 +85,7 @@ readLUH2v2 <- function(subtype) {
       # This attributes LUC to the year resulting from it
       print(luTrans[item])
       if (!zeroTrans[item]) {
-        shr <- subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1)
+        shr <- suppressWarnings(subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1))
         mag <- aggregate(shr * carea, fact = 2, fun = sum)
         mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
         getNames(mag) <- luTransReduced[item]
@@ -109,13 +109,13 @@ readLUH2v2 <- function(subtype) {
     data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
-    carea         <- raster("staticData_quarterdeg.nc", varname = "carea")
+    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
     extent(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
     for (item in dataMan) {
-      shr    <- subset(brick(fStates, varname = data[data[, 1] == item, 2]), timeSel - offset)
-      irShr <- subset(brick(fMan,    varname = item), timeSel - offset)
+      shr    <- suppressWarnings(subset(brick(fStates, varname = data[data[, 1] == item, 2]), timeSel - offset))
+      irShr <- suppressWarnings(subset(brick(fMan,    varname = item), timeSel - offset))
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
       tmp <- shr
       for (i in seq_len(dim(tmp)[3])) tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
@@ -134,7 +134,7 @@ readLUH2v2 <- function(subtype) {
   } else if (grepl("ccode", subtype)) {
 
     # Load raster data on 0.25° and extend to full grid
-    ccode25         <- raster("staticData_quarterdeg.nc", varname = "ccode")
+    ccode25         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "ccode"))
     extent(ccode25) <- c(-180, 180, -90, 90)
 
     # Create new raster object on 0.5° and re-project 0.25°-raster on 0.5°-raster

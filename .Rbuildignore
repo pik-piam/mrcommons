@@ -12,3 +12,4 @@ carbon_stored.*
 ^workflow$
 ^.lintr$
 ^tests/.lintr$
+^Makefile$
