@@ -60,7 +60,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
     # compute other land area (diff between total natural land and forest area)
     otherArea <- setNames(dimSums(lu[, , nature], dim = 3) - forestArea[, , "forest"], "other")
     if (any(otherArea < -10e-6)) {
-      vcat(0, "Other land area is partly negative. This should not be the case! values will be corrected to 0.")
+      warning("Other land area is partly negative. This should not be the case! values will be corrected to 0.")
     }
     # due to rounding there are always some very small values below 0 which is why it is always corrected to 0, but
     # a warning is only triggered for values smaller than 10e-6
@@ -108,7 +108,7 @@ calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "p
   out <- .splitOther(lu2, luh)
 
   if (any(out < 0)) {
-    if (min(out) < -10e-6) vcat(0, "Negativ land values detected and replaced by 0.")
+    if (min(out) < -10e-6) warning("Negativ land values detected and replaced by 0.")
     out[out < 0] <- 0
   }
 

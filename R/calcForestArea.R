@@ -115,7 +115,7 @@ calcForestArea <- function(selectyears = "past") {
 
   if (max(abs(dimSums(out[, , c("natrforest", "forestry")]) - out[, , "forest"])) > 10^-6 ||
       max(abs(dimSums(out[, , c("secdforest", "primforest")], dim = 3) - out[, , "natrforest"])) > 10^-6) {
-    vcat(verbosity = 0, "There are inconsistencies within the forest area data set.")
+    warning("There are inconsistencies within the forest area data set.")
   }
 
   return(list(x = out,

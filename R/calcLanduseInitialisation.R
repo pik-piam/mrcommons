@@ -33,6 +33,14 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", cell
 
   if (isFALSE(cellular)) out <- toolSum2Country(out)
 
+  if (isTRUE(input_magpie)) {
+    # add some small area to completely empty cells to avoid
+    # problems in the further processing
+    out <- round(out, 8)
+    cellArea <- dimSums(out, dim = 3)
+    out[, , "secdother"][cellArea == 0] <- 10^-6
+  }
+
   if (nclasses != "nine") {
     map <- data.frame(nine  = c("crop", "past", "range", "forestry", "primforest", "secdforest",
                                 "urban", "primother", "secdother"),
@@ -42,14 +50,6 @@ calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", cell
                                 "urban", "other", "other"))
     if (!(nclasses %in% names(map))) stop("unknown nclasses setting \"", nclasses, "\"")
     out <- toolAggregate(out, rel = map, dim = 3, from = "nine", to = nclasses)
-  }
-
-  if (isTRUE(input_magpie)) {
-    # add some small area to completely empty cells to avoid
-    # problems in the further processing
-    out <- round(out, 8)
-    cellArea <- dimSums(out, dim = 3)
-    out[, , "secdother"][cellArea == 0] <- 10^-6
   }
 
   return(list(

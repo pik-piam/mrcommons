@@ -11,7 +11,7 @@ convertFAO_TradeMatrix(x, subtype)
 
 \item{subtype}{subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
-Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity" X c("kcr", "kli", "kothers"))
+Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
 import is import side reporting while export is export-sde reporting}
 }
 \value{
