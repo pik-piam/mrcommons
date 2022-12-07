@@ -5,23 +5,26 @@
 #' @author Debbora Leip
 #' @examples
 #' \dontrun{
-#'   a <- readSource("ILOSTAT", subtype = "EmplByActivityModelled", convert = TRUE)
+#' a <- readSource("ILOSTAT", subtype = "EmplByActivityModelled", convert = TRUE)
 #' }
-
+#'
 convertILOSTAT <- function(x) {
-
   # fill missing countries
   x <- toolCountryFill(x, fill = 0, no_remove_warning = c("KOS", "CHA"))
 
   # transform currencies if applicable
   if ("currency" %in% getSets(x)) {
     xUnconverted <- x
-    x[, , "2017 PPP $"] <- convertGDP(x[, , "2017 PPP $"],
-                                      unit_in = "constant 2017 Int$PPP",
-                                      unit_out = "constant 2005 Int$PPP")
-    x[, , "US dollars"] <- convertGDP(x[, , "US dollars"],
-                                      unit_in = "current US$MER",
-                                      unit_out = "constant 2005 US$MER")
+    x[, , "2017 PPP $"] <- convertGDP(
+      x[, , "2017 PPP $"],
+      unit_in = "constant 2017 Int$PPP",
+      unit_out = "constant 2005 Int$PPP"
+    )
+    x[, , "US dollars"] <- convertGDP(
+      x[, , "US dollars"],
+      unit_in = "current US$MER",
+      unit_out = "constant 2005 US$MER"
+    )
 
     # for countries with missing conversion factors we assume no inflation
     x[is.na(x)] <- xUnconverted[is.na(x)]
