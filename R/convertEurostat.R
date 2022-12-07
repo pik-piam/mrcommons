@@ -27,7 +27,7 @@ convertEurostatSectorEmi <- function(x) {
   # mapping eurostat to sector emissions
   mapping <- list("power"      = list("energy"  = c("Fuel combustion in public electricity and heat production")),
                   "refining"   = list("energy"  = c("Fuel combustion in petroleum refining")),
-                  "solids"     = list("energy"  = c("Fuel combustion in manufacture of solid fuels and other energy industries",
+                  "solids"     = list("energy"  = c("Fuel combustion in manufacture of solid fuels and other energy industries", #nolint
                                                   "Other fuel combustion sectors n_e_c_")),
                   "extraction" = list("process" = c("Solid fuels - fugitive emissions",
                                                   "Oil, natural gas and other energy production - fugitive emissions")),
@@ -73,15 +73,17 @@ convertEurostatMACCemi <- function(x) {
                   "n2oadac" = list("emi" = "N2O", "accounts" = c("Adipic acid production")),
                   "n2onitac" = list("emi" = "N2O", "accounts" = c("Nitric acid production")),
                   "n2oagwaste" = list("emi" = "N2O", "accounts" = c("Field burning of agricultural residues")),
-                  "n2owaste" = list("emi" = "N2O", "accounts" = c("Wastewater treatment and discharge")), # or full Waste management n2O?
+                  # or full Waste management n2O?
+                  "n2owaste" = list("emi" = "N2O", "accounts" = c("Wastewater treatment and discharge")),
                   "co2cement_process" = list("emi" = "CO2", "accounts" = c("Industrial processes and product use")),
                   "co2luc" = list("emi" = "CO2", "accounts" = c("Land use, land use change, and forestry (LULUCF)")))
+
   # other MACCs do not have a direct mapping to the eurostat data (use sector information instead)
-    # ch4gas + ch4oil -> extraction.process.ch4 - ch4coal
-    # ch4forest + ch4savan -> lulucf.process.ch4
-    # n2ofertin + n2ofertcr + n2ofertsom + n2oanwstc + n2oanwstm + n2oanwstp -> agriculture.process.n2o - n2oagwaste
-    # n2oforest + n2osavan -> lulucf.process.n2o
-    # co2cement + co2chemicals + co2steel (=co2cement_process?) -> indst.process.co2
+  # ch4gas + ch4oil -> extraction.process.ch4 - ch4coal #nolint
+  # ch4forest + ch4savan -> lulucf.process.ch4 #nolint
+  # n2ofertin + n2ofertcr + n2ofertsom + n2oanwstc + n2oanwstm + n2oanwstp -> agriculture.process.n2o - n2oagwaste #nolint
+  # n2oforest + n2osavan -> lulucf.process.n2o #nolint
+  # co2cement + co2chemicals + co2steel (=co2cement_process?) -> indst.process.co2
 
   x <- mbind(lapply(names(mapping), function(var) {
     setNames(dimSums(x[, , mapping[[var]]$accounts][, , mapping[[var]]$emi], na.rm = TRUE, dim = 3.2), var)
