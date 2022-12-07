@@ -14,10 +14,10 @@
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDP()]
 #'
-calcGDPppp <- function(GDPpppCalib = NULL,
-                       GDPpppPast = NULL,
-                       GDPpppFuture = NULL,
-                       FiveYearSteps = TRUE,
+calcGDPppp <- function(GDPpppCalib = NULL,   #nolint
+                       GDPpppPast = NULL,    #nolint
+                       GDPpppFuture = NULL,  #nolint
+                       FiveYearSteps = TRUE, #nolint
                        naming = NULL) {
   stop("calcGDPppp() is defunct. Please use mrdrivers::calcGDP() directly.")
 }
@@ -33,7 +33,7 @@ calcGDPppp <- function(GDPpppCalib = NULL,
 #' @param GDPpppFuture GDPppp future data source
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDPFuture()]
-calcGDPpppFuture <- function(GDPpppFuture = NULL) {
+calcGDPpppFuture <- function(GDPpppFuture = NULL) {   #nolint
   stop("calcGDPpppFuture() is defunct. Please use mrdrivers::calcGDPFuture() directly.")
 }
 
@@ -47,6 +47,6 @@ calcGDPpppFuture <- function(GDPpppFuture = NULL) {
 #' @param GDPpppPast GDPppp future data source
 #' @return GDP PPP(ICP11) in million USD05 equivalents
 #' @seealso [mrdrivers::calcGDPPast()]
-calcGDPpppPast <- function(GDPpppPast = "WDI-MI") {
+calcGDPpppPast <- function(GDPpppPast = "WDI-MI") {    #nolint
   stop("calcGDPpppPast() is defunct. Please use mrdrivers::calcGDPPast() directly.")
 }
