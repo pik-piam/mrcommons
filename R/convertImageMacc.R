@@ -84,5 +84,7 @@ convertImageMacc <- function(x, subtype) {
     w[, , "SF6"] <- dimReduce(fGases[, , "SSP2-26-SPA0-V13.Emissions|SF6.kt SF6/yr"])
 
     return(toolAggregate(x, map, w))
+  } else {
+    stop("no convert script for this subtype")
   }
 }
