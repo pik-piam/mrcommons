@@ -54,6 +54,8 @@ toolHarmonize2Baseline <- function(x,
   # from start until ref_year, use the corresponding ref value
   full[, tillRef, ] <- base[, tillRef, ]
 
+  repRefYear <- rep(ref_year, length(afterRef))
+
   if (hard_cut) {
     ###########################################
     ### Use GCM data after historical data  ###
@@ -62,16 +64,14 @@ toolHarmonize2Baseline <- function(x,
 
     full[, afterRef, ] <- x[, afterRef, ]
   } else if (method == "multiplicative") {
-    full[, afterRef, ] <- x[, afterRef, ] * (base[, rep(ref_year, length(afterRef)), ]
-    / x[, rep(ref_year, length(afterRef)), ])
+    full[, afterRef, ] <- x[, afterRef, ] * (base[, repRefYear, ] / x[, repRefYear, ])
 
     # correct NAs and infinite
-    full[, afterRef, ][!is.finite(full[, afterRef, ])] <- (
-      base[, rep(ref_year, length(afterRef)), ] + x[, afterRef, ]
-    )[!is.finite(full[, afterRef, ])] # does this make sense?
+    fullNotFinite <- !is.finite(full[, afterRef, ])
+    # does this make sense?
+    full[, afterRef, ][fullNotFinite] <- (base[, repRefYear, ] + x[, afterRef, ])[fullNotFinite]
   } else if (method == "additive") {
-    full[, afterRef, ] <- x[, afterRef, ] + (base[, rep(ref_year, length(afterRef)), ]
-    - x[, rep(ref_year, length(afterRef)), ])
+    full[, afterRef, ] <- x[, afterRef, ] + (base[, repRefYear, ] - x[, repRefYear, ])
   } else if (method == "limited") {
     ###########################################
     ### Use DELTA-approach to put signal of ###
@@ -82,15 +82,11 @@ toolHarmonize2Baseline <- function(x,
     lambda <- sqrt(x[, ref_year, , drop = FALSE] / base[, ref_year, , drop = FALSE])
     lambda[base[, ref_year, ] <= x[, ref_year, ]] <- 1
     lambda[is.nan(lambda)] <- 1
+    lambda <- lambda[, repRefYear, ]
 
     full[, afterRef, ] <-
-      base[, rep(ref_year, length(afterRef)), ] *
-        (1 + (x[, afterRef, ] - x[, rep(ref_year, length(afterRef)), ])
-        / base[, rep(ref_year, length(afterRef)), ]
-          * (base[, rep(ref_year, length(afterRef)), ]
-          / x[, rep(ref_year, length(afterRef)), ]
-          )**lambda[, rep(ref_year, length(afterRef)), ]
-        )
+      base[, repRefYear, ] +
+      (x[, afterRef, ] - x[, repRefYear, ]) * (base[, repRefYear, ] / x[, repRefYear, ])**lambda
 
     full[, afterRef, ][is.na(full[, afterRef, ])] <- 0
   } else {
