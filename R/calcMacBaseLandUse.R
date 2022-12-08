@@ -14,36 +14,48 @@
 
 
 calcMacBaseLandUse <- function(subtype) {
-
   # Create empty magclass object with all dimensions that can be filled below (so it's easy to see which entries remain empty afterwards)
   iso_country <- read.csv2(system.file("extdata", "iso_country.csv", package = "madrat"), row.names = NULL)
-  source      <- c("co2luc", "n2oanwstm", "n2ofertin", "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp", "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals", "ch4forest", "ch4savan", "ch4agwaste")
+  source      <- c("co2luc", "n2oanwstm", "n2ofertin", "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp",
+                   "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals", "ch4forest",
+                   "ch4savan", "ch4agwaste")
 
-  y <- new.magpie(cells_and_regions = iso_country$x, years = seq(2005, 2150, 5), names = source, sets = c("region", "year", "type"))
+  y <- new.magpie(cells_and_regions = iso_country$x,
+                  years = seq(2005, 2150, 5),
+                  names = source,
+                  sets = c("region", "year", "type"))
   y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP"))
   y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20", "rcp26", "rcp45", "none"))
 
-  y <- new.magpie(cells_and_regions = iso_country$x, years = seq(2005,2150,5), names = source, sets = c("region","year","type"))
-  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
-  y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20","rcp26","rcp45","none"))
-  
-  if (subtype == "MAgPIE") {
+  y <- new.magpie(cells_and_regions = iso_country$x,
+                  years = seq(2005, 2150, 5),
+                  names = source,
+                  sets = c("region", "year", "type"))
+  y <- add_dimension(y,
+                     dim = 3.2,
+                     add = "c_LU_emi_scen",
+                     nm = c("SSP1", "SSP2", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
+  y <- add_dimension(y,
+                     dim = 3.3,
+                     add = "rcp",
+                     nm = c("rcp20", "rcp26", "rcp45", "none"))
 
-    # Read emission baselines for MAC in REMIND. These data have been calcualted by external scripts, that calcualte the CO2 LUC MAC
-    # from a bunch of MAgpIE runs started only for the purpose to calculate the MAC.
+  if (subtype == "MAgPIE") {
+    # Read emission baselines for MAC in REMIND. These data have been calcualted by external scripts, that calcualte
+    # the CO2 LUC MAC from a bunch of MAgpIE runs started only for the purpose to calculate the MAC.
     x <- readSource("MAgPIE", subtype = "macBase")
 
     getNames(x) <- gsub("\\.", "", getNames(x))
     # split up the fourth dimension again
     getNames(x) <- gsub("SSP", "\\.SSP", getNames(x))
     # make SDP scenario using SSP1 data
-    x_SDP <- x[,,"SSP1"]
+    x_SDP <- x[, , "SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
        x <- mbind(x, x_SDP)
     }
     # make SSP2EU scenario using SSP2 data
-    x_SSP2EU <- x[,,"SSP2"]
+    x_SSP2EU <- x[, , "SSP2"]
     getNames(x_SSP2EU) <- gsub("SSP2", "SSP2EU", getNames(x_SSP2EU))
     x <- mbind(x, x_SSP2EU)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
@@ -64,14 +76,16 @@ calcMacBaseLandUse <- function(subtype) {
 
     x <- x[, , emi_mag]
 
-    # Replace CO2 LUC baseline for SSP2, since there is newer data from MAgPIE 4.0 (the tax000,0 scenario from the CO2MAC-2018 runs)
+    # Replace CO2 LUC baseline for SSP2, since there is newer data from MAgPIE 4.0
+    # (the tax000,0 scenario from the CO2MAC-2018 runs)
     x_co2 <- readSource("MAgPIE", subtype = "macBaseCO2luc")
     x_co2 <- time_interpolate(x_co2, getYears(x))
 
     # write co2 baseline to all RCPs
     x[, , "co2luc.SSP2"] <- x_co2
 
-    # Replace CH4 and N2O LUC baseline for SSP2 and SSP1, since there is newer data from a coupled REMIND-MAgPIE 4.0 Baseline run
+    # Replace CH4 and N2O LUC baseline for SSP2 and SSP1, since there is newer data from a
+    # coupled REMIND-MAgPIE 4.0 Baseline run
     # Read ch4 and n2o emissions from MAgpIE Base scenario
     x_ch4_n2o <- calcOutput("MAgPIEReport", subtype = "ch4n2o", aggregate = FALSE)
     # change the order of the entries in the 3. dimension
@@ -88,8 +102,10 @@ calcMacBaseLandUse <- function(subtype) {
 
     # FS: Australia-specific, adjust 2005-2015 MacBase for lucco2 to NGGI data for LULUCF CO2
     # to catch recent trend from afforestation/forest management:
-    # http://ageis.climatechange.gov.au/, graph: http://ageis.climatechange.gov.au/Chart_KP.aspx?OD_ID=79041341749&TypeID=2
-    # does not agree with EDGAR data which shows even increasing trend, yet I trust NGGI more also because of this article:
+    # http://ageis.climatechange.gov.au/,
+    # graph: http://ageis.climatechange.gov.au/Chart_KP.aspx?OD_ID=79041341749&TypeID=2
+    # does not agree with EDGAR data which shows even increasing trend,
+    # yet I trust NGGI more also because of this article:
     # https://www.researchgate.net/publication/301942515_Deforestation_in_Australia_Drivers_trends_and_policy_responses
     # long-term solution for new regions not in Magpie still needed
 
@@ -108,7 +124,6 @@ calcMacBaseLandUse <- function(subtype) {
 
 
   } else if (subtype == "DirectlyFromMAgPIE") {
-
     # Read emission baselines for REMIND directly from MAgPIE reports.
     # The reports are taken from coupled runs, not from runs that have only been started to calcualte the MAC.
 
@@ -166,13 +181,13 @@ calcMacBaseLandUse <- function(subtype) {
     # split up the fourth dimension again
     getNames(x) <- gsub("SSP", "\\.SSP", getNames(x))
     # make SDP scenario using SSP1 data
-    x_SDP <- x[,,"SSP1"]
+    x_SDP <- x[, , "SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
        x <- mbind(x, x_SDP)
     }
     # make SSP2riadne scenario using SSP2 data
-    x_SSP2EU <- x[,,"SSP2"]
+    x_SSP2EU <- x[, , "SSP2"]
     getNames(x_SSP2EU) <- gsub("SSP2", "SSP2EU", getNames(x_SSP2EU))
     x <- mbind(x, x_SSP2EU)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
