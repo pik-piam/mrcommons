@@ -194,17 +194,25 @@ readFAO_online <- function(subtype) { # nolint
                      "Eastern Africa (excluding intra-trade)", "Eastern Asia (excluding intra-trade)",
                      "Eastern Europe (excluding intra-trade)", "Europe (excluding intra-trade)",
                      "European Union (12) (excluding intra-trade)", "European Union (15) (excluding intra-trade)",
-                     "European Union (25) (excluding intra-trade)", "European Union (27) (excluding Croatia) (excluding intra-trade)",
-                     "European Union (27) (excluding intra-trade)", "European Union (28) (excluding intra-trade)",
-                     "Land Locked Developing Countries (excluding intra-trade)", "Least Developed Countries (excluding intra-trade)",
+                     "European Union (25) (excluding intra-trade)",
+                     "European Union (27) (excluding Croatia) (excluding intra-trade)",
+                     "European Union (27) (excluding intra-trade)",
+                     "European Union (28) (excluding intra-trade)",
+                     "Land Locked Developing Countries (excluding intra-trade)",
+                     "Least Developed Countries (excluding intra-trade)",
                      "Africa (excluding intra-trade)", "Low Income Food Deficit Countries (excluding intra-trade)",
                      "Melanesia (excluding intra-trade)", "Micronesia (excluding intra-trade)",
-                     "Middle Africa (excluding intra-trade)", "Net Food Importing Developing Countries (excluding intra-trade)",
+                     "Middle Africa (excluding intra-trade)",
+                     "Net Food Importing Developing Countries (excluding intra-trade)",
                      "Northern Africa (excluding intra-trade)", "Northern America (excluding intra-trade)",
-                     "Northern Europe (excluding intra-trade)", "Oceania (excluding intra-trade)", "Polynesia (excluding intra-trade)",
-                     "Small Island Developing States (excluding intra-trade)", "South-Eastern Asia (excluding intra-trade)",
-                     "South America (excluding intra-trade)", "Southern Africa (excluding intra-trade)", "Southern Asia (excluding intra-trade)",
-                     "Southern Europe (excluding intra-trade)", "Western Africa (excluding intra-trade)", "Western Asia (excluding intra-trade)",
+                     "Northern Europe (excluding intra-trade)", "Oceania (excluding intra-trade)",
+                     "Polynesia (excluding intra-trade)",
+                     "Small Island Developing States (excluding intra-trade)",
+                     "South-Eastern Asia (excluding intra-trade)",
+                     "South America (excluding intra-trade)", "Southern Africa (excluding intra-trade)",
+                     "Southern Asia (excluding intra-trade)",
+                     "Southern Europe (excluding intra-trade)", "Western Africa (excluding intra-trade)",
+                     "Western Asia (excluding intra-trade)",
                      "Western Europe (excluding intra-trade)")
 
   fao$ISO <- toolCountry2isocode(fao$Country, mapping = faoIsoFaoCode, ignoreCountries = ignoreRegions) # nolint
@@ -264,12 +272,13 @@ readFAO_online <- function(subtype) { # nolint
   # despite all other characteristics being the same
   # this leads to duplicate rows when converting to magclass, sum these up first below
 
-  if (subtype == "Trade"){
-  tmp <- fao %>% filter(.data$ItemCodeItem == "1848|Other food") %>%
-                 group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
-                  summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
-               ungroup()
-  fao <-  fao[which(fao[,"ItemCodeItem"] != "1848|Other food"),
+  if (subtype == "Trade") {
+  tmp <- fao %>%
+         filter(.data$ItemCodeItem == "1848|Other food") %>%
+         group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
+         summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
+         ungroup()
+  fao <-  fao[which(fao[, "ItemCodeItem"] != "1848|Other food"),
               c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
   fao <- rbind(tmp, fao)
   }
