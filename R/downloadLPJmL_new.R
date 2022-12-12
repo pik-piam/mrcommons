@@ -7,17 +7,23 @@
 #' (e.g. 'LPJmL4_for_MAgPIE_3dda0615:GSWP3-W5E5:historical:soilc' or
 #' "LPJmL5.2_Pasture:IPSL_CM6A_LR:ssp126_co2_limN_00:soilc_past_hist")
 #' @return metadata entry
-#' @author Kristine Karstens, Marcos Alves
+#' @author Kristine Karstens, Marcos Alves, Felicitas Beier
 #' @examples
 #' \dontrun{
 #' readSource("LPJmL_new", convert = FALSE)
 #' }
 #' @importFrom utils head
 #' @importFrom stringr str_detect
+#' @importFrom madrat toolSplitSubtype
 
-downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") {
+downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") { # nolint
 
-  x     <- toolSplitSubtype(subtype, list(version = NULL, climatemodel = NULL, scenario = NULL, variable = NULL))
+  x     <- toolSplitSubtype(subtype,
+                            list(version = NULL,
+                                 climatemodel = NULL,
+                                 scenario = NULL,
+                                 variable = NULL))
+
   files <- c(soilc              = "soilc_natveg",
              soilc_layer        = "soilc_layer_natveg",
              litc               = "litc_natveg",
@@ -33,10 +39,18 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
              sdate              = "sdate",
              hdate              = "hdate",
              mpet               = "mpet_natveg",
+             met_grass_ir       = "met_grass_ir",
+             met_grass_rf       = "met_grass_rf",
+             cft_et_grass_ir    = "cft_et_grass_ir",
+             cft_et_grass_rf    = "cft_et_grass_rf",
              aprec              = "aprec_natveg",
              aet                = "aet_natveg",
              mdischarge         = "mdischarge_natveg",
              mrunoff            = "mrunoff_natveg",
+             mgpp_grass_ir      = "mgpp_grass_ir",
+             mgpp_grass_rf      = "mgpp_grass_rf",
+             cft_gpp_grass_ir   = "cft_gpp_grass_ir",
+             cft_gpp_grass_rf   = "cft_gpp_grass_rf",
              vegc_grass         = "mean_vegc_mangrass",
              litc_grass         = "litc_mangrass",
              soilc_grass        = "soilc_mangrass",
