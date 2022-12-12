@@ -18,7 +18,9 @@
 readIEA <- function(subtype) {
   if (subtype == "EnergyBalances") { # IEA energy balances until 2015 (estimated 2016) (data updated in February, 2018)
     energyBalancesFile <- tempfile(fileext = "csv")
-    decompressFile("IEA-Energy-Balances-2016/ExtendedEnergyBalances.csv.gz", energyBalancesFile, remove = FALSE, ext = "not_used", FUN = gzfile)
+    decompressFile("IEA-Energy-Balances-2016/ExtendedEnergyBalances.csv.gz",
+                   energyBalancesFile, remove = FALSE, ext = "not_used",
+                   FUN = gzfile)
     data <- fread(file = energyBalancesFile,
                   col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
                   colClasses = c("character", "character", "character", "numeric", "character"),
