@@ -8,6 +8,6 @@
 #' @importFrom mstools toolHoldConstant
 #' @export
 
-toolHoldConstantBeyondEnd<-function(x){
-  return(toolHoldConstant(x,years=findset("time")))
+toolHoldConstantBeyondEnd <- function(x) {
+  return(toolHoldConstant(x, years = findset("time")))
 }
