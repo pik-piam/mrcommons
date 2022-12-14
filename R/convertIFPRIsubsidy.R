@@ -7,11 +7,10 @@
 #' @importFrom readxl read_excel
 #' @examples
 #' \dontrun{
-#'   a <- readSource("IFPRIsubsidy", convert = TRUE)
+#' a <- readSource("IFPRIsubsidy", convert = TRUE)
 #' }
 #'
 convertIFPRIsubsidy <- function(x) {
-
   # create mapping to disaggregate EU
   h12 <- toolGetMapping("regionmappingH12.csv", type = "spatial")
   h12$RegionCode[h12$RegionCode != "EUR"] <- h12$CountryCode[h12$RegionCode != "EUR"]
@@ -32,8 +31,10 @@ convertIFPRIsubsidy <- function(x) {
   x[is.na(x)] <- 0
 
   # convert to USDMER05 (for years with missing conversion factors we assume no inflation)
-  x <- GDPuc::convertGDP(x, unit_in = "current US$MER",
-                             unit_out = "constant 2005 US$MER", replace_NAs = "no_conversion")
+  x <- GDPuc::convertGDP(x,
+                         unit_in = "current US$MER",
+                         unit_out = "constant 2005 US$MER", replace_NAs = "no_conversion"
+  )
 
   return(x)
 }

@@ -52,8 +52,8 @@ convertCEDS2021 <- function(x) {
   # 1A3aii_Domestic-aviation     global   (no regional values exist)
 
   varGlob <- c("1A3di_International-shipping",
-                "1A3ai_International-aviation",
-                "1A3aii_Domestic-aviation")
+               "1A3ai_International-aviation",
+               "1A3aii_Domestic-aviation")
   xGLO <- x["GLO", , varGlob]
 
   # remove global values. Note: the sector 2A1_Cement-production has a global
