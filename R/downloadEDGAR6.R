@@ -68,7 +68,6 @@ downloadEDGAR6 <- function(subtype = "n2o") {
                               url = paste0(baseUrl, "v50_AP/SO2/v50_SO2_1970_2015.zip"),
                               doi = "10.2760/687800",
                               version = "5.0"))
-  saveRDS(settings, "settings.rds")
   meta <- toolSubtypeSelect(subtype, settings)
 
   download.file(meta$url, destfile = paste0(subtype, ".zip"))
