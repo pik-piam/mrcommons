@@ -15,6 +15,13 @@
 
 toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
 
+  .arrayReduce <- function(x) {
+    # drop dimensions but keep time dimension
+    if (dim(x)[3] != 1) stop("array2D only works with a single data dimension!")
+    if (dim(x)[1] == 1) return(array(x, dim = dim(x)[2], dimnames = dimnames(x)[2]))
+    return(array(x, dim = dim(x)[1:2], dimnames = dimnames(x)[1:2]))
+  }
+
   forests <- c("primforest", "secdforest", "forestry")
   nature  <- c(forests, "other")
 
@@ -48,7 +55,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
     vegCIso <- vegC[iso, , ]
 
     # normalized vegetation carbon (with small correction to ensure values between [0,1))
-    vegCN <- t(as.array(vegCIso / (as.magpie(apply(vegCIso, 2, max)) + 10^-10))[, , 1])
+    vegCN <- t(.arrayReduce(vegCIso / (as.magpie(apply(vegCIso, 2, max)) + 10^-10)))
 
     ###########################
     ### Reduction procedure ###
@@ -57,13 +64,13 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
     # loop over all land use categories, that have to be reallocated
     for (cat in nature) {
 
-      catreduce <- as.array(reduce[iso, , cat])[, , 1]
+      catreduce <- .arrayReduce(reduce[iso, , cat])
 
       # check if area has to be cleared
       if (any(catreduce != 0)) {
 
         # check for one cell countries
-        if (dim(vegCN)[1] == 1) {
+        if (dim(l[[iso]])[1] == 1) {
           # trivial case of one cell countries
           remove <- -as.magpie(catreduce)
         } else if (all(dimSums(l[[iso]][, , cat] != 0, dim = 1) == 1)) {
@@ -78,7 +85,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
           }
 
           # check for edge case in which all land of that category must be removed and treat it separately
-          fullremoval <- (round(dimSums(l[[iso]], dim = 1)[, , cat] + catreduce, 3) == 0)
+          fullremoval <- (round(dimSums(l[[iso]], dim = 1)[, , cat] + as.magpie(catreduce), 3) == 0)
           if (any(fullremoval)) {
             allocate[, fullremoval, ] <- (allocate[, fullremoval, ]
                                                         + setNames(l[[iso]][, fullremoval, cat], NULL))
@@ -97,7 +104,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
             for (ti in getYears(l[[iso]][, t, ])) {
 
               sol  <- nleqslv(rep(1, nyears(l[[iso]][, ti, ])), findweight,
-                              cellarea = t(as.array(l[[iso]])[, ti, cat]),
+                              cellarea = t(.arrayReduce(l[[iso]][, ti, cat])),
                               isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
                               control = list(allowSingular = TRUE))
               p[ti] <- sol$x
@@ -112,7 +119,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
                      "Restart from higher intial guess."))
 
                 sol  <- nleqslv(rep(10^10, nyears(l[[iso]][, ti, ])), findweight,
-                                cellarea = t(as.array(l[[iso]])[, ti, cat]),
+                                cellarea = t(.arrayReduce(l[[iso]][, ti, cat])),
                                 isoreduction = catreduce[ti], cellweight = cellweight[ti, ],
                                 control = list(allowSingular = TRUE))
                 p[ti] <- sol$x
@@ -140,7 +147,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
     ### Allocation procedure ###
     ############################
 
-    catincrease <- as.array(increase[iso, , "other"])[, , 1]
+    catincrease <- .arrayReduce(increase[iso, , "other"])
 
     # relocate other land to areas with low vegetation carbon density
     # check if other land has to be filled
@@ -151,7 +158,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
       cellweight <- (1 - 10^-16 - vegCN)
 
       # check for one cell countries
-      if (dim(vegCN)[1] == 1) {
+      if (dim(l[[iso]])[1] == 1) {
         # trivial case of one cell countries
         add <- as.magpie(catincrease)
       } else if (all(dimSums(allocate != 0, dim = 1) == 1)) {
@@ -166,7 +173,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
         for (ti in getYears(l[[iso]][, t, ])) {
 
           sol  <- nleqslv(rep(1, nyears(l[[iso]][, ti, ])), findweight,
-                          cellarea = t(as.array(allocate)[, ti, ]),
+                          cellarea = t(.arrayReduce(allocate[, ti, ])),
                           isoreduction = -catincrease[ti], cellweight = cellweight[ti, ])
           p[ti] <- sol$x
         }

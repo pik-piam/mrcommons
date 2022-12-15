@@ -15,8 +15,11 @@
 
 toolGetMappingCoord2Country <- function(pretty = FALSE, extended = FALSE) {
 
-  out <- readRDS(system.file("extdata/mapCoords2Country.rds", package = "mrcommons"))
-  if (!extended) out <- out[1:67420, ]
+  out <- toolGetMapping("mapCoords2Country.rds", where = "mrcommons")
+
+  if (!extended) {
+    out <- out[1:67420, ]
+  }
 
   if (pretty) {
     tmp <- gsub("p", "\\.", str_split(out$coords, "\\.", simplify = TRUE))

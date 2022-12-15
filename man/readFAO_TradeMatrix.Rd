@@ -23,7 +23,7 @@ given identical qty, is thus the transport margin.
 }
 \examples{
 \dontrun{
-a <- readSource("FAO_TradeMatrix", "import_value")
+a <- readSource("FAO_TradeMatrix", "import_value_kcr")
 }
 }
 \seealso{
