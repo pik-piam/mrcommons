@@ -26,37 +26,8 @@ readIEA <- function(subtype) {
       sep = ";", stringsAsFactors = FALSE, na.strings = c("x", "..", "c"), skip = 2, showProgress = FALSE
     )
 
-    customMapping <- c(
-      "AUSTRALI" = "AUS",
-      "BOSNIAHERZ" = "BIH",
-      "CONGOREP" = "COD",
-      "COTEIVOIRE" = "CIV",
-      "ELSALVADOR" = "SLV",
-      "EQGUINEA" = "GNQ",
-      "DOMINICANR" = "DOM",
-      "FSUND" = "SUN",
-      "HONGKONG" = "HKG",
-      "KOREADPR" = "PRK",
-      "LUXEMBOU" = "LUX",
-      "NETHLAND" = "NLD",
-      "NORTHMACED" = "MKD",
-      "PHILIPPINE" = "PHL",
-      "SAUDIARABI" = "SAU",
-      "SOUTHAFRIC" = "ZAF",
-      "SSUDAN" = "SSD",
-      "SRILANKA" = "LKA",
-      "SWITLAND" = "CHE",
-      "TAIPEI" = "TWN",
-      "TURKMENIST" = "TKM",
-      "TRINIDAD" = "TTO",
-      "UAE" = "ARE",
-      "YUGOND" = "YUG",
-      "OTHERAFRIC" = "IAF",
-      "OTHERASIA" = "IAS",
-      "OTHERLATIN" = "ILA"
-    )
+    data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE)
 
-    data$COUNTRY <- toolCountry2isocode(data$COUNTRY, mapping = customMapping, warn = FALSE)
     data <- data %>%
       filter(!is.na(!!sym("ktoe")), !is.na(!!sym("COUNTRY"))) %>%
       mutate(!!sym("ktoe") := as.numeric(!!sym("ktoe")))
