@@ -5,12 +5,13 @@
 #'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
-#' @param subtype data subtype. Either "EnergyBalances" or "CHPreport"
+#' @param subtype data subtype. Either "EnergyBalances" or "Emissions"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
-
+#' @importFrom dplyr %>% filter
+#' @importFrom tidyr unite
+#'
 convertIEA <- function(x, subtype) {
-
   if (subtype == "EnergyBalances") {
 
     # aggregate Kosovo to Serbia
@@ -33,15 +34,17 @@ convertIEA <- function(x, subtype) {
 
     # disaggregating Other Africa (IAF), Other non-OECD Americas (ILA) and Other non-OECD Asia (IAS) regions to countries
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA_Other2016.csv", returnPathOnly = TRUE)
-    mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE)
-    xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mappingfile, weight = w[as.vector(mapping[[1]]), , ])
+    mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
+      filter(!(!!sym("CountryCode") %in% getItems(x, dim = 1)))
+    xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])
     x <- x[setdiff(getItems(x, dim = 1), as.vector(unique(mapping[[2]]))), , ]
     x <- mbind(x, xadd)
 
     # disaggregating extinct countries USSR (SUN) and Yugoslavia (YUG)
     ISOhistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
     ISOhistorical <- ISOhistorical[!ISOhistorical$toISO == "SCG", ]
-    x <- toolISOhistorical(x, mapping = ISOhistorical,
+    x <- toolISOhistorical(x,
+      mapping = ISOhistorical,
       additional_weight = w[ISOhistorical[ISOhistorical$fromISO %in% c("YUG", "SUN"), "toISO"], , ]
     )
     x[is.na(x)] <- 0
@@ -49,13 +52,48 @@ convertIEA <- function(x, subtype) {
     # filling missing country data
     x <- toolCountryFill(x, 0)
 
-  } else if (subtype == "CHPreport") {
-    # adjust the share for some region to avoid infeasibilities in the initial year
-    x["RUS", , ] <- 70
-    x[c("BGR", "CZE", "POL", "ROU", "SVK"), , ] <- 70
-    x[c("BEL", "LUX", "NLD"), , ] <- 40
-  }
+    # These changes may reduce the amount of CHP plants to below what is actually
+    # deployed in a region, because heat reporting is obscure. In some statistics,
+    # heat from CHP plant used in the same industrial compound is NOT explicitly
+    # reported as heat. If this is the case in the IEA data as well, this would
+    # lead to underestimating CHP plants. However, there currently seems to be no
+    # better way to create consistent data for CHP/non-CHP electricity production
+    # and heat ouput.
 
+    # for each product: check if the flow "HEMAINC" > 0, if yes, do nothing;
+    # if no, add the value of the flow "ELMAINC" to "ELMAINE" and afterwards set ELMAINC to zero.
+
+    missing.flows <- setdiff(expand.grid(iea_product = getItems(x[, , "ELMAINE"], dim = 3.1) %>%
+      union(getItems(x[, , "ELMAINC"], dim = 3.1)) %>%
+      union(getItems(x[, , "HEMAINC"], dim = 3.1)), iea_flows = c("ELMAINE", "ELMAINC", "HEMAINC")) %>%
+      unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
+      pull("product.flow"), getItems(x, dim = 3))
+
+    x <- add_columns(x, addnm = missing.flows, dim = 3, fill = 0)
+
+    d <- x[, , c("ELMAINE", "ELMAINC", "HEMAINC")]
+    tmp <- mcalc(d, ELMAINE ~ ifelse(HEMAINC > 0, ELMAINE, ELMAINC + ELMAINE), append = F)
+    x[, , "ELMAINE"] <- tmp
+    tmp <- mcalc(d, ELMAINC ~ ifelse(HEMAINC > 0, ELMAINC, 0), append = F)
+    x[, , "ELMAINC"] <- tmp
+
+    # for each product: check if the flow "HEAUTOC" > 0, if yes, do nothing;
+    # if no, add the value of the flow "ELAUTOC" to "ELAUTOE" and afterwards set ELAUTOC to zero.
+
+    missing.flows <- setdiff(expand.grid(iea_product = getItems(x[, , "ELAUTOE"], dim = 3.1) %>%
+      union(getItems(x[, , "ELAUTOC"], dim = 3.1)) %>%
+      union(getItems(x[, , "HEAUTOC"], dim = 3.1)), iea_flows = c("ELAUTOE", "HEAUTOC", "ELAUTOC")) %>%
+      unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
+      pull("product.flow"), getItems(x, dim = 3))
+
+    x <- add_columns(x, addnm = missing.flows, dim = 3, fill = 0)
+
+    d <- x[, , c("ELAUTOE", "HEAUTOC", "ELAUTOC")]
+    tmp <- mcalc(d, ELAUTOE ~ ifelse(HEAUTOC > 0, ELAUTOE, ELAUTOC + ELAUTOE), append = F)
+    x[, , "ELAUTOE"] <- tmp
+    tmp <- mcalc(d, ELAUTOC ~ ifelse(HEAUTOC > 0, ELAUTOC, 0), append = F)
+    x[, , "ELAUTOC"] <- tmp
+  }
 
   return(x)
 }
