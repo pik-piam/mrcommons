@@ -21,11 +21,13 @@
 #' @importFrom lpjclass readLPJ
 #' @importFrom stringr str_subset str_trim str_split
 
-readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") {
-  subtype <- toolSplitSubtype(
-    subtype,
-    list(version = NULL, climatemodel = NULL, scenario = NULL, variable = NULL)
-  )$variable
+readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:historical:soilc") { # nolint
+
+  subtype <- toolSplitSubtype(subtype,
+                              list(version = NULL,
+                                   climatemodel = NULL,
+                                   scenario = NULL,
+                                   variable = NULL))$variable
 
   .prepareLPJ <- function(datatype = numeric(),
                           bytes = 4,
