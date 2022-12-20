@@ -27,9 +27,11 @@ toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype 
   }
 
   rawMapping <- read.csv2(structureMapping, stringsAsFactors = FALSE)
-  ieamatch <- na.omit(rawMapping[c("iea_product", "iea_flows", targetName, "Weight")])
+  ieamatch <- na.omit(rawMapping[c("iea_product", "iea_flows", targetName, "Weight")]) %>%
+    unite('product.flow', c('iea_product', 'iea_flows'), sep = '.', remove = F) %>%
+    filter(!!sym("product.flow") %in% getNames(data))
 
-  # take only the items that are asigned to model categories
+  # take only the items that are assigned to model categories
   ieamatch <- subset(ieamatch, !grepl("not_used", ieamatch[[targetName]]))
 
   regions <- getItems(data, dim = 1.1)

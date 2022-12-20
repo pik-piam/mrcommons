@@ -1,26 +1,28 @@
-#' Read FAO_TradeMatrix
+#' Read FAOTradeMatrix
 #'
 #' Read in FAOSTAT detail trade matrix.
-#' FAOSTAT does not balance or harmonize the import/export side reporting, effectively creating 2 slightly different datasets.
-#' Furthermore, in terms of trade value, exporters are "usuallY" reporting FOB, while importers report CIF. Difference in value,
-#' given identical qty, is thus the transport margin.
+#' FAOSTAT does not balance or harmonize the import/export side reporting.
+#' Furthermore, in terms of trade value, exporters are "usuallY" reporting FOB, while importers report CIF.
+#' Difference in value, given identical qty,
+#' is thus the transport margin and any unharmonized reporting combined.
 #' @param subtype subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 #' separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
-#' Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity" X c("kcr", "kli", "kothers"))
+#' Options are all combinations of c("import_value", "import_qty", "export_value",
+#' "export_quantity" X c("kcr", "kli", "kothers"))
 #' import is import side reporting while export is export-sde reporting
 #' @return FAO data as MAgPIE object
 #' @author David C
 #' @seealso [readSource()]
 #' @examples
 #' \dontrun{
-#' a <- readSource("FAO_TradeMatrix", "import_value_kcr")
+#' a <- readSource("FAOTradeMatrix", "import_value_kcr")
 #' }
 #' @importFrom data.table fread
 #' @importFrom tidyr pivot_longer starts_with
 #' @importFrom dplyr summarise filter group_by ungroup %>% distinct
 #' @importFrom magpiesets findset
 
-readFAO_TradeMatrix <- function(subtype) { # nolint
+readFAOTradeMatrix <- function(subtype) { # nolint
 
 file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 
@@ -36,16 +38,18 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   readcolClass <- rep("NULL", length(csvcolnames))
   factorCols <- c("Reporter.Country.Code", "Partner.Country.Code", "Item.Code", "Element.Code", "Element")
   readcolClass[csvcolnames %in% factorCols] <- "factor"
-  readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit", "Months", "Reporter.Countries", "Partner.Countries")] <- "character"
+  readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit",
+                                   "Months", "Reporter.Countries", "Partner.Countries")] <- "character"
   readcolClass[csvcolnames %in% c("Value", "Year")] <- NA
   if (!long) readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
 
-  fao <- fread(input = file, header = FALSE, skip = 1, sep = ",",
-                colClasses = readcolClass,
+  fao <- suppressWarnings(
+               fread(input = file, header = FALSE, skip = 1, sep = ",",
+               colClasses = readcolClass,
                col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
                quote = "\"",
                encoding = "Latin-1", showProgress = FALSE,
-              )
+              ))
   fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
   if (!long) {
@@ -64,8 +68,8 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   # convert data frame into named vector as required by toolCountry2isocode
   faoIsoFaoCode <- structure(as.character(faoIsoFaoCode$ISO), names = as.character(faoIsoFaoCode$Country))
 
-  fao$ReporterISO <- toolCountry2isocode(fao$ReporterCountries, mapping = faoIsoFaoCode) # nolint
-  fao$PartnerISO <- toolCountry2isocode(fao$PartnerCountries, mapping = faoIsoFaoCode) # nolint
+  fao$ReporterISO <- toolCountry2isocode(fao$ReporterCountries, mapping = faoIsoFaoCode)
+  fao$PartnerISO <- toolCountry2isocode(fao$PartnerCountries, mapping = faoIsoFaoCode)
 
   # remove countries with missing ISO code
   fao <- fao[!is.na(fao$ReporterISO), ]
@@ -93,17 +97,15 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   }
 
   # remove accent in Mate to avoid problems and remove other strange names
-  fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
-  fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
-  fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
+  fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)
+  fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)
+  fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE))
 
-  #some small islands correspond to the same ISO3code, just remove them for now
-  fao <- filter(fao, !.data$ReporterCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
-                                                    "Wake Island"), 
-                       !.data$PartnerCountries %in% c("Johnston Island", "Midway Island", "Canton and Enderbury Islands",
-                                                    "Wake Island"))
-
-
+  # some small islands correspond to the same ISO3code, just remove them for now
+  fao <- filter(fao, !.data$ReporterCountries %in% c("Johnston Island", "Midway Island",
+                                                      "Canton and Enderbury Islands", "Wake Island"),
+                       !.data$PartnerCountries %in% c("Johnston Island", "Midway Island",
+                                                     "Canton and Enderbury Islands", "Wake Island"))
 
 fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 
@@ -124,24 +126,30 @@ kothers <- setdiff(findset("kall"), c(kcr, kli))
     import_value_kcr = list(trade = "import_kUS$", product = kcr),
     import_value_kli = list(trade = "import_kUS$", product = kli),
     import_value_kothers = list(trade = "import_kUS$", product = kothers),
-    import_qty_kcr = list(trade = c("import", "Import_Quantity_(1000_Head)", "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+    import_qty_kcr = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                    "Import_Quantity_(Head)", "Import_Quantity_(no)"),
                            product = kcr),
-    import_qty_kli = list(trade = c("import", "Import_Quantity_(1000_Head)", "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+    import_qty_kli = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                    "Import_Quantity_(Head)", "Import_Quantity_(no)"),
                           product = kli),
-    import_qty_kothers = list(trade = c("import", "Import_Quantity_(1000_Head)", "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+    import_qty_kothers = list(trade = c("import", "Import_Quantity_(1000_Head)",
+                                         "Import_Quantity_(Head)", "Import_Quantity_(no)"),
                                product = kothers),
-     export_value_kcr = list(trade = "export_kUS$", product = kcr),
+    export_value_kcr = list(trade = "export_kUS$", product = kcr),
     export_value_kli = list(trade = "export_kUS$", product = kli),
     export_value_kothers = list(trade = "export_kUS$", product = kothers),
-     export_qty_kcr = list(trade = c("export", "Export_Quantity_(1000_Head)", "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+    export_qty_kcr = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                    "Export_Quantity_(Head)", "Export_Quantity_(no)"),
                            product = kcr),
-    export_qty_kli = list(trade = c("export", "Export_Quantity_(1000_Head)", "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+    export_qty_kli = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                    "Export_Quantity_(Head)", "Export_Quantity_(no)"),
                           product = kli),
-    export_qty_kothers = list(trade = c("export", "Export_Quantity_(1000_Head)", "Export_Quantity_(Head)", "Export_Quantity_(no)"),
+    export_qty_kothers = list(trade = c("export", "Export_Quantity_(1000_Head)",
+                                        "Export_Quantity_(Head)", "Export_Quantity_(no)"),
                                product = kothers)
     )
 
-  element <- toolSubtypeSelect(subtype, elements)
+element <- toolSubtypeSelect(subtype, elements)
 
 out <- filter(fao, .data$ElementShort %in% element$trade, .data$k %in% element$product)
 

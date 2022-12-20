@@ -7,8 +7,8 @@
 calcFAOBilateralTrade(
   output = "value",
   products = "kcr",
-  prod_agg = TRUE,
-  five_year = TRUE
+  prodAgg = TRUE,
+  fiveYear = TRUE
 )
 }
 \arguments{
@@ -16,18 +16,18 @@ calcFAOBilateralTrade(
 
 \item{products}{"kcr", "kli", or "kothers"}
 
-\item{prod_agg}{binary to keep FAO product level or magpie}
+\item{prodAgg}{binary to keep FAO product level or magpie}
 
-\item{five_year}{only 5 year steps due to memory load}
+\item{fiveYear}{only 5 year steps due to memory load}
 }
 \value{
-List of magpie objects with results on bilateral country level, weight on bilateral country level, unit and description.
+List of magpie objects with results on bilateral country level,
+weight on bilateral country level, unit and description.
 }
 \description{
 Calculates bilateral trade values based on FAO trade matrix
 }
 \examples{
-
 \dontrun{
 calcOutput("BilateralTradeValue")
 }
