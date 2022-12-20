@@ -16,8 +16,8 @@ magpie object EDGAR_LU data
 Read-in EDGAR_LU csv file as magclass object
 }
 \examples{
-
-\dontrun{ a <- readSource(type="EDGAR_LU")
+\dontrun{
+a <- readSource(type = "EDGAR_LU")
 }
 
 }

@@ -19,12 +19,11 @@ IPCC data as MAgPIE object for all subtypes on country level
 Convert subtypes on ISO country level.
 }
 \examples{
-
 \dontrun{
-a <- readSource("IPCC","awmsShr")
-a <- readSource("IPCC","awmsEfCh4")
-a <- readSource("IPCC","awmsParCh4")
-a <- readSource("IPCC","nExcrRate")
+a <- readSource("IPCC", "awmsShr")
+a <- readSource("IPCC", "awmsEfCh4")
+a <- readSource("IPCC", "awmsParCh4")
+a <- readSource("IPCC", "nExcrRate")
 }
 
 }

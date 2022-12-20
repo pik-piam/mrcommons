@@ -16,9 +16,10 @@ List of magpie objects with results on old ReMIND regions level
 Read in old ReMIND use of residues for 2nd generation bioenergy and newly estimations
 }
 \examples{
-
-\dontrun{ a <- readSource("ResFor2ndBE", subtype="oldReMIND")
+\dontrun{
+a <- readSource("ResFor2ndBE", subtype = "oldReMIND")
 }
+
 }
 \seealso{
 \code{\link[=readSource]{readSource()}}

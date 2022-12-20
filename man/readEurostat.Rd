@@ -17,10 +17,10 @@ magpie object of Eurostat historical emissions (MtCO2)
 Read-in Eurostat historical emissions csv files as magclass object
 }
 \examples{
-
-\dontrun{ a <- readSource(type="Eurostat",subtype="emissions")
+\dontrun{
+a <- readSource(type = "Eurostat", subtype = "emissions")
 }
- 
+
 }
 \seealso{
 \code{\link{readSource}}

@@ -7,10 +7,12 @@
 readTNC2019()
 }
 \value{
-Returns magpie object with a share of each spatial unit belonging to a biogeographic realm and major habitat type.
+Returns magpie object with a share of each spatial unit belonging to
+a biogeographic realm and major habitat type.
 }
 \description{
-Reads geospatial data from 'the nature conservancy' on ecoregions, major habitat types (MHT, or biome types) and biogeographic realms.
+Reads geospatial data from 'the nature conservancy' on ecoregions,
+major habitat types (MHT, or biome types) and biogeographic realms.
 }
 \examples{
 \dontrun{

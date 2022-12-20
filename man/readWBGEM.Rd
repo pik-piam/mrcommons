@@ -13,8 +13,9 @@ magpie object of global price of commodities
 read raw data of world commodity prices from the dataset of World Bank global economic monitor
 }
 \examples{
-
-\dontrun{ readSource(type = "WBGEM")}
+\dontrun{
+readSource(type = "WBGEM")
+}
 
 }
 \seealso{

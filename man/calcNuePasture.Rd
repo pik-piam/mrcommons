@@ -9,16 +9,19 @@ calcNuePasture(cellular = FALSE, maccbase = TRUE)
 \arguments{
 \item{cellular}{cellular disaggreagation or national values}
 
-\item{maccbase}{whether future scenarios should be expressed as base efficiency, excluding additional macc improvemetns (new default)}
+\item{maccbase}{whether future scenarios should be expressed as base efficiency,
+excluding additional macc improvements (new default)}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates the soil nitrogen uptake efficiency of pastures. This is the nitrogen taken up from the soil (N in crop biomass minus biological fixation minus seed N) divided by the soil N inputs (fertilizer, manure etc). For the future, NUE scenarios are added.
+calculates the soil nitrogen uptake efficiency of pastures. #
+This is the nitrogen taken up from the soil (N in crop biomass minus biological
+fixation minus seed N) divided by the soil N inputs (fertilizer, manure etc).
+For the future, NUE scenarios are added.
 }
 \examples{
-
 \dontrun{
 calcOutput("NuePasture")
 }
