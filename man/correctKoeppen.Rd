@@ -18,9 +18,8 @@ List of magpie objects with results on cellular level
 Correct Koeppen climate zones on cellular level
 }
 \examples{
-
 \dontrun{
-  readSource("Koeppen", subtype="cellular", convert="onlycorrect")
+readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")
 }
 }
 \author{

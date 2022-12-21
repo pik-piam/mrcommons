@@ -19,8 +19,8 @@ Read-in IFA (International Fertilizer Association) data .xlsx file as
 magclass object
 }
 \examples{
-
-\dontrun{ a <- readSource(type="IFA",subtype="consumption")
+\dontrun{
+a <- readSource(type = "IFA", subtype = "consumption")
 }
 
 }

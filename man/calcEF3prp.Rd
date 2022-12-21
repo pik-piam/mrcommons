@@ -16,8 +16,7 @@ list of magpie object with results on country level, weight on country level, un
 Returns emission factor for manure excreted during pasture range and paddock. Differs depending on the share of small ruminants.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EF3prp")
 }
 }

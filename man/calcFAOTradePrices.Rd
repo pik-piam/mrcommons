@@ -19,6 +19,7 @@ calculates USD per kg of FAOSTAT Trade data for import and export prices
 \dontrun{
 calcOutput("calcFAOTradePrices")
 }
+
 }
 \author{
 David M Chen

@@ -6,12 +6,11 @@
 #' @seealso
 #' [readLPJmL()]
 #' @examples
-#'
 #' \dontrun{
-#'   readSource("LPJmL", subtype="soilc", convert=TRUE)
+#' readSource("LPJmL", subtype = "soilc", convert = TRUE)
 #' }
 #'
-convertLPJmL <- function(x){
+convertLPJmL <- function(x) {
 
   return(x)
 }

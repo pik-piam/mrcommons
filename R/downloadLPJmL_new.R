@@ -63,7 +63,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
              fpc                = "fpc.clm")
 
   # handling the separate sources of grass runs
-  if (!grepl("Pasture", x$version, ignore.case = T)) {
+  if (!grepl("Pasture", x$version, ignore.case = TRUE)) {
     storage   <- "/p/projects/landuse/users/cmueller/"
   } else {
     storage   <- "/p/projects/rd3mod/inputdata/sources/LPJmL/"
@@ -81,7 +81,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
   find_file <- function(storage, path, list_files, file) {
     output_files <- grep(".out", list_files, value = TRUE)
     files_out <- file.path(storage, path, output_files)
-    order <- order(file.info(files_out)$ctime, decreasing =T)
+    order <- order(file.info(files_out)$ctime, decreasing = TRUE)
     files_out <- files_out[order]
     output_files <- output_files[order]
     x <- sapply(files_out, function(x) list(readLines(x)))
@@ -93,7 +93,7 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
     file.copy(file_path, file)
     if (grepl("Pasture", x$version, ignore.case = TRUE)) {
       files2copy <- find_file(storage, path, list_files, file)
-      file.copy(file.path(storage, path, files2copy), files2copy, overwrite = T)
+      file.copy(file.path(storage, path, files2copy), files2copy, overwrite = TRUE)
     } else {
       file.copy(paste0(storage, path, "/lpjml_log.out"), "lpjml_log.out")
     }

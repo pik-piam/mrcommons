@@ -24,8 +24,7 @@ List of magpie objects with results on country level, weight on country level, u
 calculates the crop-specific use of different N inputs
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FertilizerByCrop")
 }
 }

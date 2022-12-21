@@ -20,7 +20,6 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, cellular = FALSE, pr
   past <- findset("past")
 
   if (!per_livestock_unit) {
-
     # kap              <- findset("kap")
     # kli              <- findset("kli")
     ProdAttributes      <- calcOutput("Attributes", aggregate = FALSE)

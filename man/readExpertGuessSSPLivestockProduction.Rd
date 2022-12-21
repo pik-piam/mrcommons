@@ -16,11 +16,6 @@ magpie object containing the expert guesses
 {Read the Expert Guesses for future Livestock Production for the SSP Scenarios
 }
 }
-\examples{
-\dontrun{ 
-a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")
-}
-}
 \seealso{
 \code{\link[=readSource]{readSource()}}
 }

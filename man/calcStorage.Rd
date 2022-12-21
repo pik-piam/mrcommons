@@ -18,11 +18,9 @@ FAO data only has stock variation so we assume lowest level for each product/cou
 USDA data to be potentially included in future second data source
 }
 \examples{
-
 \dontrun{
-calcOutput("Storage", datasource="FAO")
+calcOutput("Storage", datasource = "FAO")
 }
-
 
 }
 \author{

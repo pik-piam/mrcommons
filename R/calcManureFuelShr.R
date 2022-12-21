@@ -8,44 +8,41 @@
 #' @seealso
 #' [calcExcretion()]
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("ManureFuelShr")
 #' }
-#' 
+#'
+calcManureFuelShr <- function(products = "magpie") {
+  past <- findset("past")
+
+  excretion <- calcOutput("ExcretionIPCC", aggregate = FALSE, products = products)
+
+  pasture_categories <- c("pasture_range_paddock", "fuel")
 
 
-calcManureFuelShr<-function(products="magpie"){
-  past<-findset("past")
-  
-  excretion<-calcOutput("ExcretionIPCC",aggregate = FALSE,products=products)
-  
-  pasture_categories<-c("pasture_range_paddock","fuel")
+  excretion <- excretion[, , pasture_categories]
 
-  
-  excretion<-excretion[,,pasture_categories]
 
-  
-  weight<-dimSums(excretion,dim=3.2)
-  
-  ManureFuelShr<-collapseNames(excretion[,,"fuel"]/weight)
-  
-  weight[is.na(weight)]<-0
-  ManureFuelShr[is.na(ManureFuelShr)]<-0
-  
-  ManureFuelShr<-toolHoldConstantBeyondEnd(ManureFuelShr)
-  weight<-toolHoldConstantBeyondEnd(weight)
-  
-  tmp<-ds<-calcOutput("DevelopmentState",aggregate = FALSE)
-  tmp[,,]<-1
-  ManureFuelShr<-convergence(origin = ManureFuelShr*tmp,aim = ManureFuelShr*(1-ds),start_year = "y2010",end_year = "y2050",type = "s")
-  weight<-weight*tmp
-  
-  return(list(x=ManureFuelShr,
-              weight=weight,
-              unit="share",
-              description="share of excreted nitrogen on pastures that is collected for fuel",
-              min=0,
-              max=1)
-  )                   
+  weight <- dimSums(excretion, dim = 3.2)
+
+  ManureFuelShr <- collapseNames(excretion[, , "fuel"] / weight)
+
+  weight[is.na(weight)] <- 0
+  ManureFuelShr[is.na(ManureFuelShr)] <- 0
+
+  ManureFuelShr <- toolHoldConstantBeyondEnd(ManureFuelShr)
+  weight <- toolHoldConstantBeyondEnd(weight)
+
+  tmp <- ds <- calcOutput("DevelopmentState", aggregate = FALSE)
+  tmp[, , ] <- 1
+  ManureFuelShr <- convergence(origin = ManureFuelShr * tmp, aim = ManureFuelShr * (1 - ds), start_year = "y2010", end_year = "y2050", type = "s")
+  weight <- weight * tmp
+
+  return(list(x = ManureFuelShr,
+              weight = weight,
+              unit = "share",
+              description = "share of excreted nitrogen on pastures that is collected for fuel",
+              min = 0,
+              max = 1)
+  )
 }

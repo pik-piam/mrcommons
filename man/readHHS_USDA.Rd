@@ -17,10 +17,10 @@ https://health.gov/dietaryguidelines/2015/resources/2015-2020_Dietary_Guidelines
 Appendix 2
 }
 \examples{
-
-\dontrun{ 
-readSource("Lassaletta2014",subtype="budget",convert=FALSE)
+\dontrun{
+readSource("Lassaletta2014", subtype = "budget", convert = FALSE)
 }
+
 }
 \seealso{
 \code{\link[=convertLassaletta2014]{convertLassaletta2014()}},

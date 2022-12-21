@@ -22,10 +22,10 @@ Environmental Research Letters.
 into a dataset including all countries. Replacing Soviet Union by Russia and Yugoslavia by Serbia without detailed disaggregation.
 }
 \examples{
-
-\dontrun{ 
-readSource("Lassaletta2014",convert=TRUE)
+\dontrun{
+readSource("Lassaletta2014", convert = TRUE)
 }
+
 }
 \seealso{
 \code{\link[=readLassaletta2014]{readLassaletta2014()}},

@@ -97,7 +97,6 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- add_dimension(out, dim = 3.2, add = "model", nm = datasource)
 
   } else if (datasource %in% c("combined_CEDS_PRIMAPhist")) {
-
     # WORK IN PROGRESS!!!
     inventory <- calcOutput("EmissionInventory",
                      datasource = datasource,
@@ -285,7 +284,6 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- toolCountryFill(out, fill = 0)
 
   } else if (datasource == "PRIMAPhist") {
-
     # The PRIMAP-hist national historical emissions time series (1850-2014)
     primap <- readSource("PRIMAPhist", "hist")
     n2o <- primap[, , "n2o_n"][, , "CAT4"] / 28 * 44

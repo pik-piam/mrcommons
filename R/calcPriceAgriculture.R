@@ -59,7 +59,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
     tmp <- mapping %>% group_by(.data$magpie) %>% summarise(V1 = n())
 
     tmp <- base::merge(mapping, tmp, by = "magpie")
-    weight <- as.magpie(acast(melt(tmp), .~wbgem))
+    weight <- as.magpie(acast(melt(tmp), . ~ wbgem))
     getNames(weight) <- gsub("\\..", "", getNames(weight))
 
     x <- toolAggregate(x, mapping, from = "wbgem", to = "magpie", weight = weight, dim = 3)

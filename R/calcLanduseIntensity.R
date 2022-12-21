@@ -24,7 +24,6 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
   selectyears <- findset("past")
 
   if (sectoral %in% c("kcr", "lpj")) {
-
     # Mappings
     MAGcroptypes  <- findset("kcr")
     MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
@@ -86,7 +85,6 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
  #  ?Old comment: if only one indicator is required over all crops, I suggest a weighting over area harvested
 
   } else if (sectoral == "pasture") {
-
     # Mappings
     CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 

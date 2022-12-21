@@ -13,9 +13,9 @@ magpie object of time series of world price of commodites
 recover world price of commidity in terms of real 2005 USD per metric ton
 }
 \examples{
-
 \dontrun{
-calcOutput("WBGEM")}
+calcOutput("WBGEM")
+}
 
 }
 \seealso{

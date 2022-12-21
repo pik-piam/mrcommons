@@ -17,7 +17,6 @@ Calculates nitrogenous emissions from all emission sources for the historical pe
 Complements own estimates with Edgar esimtates for the historical period.
 }
 \examples{
-
 \dontrun{
 calcOutput("EmisNitrogenPast")
 }

@@ -18,7 +18,6 @@
 #' }
 #' @importFrom magclass getNames
 calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
-
   # readSource N2O and baseline Emissions
   if (source == "ImageMacc") {
 
@@ -60,11 +59,11 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     n2o <- NULL
     for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      existingYears <- getYears(x, as.integer = T)
+      existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
       missingYears <- tmp[tmp < existingYears[1]]
       x <- x[, intersect(wantedYears, existingYears), ]
-      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
       y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
       names(dimnames(y)) <- names(dimnames(x))
       n2o <- mbind(n2o, y)
@@ -75,7 +74,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
 
   } else if (source == "PBL_MACC_SSP2_2019") {
-    #relative to PBL IMAGE SSP2 BASELINE emissions
+    # relative to PBL IMAGE SSP2 BASELINE emissions
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "N2O PBL_MACC_SSP2_2019"
 
@@ -84,11 +83,11 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     n2o <- NULL
     for (subtype in c("SSP2_n2otrans", "SSP2_n2oadac", "SSP2_n2onitac", "SSP2_n2ofert", "SSP2_n2oanwst", "SSP2_n2owaste")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      existingYears <- getYears(x, as.integer = T)
+      existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
       missingYears <- tmp[tmp < existingYears[1]]
       x <- x[, intersect(wantedYears, existingYears), ]
-      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
       y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
       names(dimnames(y)) <- names(dimnames(x))
       n2o <- mbind(n2o, y)
@@ -98,9 +97,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
 
-  }
-
-  else if (source == "PBL_MACC_2022") {
+  } else if (source == "PBL_MACC_2022") {
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "N2O PBL_MACC_2022"
 
@@ -108,13 +105,13 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
 
     n2o <- NULL
     for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
-      for (scentype in c("Default","Optimistic","Pessimistic")) {
+      for (scentype in c("Default", "Optimistic", "Pessimistic")) {
         x <- readSource("PBL_MACC_2022", subtype, scentype)
-        existingYears <- getYears(x, as.integer = T)
+        existingYears <- getYears(x, as.integer = TRUE)
         tmp <- setdiff(wantedYears, existingYears)
         missingYears <- tmp[tmp < existingYears[1]]
         x <- x[, intersect(wantedYears, existingYears), ]
-        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
         y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
         names(dimnames(y)) <- names(dimnames(x))
         n2o <- mbind(n2o, y)
@@ -124,7 +121,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
-    w[,,] <-setYears(w[,2010,],NULL)
+    w[, , ] <- setYears(w[, 2010, ], NULL)
 
   }
 

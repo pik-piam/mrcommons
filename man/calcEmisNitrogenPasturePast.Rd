@@ -16,8 +16,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates nitrogenous emissions from pastures for the historical period
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPasturePast")
 }
 

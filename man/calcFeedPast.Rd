@@ -28,8 +28,7 @@ List of magpie objects with results on country or cellular level, unit and descr
 Combines feed baskets of the past with livestock production to get total feed demand
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedPast")
 }
 }

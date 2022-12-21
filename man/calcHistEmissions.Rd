@@ -16,8 +16,7 @@ magpie object of historical emissions data
 provides historical emissions values per economic sector or per mac sector. For now it only includes European data.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("HistEmissions")
 }
 }

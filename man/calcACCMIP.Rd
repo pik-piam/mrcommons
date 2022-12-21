@@ -16,8 +16,7 @@ List of magpie objects with results on country level, weight on country level, u
 reads in the ACCMIP atmospheric deposition database. Speeds up caching
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ACCMIP")
 }
 

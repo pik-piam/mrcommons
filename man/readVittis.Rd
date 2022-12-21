@@ -13,8 +13,8 @@ National-scale costs of production for 10 crops, disaggregated in 9 distinct cos
 Read-in cost data from Vittis dataset.
 }
 \examples{
-
-\dontrun{ a <- readSource("Vittis")
+\dontrun{
+a <- readSource("Vittis")
 }
 }
 \seealso{

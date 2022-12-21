@@ -16,6 +16,7 @@ Calculates iso-level total global transport costs from GTAP for GTAP food commod
 \dontrun{
 calcOutput("GTAPTotalTransportCosts")
 }
+
 }
 \author{
 David M Chen

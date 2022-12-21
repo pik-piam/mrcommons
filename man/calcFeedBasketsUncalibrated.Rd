@@ -13,8 +13,7 @@ List of magpie objects with results on country level, weight on country level, u
 Combines uncalibrated feed baskets of the past with scenario-dependent future feed baskets.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedBasketsUncalibrated")
 }
 }

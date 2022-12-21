@@ -13,8 +13,7 @@ List of magpie object with results on country level, weight on country level, un
 Emission factors for croplands based on IPCC using a country-level leaching fraction
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("IPCCefNSoil")
 }
 

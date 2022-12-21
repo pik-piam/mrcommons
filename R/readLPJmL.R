@@ -72,7 +72,6 @@ stop("readLPJmL needs version and climatetype information")
     years      <- seq(years[1], years[2], 1)
 
   } else {
-
     # default
     start_year  <- 1901
     years      <- seq(start_year, 2017, 1)
@@ -110,7 +109,7 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -207,7 +206,7 @@ stop("readLPJmL needs version and climatetype information")
     } else if (grepl("runoff|evap_lake", subtype)) {
     # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       if (grepl("_lpjcell", subtype)) {
-        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                              type = "cell", where = "mrcommons")
         cell_area <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         class(x) <- "array"
@@ -236,7 +235,7 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -311,7 +310,7 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -357,7 +356,7 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv", 
+      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")

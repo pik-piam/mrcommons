@@ -16,9 +16,8 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Read LPJmL contant
 }
 \examples{
-
-\dontrun{ 
-readSource("LPJml_rev21", subtype="maize_mrh")
+\dontrun{
+readSource("LPJml_rev21", subtype = "maize_mrh")
 }
 
 }

@@ -13,7 +13,6 @@
 #' @export
 
 calcGrowingStockNRF <- function() {
-
   ## Read Growing Stock
   out <- readSource("FRA2020", subtype = "growing_stock", convert = TRUE)
   x <- out[, , grep(pattern = "ha", x = getNames(out), value = TRUE)]

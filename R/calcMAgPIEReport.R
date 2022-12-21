@@ -1,24 +1,24 @@
 #' @importFrom quitte inline.data.frame
 
-calcMAgPIEReport <- function(subtype){
+calcMAgPIEReport <- function(subtype) {
 
   x <- readSource("MAgPIE", subtype = "MAgPIEReport_extensive")
 
   if (subtype == "CostTotal") {
 
-    x <- x[,,"Costs|MainSolve w/o GHG Emissions (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    x <- x[, , "Costs|MainSolve w/o GHG Emissions (million US$05/yr)"] / 1000 / 1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
     d <- "Total Landuse Costs from MAgPIE excluding emission costs"
     u <- "T$2005/yr"
 
   } else if (subtype == "CostMAC") {
 
-    x <- x[,,"Costs|MainSolve|MACCS (million US$05/yr)"]/1000/1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
+    x <- x[, , "Costs|MainSolve|MACCS (million US$05/yr)"] / 1000 / 1000 # with transformation factor from 10E6 US$2005 to 10E12 US$2005
     d <- "MAC Costs for LU emissions from MAgPIE"
     u <- "T$2005/yr"
 
   } else if (subtype == "ProductionBiomass") {
 
-    x <- x[,,"Demand|Bioenergy|++|2nd generation (EJ/yr)"]/31.536 # EJ to TWa
+    x <- x[, , "Demand|Bioenergy|++|2nd generation (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
     u <- "TWa/yr"
 
@@ -36,9 +36,9 @@ calcMAgPIEReport <- function(subtype){
       "Emissions before technical mitigation|N2O|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O/yr);n2oanwstp",
       "Emissions before technical mitigation|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O/yr);n2ofertsom")
 
-    x <- x[,,mapping$oldnames]
+    x <- x[, , mapping$oldnames]
     # rename
-    getNames(x,dim=3) <- mapping$newnames
+    getNames(x, dim = 3) <- mapping$newnames
     d <- "CH4 and N2O land emissions"
     u <- "MtCH4/yr and Mt N2O/yr"
 
@@ -48,14 +48,14 @@ calcMAgPIEReport <- function(subtype){
       "oldnames;newnames",
       "Emissions|CO2|Land (Mt CO2/yr);co2luc")
 
-    x <- x[,,mapping$oldnames]
+    x <- x[, , mapping$oldnames]
     # rename
-    getNames(x,dim=3) <- mapping$newnames
+    getNames(x, dim = 3) <- mapping$newnames
     d <- "CO2 land emissions"
     u <- "Mt CO2/yr"
 
   } else {
-    stop("Unknown subtype",subtype)
+    stop("Unknown subtype", subtype)
   }
 
   # remove model and variable name

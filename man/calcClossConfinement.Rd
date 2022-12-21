@@ -13,8 +13,7 @@ List of magpie object with results on country level, weight on country level, un
 Carbon losses for livestock confinements
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ClossConfinement")
 }
 }
