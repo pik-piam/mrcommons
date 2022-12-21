@@ -18,8 +18,7 @@ List of magpie object with results on country level, weight on country level, un
 calculates manure recycling to cropland based on excretions, animal waste management types (and their shares per country) and emission factors for nitrogenous emissions in livestock confinements
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("calcManureRecyclingCroplandPast")
 }
 }

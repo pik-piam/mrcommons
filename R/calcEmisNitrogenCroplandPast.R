@@ -36,7 +36,6 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
 
 
   } else if (method %in% c("Nsurplus", "Nsurplus2")) {
-
     # IPCC methodologies are not in line with the Nr surplus in various regions.
     # Sometimes, volatilization and leaching exceed the surplus.
     # Also, a change in NUE does not change the emission factors.
@@ -108,7 +107,7 @@ dim = 3) * ef[, , "ef_5"]
 
 
 
-    dentrificationShr <- setNames(dimSums(emisSum[, , c("n2o_n_direct", "n2_n")], dim = c(1, 3)) / 
+    dentrificationShr <- setNames(dimSums(emisSum[, , c("n2o_n_direct", "n2_n")], dim = c(1, 3)) /
     dimSums(budget[, , "surplus"], dim = c(1, 3)), NULL)
 
     unscaled <- mbind(emisSum[, , c("nh3_n", "no2_n", "no3_n")],

@@ -18,7 +18,7 @@ Adjustement factors for emission in GtCO2 yr-1.
 }
 \examples{
 \dontrun{
-readSource("AdjustGrassi2021",subtype = "data")
+readSource("AdjustGrassi2021", subtype = "data")
 }
 }
 \author{

@@ -19,12 +19,9 @@ Source: Herridge D. F., Peoples M. B., Boddey R. M.: Global inputs of
 biological nitrogen fixation in agricultural systems
 }
 \examples{
-
-
-  \dontrun{
-    x <- readSource("Herridge")
-  }
-
+\dontrun{
+x <- readSource("Herridge")
+}
 
 }
 \author{

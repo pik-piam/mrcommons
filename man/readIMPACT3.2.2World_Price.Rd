@@ -13,8 +13,8 @@ magpie object of the world prices from the IMPACT model for different SSP scenar
 Read-in world prices data csv file as magclass object
 }
 \examples{
-
-\dontrun{ a <- readSource(type="IMPACT3.2.2World_Price")
+\dontrun{
+a <- readSource(type = "IMPACT3.2.2World_Price")
 }
 
 }

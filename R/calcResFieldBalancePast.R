@@ -60,7 +60,6 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
     ### estimate removal
 
     if (cellular == TRUE) {
-
       # to avoid negative values, take the regional share of removal by product
       fieldbalance <- calcOutput("ResFieldBalancePast", cellular = FALSE, aggregate = FALSE, products = "kres", scenario = scenario)
       # use nr for removalshare decision

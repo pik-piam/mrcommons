@@ -14,7 +14,6 @@ Calculates the carbon emission adjustement factors as derived by Grassi et al. 2
 Adjustement factors are provided in GtCO2 yr-1. Positive and negative values possible.
 }
 \examples{
-
 \dontrun{
 calcOutput("AdjustGrassi2021")
 }

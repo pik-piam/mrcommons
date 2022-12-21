@@ -18,8 +18,7 @@ conversions are made more explicit using simple assumptions. The first part of t
 function is the calcFAOmassbalance_pre.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FAOmassbalance")
 }
 }

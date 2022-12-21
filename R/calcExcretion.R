@@ -15,7 +15,6 @@
 #' @importFrom magclass getNames<-
 
 calcExcretion <- function(cellular = FALSE, attributes = "npk") {
-
   # read in sets
   nutrients  <- c("nr", "p", "k")
   past       <- findset("past")

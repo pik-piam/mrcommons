@@ -42,7 +42,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       productionMAG[, , missing] <- 0
 
     } else {
-
       ################################
       ### crop production cellular ###
       ################################
@@ -84,14 +83,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       isoMismatch[]     <- abs(round(isoproductionMAG - toolIso2CellCountries(productionFAO), 4)) > 0
 
       if (any(isoMismatch != 0)) {
-
         # correct items with no cropspecific area
         isoMAGCroparea   <- noMAGCroparea <- toolAggregate(cropareaMAG, rel = mappingCountryCell,
                                                            from = "celliso", to = "iso")
         noMAGCroparea[]  <- (isoMAGCroparea == 0) * isoMismatch
 
         if (any(noMAGCroparea != 0)) {
-
           # distribute total cropland weighted over all non-irrigated cells first
           productionMAG[, , "rainfed"]  <- productionMAG[, , "rainfed"] * (1 - noMAGCroparea[, , "rainfed"]) +
             toolAggregate(noMAGCroparea[, , "rainfed"] * (toolIso2CellCountries(productionFAO) - isoproductionMAG),
@@ -176,7 +173,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       productionMAG  <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "production"][, , "pasture"])
 
     } else {
-
       ####################################
       ### pasture production celluluar ###
       ####################################
@@ -211,14 +207,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       isoMismatch[]     <- abs(round(isoproductionMAG - toolIso2CellCountries(productionFAO), 4)) > 0
 
       if (any(isoMismatch != 0)) {
-
         # correct items with no area
         isoPastureArea   <- noPastureArea <- toolAggregate(areaPasture, rel = mappingCountryCell,
                                                            from = "celliso", to = "iso")
         noPastureArea[]  <- (isoPastureArea == 0) * isoMismatch
 
         if (any(noPastureArea != 0)) {
-
           # distribute equally over all cells
           productionMAG     <- productionMAG * (1 - noPastureArea) +
             magpie_expand(noPastureArea * toolIso2CellCountries(productionFAO), productionMAG) /
@@ -232,7 +226,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
         noPastureYields[]  <- (isoPastureYields == 0) * isoMismatch * (1 - noPastureArea)
 
         if (any(noPastureYields != 0)) {
-
           # distribute corresponding to pasture area share
           productionMAG     <- productionMAG * (1 - noPastureYields) +
             noPastureYields * toolAggregate(toolIso2CellCountries(productionFAO), rel = mappingCountryCell,

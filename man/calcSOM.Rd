@@ -30,8 +30,7 @@ Relevant for the release of N by SOM loss is also the change in carbon stocks pe
 This is done in delta cropland soilc.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("SOM")
 }
 

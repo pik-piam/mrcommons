@@ -21,10 +21,10 @@ Calculates the supply potential of Crop Residues for 2nd generation bioenergy
 for future and different ssp scenarios
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResFor2ndBioengery")
 }
+
 }
 \seealso{
 \code{\link[=calcResFor2ndBioengery]{calcResFor2ndBioengery()}}

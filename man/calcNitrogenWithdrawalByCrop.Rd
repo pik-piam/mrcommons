@@ -24,8 +24,7 @@ List of magpie objects with results on country level, weight on country level, u
 calculates the crop-specific withdrawals of nutrients from soils
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NitrogenWithdrawalByCrop")
 }
 }

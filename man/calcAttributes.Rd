@@ -16,8 +16,7 @@ List of magpie objects with results on global level, empty weight, unit and desc
 provides attributes of different products
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("Attributes")
 }
 

@@ -17,9 +17,8 @@ List of magpie objects with results on cellular level, weight, unit and descript
 This function reads in LPJmL inputs (inputs to LPJmL)
 }
 \examples{
-
-\dontrun{ 
-readSource("LPJmLInputs", subtype="lakeshare", convert=FALSE)
+\dontrun{
+readSource("LPJmLInputs", subtype = "lakeshare", convert = FALSE)
 }
 
 }

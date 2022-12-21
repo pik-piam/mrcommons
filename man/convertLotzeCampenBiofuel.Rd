@@ -20,12 +20,9 @@ markets: an AgMIP economic model intercomparison" Agricultural Economics 45 (103
 doi:10.1111/agec.12092.
 }
 \examples{
-
-
-  \dontrun{
-    x <- readSource("LotzeCampenBiofuel")
-  }
-
+\dontrun{
+x <- readSource("LotzeCampenBiofuel")
+}
 
 }
 \author{

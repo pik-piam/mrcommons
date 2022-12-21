@@ -27,11 +27,10 @@ Availables Subtypes:
 }
 }
 \examples{
-
-  \dontrun{
-    x <- readSource("Herridge", "ndfa")
-    x <-  readSource("Herridge", "freeliving", convert=F)
-  }
+\dontrun{
+x <- readSource("Herridge", "ndfa")
+    x <-  readSource("Herridge", "freeliving", convert = F)
+}
 
 }
 \author{

@@ -107,7 +107,7 @@ x <- NULL
 
 
 
-      x <- if (subtype == "wheat_areas") toolCoord2Isocell(collapseNames(x[, ,c("wwh", "swh")])) else if (subtype == "rice_areas") toolCoord2Isocell(collapseNames(x[, , c("ri1", "ri2")][, , "ir"])) else if(subtype == "cal") toolCoord2Isocell(x) else x
+      x <- if (subtype == "wheat_areas") toolCoord2Isocell(collapseNames(x[, , c("wwh", "swh")])) else if (subtype == "rice_areas") toolCoord2Isocell(collapseNames(x[, , c("ri1", "ri2")][, , "ir"])) else if (subtype == "cal") toolCoord2Isocell(x) else x
 
 return(x)
     }

@@ -70,7 +70,6 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
     }
 
   } else {
-
     ############################################
     ### Ricearea and shares on cellular level
     ############################################

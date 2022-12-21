@@ -18,7 +18,6 @@ Calculates an extended version of the Food Balance Sheets. Makes explicit the co
 Includes processes like milling, distilling, extraction etc. Adds certain byproducts like distillers grains or ethanol.
 }
 \examples{
-
 \dontrun{
 calcOutput("FAOmassbalance_pre")
 }

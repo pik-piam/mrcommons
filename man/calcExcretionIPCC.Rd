@@ -16,8 +16,7 @@ List of magpie object with results on country level, weight on country level, un
 calculates excretion in the year 2005 using the IPCC Guidelines excretion rates.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ExcretionIPCC")
 }
 

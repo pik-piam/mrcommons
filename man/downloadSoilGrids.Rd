@@ -17,7 +17,9 @@ This function download the raw SoilGrids data (available at https://files.isric.
 or if available the preprocessed raster layers.
 }
 \examples{
-\dontrun{ downloadSource("SoilGrids",subtype="carbon0_30") }
+\dontrun{
+downloadSource("SoilGrids", subtype = "carbon0_30")
+}
 
 }
 \seealso{

@@ -9,11 +9,10 @@
 #' [calcExcretionIPCC()],
 #' [readIPCC()]
 #' @examples
-#'
 #' \dontrun{
 #' calcOutput("AnimalStocks")
 #' }
-
+#'
 calcAnimalStocks <- function(grouping = "IPCC") {
   if (grouping != "IPCC") {
     stop("so far only IPCC categories implemented.")
@@ -44,7 +43,7 @@ calcAnimalStocks <- function(grouping = "IPCC") {
   animals <- mbind(animals, setNames(collapseNames(LivePrim[, , c("Milk_Animals_(Head)")]
                                                    [, , c("951|Milk, whole fresh buffalo")]), "dairy buffalo"))
   # Other buffalo
-  animals <- mbind(animals, setNames(collapseNames(LiveHead[, , c("946|Buffaloes")]) - 
+  animals <- mbind(animals, setNames(collapseNames(LiveHead[, , c("946|Buffaloes")]) -
                                        setNames(animals[, , "dairy buffalo"], NULL), "other buffalo"))
 
   # Market Swine

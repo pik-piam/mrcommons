@@ -6,11 +6,10 @@
 #' @seealso
 #' [readSoilGrids()]
 #' @examples
-#'
 #' \dontrun{
-#'   readSource("SoilGrids", subtype="cstock_0_30", convert=TRUE)
+#' readSource("SoilGrids", subtype = "cstock_0_30", convert = TRUE)
 #' }
-convertSoilGrids <- function(x){
+convertSoilGrids <- function(x) {
 
   return(x)
 }

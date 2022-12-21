@@ -24,8 +24,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates Nitrogen Budgets for Non-agricultural land on country levels.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NitrogenBudgetNonagland")
 }
 }

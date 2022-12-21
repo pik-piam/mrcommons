@@ -18,7 +18,6 @@ calcEmissionInventory <- function(datasource = "CEDS", targetResolution = "secto
 
   past <- findset("past")
   if (datasource == "CEDS") {
-
     # read CEDS emissions data from sources
     bc    <- readSource("CEDS", subtype = "BC")
     # ch4   <- readSource("CEDS",subtype="CH4") #excluding ghg emissions, they were strange # nolint
@@ -179,7 +178,6 @@ calcEmissionInventory <- function(datasource = "CEDS", targetResolution = "secto
     out <- edgar
 
     } else if (datasource == "CEDS2021") {
-
     # read CEDS emissions data from sources
     ceds    <- readSource("CEDS2021")
 
@@ -285,7 +283,6 @@ stop("datasource unknown")
 }
 
   if (!is.null(targetResolution)) {
-
     # aggregate and rename CEDS59 sectors to CEDS16 sectors
     if (targetResolution == "sectoral") {
       map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toSectors.csv")

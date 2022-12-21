@@ -17,10 +17,10 @@ correctc area equipped for irrigation for the period 1997-2002 from Siebert et a
 Global Map of Irrigation Areas version 4.0.1
 }
 \examples{
-
 \dontrun{
-  readSource("Siebert", convert="onlycorrect")
+readSource("Siebert", convert = "onlycorrect")
 }
+
 }
 \author{
 David Chen

@@ -22,10 +22,10 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Calculates soil organic carbon loss share on cellular level
 }
 \examples{
-
 \dontrun{
-calcOutput("SOCLossShare", aggregate=FALSE)
+calcOutput("SOCLossShare", aggregate = FALSE)
 }
+
 }
 \author{
 Kristine Karstens

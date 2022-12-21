@@ -27,10 +27,10 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Handle LPJmL data for carbon module
 }
 \examples{
-
-\dontrun{ 
-calcOutput("LPJmlCarbon", landtype="nat_veg", subtype="soilc_layer", aggregate=FALSE)
+\dontrun{
+calcOutput("LPJmlCarbon", landtype = "nat_veg", subtype = "soilc_layer", aggregate = FALSE)
 }
+
 }
 \seealso{
 \code{\link[=readLPJmlCarbon]{readLPJmlCarbon()}}

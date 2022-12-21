@@ -22,7 +22,6 @@
 #' @importFrom magpiesets findset
 
 calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo") {
-
   # dry matter factors
   dm <- 1 / readSource("ProductAttributes", "Products")[, , "wm"]
   dm <- collapseNames(dm)

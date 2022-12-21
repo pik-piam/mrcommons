@@ -13,7 +13,7 @@ MAgPIE object
 This function calculates historical capital shares (Capital + Labour) of the factor requirements using USDA
 }
 \examples{
-\dontrun{ 
+\dontrun{
 calcOutput("calcAgCapLabourShare")
 }
 

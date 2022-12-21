@@ -14,10 +14,8 @@ objects
 Calculate historical distribution of livestock production across different systems based on output of MAgPIE_FEED model
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ProdSysRatioPast")
-
 }
 }
 \seealso{

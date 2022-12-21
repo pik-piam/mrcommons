@@ -16,8 +16,7 @@ List of magpie objects with results on country level, weight on country level, u
 calculates agricultural production costs (split into different cost categories)
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ProductionCosts", source = "Vittis")
 }
 

@@ -16,9 +16,8 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Convert LPJmL content
 }
 \examples{
-
 \dontrun{
-  readSource("LPJmL", subtype="soilc", convert=TRUE)
+readSource("LPJmL", subtype = "soilc", convert = TRUE)
 }
 
 }

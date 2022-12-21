@@ -13,9 +13,8 @@ MAgPIE object with regional aggregation of SSP regions, including all indicators
 Reads in a reporting mif file from the SSP scenario results
 }
 \examples{
-
-\dontrun{ 
-readSource("SSPresults",aggregate=FALSE)
+\dontrun{
+readSource("SSPresults", aggregate = FALSE)
 }
 }
 \seealso{

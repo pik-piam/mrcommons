@@ -30,8 +30,7 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the food supply (as defined by FAO, including intake and household waste) for the past.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FoodSupplyPast")
 }
 

@@ -16,9 +16,8 @@ MAgPIE object with ISO countries with all indicators for which disaggregation we
 Disagregates from SSP regions to ISO countries
 }
 \examples{
-
-\dontrun{ 
-readSource("SSPResults",aggregate=TRUE)
+\dontrun{
+readSource("SSPResults", aggregate = TRUE)
 }
 
 }
