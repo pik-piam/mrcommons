@@ -22,7 +22,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
   ## fix dimension names and currency unit
   currencyDims <- c("import_kUS$", "export_kUS$")
-  fertByProduc_currentUSD <- fertByProduct
+  fertByProduc_currentUSD <- fertByProduct   # nolint
   fertByProduct[, , currencyDims] <- convertGDP(fertByProduc_currentUSD[, , currencyDims],
                                                 unit_in = "current US$MER",
                                                 unit_out = "constant 2005 US$MER",

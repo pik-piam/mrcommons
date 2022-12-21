@@ -11,184 +11,177 @@
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
-readPBL_MACC_2019 <- function(subtype) {
+readPBL_MACC_2019 <- function(subtype) {   # nolint object_name_ linter   cyclocomp_linter
 
   readMMC1 <- function(sheet) {
-    x <- as.data.table(read_xlsx("mmc1.xlsx",sheet = sheet))
-    x <- melt(x, id.vars = c(1,2),variable.name = "region")
-    names(x) <- c("year","steps","region","value")
+    x <- as.data.table(read_xlsx("mmc1.xlsx", sheet = sheet))
+    x <- melt(x, id.vars = c(1, 2), variable.name = "region")
+    names(x) <- c("year", "steps", "region", "value")
     x$type <- sheet
-    x$steps <- x$steps/20+1
+    x$steps <- x$steps / 20 + 1
     x$year <- factor(x$year)
-    x <- x[,c("region","year","type","steps","value")]
-    x <- as.magpie(x,spatial=1,temporal=2,tidy=TRUE)
+    x <- x[, c("region", "year", "type", "steps", "value")]
+    x <- as.magpie(x, spatial = 1, temporal = 2, tidy = TRUE)
     names(dimnames(x))[3] <- "type.steps"
     return(x)
   }
 
-  readMMC2 <- function(sheet) {
-    x <- as.data.table(read_xlsx("mmc2.xlsx",sheet = sheet))
-    #Add code for reading mmc2 here
-    return(x)
-  }
-
-
-  if(subtype=="ch4coal") {
+  if (subtype == "ch4coal") {
     x <- readMMC1("CH4_coal")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4oil") {
+  if (subtype == "ch4oil") {
     x <- readMMC1("CH4_oilp")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4gas") {
+  if (subtype == "ch4gas") {
     x <- readMMC1("CH4_ngas")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4wstl") {
+  if (subtype == "ch4wstl") {
     x <- readMMC1("CH4_landfills")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4wsts") {
+  if (subtype == "ch4wsts") {
     x <- readMMC1("CH4_sewage")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4rice") {
+  if (subtype == "ch4rice") {
     x <- readMMC1("CH4_rice")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4animals") {
+  if (subtype == "ch4animals") {
     x <- readMMC1("CH4_ent fermentation")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="ch4anmlwst") {
+  if (subtype == "ch4anmlwst") {
     x <- readMMC1("CH4_manure")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2otrans") {
+  if (subtype == "n2otrans") {
     x <- readMMC1("N2O_transport")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2oadac") {
+  if (subtype == "n2oadac") {
     x <- readMMC1("N2O_adip acid")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2onitac") {
+  if (subtype == "n2onitac") {
     x <- readMMC1("N2O_nitr acid")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2ofert") {
+  if (subtype == "n2ofert") {
     x <- readMMC1("N2O_fertilizer")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2oanwst") {
+  if (subtype == "n2oanwst") {
     x <- readMMC1("N2O_manure")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="n2owaste") {
+  if (subtype == "n2owaste") {
     x <- readMMC1("N2O_sewage")
-    getNames(x,dim="type") <- subtype
+    getNames(x, dim = "type") <- subtype
   }
 
-  if(subtype=="SSP2_ch4coal") {
+  if (subtype == "SSP2_ch4coal") {
     x <- readMMC1("SSP2 CH4_coal")
-    getNames(x,dim="type") <- "ch4coal"
+    getNames(x, dim = "type") <- "ch4coal"
   }
 
-  if(subtype=="SSP2_ch4oil") {
+  if (subtype == "SSP2_ch4oil") {
     x <- readMMC1("SSP2 CH4_oilp")
-    getNames(x,dim="type") <- "ch4oil"
+    getNames(x, dim = "type") <- "ch4oil"
   }
 
-  if(subtype=="SSP2_ch4gas") {
+  if (subtype == "SSP2_ch4gas") {
     x <- readMMC1("SSP2 CH4_ngas")
-    getNames(x,dim="type") <- "ch4gas"
+    getNames(x, dim = "type") <- "ch4gas"
   }
 
-  if(subtype=="SSP2_ch4wstl") {
+  if (subtype == "SSP2_ch4wstl") {
     x <- readMMC1("SSP2 CH4_landfills")
-    getNames(x,dim="type") <- "ch4wstl"
+    getNames(x, dim = "type") <- "ch4wstl"
   }
 
-  if(subtype=="SSP2_ch4wsts") {
+  if (subtype == "SSP2_ch4wsts") {
     x <- readMMC1("SSP2 CH4_sewage")
-    getNames(x,dim="type") <- "ch4wsts"
+    getNames(x, dim = "type") <- "ch4wsts"
   }
 
-  if(subtype=="SSP2_ch4rice") {
+  if (subtype == "SSP2_ch4rice") {
     x <- readMMC1("SSP2 CH4_rice")
-    getNames(x,dim="type") <- "ch4rice"
+    getNames(x, dim = "type") <- "ch4rice"
   }
 
-  if(subtype=="SSP2_ch4animals") {
+  if (subtype == "SSP2_ch4animals") {
     x <- readMMC1("SSP2 CH4_ent fermentation")
-    getNames(x,dim="type") <- "ch4animals"
+    getNames(x, dim = "type") <- "ch4animals"
   }
 
-  if(subtype=="SSP2_ch4anmlwst") {
+  if (subtype == "SSP2_ch4anmlwst") {
     x <- readMMC1("SSP2 CH4_manure")
-    getNames(x,dim="type") <- "ch4anmlwst"
+    getNames(x, dim = "type") <- "ch4anmlwst"
   }
 
-  if(subtype=="SSP2_n2otrans") {
+  if (subtype == "SSP2_n2otrans") {
     x <- readMMC1("SSP2 N2O_transport")
-    getNames(x,dim="type") <- "n2otrans"
+    getNames(x, dim = "type") <- "n2otrans"
   }
 
-  if(subtype=="SSP2_n2oadac") {
+  if (subtype == "SSP2_n2oadac") {
     x <- readMMC1("SSP2 N2O_adip acid")
-    getNames(x,dim="type") <- "n2oadac"
+    getNames(x, dim = "type") <- "n2oadac"
   }
 
-  if(subtype=="SSP2_n2onitac") {
+  if (subtype == "SSP2_n2onitac") {
     x <- readMMC1("SSP2 N2O_nitr acid")
-    getNames(x,dim="type") <- "n2onitac"
+    getNames(x, dim = "type") <- "n2onitac"
   }
 
-  if(subtype=="SSP2_n2ofert") {
+  if (subtype == "SSP2_n2ofert") {
     x <- readMMC1("SSP2 N2O_fertilizer")
-    getNames(x,dim="type") <- "n2ofert"
+    getNames(x, dim = "type") <- "n2ofert"
   }
 
-  if(subtype=="SSP2_n2oanwst") {
+  if (subtype == "SSP2_n2oanwst") {
     x <- readMMC1("SSP2 N2O_manure")
-    getNames(x,dim="type") <- "n2oanwst"
+    getNames(x, dim = "type") <- "n2oanwst"
   }
 
-  if(subtype=="SSP2_n2owaste") {
+  if (subtype == "SSP2_n2owaste") {
     x <- readMMC1("SSP2 N2O_sewage")
-    getNames(x,dim="type") <- "n2owaste"
+    getNames(x, dim = "type") <- "n2owaste"
   }
 
-  if(subtype=="HFC_tot"){
+  if (subtype == "HFC_tot") {
     stop("not working yet")
   }
 
-  if(subtype=="SF6_tot"){
+  if (subtype == "SF6_tot") {
     stop("not working yet")
   }
 
-  if(subtype=="PFC_tot"){
+  if (subtype == "PFC_tot") {
     stop("not working yet")
   }
 
-  if(subtype=="baseline_sources") {
-    x <- as.data.table(read_xlsx("mmc1.xlsx",sheet = "SSP2 CH4 N2O baseline emissions"))
-    x <- melt(x, id.vars = c(1,2),variable.name = "type")
-    names(x) <- c("year","region","type","value")
+  if (subtype == "baseline_sources") {
+    x <- as.data.table(read_xlsx("mmc1.xlsx", sheet = "SSP2 CH4 N2O baseline emissions"))
+    x <- melt(x, id.vars = c(1, 2), variable.name = "type")
+    names(x) <- c("year", "region", "type", "value")
     levels(x$type)[1] <- "ch4coal"
     levels(x$type)[2] <- "ch4oil"
     levels(x$type)[3] <- "ch4gas"
@@ -205,8 +198,8 @@ readPBL_MACC_2019 <- function(subtype) {
     levels(x$type)[14] <- "n2owaste"
 
     x$year <- factor(x$year)
-    x <- dcast(x, region + year ~ type, value.var="value")
-    x <- as.magpie(x,spatial=1,temporal=2)
+    x <- dcast(x, region + year ~ type, value.var = "value")
+    x <- as.magpie(x, spatial = 1, temporal = 2)
     names(dimnames(x))[3] <- "type"
   }
 

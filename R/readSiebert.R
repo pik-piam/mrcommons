@@ -5,12 +5,11 @@
 #' @return magpie object in cellular resolution
 #' @author David Chen
 #' @examples
-#'
 #' \dontrun{
-#'   readSource("Siebert", convert="onlycorrect")
+#' readSource("Siebert", convert = "onlycorrect")
 #' }
-
-readSiebert <- function(){
+#'
+readSiebert <- function() {
 
   x <- read.magpie("avl_irrig_0.5.mz")
 

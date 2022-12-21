@@ -20,7 +20,7 @@ calcVoPlivst <- function(other = FALSE, fillGaps = TRUE) {
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
   vop <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. constant US$05MER
- 
+
   # mapping for aggregation
   mappingFAO <- toolGetMapping("FAO_VoP_kli.csv", type = "sectoral", where = "mrcommons")
   if (isFALSE(other)) {

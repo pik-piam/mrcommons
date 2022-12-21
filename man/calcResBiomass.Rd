@@ -15,7 +15,8 @@ calcResBiomass(
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}
 
-\item{plantparts}{both, ag (aboveground) or belowground (bg). Both can have memory problems for cellular outputs}
+\item{plantparts}{both, ag (aboveground) or belowground (bg). Both can have memory
+problems for cellular outputs}
 
 \item{irrigation}{if TRUE, distinguishes irrigated and non-irrigated crops}
 
@@ -32,10 +33,8 @@ two MAgPIE objects
 Provides MAgPIE-FEED data for aboveground and belowground residues biomass
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResBiomass")
-
 }
 
 }

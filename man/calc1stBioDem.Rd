@@ -13,12 +13,11 @@ calc1stBioDem(subtype = "all")
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates projections of first generation biofuels demand,including biogas, bioethamol and biodiesel, from IEA database.
-The unit is Petajoule.
+Calculates projections of first generation biofuels demand,including biogas, bioethamol and
+biodiesel, from IEA database. The unit is Petajoule.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("1stBioDem")
 }
 }

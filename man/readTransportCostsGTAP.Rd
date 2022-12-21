@@ -13,8 +13,8 @@ Transport Costs in USD
 Read in  Transport Costs from GTAP
 }
 \examples{
-
-\dontrun{ a <- readSource(type="TransportCostsGTAP")
+\dontrun{
+a <- readSource(type = "TransportCostsGTAP")
 }
 
 }

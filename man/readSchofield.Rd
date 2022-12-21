@@ -10,11 +10,14 @@ readSchofield()
 MAgPIE object
 }
 \description{
-University, United Nations. 2004. Human Energy Requirements: Report of a Joint FAO/WHO/UNU Expert Consultation: Rome, 17-24 October 2001. Vol. 1. Food & Agriculture Org. http://books.google.com/books?hl=en&lr=&id=8WW7LP5h6usC&oi=fnd&pg=PR3&dq=\%22working+groups.+The+work+of+these+groups+preceded+the+expert+consultation+and+served+as\%22+\%22for+discussions+and+exchange+during+the+meeting.+Thanks+are+also+due+to+Dr+E.\%22+&ots=8Fizk--Hr6&sig=ocPdelHKyX2_npUTh41zZRRHf68.
+University, United Nations. 2004. Human Energy Requirements:
+Report of a Joint FAO/WHO/UNU Expert Consultation: Rome, 17-24 October 2001. Vol. 1. Food & Agriculture Org.
+http://books.google.com/books?hl=en&lr=&id=8WW7LP5h6usC&oi=fnd&pg=PR3&dq=\%22working+groups.+The+work+of+these+groups+preceded+the+expert+consultation+and+served+as\%22+\%22for+discussions+and+exchange+during+the+meeting.+Thanks+are+also+due+to+Dr+E.\%22+&ots=8Fizk--Hr6&sig=ocPdelHKyX2_npUTh41zZRRHf68.  #nolint
 }
 \examples{
-
-\dontrun{ a <- readSource("Schofield") }
+\dontrun{
+a <- readSource("Schofield")
+}
 
 }
 \seealso{

@@ -34,7 +34,6 @@ It distinguishes ammonia (Nh3) and Nitrogen oxides (NOx) as well
 \dontrun{
 calcOutput("AtmosphericDeposition")
 }
-
 }
 \seealso{
 \code{\link[=calcNitrogenBudgetCropland]{calcNitrogenBudgetCropland()}}

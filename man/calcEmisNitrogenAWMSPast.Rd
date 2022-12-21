@@ -13,8 +13,7 @@ List of magpie object with results on country level, weight on country level, un
 calculates nitrogenous emissions from animal waste management systems in the historical period
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenAWMSPast")
 }
 

@@ -20,7 +20,7 @@
 #' calcOutput("Multicropping")
 #' }
 #'
-calcMulticropping <- function(extend_future = FALSE, factortype = "CI") {
+calcMulticropping <- function(extend_future = FALSE, factortype = "CI") {   # nolint
 
   # physical cropland area ("6620|Cropland")
   phys   <- collapseNames(calcOutput("FAOLand", aggregate = FALSE)[, , "6620", pmatch = TRUE])

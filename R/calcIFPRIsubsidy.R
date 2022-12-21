@@ -24,7 +24,7 @@ calcIFPRIsubsidy <- function(fillGaps = TRUE) {
     for (ctry in getItems(subsidies, dim = 1)) {
       years <- where(subsidies[ctry, , ] != 0)$true$years
       yGaps <- setdiff(getItems(subsidies, dim = 2), years)
-      if (length(yGaps) > 0 & length(years) > 0) {
+      if (length(yGaps) > 0 && length(years) > 0) {
         subsidies[ctry, , ] <- time_interpolate(subsidies[ctry, years, ],
                                                 interpolated_year = yGaps,
                                                 integrate_interpolated_years = TRUE,

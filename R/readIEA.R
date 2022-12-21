@@ -16,6 +16,7 @@
 #' @importFrom madrat toolCountry2isocode
 #'
 readIEA <- function(subtype) {
+
   if (subtype == "EnergyBalances") { # IEA energy balances until 2020 (incomplete 2021) (data updated in August, 2022)
 
     energyBalancesFile <- "IEA-Energy-Balances-2022/worldbig.csv"

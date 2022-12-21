@@ -18,7 +18,7 @@ readKoeppen <- function(subtype = "iso") {
     x$country <- NULL
     mag       <- as.magpie(x, spatial = 1, temporal = 0, datacol = 2)
 
-  } else if (subtype == "cellular") {
+  } else if (subtype == "cellular") {   # nolint
 
     alltimes  <- c("1951-1975_ASCII.txt", "1976-2000_ASCII.txt", "2001-2025_A2_ASCII.txt")
     out       <- NULL
