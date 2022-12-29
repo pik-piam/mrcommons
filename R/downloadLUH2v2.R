@@ -2,11 +2,15 @@
 
 downloadLUH2v2 <- function(subtype = NULL) {
 
-  links <- c("http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/states.nc",
-             "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/transitions.nc",
-             "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/management.nc",
-             "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/staticData_quarterdeg.nc")
+  # links <- c("http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/states.nc",
+  #            "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/transitions.nc",
+  #            "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/management.nc",
+  #            "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/staticData_quarterdeg.nc")
 
+  links <- c("https://luh.umd.edu/LUH2/LUH2_v2h/states.nc",
+             "https://luh.umd.edu/LUH2/LUH2_v2h/transitions.nc",
+             "https://luh.umd.edu/LUH2/LUH2_v2h/management.nc",
+             "https://luh.umd.edu/LUH2/LUH2_v2h/staticData_quarterdeg.nc")
 
   ### download files
   fnames <- sapply(links, function(x) {

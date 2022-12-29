@@ -12,9 +12,7 @@
 #' @seealso [readSource()]
 #' @examples
 #' \dontrun{
-#' a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")
-#' }
-
+#' a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")
 #' }
 
 
