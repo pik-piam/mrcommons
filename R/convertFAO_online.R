@@ -24,7 +24,7 @@
 
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
 
-convertFAO_online <- function(x, subtype) { #nolint
+convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_name_linter.
 
   # ---- Settings ----
 
@@ -51,33 +51,34 @@ convertFAO_online <- function(x, subtype) { #nolint
                                      "Yield_(hg)")                     # new FAO data
 
   # Relative and unused datasets for the Capital Stock database
-  #nolint start
   relativeDelete[["CapitalStock"]] <-
-    c("22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Value_Local_Currency_(millions)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Value_Local_Currency_2015_prices_(millions)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Value_USD_(millions)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Value_Added_Local_Currency_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Value_Added_Local_Currency_2015_prices_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Value_Added_USD_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Agriculture_orientation_index_Local_Currency_(index)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Agriculture_orientation_index_Local_Currency_2015_prices_(index)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Agriculture_orientation_index_USD_(index)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Agriculture_orientation_index_USD_2015_prices_(index)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Gross_Fixed_Capital_Formation_USD_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Gross_Fixed_Capital_Formation_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Gross_Fixed_Capital_Formation_2015_prices_(percentage)",
-      "22031|Consumption of Fixed Capital (Agriculture, Forestry and Fishing).Value_Local_Currency_(millions)",
-      "22031|Consumption of Fixed Capital (Agriculture, Forestry and Fishing).Value_Local_Currency_2015_prices_(millions)",
-      "22031|Consumption of Fixed Capital (Agriculture, Forestry and Fishing).Value_USD_(millions)",
-      "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_Local_Currency_(millions)",
-      "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_Local_Currency_2015_prices_(millions)",
-      "22034|Net Capital Stocks (Agriculture, Forestry and Fishing).Value_USD_(millions)",
+    c(paste0("22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).",
+             c("Value_Local_Currency_(millions)",
+               "Value_Local_Currency_2015_prices_(millions)",
+               "Value_USD_(millions)",
+               "Share_of_Value_Added_Local_Currency_(percentage)",
+               "Share_of_Value_Added_Local_Currency_2015_prices_(percentage)",
+               "Share_of_Value_Added_USD_(percentage)",
+               "Agriculture_orientation_index_Local_Currency_(index)",
+               "Agriculture_orientation_index_Local_Currency_2015_prices_(index)",
+               "Agriculture_orientation_index_USD_(index)",
+               "Agriculture_orientation_index_USD_2015_prices_(index)",
+               "Share_of_Gross_Fixed_Capital_Formation_USD_(percentage)",
+               "Share_of_Gross_Fixed_Capital_Formation_(percentage)",
+               "Share_of_Gross_Fixed_Capital_Formation_2015_prices_(percentage)")),
+      paste0("22031|Consumption of Fixed Capital (Agriculture, Forestry and Fishing).",
+             c("Value_Local_Currency_(millions)",
+               "Value_Local_Currency_2015_prices_(millions)",
+               "Value_USD_(millions)")),
+      paste0("22034|Net Capital Stocks (Agriculture, Forestry and Fishing).",
+             c("Value_Local_Currency_(millions)",
+               "Value_Local_Currency_2015_prices_(millions)",
+               "Value_USD_(millions)")),
       "22033|Gross Capital Stocks (Agriculture, Forestry and Fishing).Value_Local_Currency_(millions)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Value_Added_USD_2015_prices_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Share_of_Gross_Fixed_Capital_Formation_USD_2015_prices_(percentage)",
-      "22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).Value_Local_Currency_(millions)")
-  #nolint end
-
+      paste0("22030|Gross Fixed Capital Formation (Agriculture, Forestry and Fishing).",
+             c("Share_of_Value_Added_USD_2015_prices_(percentage)",
+               "Share_of_Gross_Fixed_Capital_Formation_USD_2015_prices_(percentage)",
+               "Value_Local_Currency_(millions)")))
 
   # select elements only if unit (dim=3.2) exists in x (otherwise magclass would complain when trying to remove
   # non-existent elements with invert=TRUE). For capital stocks selects the complete name. The dot in the original
@@ -211,8 +212,10 @@ convertFAO_online <- function(x, subtype) { #nolint
   } else if (!is.null(relativeDelete)) {
     x[is.na(x)] <- 0
     x <- x[, , relativeDelete, invert = TRUE]
-    # Capital Stock available starting from 1995 (no need for transitions)
-    x <- if (subtype != "CapitalStock") toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
+    if (subtype != "CapitalStock") {
+      # Capital Stock available starting from 1995 (no need for transitions)
+      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
+    }
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (subtype != "CapitalStock") {
       if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
@@ -293,9 +296,10 @@ convertFAO_online <- function(x, subtype) { #nolint
   # Producer Prices Annual
   } else if (subtype %in% c("PricesProducerAnnual", "PricesProducerAnnualLCU")) {
     # FAO changed the unit. Look for all possible names and select only existing ones from the magpie object
-    possibleNames <-
-       list(PricesProducerAnnual    = c("Producer_Price_(US_$_tonne)_(USD)", "Producer_Price_(USD_tonne)_(USD)"),
-            PricesProducerAnnualLCU = c("Producer_Price_(Standard_local_Currency_tonne)_(SLC)", "Producer_Price_(SLC_tonne)_(SLC)")) #nolint
+    possibleNames <- list(PricesProducerAnnual = c("Producer_Price_(US_$_tonne)_(USD)",
+                                                   "Producer_Price_(USD_tonne)_(USD)"),
+                          PricesProducerAnnualLCU = c("Producer_Price_(Standard_local_Currency_tonne)_(SLC)",
+                                                      "Producer_Price_(SLC_tonne)_(SLC)"))
     possibleNames <- toolSubtypeSelect(subtype, possibleNames)
     x <- collapseNames(x[, , possibleNames[possibleNames %in% getItems(x, dim = 3.2)]])
     ## Serbia and Montenegro split
