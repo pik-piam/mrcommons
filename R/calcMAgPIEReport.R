@@ -64,7 +64,7 @@ calcMAgPIEReport <- function(subtype) {
   # !!! ATTENTION !!!
   # If you change the name of the baseline scenario from "none" to something else update "none" in calcMacBaseLandUse.R
 
-  # Rename the MAgPIE scenarios
+  # Rename the MAgPIE scenarios to RCP scenarios
   getNames(x) <- getNames(x) %>%
     stringr::str_replace_all(c(
       "^C_"               = "",
@@ -73,8 +73,7 @@ calcMAgPIEReport <- function(subtype) {
       "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
       "-PkBudg1150-mag-4" = ".rcp26",
       "-NDC-mag-4"        = ".rcp45",
-      "-Base-mag-4"       = ".none",
-      "SSP2EU"            = "SSP2"
+      "-Base-mag-4"       = ".none"
   ))
 
   return(list(x           = x,
