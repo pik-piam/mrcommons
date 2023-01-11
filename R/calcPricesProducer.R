@@ -51,7 +51,8 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
     wnames <- intersect(getNames(weightProd), getNames(pricesProdFAO[, , witemsIntersect]))
     wyears <- intersect(getYears(weightProd), getYears(pricesProdFAO[, , witemsIntersect]))
     pricesProdFAO <- toolAggregate(pricesProdFAO[, wyears, wnames], rel = mappingFAO,
-                                       from = "ProductionItem", to = "FoodBalanceItem", weight = weightProd[, wyears, wnames],
+                                       from = "ProductionItem", to = "FoodBalanceItem",
+                                       weight = weightProd[, wyears, wnames],
                                        partrel = TRUE, dim = 3, wdim = 3)
 
     weightPrice <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "food"])
@@ -84,10 +85,11 @@ stop("only production and consumption weights")
       weight <- collapseNames(calcOutput("Production", products = "kcr", aggregate = FALSE, attributes = "dm"))
       } else if (weighting == "consumption") {
                 kcr <- findset("kcr")
-      weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
+      weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance",
+                                                  aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
                          dim = 3.2))[, , kcr]
     } else {
-stop ("invalid type")
+ stop("invalid type")
 }
 
     # years and names subseting
@@ -155,7 +157,8 @@ stop ("invalid type")
     wyears <- intersect(getYears(weightProd), getYears(pricesProdFAO[, , witemsIntersect]))
 
     pricesProdFAO <- toolAggregate(pricesProdFAO[, wyears, wnames], rel = mappingFAO,
-                                       from = "ProductionItem", to = "FoodBalanceItem", weight = weightProd[, wyears, wnames],
+                                       from = "ProductionItem", to = "FoodBalanceItem",
+                                       weight = weightProd[, wyears, wnames],
                                        partrel = TRUE, dim = 3, wdim = 3)
 
     weightPrice <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "food"])
@@ -182,10 +185,11 @@ stop("only production and consumption weights")
       weight <- collapseNames(calcOutput("Production", products = "kli", aggregate = FALSE, attributes = "dm"))
       } else if (weighting == "consumption") {
         kli <- findset("kli")
-      weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
+      weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance",
+                                                  aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
                          dim = 3.2))[, , kli]
     } else {
-stop ("invalid type")
+stop("invalid type")
 }
 
       years <- intersect(getYears(weight), getYears(x))
@@ -205,5 +209,5 @@ stop ("invalid type")
               weight = weight,
               mixed_aggregation = NULL,
               unit = units,
-              description = "Producer prices in 05USDppp/tDM"))
+              description = "Producer prices in 05USDMER/tDM"))
 }
