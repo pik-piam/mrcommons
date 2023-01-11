@@ -32,6 +32,7 @@ Production-Crops. These datasets have been added together to a "Fodder.csv" file
 \item \code{PricesProducerAnnual}: Producer Prices - Annual ("Prices_E_All_Data.zip")
 \item \code{PricesProducerAnnualLCU}: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
 \item \code{ValueOfProd}: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip")
+\item \code{Trade}: Trade quantities and values
 }}
 }
 \value{

@@ -31,6 +31,7 @@
 #' \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
 #' \item `PricesProducerAnnualLCU`: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
 #' \item `ValueOfProd`: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip")
+#' \item `Trade`: Trade quantities and values 
 #' }
 #' @return FAO data as MAgPIE object
 #' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
@@ -91,8 +92,7 @@ readFAO_online <- function(subtype) { # nolint
     Pop                     = c("Population_E_All_Data.zip"),
     PricesProducerAnnual    = c("Prices_E_All_Data.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
-    Trade                   = "Trade_CropsLivestock_E_All_Data_(Normalized).zip",
-    TradeMatrix             = "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip",
+    Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
     ValueOfProd             = c("Value_of_Production_E_All_Data.zip")
     )
 
