@@ -7,10 +7,10 @@
 calcWBGEM()
 }
 \value{
-magpie object of time series of world price of commodites
+magpie object of time series of world price of commodities
 }
 \description{
-recover world price of commidity in terms of real 2005 USD per metric ton
+recover world price of commodity in terms of real 2005 USD per metric ton
 }
 \examples{
 \dontrun{

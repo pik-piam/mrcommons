@@ -4,17 +4,30 @@
 \alias{calcPriceAgriculture}
 \title{calcPriceAgriculture}
 \usage{
-calcPriceAgriculture(datasource = "IMPACT3.2.2World_Price")
+calcPriceAgriculture(datasource = "IMPACT3.2.2World_Price", unit = "US$05/tDM")
 }
 \arguments{
-\item{datasource}{Options of the source of data:  \code{IMPACT3.2.2World_Price}, \code{FAO}, \code{FAOp} and \code{WBGEM}.}
+\item{datasource}{Options of the source of data:
+\code{IMPACT3.2.2World_Price}, \code{FAO}, \code{FAOp} and \code{WBGEM}}
+
+\item{unit}{A string with the unit that should be returned.
+Options are:
+\itemize{
+\item "current LCU"
+\item "current Int$PPP"
+\item "current US$MER"
+\item "constant YYYY LCU"
+\item "constant YYYY Int$PPP"
+\item "constant YYYY US$MER"
+}}
 }
 \value{
-List with a magpie object with commodity prices on global level.
+List with a magpie object with commodity prices
 }
 \description{
-provides global prices from the IMPACT model projections, World Bank observations, and FAO
-obersvations for MAgPIE commodities in $/tDM
+provides global prices from the IMPACT model projections,
+World Bank observations, and FAO observations
+for MAgPIE commodities in $/tDM
 }
 \examples{
 \dontrun{
@@ -30,5 +43,5 @@ calcOutput("PriceAgriculture", datasource = "WBGEM", aggregate = FALSE)
 \code{\link[=readWBGEM]{readWBGEM()}}
 }
 \author{
-Mishko Stevanovic, Xiaoxi Wang
+Mishko Stevanovic, Xiaoxi Wang, Felicitas Beier
 }
