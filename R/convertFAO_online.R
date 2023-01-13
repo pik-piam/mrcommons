@@ -330,44 +330,44 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                            unit_out = "constant 2005 LCU",
                            replace_NAs = "no_conversion")
      }
-
-### currency convert VoP
-  } else if (subtype == "ValueOfProd") {
+  
+  }  else if (subtype == "ValueOfProd") {
                 x <- convertGDP(x, unit_in = "current US$MER",
                          unit_out = "constant 2005 US$MER",
                          replace_NAs = "no_conversion")
-
-    
-  }   else if (subtype == "FertilizerProducts") {
-  currencyDims <- c("import_kUS$", "export_kUS$")
-  xCurrentUSD <- x   # nolint
-  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                                unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = "no_conversion") * 1000
-  # for countries with missing conversion factors we assume no inflation:
-  x[is.na(x)] <- xCurrentUSD[is.na(x)]
-
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
-
- }     else if (subtype == "Trade") {
-  currencyDims <- c("import_kUS$", "export_kUS$")
-  xCurrentUSD <- x   # nolint
-  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                                unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = "no_conversion") * 1000
-  # for countries with missing conversion factors we assume no inflation:
-  x[is.na(x)] <- xCurrentUSD[is.na(x)]
-
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
-
- } else {
+  } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
 
+ if (subtype == "FertilizerProducts") {
+  currencyDims <- c("import_kUS$", "export_kUS$")
+  xCurrentUSD <- x   # nolint
+  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                                unit_in = "current US$MER",
+                                                unit_out = "constant 2005 US$MER",
+                                                replace_NAs = "no_conversion") * 1000
+  # for countries with missing conversion factors we assume no inflation:
+  x[is.na(x)] <- xCurrentUSD[is.na(x)]
+
+  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
+  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+
+ } 
+
+ if (subtype == "Trade") {
+  currencyDims <- c("import_kUS$", "export_kUS$")
+  xCurrentUSD <- x   # nolint
+  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                                unit_in = "current US$MER",
+                                                unit_out = "constant 2005 US$MER",
+                                                replace_NAs = "no_conversion") * 1000
+  # for countries with missing conversion factors we assume no inflation:
+  x[is.na(x)] <- xCurrentUSD[is.na(x)]
+
+  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
+  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+
+ } 
   # ---- Set negative values to 0 (except stock variation) ----
 
   if (dimExists(3.2, x)) {

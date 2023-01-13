@@ -62,7 +62,8 @@ downloadFAO_online <- function(subtype) {
     PricesProducerAnnualLCU = "Prices_E_All_Data_(Normalized).zip",
     Trade                   = "Trade_CropsLivestock_E_All_Data_(Normalized).zip",
     TradeMatrix             = "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip",
-    ValueOfProd             = "Value_of_Production_E_All_Data_(Normalized).zip"
+    ValueOfProd             = "Value_of_Production_E_All_Data_(Normalized).zip",
+    ValueShares             = "Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip"
   )
 
   file <- toolSubtypeSelect(subtype, files)

@@ -31,6 +31,7 @@
 #' \item `PricesProducerAnnual`: Producer Prices - Annual ("Prices_E_All_Data.zip")
 #' \item `PricesProducerAnnualLCU`: Producer Prices - Annual in LCU ("Prices_E_All_Data.zip")
 #' \item `ValueOfProd`: Value of Agricultural Production ("Value_of_Production_E_All_Data.zip")
+#' \item `ValueShares`: Value shares by industry and primary factors 
 #' \item `Trade`: Trade quantities and values 
 #' }
 #' @return FAO data as MAgPIE object
@@ -93,7 +94,8 @@ readFAO_online <- function(subtype) { # nolint
     PricesProducerAnnual    = c("Prices_E_All_Data.zip"),
     PricesProducerAnnualLCU = c("Prices_E_All_Data.zip"),
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
-    ValueOfProd             = c("Value_of_Production_E_All_Data.zip")
+    ValueOfProd             = c("Value_of_Production_E_All_Data.zip"),
+    ValueShares             = c("Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip")
     )
 
 
@@ -141,9 +143,12 @@ readFAO_online <- function(subtype) { # nolint
 
   # define vector with types corresponding to the columns in the file
   readcolClass <- rep("NULL", length(csvcolnames))
-  factorCols <- c("Area.Code", "Country.Code", "CountryCode", "Item.Code", "ItemCode", "Element.Code", "ElementCode")
+  factorCols <- c("Area.Code", "Country.Code", "CountryCode","Food.Value.Code",
+                  "Industry.Code", "Factor.Code", "Item.Code", "ItemCode", 
+                  "Element.Code", "ElementCode") 
   readcolClass[csvcolnames %in% factorCols] <- "factor"
-  readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit", "Months")] <- "character"
+  readcolClass[csvcolnames %in% c("Area", "Country", "Factor", "Food.Value", 
+                                  "Industry", "Element", "Item", "Unit", "Months")] <- "character"
   readcolClass[csvcolnames %in% c("Value", "Year")] <- NA
   if (!long) readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
 
@@ -262,16 +267,17 @@ readFAO_online <- function(subtype) { # nolint
     }
   }
 
+  if ("Item" %in% colnames(fao)) {
   # remove accent in Mate to avoid problems and remove other strange names
   fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
   fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
   fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
+  }
 
   #trade data has element codes 5608 5609 for "Import_Quantity_(Head)"
   # and codes 5908 5909 for "Export_Quantity_(Head)" for the "Other food" product,
   # despite all other characteristics being the same
   # this leads to duplicate rows when converting to magclass, sum these up first below
-
   if (subtype == "Trade") {
   tmp <- fao %>%
          filter(.data$ItemCodeItem == "1848|Other food") %>%
@@ -283,8 +289,22 @@ readFAO_online <- function(subtype) { # nolint
   fao <- rbind(tmp, fao)
   }
 
+#Value Shares has no items, but rather food values, industries, and factor dimensions
+  if (subtype == "ValueShares") {
+  fao$FoodValueCodeFoodValue <- paste0(fao$FoodValueCode, "|", gsub("\\.", "", fao$FoodValue, perl = TRUE)) # nolint
+  fao$IndustryCodeIndustry <- paste0(fao$IndustryCode, "|", gsub("\\.", "", fao$Industry, perl = TRUE)) # nolint
+  fao$FactorCodeFactor <- paste0(fao$FactorCode, "|", gsub("\\.", "", fao$Factor, perl = TRUE)) # nolint
+   
+  fao <- as.magpie(fao[, c("Year", "ISO", "FoodValueCodeFoodValue", "IndustryCodeIndustry",
+                           "FactorCodeFactor", "ElementShort", "Value")],
+                   temporal = 1, spatial = 2, datacol = 7)
+
+  } else {
+  
   fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
                    temporal = 1, spatial = 2, datacol = 5)
+
+  }
   if (subtype %in% c("EmisAgBurnCropResid", "EmisAgCropResid", "EmisLuForest")) {
     getNames(fao, dim = 1) <- gsub("\\r", "", getNames(fao, dim = 1))
   }
