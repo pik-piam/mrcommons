@@ -1,6 +1,9 @@
 #' @title calcHourlyLaborCosts
-#' @description calculates dataset of hourly labor costs per employee in agriculture, forestry and fishery
-#' @param datasource either raw data from "ILO" or data calculated based on total labor costs from "USDA_FAO"
+#' @description calculates dataset of hourly labor costs per employee in agriculture
+#' @param datasource either raw data from "ILO" (agriculture+forestry+fishery) or data calculated based on total labor
+#' costs from "USDA_FAO" (crop+livestock production)
+#' @param sector should average hourly labor costs be reported ("agriculture"), or hourly labor costs specific to
+#' either "crops" or "livestock" production. For ILO only the aggregate hourly labor costs are available.
 #' @param fillWithRegression boolean: should missing values be filled based on a regression between ILO hourly labor
 #' costs and GDPpcMER (calibrated to countries)
 #' @param calibYear in case of fillWithRegression being TRUE, data after this year will be ignored and calculated using
@@ -13,11 +16,15 @@
 #' \dontrun{
 #' calcOutput("HourlyLaborCosts")
 #' }
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_to_title
 
 
-calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = TRUE,
+calcHourlyLaborCosts <- function(datasource = "USDA_FAO", sector = "agriculture",  fillWithRegression = TRUE,
                                  calibYear = 2010, projection = FALSE) {
+
+  if (datasource == "ILO" && sector != "agriculture") {
+    stop("For ILO only average hourly labor costs in agriculture are available")
+  }
 
   if (isFALSE(fillWithRegression)) {
     if (datasource == "ILO") { # data as reported by ILO (and CACP for India)
@@ -92,17 +99,25 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
       totalLaborCosts <- totalLaborCosts[, years, ]
       weeklyHours <- weeklyHours[, years, ]
 
-      # aggregate crops and livestock, but only if both report VoP (else take only the one that has VoP)
+      # only use employment data where also VoP data is available
       agEmpl[totalLaborCosts == 0] <- 0
-      agEmpl <- dimSums(agEmpl, dim = 3)
-      totalLaborCosts <- dimSums(totalLaborCosts, dim = 3)
 
-      hourlyCosts <- setNames((totalLaborCosts / agEmpl) / (collapseDim(weeklyHours) * 52.1429), "hourlyLaborCostsAg")
+      # which sector?
+      if (sector != "agriculture") {
+        agEmpl <- agEmpl[, , stringr::str_to_title(sector)]
+        totalLaborCosts <- totalLaborCosts[, , stringr::str_to_title(sector)]
+      } else {
+        agEmpl <- dimSums(agEmpl, dim = 3)
+        totalLaborCosts <- dimSums(totalLaborCosts, dim = 3)
+      }
+
+      # calculate hourly labor costs
+      hourlyCosts <- setNames((totalLaborCosts / agEmpl) / (collapseDim(weeklyHours) * 52.1429), "hourlyLaborCosts")
       hourlyCosts[!is.finite(hourlyCosts)] <- 0
     }
 
   } else {
-    hourlyCosts <- calcOutput("HourlyLaborCosts", datasource = datasource,
+    hourlyCosts <- calcOutput("HourlyLaborCosts", datasource = datasource, sector = sector,
                               fillWithRegression = FALSE, aggregate = FALSE)
 
     # calculate GDP pc [USD05MER] for regression
@@ -169,7 +184,8 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", fillWithRegression = T
   hourlyCosts <- setNames(hourlyCosts, NULL)
 
   # total hours worked (in calibration year for consistency with MAgPIE) as weight for aggregation to world regions
-  agEmpl <- calcOutput("AgEmplILO", aggregate = FALSE, subsectors = FALSE)
+  agEmpl <- calcOutput("AgEmplILO", subsectors = TRUE, aggregate = FALSE)[, , c("Livestock", "Crops")]
+  agEmpl <- if (sector != "agriculture") agEmpl[, , str_to_title(sector)] else agEmpl <- dimSums(agEmpl, dim = 3)
   weeklyHours <- calcOutput("WeeklyHoursILO", aggregate = FALSE)
   weight <- hourlyCosts
   weight[, , ] <- agEmpl[, calibYear, ] * weeklyHours[, calibYear, ]
