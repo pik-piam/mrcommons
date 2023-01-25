@@ -9,16 +9,16 @@
 #' @export
 
 toolAdjustExperGuesses <- function(q) {
-# Reading expert guesses about livesotck productivity for each SSP and storing all SSPs in a magpie Object
-#  q <- readSource("ExpertGuessSSPLivestockProduction", subtype = paste0("2023", ":", "ssp1"))
-#  q <- add_dimension(q, dim = 3.2, add = "scen", nm = "ssp1")
-#  for (i in 2:5) {
-#    ssp <- paste0("ssp", i)
-#    q <- add_columns(q, dim = 3.2, addnm = ssp)
-#    q[, , ssp] <- readSource("ExpertGuessSSPLivestockProduction", paste0("2023", ":", ssp))
-#  }
+  # Reading expert guesses about livesotck productivity for each SSP and storing all SSPs in a magpie Object
+  #  q <- readSource("ExpertGuessSSPLivestockProduction", subtype = paste0("2023", ":", "ssp1"))
+  #  q <- add_dimension(q, dim = 3.2, add = "scen", nm = "ssp1")
+  #  for (i in 2:5) {
+  #    ssp <- paste0("ssp", i)
+  #    q <- add_columns(q, dim = 3.2, addnm = ssp)
+  #    q[, , ssp] <- readSource("ExpertGuessSSPLivestockProduction", paste0("2023", ":", ssp))
+  #  }
 
-# Recovering the labels that are used as proxis for the development stage
+  # Recovering the labels that are used as proxis for the development stage
   labels <- list()
   for (i in getItems(q, dim = 3.1)) {
     labels[[i]] <- sort(unique(as.vector(q[, , i])))
@@ -27,7 +27,7 @@ toolAdjustExperGuesses <- function(q) {
   x <- q
   x[, , ] <- NA
 
-# Transforming the numbers used to tag the different pathways to indexes.
+  # Transforming the numbers used to tag the different pathways to indexes.
 
   for (j in getItems(q, dim = 3.1)) {
     levels <- sort(unique(as.factor(q[, , j])))
@@ -39,14 +39,14 @@ toolAdjustExperGuesses <- function(q) {
     }
   }
 
-# Recovering the indexes after conversion of q in x
+  # Recovering the indexes after conversion of q in x
   indexes <- list()
   for (i in getItems(x, dim = 3.1)) {
     indexes[[i]] <- 1:max(unique(as.vector(x[, , i])))
   }
 
-# Making adjustments on SSP3 based on the reference values of SSP2:
-#  -- Assumption: All regions in all times performe worse in ssp3 than in ssp2
+  # Making adjustments on SSP3 based on the reference values of SSP2:
+  #  -- Assumption: All regions in all times performe worse in ssp3 than in ssp2
   i <- 1
   while (i > 0) {
     w <- collapseNames(x[, , "ssp2"] <= x[, , "ssp3"])       # checking which ssp3 values are bigger or equal to its correspondent ssp2 values.
@@ -58,8 +58,8 @@ toolAdjustExperGuesses <- function(q) {
     i <- sum(t)                                              # count how many countries still need to be adjusted, run until 0
   }
 
-# Making adjustments on SSP5 based on the reference values of SSP2:
-#  -- Assumption: All regions in all times performe better in ssp5 than in ssp2
+  # Making adjustments on SSP5 based on the reference values of SSP2:
+  #  -- Assumption: All regions in all times performe better in ssp5 than in ssp2
   i <- 1
   while (i > 0) {
     w <- collapseNames(x[, , "ssp5"] <= x[, , "ssp2"])       # checking which ssp2 values are bigger or equal to its correspondent ssp5 values.
@@ -91,12 +91,12 @@ toolAdjustExperGuesses <- function(q) {
   getItems(middle, dim = 3) <- getItems(x, dim = 3.2)
   getItems(lower, dim = 3) <- getItems(x, dim = 3.2)
 
-# Making adjustments on SSP1:
-#  -- Assumption: Same to ssp2 for more Developed and same ssp5 for Developing (middle and lower range).
+  # Making adjustments on SSP1:
+  #  -- Assumption: Same to ssp2 for more Developed and same ssp5 for Developing (middle and lower range).
   x[, , "ssp1"] <- x[, , "ssp2"] * developed[, , "ssp1"] + x[, , "ssp5"] * middle[, , "ssp1"] + x[, , "ssp5"] * lower[, , "ssp1"]
 
-# Making adjustments on SSP4:
-#  -- Assumption:  Same to ssp5 for more Developed, same ssp2 for middle and ssp3 for lower development.
+  # Making adjustments on SSP4:
+  #  -- Assumption:  Same to ssp5 for more Developed, same ssp2 for middle and ssp3 for lower development.
   x[, , "ssp4"] <- x[, , "ssp5"] * developed[, , "ssp4"] + x[, , "ssp2"] * middle[, , "ssp4"] + x[, , "ssp3"] * lower[, , "ssp4"]
 
   for (i in getItems(x, dim = 3.1)) {
