@@ -96,7 +96,7 @@ readFAO_online <- function(subtype) { # nolint
     Trade                   = c("Trade_CropsLivestock_E_All_Data_(Normalized).zip"),
     ValueOfProd             = c("Value_of_Production_E_All_Data.zip"),
     ValueShares             = c("Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip")
-    )
+  )
 
 
   file <- toolSubtypeSelect(subtype, files)
@@ -268,10 +268,10 @@ readFAO_online <- function(subtype) { # nolint
   }
 
   if ("Item" %in% colnames(fao)) {
-  # remove accent in Mate to avoid problems and remove other strange names
-  fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
-  fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
-  fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
+    # remove accent in Mate to avoid problems and remove other strange names
+    fao$Item <- gsub("\u00E9", "e", fao$Item, perl = TRUE)                                # nolint
+    fao$Item <- gsub("\n + (Total)", " + (Total)", fao$Item, fixed = TRUE)                # nolint
+    fao$ItemCodeItem <- paste0(fao$ItemCode, "|", gsub("\\.", "", fao$Item, perl = TRUE)) # nolint
   }
 
   # trade data has element codes 5608 5609 for "Import_Quantity_(Head)"
@@ -279,30 +279,30 @@ readFAO_online <- function(subtype) { # nolint
   # despite all other characteristics being the same
   # this leads to duplicate rows when converting to magclass, sum these up first below
   if (subtype == "Trade") {
-  tmp <- fao %>%
-         filter(.data$ItemCodeItem == "1848|Other food") %>%
-         group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
-         summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
-         ungroup()
-  fao <-  fao[which(fao[, "ItemCodeItem"] != "1848|Other food"),
-              c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
-  fao <- rbind(tmp, fao)
+    tmp <- fao %>%
+      filter(.data$ItemCodeItem == "1848|Other food") %>%
+      group_by(.data$Year, .data$ISO, .data$ItemCodeItem, .data$ElementShort) %>%
+      summarise("Value" = sum(.data$Value, na.rm = TRUE)) %>%
+      ungroup()
+    fao <-  fao[which(fao[, "ItemCodeItem"] != "1848|Other food"),
+                c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")]
+    fao <- rbind(tmp, fao)
   }
 
-# Value Shares has no items, but rather food values, industries, and factor dimensions
+  # Value Shares has no items, but rather food values, industries, and factor dimensions
   if (subtype == "ValueShares") {
-  fao$FoodValueCodeFoodValue <- paste0(fao$FoodValueCode, "|", gsub("\\.", "", fao$FoodValue, perl = TRUE)) # nolint
-  fao$IndustryCodeIndustry <- paste0(fao$IndustryCode, "|", gsub("\\.", "", fao$Industry, perl = TRUE)) # nolint
-  fao$FactorCodeFactor <- paste0(fao$FactorCode, "|", gsub("\\.", "", fao$Factor, perl = TRUE)) # nolint
+    fao$FoodValueCodeFoodValue <- paste0(fao$FoodValueCode, "|", gsub("\\.", "", fao$FoodValue, perl = TRUE)) # nolint
+    fao$IndustryCodeIndustry <- paste0(fao$IndustryCode, "|", gsub("\\.", "", fao$Industry, perl = TRUE)) # nolint
+    fao$FactorCodeFactor <- paste0(fao$FactorCode, "|", gsub("\\.", "", fao$Factor, perl = TRUE)) # nolint
 
-  fao <- as.magpie(fao[, c("Year", "ISO", "FoodValueCodeFoodValue", "IndustryCodeIndustry",
-                           "FactorCodeFactor", "ElementShort", "Value")],
-                   temporal = 1, spatial = 2, datacol = 7)
+    fao <- as.magpie(fao[, c("Year", "ISO", "FoodValueCodeFoodValue", "IndustryCodeIndustry",
+                             "FactorCodeFactor", "ElementShort", "Value")],
+                     temporal = 1, spatial = 2, datacol = 7)
 
   } else {
 
-  fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
-                   temporal = 1, spatial = 2, datacol = 5)
+    fao <- as.magpie(fao[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
+                     temporal = 1, spatial = 2, datacol = 5)
 
   }
   if (subtype %in% c("EmisAgBurnCropResid", "EmisAgCropResid", "EmisLuForest")) {
