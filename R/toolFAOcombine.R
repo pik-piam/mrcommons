@@ -20,7 +20,6 @@
 #' @export
 #'
 toolFAOcombine <- function(..., combine = "Item") {
-
   # the names of the ellipsis (...) arguments
   dotnames <- sapply(match.call()[-1], deparse)
 

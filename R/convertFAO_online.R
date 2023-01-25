@@ -40,15 +40,15 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   relativeDelete[["Crop"]] <- c("Yield_(hg/ha)", "Yield_(Hg/Ha)")
   relativeDelete[["Fodder"]] <- "Yield_(Hg/Ha)"
   relativeDelete[["LivePrim"]] <- c("Yield_Carcass_Weight_(Hg/An)",
-                                     "Yield_(100Mg/An)",
-                                     "Yield_Carcass_Weight_(0_1Gr/An)",
-                                     "Yield_(Hg/An)",
-                                     "Yield_(Hg)",
-                                     "Yield_(100mg/An)",               # new FAO data
-                                     "Yield_(hg/An)",                  # new FAO data
-                                     "Yield_Carcass_Weight_(hg/An)",   # new FAO data
-                                     "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
-                                     "Yield_(hg)")                     # new FAO data
+                                    "Yield_(100Mg/An)",
+                                    "Yield_Carcass_Weight_(0_1Gr/An)",
+                                    "Yield_(Hg/An)",
+                                    "Yield_(Hg)",
+                                    "Yield_(100mg/An)",               # new FAO data
+                                    "Yield_(hg/An)",                  # new FAO data
+                                    "Yield_Carcass_Weight_(hg/An)",   # new FAO data
+                                    "Yield_Carcass_Weight_(0_1g/An)", # new FAO data
+                                    "Yield_(hg)")                     # new FAO data
 
   # Relative and unused datasets for the Capital Stock database
   relativeDelete[["CapitalStock"]] <-
@@ -93,8 +93,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
 
   if (identical(relativeDelete, character(0))) {
     stop("For this subtype (", subtype, ") units are listed in 'convertFAO' whose entries should be deleted from the ",
-    "data, but none of the specified units could be found in the data.")
-    }
+         "data, but none of the specified units could be found in the data.")
+  }
 
   ## datasets that contain relative values: and define these dimensions
   relative <- list()
@@ -158,7 +158,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getItems(x, dim = 1.1)) {
     if ("CHN" %in% getItems(x, dim = 1.1)) x <- x["CHN", , , invert = TRUE]
-      getItems(x, dim = 1)[getItems(x, dim = 1) == "XCN"] <- "CHN"
+    getItems(x, dim = 1)[getItems(x, dim = 1) == "XCN"] <- "CHN"
   }
 
   ## data for the Netherlands Antilles is currently removed because currently no
@@ -174,9 +174,9 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   # Palau (PW, PLW, 585)
   if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x, dim = 1.1))) {
     additionalMapping <- append(additionalMapping, list(c("PCI", "MHL", "y1991"),
-                                                          c("PCI", "FSM", "y1991"),
-                                                          c("PCI", "MNP", "y1991"),
-                                                          c("PCI", "PLW", "y1991")))
+                                                        c("PCI", "FSM", "y1991"),
+                                                        c("PCI", "MNP", "y1991"),
+                                                        c("PCI", "PLW", "y1991")))
   } else if ("PCI" %in% getItems(x, dim = 1.1)) {
     x <- x["PCI", , invert = TRUE]
   }
@@ -200,7 +200,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
     if (subtype != "Fbs") {
-       x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
+      x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     }
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
     if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
@@ -234,8 +234,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     # replaced toolISOhistorical by the following approach for disaggregation
     mapping <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
     for (elem in additionalMapping) {
-    mapping <- rbind(mapping, elem)
-  }
+      mapping <- rbind(mapping, elem)
+    }
 
     .adoptAggregatedAverage <- function(country, data, mapping) {
       if (length(country) > 1) stop("only one transition per function call")
@@ -284,16 +284,16 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
               "\n", "and would need a different treatment of NAs in convertFAO")
     }
 
-  # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
+    # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
   } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
-     x[is.na(x)] <- 0
-     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
-     x <- toolCountryFill(x, fill = 0, verbosity = 2)
+    x[is.na(x)] <- 0
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
+    x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
-  # Producer Prices Annual
+    # Producer Prices Annual
   } else if (subtype %in% c("PricesProducerAnnual", "PricesProducerAnnualLCU")) {
     # FAO changed the unit. Look for all possible names and select only existing ones from the magpie object
     possibleNames <- list(PricesProducerAnnual = c("Producer_Price_(US_$_tonne)_(USD)",
@@ -320,54 +320,54 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
-     if (subtype == "PricesProducerAnnual") {
-          x <- convertGDP(x, unit_in = "current US$MER",
-                           unit_out = "constant 2005 US$MER",
-                           replace_NAs = "no_conversion")
+    if (subtype == "PricesProducerAnnual") {
+      x <- convertGDP(x, unit_in = "current US$MER",
+                      unit_out = "constant 2005 US$MER",
+                      replace_NAs = "no_conversion")
 
-     } else if (subtype == "PricesProducerAnnualLCU") {
-         x <- convertGDP(x, unit_in = "current LCU",
-                           unit_out = "constant 2005 LCU",
-                           replace_NAs = "no_conversion")
-     }
-  
-  }  else if (subtype == "ValueOfProd") {
-                x <- convertGDP(x, unit_in = "current US$MER",
-                         unit_out = "constant 2005 US$MER",
-                         replace_NAs = "no_conversion")
+    } else if (subtype == "PricesProducerAnnualLCU") {
+      x <- convertGDP(x, unit_in = "current LCU",
+                      unit_out = "constant 2005 LCU",
+                      replace_NAs = "no_conversion")
+    }
+
+  } else if (subtype == "ValueOfProd") {
+    x <- convertGDP(x, unit_in = "current US$MER",
+                    unit_out = "constant 2005 US$MER",
+                    replace_NAs = "no_conversion")
   } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
 
- if (subtype == "FertilizerProducts") {
-  currencyDims <- c("import_kUS$", "export_kUS$")
-  xCurrentUSD <- x   # nolint
-  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                                unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = "no_conversion") * 1000
-  # for countries with missing conversion factors we assume no inflation:
-  x[is.na(x)] <- xCurrentUSD[is.na(x)]
+  if (subtype == "FertilizerProducts") {
+    currencyDims <- c("import_kUS$", "export_kUS$")
+    xCurrentUSD <- x   # nolint
+    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                      unit_in = "current US$MER",
+                                      unit_out = "constant 2005 US$MER",
+                                      replace_NAs = "no_conversion") * 1000
+    # for countries with missing conversion factors we assume no inflation:
+    x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
 
- } 
+  }
 
- if (subtype == "Trade") {
-  currencyDims <- c("import_kUS$", "export_kUS$")
-  xCurrentUSD <- x   # nolint
-  x[, , currencyDims] <- convertGDP(x[, , currencyDims],
-                                                unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = "no_conversion") * 1000
-  # for countries with missing conversion factors we assume no inflation:
-  x[is.na(x)] <- xCurrentUSD[is.na(x)]
+  if (subtype == "Trade") {
+    currencyDims <- c("import_kUS$", "export_kUS$")
+    xCurrentUSD <- x   # nolint
+    x[, , currencyDims] <- convertGDP(x[, , currencyDims],
+                                      unit_in = "current US$MER",
+                                      unit_out = "constant 2005 US$MER",
+                                      replace_NAs = "no_conversion") * 1000
+    # for countries with missing conversion factors we assume no inflation:
+    x[is.na(x)] <- xCurrentUSD[is.na(x)]
 
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-  getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
+    getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
 
- } 
+  }
   # ---- Set negative values to 0 (except stock variation) ----
 
   if (dimExists(3.2, x)) {
