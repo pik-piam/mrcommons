@@ -1,7 +1,6 @@
 #' @importFrom utils download.file tail
 
 downloadLUH2v2 <- function(subtype = NULL) {
-
   # links <- c("http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/states.nc",
   #            "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/transitions.nc",
   #            "http://gsweb1vh2.umd.edu/LUH2/LUH2_v2h/management.nc",

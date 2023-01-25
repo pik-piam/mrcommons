@@ -1,5 +1,5 @@
 #' toolAdjustExperGuesses
-#' @description Function that uses ssp2 as baseline scenario and adjusts ssp1,ssp3,ssp4, and ssp5 based on 
+#' @description Function that uses ssp2 as baseline scenario and adjusts ssp1,ssp3,ssp4, and ssp5 based on
 #' pre-established assumptions about the relative development in the different scenarios.
 #' @param q magpie object with expert guesses loaded
 #'
@@ -35,7 +35,7 @@ toolAdjustExperGuesses <- function(q) {
     for (i in 1:length(levels)) {
       tmp1 <- tmp == levels[i]
       tmp[tmp1] <- i
-      x[, , j] <- tmp 
+      x[, , j] <- tmp
     }
   }
 
@@ -47,7 +47,7 @@ toolAdjustExperGuesses <- function(q) {
 
 # Making adjustments on SSP3 based on the reference values of SSP2:
 #  -- Assumption: All regions in all times performe worse in ssp3 than in ssp2
-  i = 1
+  i <- 1
   while (i > 0) {
     w <- collapseNames(x[, , "ssp2"] <= x[, , "ssp3"])       # checking which ssp3 values are bigger or equal to its correspondent ssp2 values.
     z <- collapseNames(x[, , "ssp3"] > 1)                    # checking which values in ssp3 are already not in the minimum level.
@@ -60,13 +60,13 @@ toolAdjustExperGuesses <- function(q) {
 
 # Making adjustments on SSP5 based on the reference values of SSP2:
 #  -- Assumption: All regions in all times performe better in ssp5 than in ssp2
-  i = 1
+  i <- 1
   while (i > 0) {
     w <- collapseNames(x[, , "ssp5"] <= x[, , "ssp2"])       # checking which ssp2 values are bigger or equal to its correspondent ssp5 values.
     z <- w
     z[, , ] <- NA
     for (j in getItems(x, dim = 3.1)) {                      # checking which values in ssp5 are already at the maximum level for each sys.
-      z[, , j] <- collapseNames(x[, , list(data = j, scen = "ssp5")] < max(indexes[[j]])) 
+      z[, , j] <- collapseNames(x[, , list(data = j, scen = "ssp5")] < max(indexes[[j]]))
     }
     t <- w * z
     xtmp <- x[, , "ssp5"]
@@ -79,12 +79,12 @@ toolAdjustExperGuesses <- function(q) {
   # determining development level of countries
   gdp_pc <- calcOutput("GDPpc", naming = "scenario", aggregate = FALSE, supplementary = TRUE)
   gdp_pc <- collapseNames(gdp_pc$x)
-  developed  <- middle  <- lower <- gdp_pc[,getItems(x, dim = 2),toupper(getItems(x, dim = 3.2))]
-  for(i in getItems(x, dim = 2)){
-    for(j in toupper(getItems(x, dim = 3.2))){
-      developed[,i,j] <- gdp_pc[,i,j] >= quantile(gdp_pc[,i,j])[4]
-      middle[,i,j] <- !!(gdp_pc[,i,j] < quantile(gdp_pc[,i,j])[4]) * (gdp_pc[,i,j] >= quantile(gdp_pc[,i,j])[3])
-      lower[,i,j] <- gdp_pc[,i,j] < quantile(gdp_pc[,i,j])[3]
+  developed  <- middle  <- lower <- gdp_pc[, getItems(x, dim = 2), toupper(getItems(x, dim = 3.2))]
+  for (i in getItems(x, dim = 2)) {
+    for (j in toupper(getItems(x, dim = 3.2))) {
+      developed[, i, j] <- gdp_pc[, i, j] >= quantile(gdp_pc[, i, j])[4]
+      middle[, i, j] <- !!(gdp_pc[, i, j] < quantile(gdp_pc[, i, j])[4]) * (gdp_pc[, i, j] >= quantile(gdp_pc[, i, j])[3])
+      lower[, i, j] <- gdp_pc[, i, j] < quantile(gdp_pc[, i, j])[3]
     }
   }
   getItems(developed, dim = 3) <- getItems(x, dim = 3.2)
@@ -93,10 +93,10 @@ toolAdjustExperGuesses <- function(q) {
 
 # Making adjustments on SSP1:
 #  -- Assumption: Same to ssp2 for more Developed and same ssp5 for Developing (middle and lower range).
-  x[, , "ssp1"] <- x[, , "ssp2"] * developed[, , "ssp1"] + x[, , "ssp5"] * middle[, , "ssp1"] + x[, , "ssp5"] * lower[, , "ssp1"]         
+  x[, , "ssp1"] <- x[, , "ssp2"] * developed[, , "ssp1"] + x[, , "ssp5"] * middle[, , "ssp1"] + x[, , "ssp5"] * lower[, , "ssp1"]
 
 # Making adjustments on SSP4:
-#  -- Assumption:  Same to ssp5 for more Developed, same ssp2 for middle and ssp3 for lower development.          
+#  -- Assumption:  Same to ssp5 for more Developed, same ssp2 for middle and ssp3 for lower development.
   x[, , "ssp4"] <- x[, , "ssp5"] * developed[, , "ssp4"] + x[, , "ssp2"] * middle[, , "ssp4"] + x[, , "ssp3"] * lower[, , "ssp4"]
 
   for (i in getItems(x, dim = 3.1)) {

@@ -330,8 +330,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                            unit_out = "constant 2005 LCU",
                            replace_NAs = "no_conversion")
      }
-  
-  }  else if (subtype == "ValueOfProd") {
+
+  } else if (subtype == "ValueOfProd") {
                 x <- convertGDP(x, unit_in = "current US$MER",
                          unit_out = "constant 2005 US$MER",
                          replace_NAs = "no_conversion")
@@ -352,7 +352,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
   getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
 
- } 
+ }
 
  if (subtype == "Trade") {
   currencyDims <- c("import_kUS$", "export_kUS$")
@@ -367,7 +367,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   getNames(x, dim = 2)[getNames(x, dim = 2) == "import_kUS$"] <- "import_US$MER05"
   getNames(x, dim = 2)[getNames(x, dim = 2) == "export_kUS$"] <- "export_US$MER05"
 
- } 
+ }
   # ---- Set negative values to 0 (except stock variation) ----
 
   if (dimExists(3.2, x)) {
