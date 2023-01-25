@@ -22,8 +22,8 @@ toolSmooth <- function(x, method = "spline") {
     # backup and old default of 8-year averages
     out <- toolTimeAverage(x, averaging_range = 8, cut = FALSE)
   } else {
-stop("This method is not supported.")
-}
+    stop("This method is not supported.")
+  }
 
   return(out)
 }
