@@ -33,9 +33,6 @@ nonTcostInputs <-  dimSums(nvfa[, , list("DEMD_COMM" = nonTranspInputs)], dim = 
 
 tcostPerUnitInput <- tcostInputs / nonTcostInputs
 
-# where(tcostPerUnitInput[,,"wht"] > 3)$true # some high costs around the world
-
-
 tcostToSecondary <- tcostPerUnitInput * nvfa[, , list("DEMD_COMM" = gtapFoods)]
 tcostToSecondary <- dimSums(tcostToSecondary, dim = "DEMD_COMM")
 
