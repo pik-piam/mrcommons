@@ -17,7 +17,7 @@
 #' @importFrom magclass read.magpie
 readFeedShareReg <- function() {
   file <-  "DM_feed_shr_regression_nls.csv"
-  feed_shr_regr <- read.magpie(file)
-  return(feed_shr_regr)
+  feedShareReg <- read.magpie(file)
+  return(feedShareReg)
 
 }

@@ -47,7 +47,7 @@ readFRA2020 <- function(subtype) {
           missingData <- missingData + 1
           data[j, , i] <- 0
           missingData <- missingData
-        } else if (naCount > 0 & naCount < yrCount) {
+        } else if (naCount > 0 && naCount < yrCount) {
           partialData <- partialData + 1
           data[j, , i][is.na(data[j, , i])] <- mean(as.numeric(as.vector(data[j, , i])), na.rm = TRUE)
           partialData <- partialData
@@ -156,7 +156,7 @@ readFRA2020 <- function(subtype) {
         missingData <- missingData + 1
         data[i, -1] <- 0
         missingData <- missingData
-      } else if (naCount > 0 & naCount < yrCount - 1) {
+      } else if (naCount > 0 && naCount < yrCount - 1) {
         partialData <- partialData + 1
         data[i, is.na(data[i, ])] <- mean(as.numeric(as.vector(data[i, -1])), na.rm = TRUE)
         partialData <- partialData
