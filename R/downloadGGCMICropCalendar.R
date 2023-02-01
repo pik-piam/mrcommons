@@ -5,7 +5,6 @@
 #' @author David M Chen, Edna Molina Bacca
 
 downloadGGCMICropCalendar <- function() {
-
   # spring and winter wheat
   wheatfile <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/landuse/winter_spring_wheat_separation/winter_and_spring_wheat_areas_phase3.nc4"
 
