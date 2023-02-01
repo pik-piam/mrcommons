@@ -15,7 +15,8 @@ calcExcretion(cellular = FALSE, attributes = "npk")
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates excretion during grazing, cropland-grazing, confinement and collected for fuel. Based on MAgPIE Feed baskets, slaughter biomass and simple allocation rules.
+calculates excretion during grazing, cropland-grazing, confinement and collected for fuel.
+Based on MAgPIE Feed baskets, slaughter biomass and simple allocation rules.
 }
 \examples{
 \dontrun{
