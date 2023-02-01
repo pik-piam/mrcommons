@@ -2,8 +2,8 @@
 % Please edit documentation in R/readLPJmLInputs.R
 \name{readLPJmLInputs}
 \alias{readLPJmLInputs}
-\title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  readLPJmLInputs
-}\if{html}{\out{</div>}}}
+\title{\preformatted{  readLPJmLInputs
+}}
 \usage{
 readLPJmLInputs(subtype = "lakeshare")
 }
