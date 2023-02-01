@@ -18,9 +18,12 @@
 #' calcOutput("MACCsCH4")
 #' }
 #' @importFrom magclass getNames
-calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
+calcMACCsCH4 <- function(
+    sector = "all",
+    source = "ImageMacc" # nolint: object_name_linter.
+) {
   # readSource CH4 and baseline Emissions
-  if (source == "ImageMacc") {
+  if (source == "ImageMacc") { # nolint
 
     unit <- "Tax level 200 steps each 5$/tC"
     description <- "CH4 ImageMacc"
@@ -58,7 +61,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     getNames(w) <- gsub("CH4 Animals", "ch4animals", getNames(w))
     getNames(w) <- gsub("CH4 Animal waste", "ch4anmlwst", getNames(w))
 
-  } else if (source == "PBL_MACC_2019") {
+  } else if (source == "PBL_MACC_2019") { # nolint
 
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_2019"
@@ -82,7 +85,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
 
-  } else if (source == "PBL_MACC_SSP2_2019") {
+  } else if (source == "PBL_MACC_SSP2_2019") { # nolint
     # relative to PBL IMAGE SSP2 BASELINE emissions
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_SSP2_2019"
@@ -107,7 +110,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
 
-  } else if (source == "PBL_MACC_2022") {
+  } else if (source == "PBL_MACC_2022") { # nolint
 
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_2022"
@@ -152,7 +155,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     getNames(ch4) <- gsub("ch4rice", "rice_ch4", getNames(ch4))
     getNames(ch4) <- gsub("ch4animals", "ent_ferm_ch4", getNames(ch4))
     getNames(ch4) <- gsub("ch4anmlwst", "awms_ch4", getNames(ch4))
-    x <- new.magpie(getRegions(ch4), seq(2105, 2150, 5), getNames(ch4), 0)
+    x <- new.magpie(getItems(ch4, dim = 1), seq(2105, 2150, 5), getNames(ch4), 0)
     x[, , ] <- setYears(ch4[, 2100, ], NULL)
     ch4 <- mbind(ch4, x)
 
@@ -160,7 +163,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     getNames(w) <- gsub("ch4rice", "rice_ch4", getNames(w))
     getNames(w) <- gsub("ch4animals", "ent_ferm_ch4", getNames(w))
     getNames(w) <- gsub("ch4anmlwst", "awms_ch4", getNames(w))
-    x <- new.magpie(getRegions(w), seq(2105, 2150, 5), getNames(w), 0)
+    x <- new.magpie(getItems(w, dim = 1), seq(2105, 2150, 5), getNames(w), 0)
     x[, , ] <- setYears(w[, 2100, ], NULL)
     w <- mbind(w, x)
   }
