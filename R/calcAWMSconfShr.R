@@ -26,7 +26,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "ssp1",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.4, 0.2, 0.4),
       y2100 = c(0.7, 0.2, 0.1)
@@ -37,7 +37,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "ssp2",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.3, 0, 0.7),
       y2100 = c(0.6, 0, 0.4)
@@ -47,7 +47,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "ssp3",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.2, 0.0, 0.8),
       y2100 = c(0.4, 0.0, 0.6)
@@ -57,7 +57,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "ssp4",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.4, 0.0, 0.6),
       y2100 = c(0.7, 0.0, 0.3)
@@ -67,7 +67,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "ssp5",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.4, 0.2, 0.4),
       y2100 = c(0.7, 0.2, 0.1)
@@ -77,7 +77,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "a1",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.7, 0.0, 0.3),
       y2100 = c(0.1, 0.0, 0.9)
@@ -87,7 +87,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "a2",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.2, 0.0, 0.8),
       y2100 = c(0.5, 0.0, 0.5)
@@ -97,7 +97,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "b1",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.3, 0.0, 0.7),
       y2100 = c(0.4, 0.0, 0.6)
@@ -107,7 +107,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "b2",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2020 = c(0.04, 0.2, 0.76),
       y2050 = c(0.2, 0.0, 0.8),
       y2100 = c(0.5, 0.0, 0.5)
@@ -118,19 +118,19 @@ calcAWMSconfShr <- function(rev = 0.1) {
     name = "GoodPractice",
     start_year = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
-    values <- list(
+    values = list(
       y2015 = c(0.15, 0, 0.85),
       y2030 = c(0.3, 0, 0.7),
       y2050 = c(0.5, 0.0, 0.5),
       y2100 = c(0.7, 0.0, 0.3)
-        ), out)
+    ), out)
   }
-
 
   return(list(x = out,
               weight = weight2,
               unit = "share",
-              description = "share of excreted nitrogen within stables excreted in which awms",
+              description = paste("share of excreted nitrogen within stables excreted in",
+                                  "which animal waste management systems"),
               min = 0,
               max = 1)
   )
