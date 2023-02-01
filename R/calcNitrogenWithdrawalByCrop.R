@@ -1,9 +1,11 @@
 #' @title calcNitrogenWithdrawalByCrop
 #' @description calculates the crop-specific withdrawals of nutrients from soils
 #'
-#' @param indicator total: estimates the inputs per total crop production; by_area estimates the inputs per area harvested
+#' @param indicator total: estimates the inputs per total crop production;
+#' by_area estimates the inputs per area harvested
 #' @param cellular cellular disaggreagation or national values
-#' @param irrigation FALSE for the sum of irrigated and rainfed, FALSE for seperated categories, 'rainfed' or 'irrigated for single categories
+#' @param irrigation FALSE for the sum of irrigated and rainfed, FALSE for separated categories,
+#' 'rainfed' or 'irrigated for single categories
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
@@ -27,11 +29,16 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
 irrigation2 <- FALSE
 }
 
-  harvest <- collapseNames(calcOutput("Production", products = "kcr", cellular = cellular, attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
-  ag <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
-  bg <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "bg", irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
-  seed <- collapseNames(calcOutput("Seed", cellular = cellular, products = "kcr", attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
-  fixation <- calcOutput("NitrogenFixationPast", cellular = cellular, irrigation = irrigation, fixation_types = "fixation_crops", aggregate = FALSE)
+  harvest <- collapseNames(calcOutput("Production", products = "kcr", cellular = cellular,
+                                      attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
+  ag <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag",
+                                 irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
+  bg <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "bg",
+                                 irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
+  seed <- collapseNames(calcOutput("Seed", cellular = cellular, products = "kcr",
+                                   attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
+  fixation <- calcOutput("NitrogenFixationPast", cellular = cellular, irrigation = irrigation,
+                         fixation_types = "fixation_crops", aggregate = FALSE)
 
   if (irrigation2 != "FALSE") { # again, for size reasons
     harvest <- harvest[, , irrigation2]
@@ -50,7 +57,8 @@ irrigation2 <- FALSE
   )
 
   if (indicator == "by_physical_area") {
-    area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE, cellular = cellular, irrigation = irrigation, sectoral = "kcr")[, past, ])
+    area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE, cellular = cellular,
+                                     irrigation = irrigation, sectoral = "kcr")[, past, ])
     if (irrigation2 != "FALSE") { # again, for size reasons
       area <- area[, , irrigation2]
     }
@@ -62,7 +70,8 @@ irrigation2 <- FALSE
     out <- data$x
     unit <- "t Nr per ha physical area"
   } else if (indicator == "by_area_harvested") {
-    area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular, irrigation = irrigation, aggregate = FALSE, sectoral = "kcr")[, past, ])
+    area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular, irrigation = irrigation,
+                                     aggregate = FALSE, sectoral = "kcr")[, past, ])
     if (irrigation2 != "FALSE") { # again, for size reasons
       area <- area[, , irrigation2]
     }

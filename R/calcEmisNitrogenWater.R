@@ -19,8 +19,8 @@ calcEmisNitrogenWater <- function(method = "Nsurplus") {
   } else if (method == "Nsurplus2") {
     method <- "Nsurplus"
   } else {
-stop("unknown method")
-}
+    stop("unknown method")
+  }
 
   groundwater <- dimSums(calcOutput("EmisNitrogenPast", method = method, aggregate = FALSE)[, , "no3_n"], dim = 3)
   sewage <- collapseNames(calcOutput("NutrientBudgetSewage", aggregate = FALSE)[, , "nr"][, , "freshwater"])
@@ -55,7 +55,6 @@ stop("unknown method")
                                         (65 + 7.7) *
                                         (65 + 7.7 - 43.2 - dimSums(emis[, , "freshwater"][, , "n2o_n_direct"],
                                                                    dim = c(1, 3)))
-
   return(list(
     x = emis,
     weight = NULL,
