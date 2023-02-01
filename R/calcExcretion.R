@@ -24,7 +24,7 @@ calcExcretion <- function(cellular = FALSE, attributes = "npk") {
 
   # read in inputs
 
-  developmentState <- calcOutput("DevelopmentState", aggregate = FALSE)
+  developmentState             <- calcOutput("DevelopmentState", aggregate = FALSE)
   croplandGrazingShare         <- collapseNames(1 - developmentState[, past, "SSP2"]) * 0.25
   fuelShare                    <- collapseNames(calcOutput("ManureFuelShr", aggregate = FALSE)[, past, "SSP2"])
   getNames(fuelShare, dim = 1) <- paste0("alias_", getNames(fuelShare, dim = 1))
@@ -52,7 +52,7 @@ calcExcretion <- function(cellular = FALSE, attributes = "npk") {
 
   excretion <- feedingSystems * (1 - slaughterFeedShare)
 
-  excretion[is.na(excretion)] <- 0
+  excretion[is.na(excretion)]  <- 0
   getNames(excretion, dim = 2) <- substring(getNames(excretion, dim = 2), 7)
 
 
