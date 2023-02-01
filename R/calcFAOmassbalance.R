@@ -45,7 +45,8 @@ calcFAOmassbalance <- function() {
   mb2[, , newitems] <- 0
 
   ### Add feed by animal group
-  # consists of feed by animal group according to Isabelle Weindls Feed Baskets plus a balanceflow to bee consistent with FAO
+  # consists of feed by animal group according to Isabelle Weindls Feed Baskets
+  # plus a balanceflow to bee consistent with FAO
   feed <- calcOutput("FeedPast", balanceflow = FALSE, aggregate = FALSE)
   getNames(feed, dim = 1) <- paste0("feed_", substring(getNames(feed, dim = 1), 7))
   feed <- as.magpie(aperm(unwrap(feed), c(1, 2, 4, 3, 5)))
@@ -66,13 +67,21 @@ calcFAOmassbalance <- function() {
   }
   mb3 <- mbind(mb2, feed)
 
-#  forest <- calcOutput("FAOForestryDemand",aggregate = F)
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
-  mb3[, , getNames(mb3[, , paste0("wood.", getNames(forest, dim = 2), ".dm")])] <- forest[, intersect(getYears(mb3), getYears(forest)), getNames(forest[, , "Industrial roundwood"])]
-  mb3[, , getNames(mb3[, , paste0("woodfuel.", getNames(forest, dim = 2), ".dm")])] <- forest[, intersect(getYears(mb3), getYears(forest)), getNames(forest[, , "Wood fuel"])]
+  mb3[, , getNames(mb3[, , paste0("wood.",
+                                  getNames(forest, dim = 2),
+                                  ".dm")])] <- forest[, intersect(getYears(mb3),
+                                                                 getYears(forest)),
+                                                      getNames(forest[, , "Industrial roundwood"])]
+  mb3[, , getNames(mb3[, , paste0("woodfuel.",
+                                   getNames(forest, dim = 2),
+                                   ".dm")])] <- forest[, intersect(getYears(mb3),
+                                                                   getYears(forest)),
+                                                         getNames(forest[, , "Wood fuel"])]
 
   # Adding Pasture as feed item
-  mb3[, , "pasture"][, , c("domestic_supply", "production", "feed")] <- dimSums(feed[, , "pasture"], dim = 3.2)
+  mb3[, , "pasture"][, ,
+                     c("domestic_supply", "production", "feed")] <- dimSums(feed[, , "pasture"], dim = 3.2)
 
   # Adding Crop Residues Production and use
   kres <- findset("kres")
@@ -84,15 +93,21 @@ calcFAOmassbalance <- function() {
   ### Dividing other_util into bioenergy and other_util
   bioenergy <- collapseNames(calcOutput("1stBioenergyPast", aggregate = FALSE)[, , "INDPROD"])
   att <- calcOutput("Attributes", aggregate = FALSE)
-  EthanolOilFactor <- (att / (collapseNames(att[, , "ge"])))[, , c("ethanol", "oils")]
-  mb3[, , c("ethanol", "oils")][, , "bioenergy"] <- bioenergy[, getYears(mb3), c("ethanol", "oils")] * EthanolOilFactor
+  ethanolOilFactor <- (att / (collapseNames(att[, , "ge"])))[, , c("ethanol", "oils")]
+  mb3[, , c("ethanol", "oils")][, , "bioenergy"] <- bioenergy[, getYears(mb3), c("ethanol", "oils")] *
+                                                    ethanolOilFactor
 
   # in some cases bioenergy demand from EEA exceeds ethanol production.
   # We limit it to the availabiltiy in FAOmassbalance_pre
   exceeded <- mb3[, , c("ethanol", "oils")][, , "bioenergy"] > mb3[, , c("ethanol", "oils")][, , "other_util"]
-  mb3[, , c("ethanol", "oils")][, , "bioenergy"][exceeded] <- mb3[, , c("ethanol", "oils")][, , "other_util"][exceeded]
+  mb3[, , c("ethanol",
+            "oils")][, , "bioenergy"][exceeded] <- mb3[, , c("ethanol",
+                                                              "oils")][, , "other_util"][exceeded]
 
-  mb3[, , c("ethanol", "oils")][, , "other_util"] <- mb3[, , c("ethanol", "oils")][, , "other_util"] - mb3[, , c("ethanol", "oils")][, , "bioenergy"]
+  mb3[, , c("ethanol",
+            "oils")][, , "other_util"] <- mb3[, , c("ethanol",
+                                                     "oils")][, , "other_util"] - mb3[, , c("ethanol",
+                                                                                            "oils")][, , "bioenergy"]
 
   return(list(
     x = mb3,

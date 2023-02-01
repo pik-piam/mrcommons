@@ -32,7 +32,9 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
     out <- collapseNames(out[, year, "SSP2-NoCC-NoCC-379"])
     out <- setYears(out, NULL)
     # get the mapping
-    mapping <- read.csv(toolGetMapping(type = "sectoral", name = "impact2magpie.csv", returnPathOnly = TRUE),
+    mapping <- read.csv(toolGetMapping(type = "sectoral",
+                                       name = "impact2magpie.csv",
+                                       returnPathOnly = TRUE),
                         na.strings = "")
     mapping <- mapping[1:nlevels(mapping$MAgPIE), ]
     out <- toolAggregate(out, rel = mapping, from = "IMPACT", to = "MAgPIE", dim = 3.1, partrel = TRUE)
@@ -43,17 +45,19 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
 
     out[, , "sugr_cane"]        <- 13.07939764 # the FAO producer price in Brazil in 2005 (biggest production)
     out[, , "sugr_beet"]        <- 55.311522 # the FAO producer price in France in 2005 (biggest production)
-    out[, , "alcohol"]          <- 300 # a guess that a liter of beer is 1$ # BB: this is luxury. I would go for 30 cents like Sternie (also beacuse we are interested in the pirmary products going into alcohol, not the marketed product).
-    # out[,,"fish"]             <- 2067.626632 # OECD/FAO price of fish food traded in 2005
+    out[, , "alcohol"]          <- 300 # a guess that a liter of beer is 1$
+    # BB: on alocohol this is luxury. I would go for 30 cents like Sternie
+    #    (also beacuse we are interested in the pirmary products going into alcohol, not the marketed product).
+    # out[,,"fish"]             <- 2067.626632 # OECD/FAO price of fish food traded in 2005 #nolint: keep fish price for future
     out[, , "fish"]             <- 1400 # FAO FIGIS database, export value divided by export volume in 2005, rounded
     out[, , "oilpalm"]          <- 100 # palmoilpoint.blogspot.de (527 malaysian ringgit = 118 USD rounded to 100)
     out[, , "oilcakes"]         <- 300 # https://www.indexmundi.com/commodities/?commodity=soybean-meal&months=180
-    out[, , "cottn_pro"]        <- 700 # https://cotton.ces.ncsu.edu/wp-content/uploads/2018/02/Seed-Cotton-Summary_Feb-13-2018.pdf?fwd=no 0.3353*2.2*1000
+    out[, , "cottn_pro"]        <- 700 # https://cotton.ces.ncsu.edu/wp-content/uploads/2018/02/Seed-Cotton-Summary_Feb-13-2018.pdf?fwd=no 0.3353*2.2*1000 #nolint
     out[, , "foddr"]            <- 200 # equivalent to cereals
     out[, , "brans"]            <- 100 # quick google search
     out[, , "distillers_grain"] <- 200 # quick google search
     out[, , "ethanol"]          <- 900 # quick google search
-    out[, , "fibres"]           <- 1500 # https://cotton.ces.ncsu.edu/wp-content/uploads/2018/02/Seed-Cotton-Summary_Feb-13-2018.pdf?fwd=no 0.690*2.2*1000
+    out[, , "fibres"]           <- 1500 # https://cotton.ces.ncsu.edu/wp-content/uploads/2018/02/Seed-Cotton-Summary_Feb-13-2018.pdf?fwd=no 0.690*2.2*1000 #nolint
     out[, , "molasses"]         <- 50 # quick google search
     out[, , "wood"]             <- 150 # quick google search
     out[, , "woodfuel"]         <- 100 # quick google search
@@ -79,14 +83,16 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
     missingCommodities <- setdiff(findset("kall"), getNames(out))
     out <- add_columns(x = out, dim = 3.1, addnm = missingCommodities)
 
-    # out[,,"fish"]             <- 2067.626632 # OECD/FAO price of fish food traded in 2005
+    # out[,,"fish"]             <- 2067.626632 # OECD/FAO price of fish food traded in 2005 #nolint
     out[, , "fish"]             <- 1400 # FAO FIGIS database, export value divided by export volume in 2005, rounded
-    # out[, , "oilpalm"]          <- 100 # palmoilpoint.blogspot.de (527 malaysian ringgit   = 118 USD rounded to 100)
+    # out[, , "oilpalm"]          <- 100 # palmoilpoint.blogspot.de (527 malaysian ringgit   = 118 USD rounded to 100) #nolint
     out[, , "oilcakes"]         <- 300 # https://www.indexmundi.com/commodities/?commodity=soybean-meal&months=180
     out[, , "brans"]            <- 100 # quick google search
     out[, , "distillers_grain"] <- 200 # quick google search
     out[, , "ethanol"]          <- 900 # quick google search
-    out[, , "alcohol"]          <- 300 # a guess that a liter of beer is 1$ # BB: this is luxury. I would go for 30 cents like Sternie (also beacuse we are interested in the pirmary products going into alcohol, not the marketed product).
+    out[, , "alcohol"]          <- 300 # a guess that a liter of beer is 1$
+    # BB: this is luxury. I would go for 30 cents like Sternie
+    #     (also beacuse we are interested in the pirmary products going into alcohol, not the marketed product).
     out[, , "molasses"]         <- 50 # quick google search
     out[, , "wood"]             <- 150 # quick google search
     out[, , "woodfuel"]         <- 100 # quick google search
