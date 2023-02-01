@@ -19,8 +19,8 @@ calcEmisNitrogenWater <- function(method = "Nsurplus") {
   } else if (method == "Nsurplus2") {
     method <- "Nsurplus"
   } else {
-stop("unknown method")
-}
+    stop("unknown method")
+  }
 
   groundwater <- dimSums(calcOutput("EmisNitrogenPast", method = method, aggregate = FALSE)[, , "no3_n"], dim = 3)
   sewage <- collapseNames(calcOutput("NutrientBudgetSewage", aggregate = FALSE)[, , "nr"][, , "freshwater"])
@@ -38,19 +38,23 @@ stop("unknown method")
   emis[, , "riparian"][, , "n2_n"] <- groundwater / (93 + 11) * 5
   emis[, , "riparian"][, , "n2o_n_direct"] <- groundwater / (93 + 11) * 0.9
 
-  river_inflow <- groundwater - dimSums(emis, dim = 3) + sewage
+  riverInflow <- groundwater - dimSums(emis, dim = 3) + sewage
 
-  # only DIN. in Seitzinger 2010: 18.9 in the year 2000 Seitzinger, S. P. et al. Global river nutrient export: A scenario analysis of past and future trends. Global Biogeochem. Cycles 24, GB0A08 (2010).
+  # only DIN. in Seitzinger 2010: 18.9 in the year 2000 Seitzinger, S. P. et al.
+  # Global river nutrient export: A scenario analysis of past and future trends. Global Biogeochem.
+  # Cycles 24, GB0A08 (2010).
   # Kroeze et al (2005) then assume 5% of DIN to be lost as N2O in rivers, and 1% in estuaries
   # Add to Bouwmans soil N the sewage point sources that enter surface waters, which are 7.7 Tg
   # 65 TG = soilN--> surface water (Bouwman 2013)
-  # 7.7 Tg: 1.Morée, A. L., Beusen, A. H. W., Bouwman, A. F. & Willems, W. J. Exploring global nitrogen and phosphorus flows in urban wastes during the twentieth century. Global Biogeochemical Cycles 27, 836–846 (2013).
+  # 7.7 Tg: 1.Morée, A. L., Beusen, A. H. W., Bouwman, A. F. & Willems, W. J. Exploring global
+  # nitrogen and phosphorus flows in urban wastes during the twentieth century. Global Biogeochemical
+  # Cycles 27, 836–846 (2013).
   # 43.2 Tg: reaching ocean according to Seitinger
 
-  emis[, , "freshwater"][, , "n2o_n_direct"] <- river_inflow / (65 + 7.7) * (18.9 * 0.06)
-  emis[, , "freshwater"][, , "n2_n"] <- river_inflow / (65 + 7.7) * (65 + 7.7 - 43.2 - dimSums(emis[, , "freshwater"][, , "n2o_n_direct"], dim = c(1, 3)))
+  emis[, , "freshwater"][, , "n2o_n_direct"] <- riverInflow / (65 + 7.7) * (18.9 * 0.06)
+  emis[, , "freshwater"][, , "n2_n"] <- riverInflow / (65 + 7.7) * (65 + 7.7 - 43.2 - dimSums(
+    emis[, , "freshwater"][, , "n2o_n_direct"], dim = c(1, 3)))
 
-  # dimSums(outputs,dim=c(1,3))/dimSums(inputs,dim=c(1,3))
   return(list(
     x = emis,
     weight = NULL,
