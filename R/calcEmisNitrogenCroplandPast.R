@@ -20,12 +20,12 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
 
     fertRice <- collapseNames(
       calcOutput("FertilizerByCrop",
-      deposition = "CEDS", aggregate = FALSE)[, , "fertilizer"][, , "rice_pro"]
-      )
+                 deposition = "CEDS", aggregate = FALSE)[, , "fertilizer"][, , "rice_pro"]
+    )
 
     ef <- calcOutput("IPCCefNSoil", aggregate = FALSE)
 
-    out <- new.magpie(getRegions(budget), getYears(budget), getNames(ef))
+    out <- new.magpie(getItems(budget, dim = 1), getYears(budget), getNames(ef))
     out[, , "inorg_fert"] <- collapseNames(budget[, , "fertilizer"]) * ef[, , "inorg_fert"]
     out[, , "man_crop"] <- collapseNames(budget[, , "manure_conf"]) * ef[, , "man_crop"]
     out[, , "resid"] <- dimSums(budget[, , c("ag_recycling", "bg_recycling")], dim = 3.1) * ef[, , "resid"]
@@ -74,19 +74,19 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
 
     # Add indirect deposition emissions for N2O ####
     ef <- setYears(readSource("IPCC", "emissionfactors", convert = FALSE), NULL)
-    emis_dep <- dimSums(
+    emisDep <- dimSums(
       dep[, , "crop"],
-dim = 3) * ef[, , "ef_5"]
+      dim = 3) * ef[, , "ef_5"]
     emis <- add_columns(emis, addnm = "deposition", dim = 3.1)
     emis[, , "deposition"] <- 0
-    emis[, , "n2o_n_direct"][, , "deposition"] <- emis_dep
+    emis[, , "n2o_n_direct"][, , "deposition"] <- emisDep
 
     # Add natural emissions ####
     emisNatural <- collapseNames(
       calcOutput("EmisNitrogenPreagriculture",
-      aggregate = FALSE, deposition = FALSE)[, , "crop"][, , c("n2_n", "accumulation"),
-      invert = TRUE]
-      )
+                 aggregate = FALSE, deposition = FALSE)[, , "crop"][, , c("n2_n", "accumulation"),
+                                                                    invert = TRUE]
+    )
     emis <- add_columns(emis, addnm = "natural", dim = 3.1)
     emis[, , "natural"] <- 0
     emis[, , "natural"] <- emisNatural
@@ -108,14 +108,14 @@ dim = 3) * ef[, , "ef_5"]
 
 
     dentrificationShr <- setNames(dimSums(emisSum[, , c("n2o_n_direct", "n2_n")], dim = c(1, 3)) /
-    dimSums(budget[, , "surplus"], dim = c(1, 3)), NULL)
+                                    dimSums(budget[, , "surplus"], dim = c(1, 3)), NULL)
 
     unscaled <- mbind(emisSum[, , c("nh3_n", "no2_n", "no3_n")],
-                    setNames(dentrificationShr * budget[, , "surplus"], "denitrification"))
+                      setNames(dentrificationShr * budget[, , "surplus"], "denitrification"))
 
     emissionShares <- setYears(unscaled[, baseyear, ] / dimSums(unscaled[, baseyear, ], dim = 3), NULL)
     emissionSharesGlo <- setYears(dimSums(unscaled[, baseyear, ], dim = 1, na.rm = TRUE) /
-    dimSums(unscaled[, baseyear, ], dim = c(1, 3), na.rm = TRUE), NULL)
+                                    dimSums(unscaled[, baseyear, ], dim = c(1, 3), na.rm = TRUE), NULL)
     emissionShares[which(dimSums(emisSum[, , ], dim = c(2, 3)) < 0.001), , ] <- emissionSharesGlo
 
     # distributing cropland surplus according to these shares.
