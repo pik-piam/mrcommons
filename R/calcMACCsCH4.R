@@ -90,7 +90,8 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     wantedYears <- seq(2010, 2100, by = 5)
 
     ch4 <- NULL
-    for (subtype in c("SSP2_ch4coal", "SSP2_ch4oil", "SSP2_ch4gas", "SSP2_ch4wstl", "SSP2_ch4wsts", "SSP2_ch4rice", "SSP2_ch4animals", "SSP2_ch4anmlwst")) {
+    for (subtype in c("SSP2_ch4coal", "SSP2_ch4oil", "SSP2_ch4gas", "SSP2_ch4wstl", "SSP2_ch4wsts", "SSP2_ch4rice",
+                      "SSP2_ch4animals", "SSP2_ch4anmlwst")) {
       x <- readSource("PBL_MACC_2019", subtype)
       existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
