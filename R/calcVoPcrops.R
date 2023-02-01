@@ -20,7 +20,7 @@ calcVoPcrops <- function(fillGaps = TRUE) {
   # Value of production of individual items (current US$MER -> US$MER05)
   item <- "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"
   vopAll <- readSource("FAO_online", "ValueOfProd")[, , item] / 1000 # mio. current US$MER
-  
+
   getNames(vopAll) <- gsub("\\..*", "", getNames(vopAll))
   getNames(vopAll)[getNames(vopAll) == "254|Oil palm fruit"] <- "254|Oil, palm fruit"
 

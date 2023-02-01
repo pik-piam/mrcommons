@@ -19,17 +19,15 @@ Read in ImageMacc Costcurves for different subtypes. Rows are removed, the
 dataframe is reshaped and numbers are replaced by descriptions.
 }
 \examples{
-
-\dontrun{ 
-a <- readSource("ImageMacc","CH4_Energy_Industry")
-a <- readSource("ImageMacc","CH4_Landuse")
-a <- readSource("ImageMacc","N2O_Energy_Industry")
-a <- readSource("ImageMacc","N2O_Landuse")
-a <- readSource("ImageMacc","HFC_tot")
-a <- readSource("ImageMacc","SF6_tot")
-a <- readSource("ImageMacc","PFC_tot")
-a <- readSource("ImageMacc","baseline_sources")
-
+\dontrun{
+a <- readSource("ImageMacc", "CH4_Energy_Industry")
+a <- readSource("ImageMacc", "CH4_Landuse")
+a <- readSource("ImageMacc", "N2O_Energy_Industry")
+a <- readSource("ImageMacc", "N2O_Landuse")
+a <- readSource("ImageMacc", "HFC_tot")
+a <- readSource("ImageMacc", "SF6_tot")
+a <- readSource("ImageMacc", "PFC_tot")
+a <- readSource("ImageMacc", "baseline_sources")
 }
 }
 \seealso{

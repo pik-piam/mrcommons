@@ -24,8 +24,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates share of volatilised nitrogen emissions that is redeposited on different land types.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("AtmosphericRedepositionShare")
 }
 

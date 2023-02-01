@@ -16,10 +16,10 @@ List of magpie objects with results on country level, weight on country level, u
 calculates stocks of animals of different categories.
 }
 \examples{
-
 \dontrun{
 calcOutput("AnimalStocks")
 }
+
 }
 \seealso{
 \code{\link[=calcExcretionIPCC]{calcExcretionIPCC()}},

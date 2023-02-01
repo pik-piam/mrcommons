@@ -14,16 +14,14 @@
 #' \dontrun{
 #' a <- readSource("TFP_USD")
 #' }
-#'
 readTFPUSDA <- function() {
-
  # File
   file <- "AgTFPindividualcountries.xlsx"
 
   # Reads countries from the file
   countries <- read_excel(file, sheet = "Cost Shares", range = "D3:D182")
-  FAON_countries <- read_excel(file, sheet = "Cost Shares", range = "B3:B182")
-  regions <- cbind(countries, FAON_countries)
+  FAONcountries <- read_excel(file, sheet = "Cost Shares", range = "B3:B182")
+  regions <- cbind(countries, FAONcountries)
   colnames(regions) <- c("Country/territory", "FAO N")
 
   # Available shares and their location in the file
@@ -31,31 +29,32 @@ readTFPUSDA <- function() {
   ranges <- c("S3:X182", "AA3:AF182", "BG3:BL182", "AY3:BD182", "BO3:BT182", "BW3:CB182")
 
   # Function to extract the values of the shares and organize the data in a format easy to convert to a magpie object
-  extract_fractions <- function(names = names, ranges = ranges, file = file, regions = regions) {
+  extractFractions <- function(names = names, ranges = ranges, file = file, regions = regions) {
     data <- NULL
-    years_s <- as.character(seq(from = 1960, to = 2010, by = 10))
+    yearsS <- as.character(seq(from = 1960, to = 2010, by = 10))
 
-    for (n in 1:length(names)) {
-      data_int <- as.data.frame(read_excel(file, sheet = "Cost Shares", range = ranges[n]))
-      colnames(data_int) <- years_s
-      data_int <- cbind(regions, data_int)
-      data_int$Input <- names[n]
-      data <- rbind(data, data_int)
+    for (n in seq_along(names)) {
+      dataInt <- as.data.frame(read_excel(file, sheet = "Cost Shares", range = ranges[n]))
+      colnames(dataInt) <- yearsS
+      dataInt <- cbind(regions, dataInt)
+      dataInt$Input <- names[n]
+      data <- rbind(data, dataInt)
     }
-    data <- reshape(data, varying = years_s, direction = "long", idvar = c("Country/territory", "FAO N", "Input"), v.names = "Value", timevar = "Year", times = years_s)
-    rownames(data) <- 1:length(rownames(data))
+    data <- reshape(data, varying = yearsS, direction = "long", idvar = c("Country/territory", "FAO N", "Input"),
+                    v.names = "Value", timevar = "Year", times = yearsS)
+    rownames(data) <- seq_along(rownames(data))
     colnames(data) <- c("Country", "CountryCode", "Input", "Year", "Value")
     return(data)
   }
 
   # Extracts data
-  data <- extract_fractions(names, ranges, file, regions)
+  data <- extractFractions(names, ranges, file, regions)
 
   # Reads fao countries
-  isocode_FAO <- toolGetMapping("FAOiso_faocode.csv", where = "mrcommons")
+  isocodeFAO <- toolGetMapping("FAOiso_faocode.csv", where = "mrcommons")
 
   # Merges read data with the fao mapping by country code
-  data <- merge(data, isocode_FAO, by = "CountryCode", all = FALSE)[, c("ISO3", "Year", "Input", "Value")]
+  data <- merge(data, isocodeFAO, by = "CountryCode", all = FALSE)[, c("ISO3", "Year", "Input", "Value")]
 
   # Creates magpie object (184 countries)
   x <- magpiesort(as.magpie(data, spatial = 1, temporal = 2, datacol = 4))

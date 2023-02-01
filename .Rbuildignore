@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^GFED_1997.nc
+^states.nc
 carbon_stored.*
 ^\.git$
 ^codemeta\.json$

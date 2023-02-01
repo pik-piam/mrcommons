@@ -18,8 +18,7 @@ List of magpie object with results on country level, weight on country level, un
 Emission factors for nitrogenous emissions in livestock confinements
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EF3confinement")
 }
 }

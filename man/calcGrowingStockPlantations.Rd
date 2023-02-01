@@ -13,8 +13,8 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the growing stocks on FAO data.
 }
 \examples{
-\dontrun{ 
-calcOutput("GrowingStockPlantations",aggregate=TRUE)
+\dontrun{
+calcOutput("GrowingStockPlantations", aggregate = TRUE)
 }
 
 }

@@ -16,9 +16,8 @@ FAO Value Of Production as a list of MAgPIE objects
 Calculate FAO Value Of Production
 }
 \examples{
-
 \dontrun{
-a <- calcOutput("AgProductionValue", datasource="FAO")
+a <- calcOutput("AgProductionValue", datasource = "FAO")
 }
 
 }

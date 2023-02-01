@@ -6,13 +6,18 @@
 \usage{
 calcHourlyLaborCosts(
   datasource = "USDA_FAO",
+  sector = "agriculture",
   fillWithRegression = TRUE,
   calibYear = 2010,
   projection = FALSE
 )
 }
 \arguments{
-\item{datasource}{either raw data from "ILO" or data calculated based on total labor costs from "USDA_FAO"}
+\item{datasource}{either raw data from "ILO" (agriculture+forestry+fishery) or data calculated based on total labor
+costs from "USDA_FAO" (crop+livestock production)}
+
+\item{sector}{should average hourly labor costs be reported ("agriculture"), or hourly labor costs specific to
+either "crops" or "livestock" production. For ILO only the aggregate hourly labor costs are available.}
 
 \item{fillWithRegression}{boolean: should missing values be filled based on a regression between ILO hourly labor
 costs and GDPpcMER (calibrated to countries)}
@@ -27,7 +32,7 @@ TRUE.}
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates dataset of hourly labor costs per employee in agriculture, forestry and fishery
+calculates dataset of hourly labor costs per employee in agriculture
 }
 \examples{
 \dontrun{

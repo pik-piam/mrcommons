@@ -19,10 +19,8 @@ Calculate historical feed baskets based on output of MAgPIE_FEED model
 as DM feed biomass (different types of feed) needed per DM livestock products
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedBasketsPast")
-
 }
 }
 \seealso{

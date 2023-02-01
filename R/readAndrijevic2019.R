@@ -17,7 +17,6 @@
 #' @importFrom madrat toolCountryFill
 
 readAndrijevic2019 <- function(subtype) {
-
   # read in data:
   file <- paste(subtype, "csv", sep = ".")
   data <- read.csv(file, header = TRUE, dec = ".", sep = ",")[, -1]
@@ -49,7 +48,7 @@ readAndrijevic2019 <- function(subtype) {
   projData <- toolCountryFill(projData, fill = NA)
 
   # merge historical and projected data into one object
-  histData <- histData[, intersect(getYears(histData), getYears(projData)), , invert = T]
+  histData <- histData[, intersect(getYears(histData), getYears(projData)), , invert = TRUE]
 
   out <- new.magpie(cells_and_regions = getRegions(histData),
                     years = c(getYears(histData), getYears(projData)),

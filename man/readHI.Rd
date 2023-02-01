@@ -15,8 +15,8 @@ Values are assembled from various literature sources, and the weighting and allo
 spreadsheet crop_specifications_*.ods for different versions of the file
 }
 \examples{
-
-\dontrun{ a <- readSource("HI")
+\dontrun{
+a <- readSource("HI")
 }
 }
 \seealso{

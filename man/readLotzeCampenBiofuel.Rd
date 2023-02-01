@@ -17,10 +17,9 @@ doi:10.1111/agec.12092.
 from a .csv file to a magclass object
 }
 \examples{
-
-\dontrun{ a <- readSource("LotzeCampenBiofuel")
+\dontrun{
+a <- readSource("LotzeCampenBiofuel")
 }
-
 
 }
 \seealso{

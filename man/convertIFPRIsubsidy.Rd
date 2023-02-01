@@ -17,7 +17,7 @@ disaggregates EU subsidies for crops and livestock from IFPRI table to country l
 }
 \examples{
 \dontrun{
-  a <- readSource("IFPRIsubsidy", convert = TRUE)
+a <- readSource("IFPRIsubsidy", convert = TRUE)
 }
 
 }

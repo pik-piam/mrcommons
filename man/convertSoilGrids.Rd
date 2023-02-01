@@ -16,9 +16,8 @@ List of magpie objects with results on cellular level, weight, unit and descript
 Convert SoilGrids content
 }
 \examples{
-
 \dontrun{
-  readSource("SoilGrids", subtype="cstock_0_30", convert=TRUE)
+readSource("SoilGrids", subtype = "cstock_0_30", convert = TRUE)
 }
 }
 \seealso{

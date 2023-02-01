@@ -1,13 +1,15 @@
-#' Convert FAO_TradeMatrix
+#' Convert FAOTradeMatrix
 #'
 #' Convert FAOSTAT detailed trade matrix.
-#' FAOSTAT does not balance or harmonize the import/export side reporting, effectively creating 2 slightly different datasets.
-#' Furthermore, in terms of trade value, exporters are "usuallY" reporting FOB, while importers report CIF. Difference in value,
-#' given identical qty, is thus the transport margin.
+#' FAOSTAT does not balance or harmonize the import/export side reporting.
+#' Furthermore, in terms of trade value, exporters are "usuallY" reporting FOB,
+#' while importers report CIF. Difference in value,
+#' given identical qty, is thus the transport margin mixed with unharmonized reporting.
 #' @param x output from read function
 #' @param subtype subsets of the detailed trade matrix to read in. Very large csv needs to be read in chunks
 #' separated by export/import quantities and values, as well as kcr, kli and kothers (not in kcr nor kli)
-#' Options are all combinations of c("import_value", "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
+#' Options are all combinations of c("import_value",
+#' "import_qty", "export_value", "export_quantity") X c("kcr", "kli", "kothers"))
 #' import is import side reporting while export is export-sde reporting
 #' @return FAO data as MAgPIE object
 #' @author David C
@@ -15,7 +17,7 @@
 #' @importFrom GDPuc convertGDP
 
 
-convertFAO_TradeMatrix <- function(x, subtype) { # nolint
+convertFAOTradeMatrix <- function(x, subtype) { # nolint
 
 gc()
 
@@ -26,7 +28,8 @@ gc()
 
   ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
   ## to make toolISOhistorical work
-  if (any(getItems(x, dim = 1.1) == "XET") & any(getItems(x, dim = 1.1) == "ETH") & !any(getItems(x, dim = 1.1) == "ERI")) {
+  if (any(getItems(x, dim = 1.1) == "XET") && any(getItems(x, dim = 1.1) == "ETH") &&
+      !any(getItems(x, dim = 1.1) == "ERI")) {
     xERI <- x[list("ISO" = c("ETH")), , ]
     xERI[, , ] <- 0
     getItems(xERI, dim = 1.1) <- "ERI"
@@ -37,7 +40,8 @@ gc()
     x <- magpiesort(mbind(x, xERI))
   }
 
-    if (any(getItems(x, dim = 1.2) == "XET") & any(getItems(x, dim = 1.2) == "ETH") & !any(getItems(x, dim = 1.2) == "ERI")) {
+    if (any(getItems(x, dim = 1.2) == "XET") && any(getItems(x, dim = 1.2) == "ETH") &&
+       !any(getItems(x, dim = 1.2) == "ERI")) {
     xERI <- x[list("Partner" = c("ETH")), , ]
     xERI[, , ] <- 0
     getItems(xERI, dim = 1.2) <- "ERI"
@@ -48,7 +52,8 @@ gc()
     x <- magpiesort(mbind(x, xERI))
   }
 
-  if (any(getItems(x, dim = 1.1) == "XSD") & any(getItems(x, dim = 1.1) == "SDN") & !any(getItems(x, dim = 1.1) == "SSD")) {
+  if (any(getItems(x, dim = 1.1) == "XSD") && any(getItems(x, dim = 1.1) == "SDN") &&
+      !any(getItems(x, dim = 1.1) == "SSD")) {
     xSSD <- x[list("ISO" = c("SDN")), , ]
     xSSD[, , ] <- 0
     getItems(xSSD, dim = 1.1) <- "SSD"
@@ -58,7 +63,8 @@ gc()
     x <- magpiesort(mbind(x, xSSD))
   }
 
-  if (any(getItems(x, dim = 1.2) == "XSD") & any(getItems(x, dim = 1.2) == "SDN") & !any(getItems(x, dim = 1.2) == "SSD")) {
+  if (any(getItems(x, dim = 1.2) == "XSD") && any(getItems(x, dim = 1.2) == "SDN") &&
+      !any(getItems(x, dim = 1.2) == "SSD")) {
     xSSD <- x[list("Partner" = c("SDN")), , ]
     xSSD[, , ] <- 0
     getItems(xSSD, dim = 1.2) <- "SSD"
@@ -69,31 +75,36 @@ gc()
   }
 
   ## add additional mappings
-  additional_mapping <- list()
+  additionalMapping <- list()
 
   # Eritrea ERI and Ethiopia ETH
-  if ((all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1.1))) | (all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1.2)))) {
-    additional_mapping <- append(additional_mapping, list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
+  if ((all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1.1))) ||
+      (all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1.2)))) {
+    additionalMapping <- append(additionalMapping,
+                                 list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
   }
 
   # Belgium-Luxemburg
-  if ((all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.1))) | (all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.2)))) {
-    additional_mapping <- append(additional_mapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
-  } else if (("XBL" %in% getItems(x, dim = 1.1)) & !("BEL" %in% getItems(x, dim = 1.1))) {
+  if ((all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.1))) ||
+     (all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1.2)))) {
+    additionalMapping <- append(additionalMapping,
+                                list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
+  } else if (("XBL" %in% getItems(x, dim = 1.1)) && !("BEL" %in% getItems(x, dim = 1.1))) {
     getCells(x)[getItems(x, dim = 1.1) == "XBL"] <- "BEL"
-  } else if (("XBL" %in% getItems(x, dim = 1.2)) & !("BEL" %in% getItems(x, dim = 1.2))) {
+  } else if (("XBL" %in% getItems(x, dim = 1.2)) && !("BEL" %in% getItems(x, dim = 1.2))) {
     getCells(x)[getItems(x, dim = 1.2) == "XBL"] <- "BEL"
   }
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
-  if ((all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.1))) | (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.2)))) {
-    additional_mapping <- append(additional_mapping, list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
-  } else if ("XSD" %in% getItems(x, dim = 1.1) & !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
+  if ((all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.1))) ||
+      (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1.2)))) {
+    additionalMapping <- append(additionalMapping,
+                                 list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
+  } else if ("XSD" %in% getItems(x, dim = 1.1) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.1))) {
     getCells(x)[getItems(x, dim = 1.1) == "XSD"] <- "SDN"
-  } else if ("XSD" %in% getItems(x, dim = 1.2) & !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
+  } else if ("XSD" %in% getItems(x, dim = 1.2) && !any(c("SSD", "SDN") %in% getItems(x, dim = 1.2))) {
     getCells(x)[getItems(x, dim = 1.2) == "XSD"] <- "SDN"
   }
-
 
   ## if XCN exists, replace CHN with XCN.
   if ("XCN" %in% getItems(x, dim = 1.1)) {
@@ -118,19 +129,25 @@ gc()
   # Northern Mariana Islands (MP, MNP, 580)
   # Palau (PW, PLW, 585)
   if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x, dim = 1.1))) {
-    additional_mapping <- append(additional_mapping, list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"), c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
+    additionalMapping <- append(additionalMapping,
+                                list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"),
+                                    c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
   } else if ("PCI" %in% getItems(x, dim = 1.1)) {
     x <- x[list("ISO" = c("PCI")), , invert = TRUE]
   }
   if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x, dim = 1.2))) {
-    additional_mapping <- append(additional_mapping, list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"), c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
+    additionalMapping <- append(additionalMapping,
+                                list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"),
+                                     c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
   } else if ("PCI" %in% getItems(x, dim = 1.2)) {
     x <- x[list("Partner" = c("PCI")), , invert = TRUE]
   }
 
-  ### some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG), Serbia and Montenegro (SCG) are missing add them with values of 0
-    ISOhistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
-    former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"), "toISO"]
+  # some of the follow up states of the Soviet Union (SUN), Yugoslavia (YUG),
+  #          Serbia and Montenegro (SCG) are missing add them with values of 0
+    isoHistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv",
+                                             package = "madrat"), stringsAsFactors = FALSE)
+    former <- isoHistorical[isoHistorical$fromISO %in% c("SUN", "YUG", "SCG"), "toISO"]
 
     missing1 <- former[!former %in% getItems(x, dim = 1.1)]
 if (length(missing1 > 0)) {
@@ -150,7 +167,7 @@ x2[, getYears(x2)[getYears(x2, as.integer = TRUE) >= 1992], ] <- 0
     x[is.na(x)] <- 0
 
     ### do ISOhistorical
-x <- toolISOhistorical(x, mapping = NULL, overwrite = TRUE, additional_mapping = additional_mapping)
+x <- toolISOhistorical(x, mapping = NULL, overwrite = TRUE, additional_mapping = additionalMapping)
 
 out <- toolCountryFillBilateral(x, fill = 0)
 rm(x)

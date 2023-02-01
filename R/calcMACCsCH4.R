@@ -19,7 +19,6 @@
 #' }
 #' @importFrom magclass getNames
 calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
-
   # readSource CH4 and baseline Emissions
   if (source == "ImageMacc") {
 
@@ -69,11 +68,11 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     ch4 <- NULL
     for (subtype in c("ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      existingYears <- getYears(x, as.integer = T)
+      existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
       missingYears <- tmp[tmp < existingYears[1]]
       x <- x[, intersect(wantedYears, existingYears), ]
-      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
       y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
       names(dimnames(y)) <- names(dimnames(x))
       ch4 <- mbind(ch4, y)
@@ -84,7 +83,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
 
   } else if (source == "PBL_MACC_SSP2_2019") {
-    #relative to PBL IMAGE SSP2 BASELINE emissions
+    # relative to PBL IMAGE SSP2 BASELINE emissions
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_SSP2_2019"
 
@@ -93,11 +92,11 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     ch4 <- NULL
     for (subtype in c("SSP2_ch4coal", "SSP2_ch4oil", "SSP2_ch4gas", "SSP2_ch4wstl", "SSP2_ch4wsts", "SSP2_ch4rice", "SSP2_ch4animals", "SSP2_ch4anmlwst")) {
       x <- readSource("PBL_MACC_2019", subtype)
-      existingYears <- getYears(x, as.integer = T)
+      existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
       missingYears <- tmp[tmp < existingYears[1]]
       x <- x[, intersect(wantedYears, existingYears), ]
-      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+      x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
       y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
       names(dimnames(y)) <- names(dimnames(x))
       ch4 <- mbind(ch4, y)
@@ -107,9 +106,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
 
-  }
-
- else if (source == "PBL_MACC_2022") {
+  } else if (source == "PBL_MACC_2022") {
 
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_2022"
@@ -118,13 +115,13 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
 
     ch4 <- NULL
     for (subtype in c("ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst")) {
-      for (scentype in c("Default","Optimistic","Pessimistic")) {
-        x <- readSource("PBL_MACC_2022",subtype,scentype)
-        existingYears <- getYears(x, as.integer = T)
+      for (scentype in c("Default", "Optimistic", "Pessimistic")) {
+        x <- readSource("PBL_MACC_2022", subtype, scentype)
+        existingYears <- getYears(x, as.integer = TRUE)
         tmp <- setdiff(wantedYears, existingYears)
         missingYears <- tmp[tmp < existingYears[1]]
         x <- x[, intersect(wantedYears, existingYears), ]
-        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
         y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
         names(dimnames(y)) <- names(dimnames(x))
         ch4 <- mbind(ch4, y)
@@ -135,7 +132,7 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
-    w[,,] <-setYears(w[,2010,],NULL)
+    w[, , ] <- setYears(w[, 2010, ], NULL)
 
 
   }

@@ -22,7 +22,6 @@ List of magpie objects with results on country level, weight on country level, u
 calculates the soil nitrogen uptake efficiency. This is the nitrogen taken up from the soil (N in crop biomass minus biological fixation minus seed N) divided by the soil N inputs (fertilizer, manure etc). For the future, SNuPE scenarios are added.
 }
 \examples{
-
 \dontrun{
 calcOutput("SNUpE")
 }

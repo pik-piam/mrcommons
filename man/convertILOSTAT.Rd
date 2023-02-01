@@ -17,8 +17,9 @@ transforms currencies where applicable, and fills missing countries in ILOSTAT d
 }
 \examples{
 \dontrun{
-  a <- readSource("ILOSTAT", subtype = "EmplByActivityModelled", convert = TRUE)
+a <- readSource("ILOSTAT", subtype = "EmplByActivityModelled", convert = TRUE)
 }
+
 }
 \author{
 Debbora Leip

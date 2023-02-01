@@ -13,11 +13,9 @@ A MAgPIE object containing sewage quantities and losses
 Reads a dataset containing values for sewage
 }
 \examples{
-
-
-  \dontrun{
-    x <- readSource("VanDerWerf2010")
-  }
+\dontrun{
+x <- readSource("VanDerWerf2010")
+}
 
 }
 \author{

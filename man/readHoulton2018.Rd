@@ -13,9 +13,8 @@ magpie object global resolution by landuse types in Mt of N weathered from rocks
 Read Houlton 2018 model on weathering of N from rocks
 }
 \examples{
-
 \dontrun{
-  readSource("Houlton2018", convert=FALSE)
+readSource("Houlton2018", convert = FALSE)
 }
 }
 \author{

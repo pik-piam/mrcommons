@@ -23,6 +23,8 @@ convertISIMIP <- function(x, subtype) {
     landarea <- collapseDim(landarea, dim = "iso")
     weight   <- landarea
     weight   <- add_columns(weight, dim = 1, addnm = "178p75.-49p25", fill = 0) # add missing weight
-  } else stop("Aggregation rule for given subtype \"", subtype, "\" not defined!")
+  } else {
+    stop("Aggregation rule for given subtype \"", subtype, "\" not defined!")
+  }
   return(toolAggregateCell2Country(x, weight = weight, fill = 0))
 }

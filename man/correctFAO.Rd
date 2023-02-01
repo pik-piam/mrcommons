@@ -18,8 +18,10 @@ Data as MAgPIE object
 Corrects FAO data for known mismatches or insufficiencies
 }
 \examples{
+\dontrun{
+a <- readSource("FAO", "Crop", convert = TRUE)
+}
 
-\dontrun{ a <- readSource("FAO","Crop", convert=TRUE)}
 }
 \seealso{
 \code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},

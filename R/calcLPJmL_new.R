@@ -23,7 +23,6 @@
 #'
 calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
-
   # Create settings for LPJmL from version and climatetype argument
   cfg <- toolLPJmLVersion(version = version, climatetype = climatetype)
 
@@ -47,7 +46,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     ########## PLUG HIST + FUTURE ##########
 
     if (!grepl("historical", climatetype)) {
-
       # For climate scenarios historical data has to be read in from a different file
       readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
                                                       scenario = NULL, variable = NULL))
@@ -91,7 +89,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "day of the year"
 
     } else if (grepl("aet|discharge|runoff|lake_evap|input_lake", subtype)) {
-
       # unit transformation
       if (grepl("aet", subtype)) {
         # Annual evapotranspiration (evaporation + transpiration + interception) given in liter/m^2
@@ -165,7 +162,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "tDM/ha"
 
     } else if (grepl("irrig|cwater_b", subtype)) {
-
       # Transform units: liter/m^2 (= mm) -> m^3/ha
       irrigTransform  <- 10
       # select only irrigated
@@ -173,7 +169,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit             <- "m^3/ha"
 
     } else if (grepl("et_grass", subtype)) {
-
       # Transform units: liter/m^2 (= mm) -> m^3/ha
       watTransform <- 10
       x            <- x * watTransform
@@ -204,7 +199,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     }
 
   } else if (stage == "harmonized") {
-
     # read in historical data for subtype
     baseline        <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_hist,
                                   subtype = subtype, subdata = subdata, stage = "smoothed",
@@ -224,7 +218,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     }
 
   } else if (stage == "harmonized2020") {
-
     # read in historical data for subtype
     baseline2020    <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_gcm,
                                   subtype = subtype, subdata = subdata, stage = "harmonized",

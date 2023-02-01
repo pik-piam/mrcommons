@@ -7,14 +7,13 @@
 #' @author David Chen
 #'
 #' @examples
-#'
 #' \dontrun{
-#'   readSource("Siebert", convert="onlycorrect")
+#' readSource("Siebert", convert = "onlycorrect")
 #' }
+#'
+correctSiebert <- function(x) {
 
-correctSiebert <- function(x){
-
-  x <- toolConditionalReplace(x, conditions = c("is.na()","<0"), replaceby = 0)
+  x <- toolConditionalReplace(x, conditions = c("is.na()", "<0"), replaceby = 0)
   x <- toolCell2isoCell(x)
 
   return(x)

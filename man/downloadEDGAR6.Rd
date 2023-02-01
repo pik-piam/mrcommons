@@ -16,5 +16,5 @@ List of magpie objects with results on cellular level, weight, unit and descript
 download EDGAR emission data
 }
 \author{
-Benjamin Leon Bodirsky,
+Benjamin Leon Bodirsky
 }

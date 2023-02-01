@@ -1,12 +1,24 @@
 #' @title calcPriceAgriculture
 #'
-#' @description provides global prices from the IMPACT model projections, World Bank observations, and FAO
-#' obersvations for MAgPIE commodities in $/tDM
+#' @description provides global prices from the IMPACT model projections,
+#'              World Bank observations, and FAO observations
+#'              for MAgPIE commodities in $/tDM
 #'
-#' @param datasource Options of the source of data:  `IMPACT3.2.2World_Price`, `FAO`, `FAOp` and `WBGEM`.
+#' @param datasource Options of the source of data:
+#'                   `IMPACT3.2.2World_Price`, `FAO`, `FAOp` and `WBGEM`
+#' @param unit       A string with the unit that should be returned.
+#'                   Options are:
+#'   \itemize{
+#'     \item "current LCU"
+#'     \item "current Int$PPP"
+#'     \item "current US$MER"
+#'     \item "constant YYYY LCU"
+#'     \item "constant YYYY Int$PPP"
+#'     \item "constant YYYY US$MER"
+#'   }
 #'
-#' @return List with a magpie object with commodity prices on global level.
-#' @author Mishko Stevanovic, Xiaoxi Wang
+#' @return List with a magpie object with commodity prices
+#' @author Mishko Stevanovic, Xiaoxi Wang, Felicitas Beier
 #' @seealso
 #' [readIMPACT3.2.2World_Price()],
 #' [calcWBGEM()],
@@ -25,48 +37,58 @@
 #' @importFrom reshape2 melt acast
 #'
 
-calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
+calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "US$05/tDM") {
+
   if (datasource == "IMPACT3.2.2World_Price") {
+
     out <- readSource(type = "IMPACT3.2.2World_Price")
+
     # get the mapping
     mapping <- toolGetMapping("impact2magpie.csv", type = "sectoral")
     mapping <- mapping[-which(mapping$MAgPIE == ""), ]
-    out <- toolAggregate(out, rel = mapping, from = "IMPACT", to = "MAgPIE", dim = 3.2, partrel = TRUE, verbosity = 2)
+
+    # aggregate to MAgPIE crops
+    out <- toolAggregate(out, rel = mapping, from = "IMPACT", to = "MAgPIE",
+                         dim = 3.2, partrel = TRUE, verbosity = 2)
 
     # correct the prices for dry matter values
     dm <- 1 / readSource("ProductAttributes", "Products")[, , "wm"]
     dm <- collapseNames(dm)
     commodities <- unique(mapping$MAgPIE)
-    k_trade <- findset("k_trade")
+    ktradeSet <- findset("k_trade")
     out <- out[, , ] / dm[, , commodities]
 
     out <- add_dimension(out, dim = 3.2, add = "model", nm = "IMPACT")
     names(dimnames(out))[3] <- "scenario.model.variable"
 
-    description <- paste0("Prices from the IMPACT model projections. There are ", length(k_trade) - length(commodities),
-                          " missing MAgPIE commodities: ", paste(k_trade[!k_trade %in% commodities], collapse = " "))
-    weight <- NULL
+    description  <- paste0("Prices from the IMPACT model projections. There are ",
+                          length(ktradeSet) - length(commodities),
+                          " missing MAgPIE commodities: ",
+                          paste(ktradeSet[!ktradeSet %in% commodities], collapse = " "))
+    weight       <- NULL
     isocountries <- FALSE
 
   } else if (datasource == "WBGEM") {
+
+    # Prices in US$05/tDM
     x <- calcOutput("WBGEM", aggregate = FALSE)
 
     # sectoral mappings
     mapping <- toolGetMapping(type = "sectoral", name = "mappingWBGEM2MAgPIEnew.csv")
     mapping <- mapping[mapping$wbgem %in% getNames(x), ]
 
-    x <- x[, , mapping$wbgem]
+    x   <- x[, , mapping$wbgem]
     tmp <- mapping %>% group_by(.data$magpie) %>% summarise(V1 = n())
 
-    tmp <- base::merge(mapping, tmp, by = "magpie")
-    weight <- as.magpie(acast(melt(tmp), .~wbgem))
+    tmp    <- base::merge(mapping, tmp, by = "magpie")
+    weight <- as.magpie(acast(melt(tmp), . ~ wbgem))
     getNames(weight) <- gsub("\\..", "", getNames(weight))
 
     x <- toolAggregate(x, mapping, from = "wbgem", to = "magpie", weight = weight, dim = 3)
 
     dm <- 1 / readSource("ProductAttributes", "Products")[, , "wm"]
     dm <- collapseNames(dm)
-    k_trade <- findset("k_trade")
+    ktradeSet <- findset("k_trade")
 
     out <- NULL
     for (i in getNames(x, dim = 1)) {
@@ -80,20 +102,23 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
     names(dimnames(out))[3] <- gsub("data1", "variable", names(dimnames(out))[3])
 
     description <- paste0("Average prices from the WBGEM-Commodities. There are ",
-                          length(k_trade) - length(getNames(out)), " missing MAgPIE commodities: ",
-                          paste(k_trade[!k_trade %in% getNames(out)], collapse = " "))
+                          length(ktradeSet) - length(getNames(out)), " missing MAgPIE commodities: ",
+                          paste(ktradeSet[!ktradeSet %in% getNames(out)], collapse = " "))
     weight <- NULL
     isocountries <- FALSE
 
   } else if (datasource == "FAOp") {
+
     # calculate prices as a ratio of production value and production quantities
     vprod <- calcOutput("AgProductionValue", aggregate = FALSE, datasource = "FAO")
     qprod <- calcOutput("FAOharmonized", aggregate = FALSE)
-    aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
+    aggregation <- toolGetMapping("FAOitems.csv",
+                                  type = "sectoral", where = "mappingfolder")
 
     # aggregate FAO quantities into MAgPIE commodities
-    qprod <- toolAggregate(qprod[, , "production"], rel = aggregation, from = "FoodBalanceItem",
-                           to = "k", dim = 3.1, partrel = TRUE, verbosity = 2)
+    qprod <- toolAggregate(qprod[, , "production"], rel = aggregation,
+                           from = "FoodBalanceItem", to = "k",
+                           dim = 3.1, partrel = TRUE, verbosity = 2)
     qprod <- collapseNames(qprod)
 
     ## convert to DM tonnes
@@ -102,20 +127,24 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
     comms <- intersect(intersect(getNames(dm), getNames(qprod)), getNames(vprod, dim = 3))
     qprod <- qprod[, , comms] * dm[, , comms]
 
-    years <- intersect(getYears(qprod), getYears(vprod))
-    out <- vprod[, years, comms] / qprod[, years, comms]
+    years  <- intersect(getYears(qprod), getYears(vprod))
+    out    <- vprod[, years, comms] / qprod[, years, comms]
     weight <- qprod
     weight[is.na(out) | is.infinite(out)] <- 0
-    out[is.na(out) | is.infinite(out)] <- 0
+    out[is.na(out) | is.infinite(out)]    <- 0
 
     description <- "FAO prices Agricultural Value statistics."
     isocountries <- TRUE
 
   } else if (datasource == "FAO") {
-    out <- readSource("FAO_online", "PricesProducerAnnual", convert = TRUE)
-    aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
-    # production item for oilpalm exists twice: "254|Oil, palm fruit", "254|Oil palm fruit" - in out only the latter
+    # Annual producer prices in US$05/tDM
+    out         <- readSource("FAO_online", subtype = "PricesProducerAnnual", convert = TRUE)
+    aggregation <- toolGetMapping("FAOitems_online.csv",
+                                  type = "sectoral", where = "mappingfolder")
+
+    # production item for oilpalm exists twice:
+    # "254|Oil, palm fruit", "254|Oil palm fruit" - in out only the latter exists
     aggregation <- aggregation[aggregation$ProductionItem != "254|Oil, palm fruit", ]
 
     qprod <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "production"])
@@ -155,9 +184,17 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price") {
     isocountries <- TRUE
   }
 
+  if (unit != "US$05/tDM") {
+    # Transform to selected currency unit
+    out <- GDPuc::convertGDP(out,
+                             unit_in = "constant 2005 US$MER",
+                             unit_out =  unit,
+                             replace_NAs = "no_conversion")
+  }
+
   return(list(x = out,
               weight = weight,
-              unit = "US$05/tDM",
+              unit = unit,
               description = description,
               isocountries = isocountries))
 }

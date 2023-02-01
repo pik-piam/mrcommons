@@ -13,9 +13,8 @@ correctLPJmL_new(x)
 Convert LPJmL content (dummy function)
 }
 \examples{
-
 \dontrun{
-  readSource("LPJmL", convert="onlycorrect")
+readSource("LPJmL", convert = "onlycorrect")
 }
 
 }

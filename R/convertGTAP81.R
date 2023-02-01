@@ -10,7 +10,6 @@
 #' }
 #'
 convertGTAP81 <- function(x, subtype) {
-
   # optimally GDP would be converted from constant 2005 US$MER to current US$MER, but as it is used as weight
   # this shouldn't have a big impact
   GDPmer <- calcOutput("GDPPast", GDPPast = "WDI-MI", unit = "constant 2005 US$MER", aggregate = FALSE)

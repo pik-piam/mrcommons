@@ -19,9 +19,8 @@ Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014.
 Environmental Research Letters.
 }
 \examples{
-
-\dontrun{ 
-readSource("Lassaletta2014",subtype="budget",convert=FALSE)
+\dontrun{
+readSource("Lassaletta2014", subtype = "budget", convert = FALSE)
 }
 }
 \seealso{

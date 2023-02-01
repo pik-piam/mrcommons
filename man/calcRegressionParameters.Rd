@@ -16,8 +16,7 @@ List of magpie objects with results on country level, weight on country level, u
 Writes down the equation parameters from various data sources
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("RegressionParameters")
 }
 

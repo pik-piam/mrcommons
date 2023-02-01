@@ -14,8 +14,7 @@ weights (NULL) as a list of two MAgPIE objects
 Provides REMIND data for baseline emissions for maccs.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("calcEmiMac")
 }
 }

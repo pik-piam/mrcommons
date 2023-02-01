@@ -68,7 +68,7 @@ calcFactorIntensity <- function(output = "intensities", method = "USDA") {
        }
 
 
-   } else if (method == "CapitalStock" & output %in% c("intensities", "requirements")) {
+   } else if (method == "CapitalStock" && output %in% c("intensities", "requirements")) {
 
           # Fraction of each crop on overall Value of Production (Agriculture, Forestry and Fisheries)
           vopCrops <- calcOutput("VoPcrops", aggregate = FALSE)

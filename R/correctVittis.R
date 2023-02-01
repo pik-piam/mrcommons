@@ -1,14 +1,13 @@
 #' @title correctVittis
 #' @description Correct inconsistencies in crop naming in the Vittis dataset
 #' @param x magpie object provided by the read function
-#' @return corrected mapie object on national-scale costs of production for 10 
+#' @return corrected mapie object on national-scale costs of production for 10
 #' crops, disaggregated in 9 distinct cost elements
 #' @author Debbora Leip
 #' @seealso
 #' [readVittis()]
 
 correctVittis <- function(x) {
-
   # fix inconsistent naming
   x[, , "whea"] <- dimSums(x[, , c("wheat", "whea")], dim = "CropType", na.rm = TRUE)
   x[, , "barl"] <- dimSums(x[, , c("bar", "barl")], dim = "CropType", na.rm = TRUE)
@@ -23,6 +22,6 @@ correctVittis <- function(x) {
 
   # remove obsolete crop categories
   x <- x[, , c("wheat", "bar", "potato", "corn", "oats", "rape"), invert = TRUE]
-  
+
   return(x)
 }

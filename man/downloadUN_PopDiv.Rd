@@ -10,8 +10,8 @@ downloadUN_PopDiv()
 Download UN_PopDiv dataset (World Population Prospects)
 }
 \examples{
-
-\dontrun{ a <- downloadSource()
+\dontrun{
+a <- downloadSource()
 }
 }
 \seealso{

@@ -27,5 +27,5 @@ readSource("LPJmL_new", convert = FALSE)
 }
 }
 \author{
-Kristine Karstens, Marcos Alves
+Kristine Karstens, Marcos Alves, Felicitas Beier
 }

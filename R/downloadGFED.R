@@ -12,7 +12,6 @@
 #' @importFrom utils download.file
 
 downloadGFED <- function() {
-
   # yearly GFED data
   base_URL <- "https://www.geo.vu.nl/~gwerf/GFED/GFED4/"
   years <- seq(1997, 2016) # ignoring current years in beta

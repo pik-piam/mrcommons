@@ -18,8 +18,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates Nitrogen Budgets for Oceans on global level. Values are placed in Antarcica (ATA)
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NitrogenBudgetOcean")
 }
 }

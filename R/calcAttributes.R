@@ -8,15 +8,11 @@
 #' @seealso
 #' [readProductAttributes()]
 #' @examples
-#' 
-#' \dontrun{ 
+#' \dontrun{
 #' calcOutput("Attributes")
 #' }
-#' 
-
-
-
-calcAttributes<-function(subtype="Products"){
-  attributes<-readSource("ProductAttributes",subtype = subtype)
-  return(list(x=attributes,weight=NULL,unit="t X per t dry matter (DM), except generalizable energy (ge), where it is PJ/Mt DM.",description="Values from literature survey. See SVN: tools/Nutrients/crop_specifications.ods or livestock_specifications.ods"))
+#'
+calcAttributes <- function(subtype = "Products") {
+  attributes <- readSource("ProductAttributes", subtype = subtype)
+  return(list(x = attributes, weight = NULL, unit = "t X per t dry matter (DM), except generalizable energy (ge), where it is PJ/Mt DM.", description = "Values from literature survey. See SVN: tools/Nutrients/crop_specifications.ods or livestock_specifications.ods"))
 }

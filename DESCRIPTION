@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.23.14
-Date: 2022-12-06
+Version: 1.25.19
+Date: 2023-02-01
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -39,7 +39,7 @@ Description: Provides useful functions and a common structure to all the input d
 Depends:
     R (>= 2.10.0),
     magclass (>= 3.17),
-    madrat (>= 2.12.0),
+    madrat (>= 2.20.9),
     mrdrivers (>= 0.2.1),
     mstools
 Imports:
@@ -54,7 +54,6 @@ Imports:
     nleqslv,
     purrr,
     quitte,
-    R.utils,
     raster,
     terra,
     readxl,
@@ -82,6 +81,6 @@ URL:
 BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

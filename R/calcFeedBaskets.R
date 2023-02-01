@@ -145,6 +145,7 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
     weightKLI <- setYears(weightKLI[, year, ], NULL)
 
     .calcFbaskShr <- function(x, main, dim) {
+
       out <- dimSums(x * main, dim = dim) / dimSums(x, dim = dim)
       if (anyNA(out)) {
         replacement <- as.magpie(apply(out, 3, mean, na.rm = TRUE))
@@ -184,6 +185,7 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       outm[, , missing] <- fbaskShr[, , "main", drop = TRUE][, , missing]
 
       out <- add_dimension(fbaskShr, dim = 3.2, add = "scen", nm = getNames(outm, dim = 2))
+
       out[, , "main"] <- outm
       out[, , "anti"] <- 1 - out[, , "main"] - out[, , "const"]
       # remove negative values:
@@ -203,10 +205,12 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
     # Read in efficiencies and calibrate them
     outEff <- calcOutput("FeedEfficiencyFuture", aggregate = FALSE)
     .calcMultiplier <- function(x, year) {
+
       out <- x / setYears(x[, year, ], NULL)
       out[is.nan(out) | is.infinite(out)] <- 1
       return(out)
     }
+
     multEff  <- .calcMultiplier(outEff, year)
 
     .calcFshare <- function(fbaskSys, ctype, calShr, weightSYS, year) {
@@ -285,7 +289,7 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
 
     # remove non_eaten_food if not established as product yet
     if (!non_eaten_food) {
-      data       <- data[, , "non_eaten_food", invert = TRUE]
+      data      <- data[, , "non_eaten_food", invert = TRUE]
       weightKLI <- weightKLI[, , "non_eaten_food", invert = TRUE]
     }
 

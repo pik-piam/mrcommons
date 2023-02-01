@@ -17,7 +17,7 @@ Correct LPJmL content
 }
 \examples{
 \dontrun{
-readSource("LPJmL", subtype="soilc", convert="onlycorrect")
+readSource("LPJmL", subtype = "soilc", convert = "onlycorrect")
 }
 
 }

@@ -59,6 +59,7 @@ calcFAOTradePrices <- function(aggregation = "k") {
   out <- mbind(importPrice, exportPrice)
 
   weight <- tradeAgg[, , c("export", "import")]
+
   getNames(weight, dim = 2) <- c("importPrice_$kg", "exportPrice_$kg")
 
   return(list(x = out,

@@ -15,7 +15,7 @@ correct LPJmLInputs content (dummy function)
 }
 \examples{
 \dontrun{
-  readSource("LPJmLInputs", convert="onlycorrect")
+readSource("LPJmLInputs", convert = "onlycorrect")
 }
 
 }

@@ -4,20 +4,19 @@
 #'
 #' @author David M Chen, Edna Molina Bacca
 
-downloadGGCMICropCalendar <- function(){
-
-
-#spring and winter wheat
-wheatfile = "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/landuse/winter_spring_wheat_separation/winter_and_spring_wheat_areas_phase3.nc4"
+downloadGGCMICropCalendar <- function() {
+# spring and winter wheat
+wheatfile <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/landuse/winter_spring_wheat_separation/winter_and_spring_wheat_areas_phase3.nc4"
 
  if (file.exists(wheatfile)) {
           file.copy(wheatfile, basename(wheatfile))
          } else {
-          vcat(1, paste0("Data for wheat masks could not be found!"))}
+          vcat(1, paste0("Data for wheat masks could not be found!"))
+}
 
 for (crop in c("bar", "bea", "cas", "cot", "mai", "mil",
                "nut", "pea", "pot", "rap", "ri1", "ri2", "rye",
-               "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")){
+               "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")) {
     for (irr in c("ir", "rf")) {
 
 path <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar"
@@ -27,7 +26,8 @@ path <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar"
       if (file.exists(file)) {
           file.copy(file, basename(file))
          } else {
-          vcat(1, paste0("Data for requested subtype \"",path,"\" could not be found!"))}
+          vcat(1, paste0("Data for requested subtype \"", path, "\" could not be found!"))
+}
     }
 }
 
@@ -44,7 +44,3 @@ return(list(
 ))
 
   }
-
-
-
-
