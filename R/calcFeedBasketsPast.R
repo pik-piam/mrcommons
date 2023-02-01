@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' @title calcFeedBasketsPast
 #'
 #' @description Calculate historical feed baskets
@@ -12,15 +11,6 @@
 #' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets,
 #' if not it is excluded.
 #'
-=======
-#' Calculate historical feed baskets based on output of MAgPIE_FEED model
-#' as DM feed biomass (different types of feed) needed per DM livestock products
-#'
-#'
-#' @return Historical feed baskets and corresonding weights as a list of two MAgPIE
-#' objects
-#' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
->>>>>>> 2ae465866a49f542654f8a61daa50afb86e26a14
 #' @author Isabelle Weindl, Benjamin Bodirsky
 #' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
