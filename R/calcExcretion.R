@@ -95,6 +95,5 @@ calcExcretion <- function(cellular = FALSE, attributes = "npk") {
               unit = unit,
               min = 0,
               description = "Excreted nutrients per animal type and animal waste system",
-              isocountries = !cellular)
-  )
+              isocountries = !cellular))
 }
