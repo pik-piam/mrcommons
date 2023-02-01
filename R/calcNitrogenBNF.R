@@ -12,10 +12,9 @@
 #'
 calcNitrogenBNF <- function(cellular = FALSE) {
 
-  past <- findset("past")
   land <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
-  bnf_rate <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
-  bnf <- land * bnf_rate
+  bnfRate <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
+  bnf <- land * bnfRate
   bnf[, , c("crop", "urban")] <- 0
 
   if (!cellular) {
@@ -27,7 +26,8 @@ calcNitrogenBNF <- function(cellular = FALSE) {
   }
 
   bnf[, , "crop"] <- dimSums(
-    calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular, fixation_types = "both", sum_plantparts = TRUE),
+    calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular,
+               fixation_types = "both", sum_plantparts = TRUE),
 dim = c(3))
 
   return(list(x = bnf,

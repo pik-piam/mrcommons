@@ -19,7 +19,8 @@ calcNutrientBudgetSewage <- function(historic = TRUE) {
   drecht <- readSource("VanDrecht2009")
 
   if (historic) {
-    drecht <- collapseNames(time_interpolate(drecht[, , "GO"], interpolated_year = past, integrate_interpolated_years = FALSE, extrapolation_type = "constant"))
+    drecht <- collapseNames(time_interpolate(drecht[, , "GO"], interpolated_year = past,
+                                             integrate_interpolated_years = FALSE, extrapolation_type = "constant"))
     population <- calcOutput("PopulationPast", aggregate = FALSE)[, past, ]
   } else {
     ssps <- c("SSP1", "SSP2", "SSP3", "SSP4", "SSP5")
@@ -30,13 +31,16 @@ calcNutrientBudgetSewage <- function(historic = TRUE) {
     drecht[, , "SSP4"] <- drecht[, , "AM"]
     drecht[, , "SSP5"] <- drecht[, , "GO"]
     drecht <- drecht[, , ssps]
-    drecht <- collapseNames(time_interpolate(drecht, interpolated_year = findset("time"), integrate_interpolated_years = FALSE, extrapolation_type = "constant"))
-    population <- collapseNames(calcOutput("Population", naming = "indicator.scenario", PopulationFuture = "SSP", aggregate = FALSE)[, , ssps])
+    drecht <- collapseNames(time_interpolate(drecht, interpolated_year = findset("time"),
+                                             integrate_interpolated_years = FALSE, extrapolation_type = "constant"))
+    population <- collapseNames(calcOutput("Population", naming = "indicator.scenario",
+                                           PopulationFuture = "SSP", aggregate = FALSE)[, , ssps])
   }
 
   detergent <- population * drecht[, , "det_p_pp"]
 
-  inflow <- dimSums(calcOutput("FoodWasteAndSewage", historic = historic, aggregate = FALSE)[, , c("urine", "feces")], dim = c(3.1))
+  inflow <- dimSums(calcOutput("FoodWasteAndSewage", historic = historic,
+                               aggregate = FALSE)[, , c("urine", "feces")], dim = c(3.1))
   inflow[, , "p"] <- inflow[, , "p"] + detergent
 
   sewage <- removed <- surfacewater <- collapseNames(inflow * drecht[, , "sewage_shr"])
