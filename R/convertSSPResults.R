@@ -28,10 +28,12 @@ convertSSPResults <- function(x) {
   data <- x[, , selection]
 
   # read in disaggregation weight population
-  pop_past <- calcOutput("PopulationPast", aggregate = FALSE)[, "y2010", ] # Read about CalcOutput
-  pop_past <- setYears(pop_past, NULL)
+  popPast <- calcOutput("PopulationPast", aggregate = FALSE)[, "y2010", ]
+  popPast <- setYears(popPast, NULL)
 
-  aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE], rel = mappingFile, weight =  pop_past, dim = 1, partrel = FALSE, from = "RegionCode", to = "CountryCode")
+  aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE],
+                                 rel = mappingFile, weight =  popPast, dim = 1, partrel = FALSE,
+                                 from = "RegionCode", to = "CountryCode")
 
   # no data with NA
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
@@ -39,21 +41,26 @@ convertSSPResults <- function(x) {
 
   # ---- Land ----
 
+  #nolint start
   selection <- c("Land Cover (million ha)", "Land Cover|Built-up Area (million ha)",
-                "Land Cover|Cropland (million ha)", "Land Cover|Cropland|Energy Crops (million ha)",
-                "Land Cover|Forest (million ha)", "Land Cover|Forest|Forestry (million ha)",
-                "Land Cover|Forest|Forestry|Harvested Area (million ha)", "Land Cover|Forest|Natural Forest (million ha)",
-                "Land Cover|Other Arable Land (million ha)", "Land Cover|Other Land (million ha)",
-                "Land Cover|Other Natural Land (million ha)", "Land Cover|Pasture (million ha)")
+                 "Land Cover|Cropland (million ha)", "Land Cover|Cropland|Energy Crops (million ha)",
+                 "Land Cover|Forest (million ha)", "Land Cover|Forest|Forestry (million ha)",
+                 "Land Cover|Forest|Forestry|Harvested Area (million ha)", "Land Cover|Forest|Natural Forest (million ha)",
+                 "Land Cover|Other Arable Land (million ha)", "Land Cover|Other Land (million ha)",
+                 "Land Cover|Other Natural Land (million ha)", "Land Cover|Pasture (million ha)")
+  #nolint end
 
-  weight <- setYears(dimSums(calcOutput("LanduseInitialisation", aggregate = FALSE), dim = 3)[, 2010, ], NULL) # use land area as weight
+  # use land area as weight
+  weight <- setYears(dimSums(calcOutput("LanduseInitialisation", aggregate = FALSE), dim = 3)[, 2010, ], NULL)
 
   for (sel in selection) {
     print(sel)
     data <- x[, , sel]
     # weight is needed here. Otherwise all countries belonging to a region get the same value!
-    # please replace pop_past with a proper weigt. For instance area.
-    aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE], rel = mappingFile, weight =  weight, dim = 1, partrel = FALSE, from = "RegionCode", to = "CountryCode")
+    # please replace popPast with a proper weigt. For instance area.
+    aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE],
+                                   rel = mappingFile, weight =  weight, dim = 1, partrel = FALSE,
+                                   from = "RegionCode", to = "CountryCode")
     aggregatedREG <- toolCountryFill(aggregatedREG, 000)
     out <- mbind(out, aggregatedREG)
   }
@@ -66,12 +73,16 @@ convertSSPResults <- function(x) {
                "Agricultural Demand|Bioenergy|1st generation (million t DM/yr)",
                "Agricultural Demand|Bioenergy|2nd generation (million t DM/yr)")
 
-  weight_bio <- setYears(dimSums(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, aggregate = FALSE), dim = 3)[, 2010, ], NULL) # use harvested area as weight
+  # use harvested area as weight
+  weightBio <- setYears(dimSums(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, aggregate = FALSE),
+                                 dim = 3)[, 2010, ], NULL)
 
   for (sel in selection) {
     print(sel)
     data <- x[, , sel]
-    aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE], rel = mappingFile, weight =  weight_bio, dim = 1, partrel = FALSE, from = "RegionCode", to = "CountryCode")
+    aggregatedREG <- toolAggregate(data["GLO", , , invert = TRUE], rel = mappingFile,
+                                   weight =  weightBio, dim = 1, partrel = FALSE,
+                                   from = "RegionCode", to = "CountryCode")
     aggregatedREG <- toolCountryFill(aggregatedREG, 000)
     out <- mbind(out, aggregatedREG)
   }
@@ -82,7 +93,8 @@ convertSSPResults <- function(x) {
 
   data <- x[, , selection]
   data[is.na(data)] <- 0
-  aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE, from = "RegionCode", to = "CountryCode")
+  aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
+                                 from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
   out <- mbind(out, aggregatedREG)
 
@@ -91,7 +103,8 @@ convertSSPResults <- function(x) {
   selection <- c("Price|Primary Energy|Biomass (US$2005/GJ)")
 
   data <- x[, , selection]
-  aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE, from = "RegionCode", to = "CountryCode")
+  aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
+                                 from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
   out <- mbind(out, aggregatedREG)
 
