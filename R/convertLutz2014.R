@@ -1,7 +1,7 @@
 #' @title convertLutz2014
 #'
 #' @description It fills the missing values of the output of readLutz2014 through
-#' the weighted average of the values of two countries with similar characteristcs
+#' the weighted average of the values of two countries with similar characteristics
 #' to the one that has na values.
 #' @param x magpie object provided by the read function
 #'
