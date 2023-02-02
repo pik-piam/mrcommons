@@ -33,17 +33,17 @@ downloadISIMIP <- function(subtype) {
                                         gcm     = c("gfdl-esm2m", "hadgem2-es", "ipsl-cm5a-lr", "miroc5"),
                                         version = c("2a", "2b", "3a", "3b")))
 
-    paths <- c(airww = paste0("ISIMIP", x$version, "/OutputData/water_global/",
+    paths <- c(airww = paste0("ISIMIP", x$version, "/OutputData/water_global/",  # nolint: absolute_path_linter.
                               x$model, "/", x$gcm, "/historical/",
                               tolower(x$model), "_", tolower(x$gcm),
                               "_ewembi_picontrol_histsoc_co2_airrww_global_monthly_1861_2005.nc4"))
 
     path <- toolSubtypeSelect(x$dataset, paths)
-    if (file.exists(paste0("/p/projects/isimip/isimip/", path))) {
-      storage <- "/p/projects/isimip/isimip/"
+    if (file.exists(paste0("/p/projects/isimip/isimip/", path))) {  # nolint: absolute_path_linter.
+      storage <- "/p/projects/isimip/isimip/"  # nolint: absolute_path_linter.
       file.copy(paste0(storage, path), basename(path))
     } else {
-      storage <- "https://files.isimip.org/"
+      storage <- "https://files.isimip.org/"  # nolint: absolute_path_linter.
       # download the data
       err <- try(suppressWarnings(download.file(paste0(storage, path),
                                                 destfile = basename(path), mode = "wb",
@@ -97,6 +97,7 @@ downloadISIMIP <- function(subtype) {
 
     for (crop in c("mai", "ri1", "ri2", "swh", "wwh", "soy")) {
       for (irr in c("firr", "noirr")) {
+
         paths <- c(yields = paste0(x$model, "/phase", x$version, "/",
                                    x$gcm, "/", x$scen, "/", crop, "/",
                                    tolower(x$model), "_", tolower(x$gcm),
@@ -104,8 +105,8 @@ downloadISIMIP <- function(subtype) {
                                    crop, "-", irr, "_global_annual_", years, ".nc"))
 
         path <- toolSubtypeSelect(x$dataset, paths)
-        if (file.exists(paste0("/p/projects/macmit/data/GGCMI/AgMIP.output/", path))) {
-          storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"
+        if (file.exists(paste0("/p/projects/macmit/data/GGCMI/AgMIP.output/", path))) {  # nolint: absolute_path_linter.
+          storage <- "/p/projects/macmit/data/GGCMI/AgMIP.output/"  # nolint: absolute_path_linter.
           file.copy(paste0(storage, path), basename(path))
         } else {
           vcat(1, paste0("Data for requested subtype \"", path, "\" could not be found!"))

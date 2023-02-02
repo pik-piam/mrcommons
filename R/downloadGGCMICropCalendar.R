@@ -6,7 +6,7 @@
 
 downloadGGCMICropCalendar <- function() {
   # spring and winter wheat
-  wheatfile <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/landuse/winter_spring_wheat_separation/winter_and_spring_wheat_areas_phase3.nc4"
+  wheatfile <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/landuse/winter_spring_wheat_separation/winter_and_spring_wheat_areas_phase3.nc4" # nolint
 
   if (file.exists(wheatfile)) {
     file.copy(wheatfile, basename(wheatfile))
@@ -19,7 +19,7 @@ downloadGGCMICropCalendar <- function() {
                  "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")) {
     for (irr in c("ir", "rf")) {
 
-      path <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar"
+      path <- "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar" # nolint: absolute_path_linter.
 
       file <-  file.path(path, paste0(crop, "_", irr, "_ggcmi_crop_calendar_phase3_v1.01.nc4"))
 
@@ -32,7 +32,7 @@ downloadGGCMICropCalendar <- function() {
   }
 
   return(list(
-    url          = "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar",
+    url          = "/p/projects/macmit/data/GGCMI/AgMIP.input/phase3/crop_calendar",  # nolint: absolute_path_linter.
     title        = "Crop calendar information for GGCMI",
     description  = "harvested area fraction, Planting day, maturity day, growing seasons length, and data source",
     revision     = "Phase3_v1.01",

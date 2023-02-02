@@ -64,9 +64,9 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
 
   # handling the separate sources of grass runs
   if (!grepl("Pasture", x$version, ignore.case = TRUE)) {
-    storage   <- "/p/projects/landuse/users/cmueller/"
+    storage   <- "/p/projects/landuse/users/cmueller/"  # nolint: absolute_path_linter.
   } else {
-    storage   <- "/p/projects/rd3mod/inputdata/sources/LPJmL/"
+    storage   <- "/p/projects/rd3mod/inputdata/sources/LPJmL/"  # nolint: absolute_path_linter.
   }
 
   path <- paste(x$version, x$climatemodel, x$scenario, sep = "/")
@@ -106,8 +106,8 @@ downloadLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:h
               doi           = NULL,
               title         = x$version,
               author        = list(person("Christoph", "Mueller", email = "cmueller@pik-potsdam.de"),
-                                   person("Jens",      "Heinke", email = "heinke@pik-potsdam.de"),
-                                   person("Stephen",   "Writh",  email = "wirth@pik-potsdam.de")),
+                                   person("Jens",      "Heinke",  email = "heinke@pik-potsdam.de"),
+                                   person("Stephen",   "Writh",   email = "wirth@pik-potsdam.de")),
               version       = x$version,
               release_date  = NULL,
               description   = NULL,
