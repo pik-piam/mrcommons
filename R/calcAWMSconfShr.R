@@ -31,7 +31,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "ssp1",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -42,7 +42,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "ssp2",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -52,7 +52,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "ssp3",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -62,7 +62,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "ssp4",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -72,7 +72,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "ssp5",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -82,7 +82,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "a1",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -92,7 +92,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "a2",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -102,7 +102,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "b1",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -112,7 +112,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
 
   out <- toolAWMSScenarioCreation(
     name = "b2",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2020 = c(0.04, 0.2, 0.76),
@@ -123,7 +123,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
   if (rev >= 4.33) {
   out <- toolAWMSScenarioCreation(
     name = "GoodPractice",
-    start_year = "y2010",
+    startYear = "y2010",
     categories = c("digester", "daily_spread", "traditional"),
     values <- list(
       y2015 = c(0.15, 0, 0.85),
