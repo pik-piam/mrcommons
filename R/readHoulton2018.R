@@ -7,7 +7,7 @@
 #' \dontrun{
 #' readSource("Houlton2018", convert = FALSE)
 #' }
-#' @importFrom raster raster resample crs area
+#' @importFrom raster raster resample crs area extent
 #' @export
 
 readHoulton2018 <- function() {

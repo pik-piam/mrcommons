@@ -16,5 +16,6 @@ List of magpie objects with results on cellular level, weight, unit and descript
 read LUH inputs
 }
 \author{
-Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
+Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier,
+Jan Philipp Dietrich, Patrick v. Jeetze
 }
