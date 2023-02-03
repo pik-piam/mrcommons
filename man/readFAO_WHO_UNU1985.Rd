@@ -10,7 +10,8 @@ readFAO_WHO_UNU1985()
 MAgPIE object
 }
 \description{
-Food and Agriculture Organization of the United Nations, World Health Organization, and United Nations University. 1985. "Energy and protein requirements." http://www.who.int/iris/handle/10665/39527.
+Food and Agriculture Organization of the United Nations, World Health Organization, and United Nations University.
+1985. "Energy and protein requirements." http://www.who.int/iris/handle/10665/39527.
 }
 \examples{
 \dontrun{
