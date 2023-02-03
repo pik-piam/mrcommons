@@ -1,8 +1,9 @@
 #' @title calcLPJmlCarbon
 #' @description Handle LPJmL data for carbon module
 #'
-#' @param landtype Switch between different land use types ("lu_maize_*", "lu_grass", "nat_veg")
-#' @param subtype Switch between diffrent input ("soil_layer", "mrh_*", "lit*", "vegc") and also processed data (soilc_0-30, rh_0-30)
+#' @param landtype    Switch between different land use types ("lu_maize_*", "lu_grass", "nat_veg")
+#' @param subtype     Switch between diffrent input ("soil_layer", "mrh_*", "lit*", "vegc")
+#'                    and also processed data (soilc_0-30, rh_0-30)
 #' @param climatetype Switch between different climate scenarios ("historical")
 #' @param selectyears defaults to past
 #'
@@ -15,8 +16,8 @@
 #' calcOutput("LPJmlCarbon", landtype = "nat_veg", subtype = "soilc_layer", aggregate = FALSE)
 #' }
 #'
-calcLPJmlCarbon <- function(climatetype = "historical", landtype = "nat_veg", subtype = "soilc_layer", selectyears = "past") {
-
+calcLPJmlCarbon <- function(climatetype = "historical", landtype = "nat_veg",
+                            subtype = "soilc_layer", selectyears = "past") {
 
   years <- sort(findset(selectyears, noset = "original"))
 
@@ -26,87 +27,108 @@ calcLPJmlCarbon <- function(climatetype = "historical", landtype = "nat_veg", su
 
   if (subtype %in% c("soilc_0-30")) {
 
-    LPJml_input <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "soilc_layer", selectyears = selectyears, aggregate = FALSE)
+    inputLPJmL <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                              landtype = landtype, subtype = "soilc_layer",
+                              selectyears = selectyears, aggregate = FALSE)
 
-    weight_layers <- as.magpie(c(layer1 = 1,
-                                   layer2 = 1 / 3,
-                                   layer3 = 0,
-                                   layer4 = 0,
-                                   layer5 = 0))
+    weightLayers <- as.magpie(c(layer1 = 1,
+                                 layer2 = 1 / 3,
+                                 layer3 = 0,
+                                 layer4 = 0,
+                                 layer5 = 0))
 
-    LPJml_input   <- dimSums(LPJml_input * weight_layers, dim = "layer")
-    getNames(LPJml_input, dim = "data") <- "soilc_0-30"
+    inputLPJmL   <- dimSums(inputLPJmL * weightLayers, dim = "layer")
+    getNames(inputLPJmL, dim = "data") <- "soilc_0-30"
 
   } else if (subtype %in% c("soilc")) {
 
-    LPJml_input <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "soilc_layer", selectyears = selectyears, aggregate = FALSE)
-    LPJml_input <- dimSums(LPJml_input, dim = "layer")
-    getNames(LPJml_input, dim = "data") <- "soilc"
+    inputLPJmL <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                             landtype = landtype, subtype = "soilc_layer",
+                             selectyears = selectyears, aggregate = FALSE)
+    inputLPJmL <- dimSums(inputLPJmL, dim = "layer")
+    getNames(inputLPJmL, dim = "data") <- "soilc"
 
   } else if (subtype %in% c("rh_0-30")) {
 
-    rh_layer1 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer0", selectyears = selectyears, aggregate = FALSE)
-    rh_layer2 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer1", selectyears = selectyears, aggregate = FALSE)
+    rhLayer1 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer0",
+                           selectyears = selectyears, aggregate = FALSE)
+    rhLayer2 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer1",
+                           selectyears = selectyears, aggregate = FALSE)
 
-    weight_layers <- as.magpie(c(layer0 = 1, layer1 = 1 / 3))     # weighting to get 0-30cm
-    LPJml_input   <- mbind(rh_layer1, rh_layer2)
-    LPJml_input   <- dimSums(LPJml_input * weight_layers, dim = "layer")
-    getNames(LPJml_input, dim = "data") <- "rh_0-30"
+    # weighting to get 0-30cm
+    weightLayers <- as.magpie(c(layer0 = 1, layer1 = 1 / 3))
+    inputLPJmL   <- mbind(rhLayer1, rhLayer2)
+    inputLPJmL   <- dimSums(inputLPJmL * weightLayers, dim = "layer")
+    getNames(inputLPJmL, dim = "data") <- "rh_0-30"
 
   } else if (subtype %in% c("rh")) {
 
-    rh_layer1 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer0", selectyears = selectyears, aggregate = FALSE)
-    rh_layer2 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer1", selectyears = selectyears, aggregate = FALSE)
-    rh_layer3 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer2", selectyears = selectyears, aggregate = FALSE)
-    rh_layer4 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer3", selectyears = selectyears, aggregate = FALSE)
-    rh_layer5 <- calcOutput("LPJmlCarbon", climatetype = climatetype, landtype = landtype, subtype = "mrh_layer4", selectyears = selectyears, aggregate = FALSE)
+    rhLayer1 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer0",
+                           selectyears = selectyears, aggregate = FALSE)
+    rhLayer2 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer1",
+                           selectyears = selectyears, aggregate = FALSE)
+    rhLayer3 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer2",
+                           selectyears = selectyears, aggregate = FALSE)
+    rhLayer4 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer3",
+                           selectyears = selectyears, aggregate = FALSE)
+    rhLayer5 <- calcOutput("LPJmlCarbon", climatetype = climatetype,
+                           landtype = landtype, subtype = "mrh_layer4",
+                           selectyears = selectyears, aggregate = FALSE)
 
-    LPJml_input   <- mbind(rh_layer1, rh_layer2, rh_layer3, rh_layer4, rh_layer5)
-    LPJml_input   <- dimSums(LPJml_input, dim = "layer")
-    getNames(LPJml_input, dim = "data") <- "rh"
+    inputLPJmL <- mbind(rhLayer1, rhLayer2, rhLayer3, rhLayer4, rhLayer5)
+    inputLPJmL <- dimSums(inputLPJmL, dim = "layer")
+    getNames(inputLPJmL, dim = "data") <- "rh"
 
   } else {
-  #################
-  ### Raw LPJmL ###
-  #################
+    #################
+    ### Raw LPJmL ###
+    #################
 
     if ("y2010" %in% years) {
       saveyears <- years
       if ("y2009" %in% years) {
-years <- years[1:(length(years) - 1)]
+        years <- years[1:(length(years) - 1)]
       } else              {
-years[length(years)] <- "y2009"
-}
+        years[length(years)] <- "y2009"
+      }
       expandyears <- TRUE
     } else {
-expandyears <- FALSE
-}
+      expandyears <- FALSE
+    }
 
-    readin_name <- paste0(climatetype, ".", landtype, ".", subtype)
-    LPJml_input <- readSource("LPJmlCarbon", subtype = readin_name, convert = "onlycorrect")[, years, ]
+    readinName <- paste0(climatetype, ".", landtype, ".", subtype)
+    inputLPJmL <- readSource("LPJmlCarbon", subtype = readinName, convert = "onlycorrect")[, years, ]
 
     if (expandyears) {
-      years       <- saveyears
-      TimeExpand  <- setYears(LPJml_input[, "y2009", ], "y2010")
-      LPJml_input <- mbind(LPJml_input, TimeExpand)[, years, ]
+      years      <- saveyears
+      timeExpand <- setYears(inputLPJmL[, "y2009", ], "y2010")
+      inputLPJmL <- mbind(inputLPJmL, timeExpand)[, years, ]
     }
 
     if (grepl("^m", subtype)) {
-
-      LPJml_input   <- dimSums(LPJml_input, dim = "month")                                     ### conversion to annual values for extensive quantities
-      getNames(LPJml_input, dim = 3)  <- substring(getNames(LPJml_input, dim = 3), 2)            ### annual values as standard come wthout prefix
+      # conversion to annual values for extensive quantities
+      inputLPJmL   <- dimSums(inputLPJmL, dim = "month")
+      getNames(inputLPJmL, dim = 3)  <- substring(getNames(inputLPJmL, dim = 3), 2)
+      # Note: annual values as standard come without prefix
     }
   }
 
-  ### weights as land surface area???
-  # Landarea <- dimSums(calcOutput("LUH2v2", cellular=TRUE, selectyears=selectyears,aggregate= FALSE), dim=3)
+  ### weights as land surface area??? KRISTINE: Please clarify.
+  # Landarea <- dimSums(calcOutput("LUH2v2", cellular=TRUE, selectyears=selectyears,aggregate= FALSE), dim=3) # nolint
 
-
-  return(list(
-    x = LPJml_input,
-    weight = NULL,
-    unit = "tC/ha",
-    description = paste0("Carbon output from LPJmL (", subtype, ") for ", climatetype, " climate and ", landtype, " landuse type."),
-    isocountries = FALSE))
+  return(list(x            = inputLPJmL,
+              weight       = NULL,
+              unit         = "tC/ha",
+              description  = paste0("Carbon output from LPJmL (",
+                                    subtype, ") for ",
+                                    climatetype, " climate and ",
+                                    landtype, " landuse type."),
+              isocountries = FALSE))
 
 }
