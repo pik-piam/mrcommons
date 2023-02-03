@@ -9,7 +9,8 @@ convertLassaletta2014(x, subtype)
 \arguments{
 \item{x}{data object that gets provided by wrapper function readSource}
 
-\item{subtype}{budget provides the nr cropland budgets, fert_to_cropland the sahre of inorganic fertilizers being applied to croplands}
+\item{subtype}{budget provides the nr cropland budgets, fert_to_cropland the share of inorganic fertilizers being
+applied to croplands}
 }
 \value{
 Magpie object with results on country level.
@@ -17,9 +18,10 @@ Magpie object with results on country level.
 \description{
 converts the dataset of
 Lassaletta, L., G. Billen, B. Grizzetti, J. Angalde, and J. Garnier. 2014.
-50 Year Trends in Nitrogen Use Efficiency of World Cropping Systems: The Relationship between Yield and Nitrogen Input to Cropland.
-Environmental Research Letters.
-into a dataset including all countries. Replacing Soviet Union by Russia and Yugoslavia by Serbia without detailed disaggregation.
+50 Year Trends in Nitrogen Use Efficiency of World Cropping Systems: The Relationship between Yield and Nitrogen
+Input to Cropland. Environmental Research Letters.
+into a dataset including all countries. Replacing Soviet Union by Russia and Yugoslavia by Serbia without detailed
+disaggregation.
 }
 \examples{
 \dontrun{

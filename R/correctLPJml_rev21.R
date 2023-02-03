@@ -1,4 +1,4 @@
-correctLPJml_rev21 <- function(x) {
+correctLPJml_rev21 <- function(x) { # nolint: object_name_linter.
   toberemoved <- function(x) {
     if (any(is.na(x))) {
       percent <- sum(is.na(x)) / length(x) * 100

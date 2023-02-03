@@ -2,7 +2,7 @@
 #' @description tool function to calculate the share of manure managed in different animal waste management systems
 #'              in confinements.
 #' @param name Name of the scenario
-#' @param start_year Year were prediction starts
+#' @param startYear Year were prediction starts
 #' @param categories share of manure managed in different animal waste management systems
 #' @param values target values
 #' @param out contains historical data
