@@ -110,7 +110,7 @@ readLUH2v2 <- function(subtype) {
     data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
-    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", subds = "carea"))
+    carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
     ext(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
