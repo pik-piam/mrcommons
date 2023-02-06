@@ -21,6 +21,8 @@ convertKoeppen <- function(x, subtype = "iso") {
 
     return(x)
 
-  } else stop("Cellular koeppen-geiger can not be converted to country level data. Use subtype='iso' for country level data.")
-
+  } else {
+    stop(paste("Cellular koeppen-geiger can not be converted to country level data.",
+               "Use subtype='iso' for country level data."))
+  }
 }

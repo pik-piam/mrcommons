@@ -1,7 +1,7 @@
 #' @title convertLutz2014
 #'
 #' @description It fills the missing values of the output of readLutz2014 through
-#' the weighted average of the values of two countries with similar carachteristcs
+#' the weighted average of the values of two countries with similar characteristics
 #' to the one that has na values.
 #' @param x magpie object provided by the read function
 #'
@@ -11,10 +11,9 @@
 
 convertLutz2014 <- function(x) {
 
-  pop_wdi <- calcOutput("Population", aggregate = FALSE) # at least one citizen per country
+  popWdi <- calcOutput("Population", aggregate = FALSE) # at least one citizen per country
 
   # handle countries with missing education data before 2010
-  tmp <- where(is.na(x))$true$regions
   # missing years
   missing <- paste0("y", 1965 + (1:9) * 5)
   # keep education structure constant over time
@@ -24,11 +23,12 @@ convertLutz2014 <- function(x) {
   x <- toolCountryFill(x, fill = NA, no_remove_warning = "ANT")
 
   # BB: use of speed_aggregate with an external mapping could replace the following function and speed it up
-  fill_country_by_average_of_region <- function(x, country = "SSD", region = c("AFG", "TCD")) {
+  fill_country_by_average_of_region <- function(x, country, region) {
     vcat(2, paste0("interpolating country: ", country))
     values <- x[region, , ]
-    population <- pop_wdi[country, getYears(values), "pop_SSP2"]
-    x[country, , ]  <-  setCells(dimSums(values, dim = 1) / dimSums(values[, , "Total"][, , "Both"][, , "All"], dim = 1), "GLO") * population
+    population <- popWdi[country, getYears(values), "pop_SSP2"]
+    average <- dimSums(values, dim = 1) / dimSums(values[, , "Total"][, , "Both"][, , "All"], dim = 1)
+    x[country, , ]  <-  setCells(average, "GLO") * population
     return(x)
   }
 
@@ -91,8 +91,7 @@ convertLutz2014 <- function(x) {
 
   # change unit to million
 
-  # x[is.nan(x)] <- 0
-  # x[is.na(x)]  <- 0
-  # NAs lead to problems later-on in the code. Please do a proper replacement as for the other countries!
+  # Replacing NAs by zeros leads to problems later-on in the code.
+  # Please do a proper replacement as for the other countries!
   return(x)
 }

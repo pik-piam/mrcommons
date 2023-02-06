@@ -1,10 +1,16 @@
-#' Calculate historical feed baskets based on output of MAgPIE_FEED model
-#' as DM feed biomass (different types of feed) needed per DM livestock products
+#' @title calcFeedBasketsPast
 #'
+#' @description Calculate historical feed baskets
+#'              based on output of MAgPIE_FEED model
+#'              as DM feed biomass (different types of feed)
+#'              needed per DM livestock products
 #'
-#' @return Historical feed baskets and corresonding weights as a list of two MAgPIE
-#' objects
-#' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
+#' @return Historical feed baskets and corresponding weights
+#' as a list of two MAgPIE objects
+#'
+#' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets,
+#' if not it is excluded.
+#'
 #' @author Isabelle Weindl, Benjamin Bodirsky
 #' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
@@ -12,25 +18,26 @@
 #' calcOutput("FeedBasketsPast")
 #' }
 #' @importFrom magclass getNames
-calcFeedBasketsPast <- function(non_eaten_food = TRUE) {
-  mag_years_past <- findset("past")
-  kli <- findset("kli")
-  kap <- findset("kap")
-  Xkap <- findset("kap", alias = TRUE)
-  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, mag_years_past, ]
 
-  weight <- collapseNames(massbalance[, , kap][, , "dm"][, , "production"])
+calcFeedBasketsPast <- function(non_eaten_food = TRUE) { # nolint
+
+  yearsPast   <- findset("past")
+  kli         <- findset("kli")
+  kap         <- findset("kap")
+  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, yearsPast, ]
+
+  weight           <- collapseNames(massbalance[, , kap][, , "dm"][, , "production"])
   getNames(weight) <- paste0("alias_", getNames(weight))
 
   # read in system-specific feed basket data (for sys_dairy,sys_beef,sys_pig,sys_hen,sys_chicken)
-  fbask_sys <-  calcOutput("FeedBasketsSysPast", aggregate = FALSE)
+  fbaskSys <-  calcOutput("FeedBasketsSysPast", aggregate = FALSE)
 
 
   # read in the ratio of livestock production allocated to the different systems
-  prod_sys_ratio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
+  prodSysRatio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
 
   # calculation of product-specific feed basket data (for livst_chick,livst_egg,livst_milk,livst_pig,livst_rum)
-  fbask <- dimSums(prod_sys_ratio * fbask_sys, dim = 3.1)
+  fbask <- dimSums(prodSysRatio * fbaskSys, dim = 3.1)
 
   # expand kli to kap (i.e. adding animal product "fish")
   missingproducts <- setdiff(kap, kli)
@@ -40,9 +47,10 @@ calcFeedBasketsPast <- function(non_eaten_food = TRUE) {
   data <- fbask
 
   # expand dim=3.2 to kall (add products like wood and woodfuel)
-  kdiff         <- setdiff(findset("kall"), getNames(data, dim = 2))
+  kdiff <- setdiff(findset("kall"),
+                   getNames(data, dim = 2))
   if (length(kdiff) > 0) {
-    data          <- add_columns(data, addnm = kdiff, dim = 3.2)
+    data            <- add_columns(data, addnm = kdiff, dim = 3.2)
     data[, , kdiff] <- 0
   }
 
@@ -52,14 +60,14 @@ calcFeedBasketsPast <- function(non_eaten_food = TRUE) {
     data <- data[, , kall]
   }
 
-
   # remove datasets with NAs in weight/data
-  data <- toolNAreplace(x = data, weight = weight, replaceby = 0)
+  data   <- toolNAreplace(x = data, weight = weight, replaceby = 0)
   weight <- data$weight
-  out <- data$x
-
+  out    <- data$x
 
   return(list(x = out, weight = weight,
           unit = "1",
-          description = "Detailed historical feed requirements in DM per DM products generated for 5 livestock commodities."))
+          description = "Detailed historical feed requirements
+                         in DM per DM products
+                         generated for 5 livestock commodities."))
 }

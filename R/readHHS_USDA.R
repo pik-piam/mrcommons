@@ -10,12 +10,8 @@
 #' @seealso
 #' [convertLassaletta2014()],
 #' [readSource()]
-#' @examples
-#' \dontrun{
-#' readSource("Lassaletta2014", subtype = "budget", convert = FALSE)
-#' }
 #'
-readHHS_USDA <- function() {
+readHHS_USDA <- function() { # nolint: object_name_linter.
   a <- read.csv("appendix2.csv", sep = ";", header = TRUE)
 
   a <- as.magpie(a)

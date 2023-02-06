@@ -24,12 +24,12 @@ readLPJmLInputs <- function(subtype = "lakeshare") {
   # Data settings
   if (subtype %in% c("lakeshare")) {
 
-       unit_transform  <- 0.01
+       unitTrans       <- 0.01
        ncells          <- 67420
        wyears          <- 1
        syear           <- 1
-       averaging_range <- NULL
-       file_type       <- "bin"
+       avgRange        <- NULL
+       filetype       <- "bin"
        bands           <- 1
        datatype        <- integer()
        bytes           <- 1
@@ -37,21 +37,19 @@ readLPJmLInputs <- function(subtype = "lakeshare") {
   }
 
   # Read in the data
-   x <- readLPJ(
-     file_name       = file,
-     wyears          = wyears,
-     syear           = syear,
-     averaging_range = averaging_range,
-     ncells          = ncells,
-     file_type       = file_type,
-     bands           = bands,
-     datatype        = datatype,
-     bytes           = bytes,
-     monthly         = monthly
-   )
+   x <- readLPJ(file_name       = file,
+                wyears          = wyears,
+                syear           = syear,
+                averaging_range = avgRange,
+                ncells          = ncells,
+                file_type       = filetype,
+                bands           = bands,
+                datatype        = datatype,
+                bytes           = bytes,
+                monthly         = monthly)
 
    # Unit transformation
-   x <- x * unit_transform
+   x <- x * unitTrans
 
    # Transform to magpie object and add dimension details
    class(x) <- "array"

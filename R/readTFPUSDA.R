@@ -1,27 +1,19 @@
 #' @title readTFPUSDA
 #' @description Reads the input shares from USDA's Agricultural total factor productivity growth indices assessment.
 #'
-#'
-#'
-#'
-#'
 #' @return magpie object with fractions of different input factors in the overall production value
 #' @author Edna J. Molina Bacca
 #' @importFrom readxl read_excel
 #' @importFrom stats reshape
 #' @seealso [readSource()]
-#' @examples
-#' \dontrun{
-#' a <- readSource("TFP_USD")
-#' }
 readTFPUSDA <- function() {
  # File
   file <- "AgTFPindividualcountries.xlsx"
 
   # Reads countries from the file
   countries <- read_excel(file, sheet = "Cost Shares", range = "D3:D182")
-  FAONcountries <- read_excel(file, sheet = "Cost Shares", range = "B3:B182")
-  regions <- cbind(countries, FAONcountries)
+  faoNCountries <- read_excel(file, sheet = "Cost Shares", range = "B3:B182")
+  regions <- cbind(countries, faoNCountries)
   colnames(regions) <- c("Country/territory", "FAO N")
 
   # Available shares and their location in the file
@@ -60,15 +52,12 @@ readTFPUSDA <- function() {
   x <- magpiesort(as.magpie(data, spatial = 1, temporal = 2, datacol = 4))
 
   # Filling HKG and SGP with developed Asia values
-  FillDevAsia <- new.magpie(cells_and_regions = c("HKG", "SGP"), years = getYears(x), names = getNames(x))
-  FillDevAsia[, , ] <- x["TWN", , ]
-  x <- mbind(x, FillDevAsia)
+  fillDevAsia <- new.magpie(cells_and_regions = c("HKG", "SGP"), years = getYears(x), names = getNames(x))
+  fillDevAsia[, , ] <- x["TWN", , ]
+  x <- mbind(x, fillDevAsia)
 
   # Fills with zeros the countries that were not reported
   x <- toolCountryFill(x, fill = 0)
-
-
-
 
   return(x)
 }

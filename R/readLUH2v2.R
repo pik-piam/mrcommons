@@ -10,9 +10,14 @@
 #' @importFrom ncdf4 nc_open
 #' @importFrom terra rast ext subset aggregate project ext<-
 #' @importFrom magclass as.magpie mbind
+#' @importFrom withr local_tempdir defer
 #' @importFrom stringr str_match str_count str_subset
 
 readLUH2v2 <- function(subtype) {
+
+  # set terra options and temporary directory
+  terraOptions(tempdir = local_tempdir(tmpdir = getConfig("tmpfolder")), todisk = TRUE, memfrac = 0.5)
+  defer(terraOptions(tempdir = tempdir()))
 
   # basic settings
   timeSel   <- seq(1901, 2015, by = 1)

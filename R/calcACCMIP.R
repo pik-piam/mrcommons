@@ -1,7 +1,8 @@
 #' @title calcACCMIP
 #' @description reads in the ACCMIP atmospheric deposition database. Speeds up caching
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
-#' @param glo_incl_oceans if true, a global value will be returned that also includes deposition on oceans and should be equivalent to total emissions.
+#' @param glo_incl_oceans if true, a global value will be returned that also includes deposition on oceans
+#' and should be equivalent to total emissions.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
 #' [calcAtmosphericDeposition()]
@@ -9,16 +10,20 @@
 #' \dontrun{
 #' calcOutput("ACCMIP")
 #' }
+#' @importFrom magclass add_dimension mbind
+#' @importFrom madrat readSource
 #'
-calcACCMIP <- function(glo_incl_oceans = FALSE) {
+calcACCMIP <- function(
+    glo_incl_oceans = FALSE # nolint: object_name_linter.
+) {
 
   if (glo_incl_oceans == "TRUE") {
     prefix <- "glo_"
   } else {
-prefix <- ""
-}
+    prefix <- ""
+  }
 
-  ACCMIP <- mbind(
+  ACCMIP <- mbind( # nolint: object_name_linter.
     add_dimension(
       mbind(
         mbind(

@@ -17,7 +17,6 @@
 #' @importFrom magclass read.magpie
 readFeedEfficiencyReg <- function() {
   file <-  "DM_feed_eff_regression_nls.csv"
-  feed_eff_regr <- read.magpie(file)
-  return(feed_eff_regr)
-
+  feedEffRegr <- read.magpie(file)
+  return(feedEffRegr)
 }

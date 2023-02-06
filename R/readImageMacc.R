@@ -4,9 +4,10 @@
 #' dataframe is reshaped and numbers are replaced by descriptions.
 #'
 #'
-#' @param subtype data subtype. Either "CH4_Energy_Industry", "CH4_Landuse",
-#' "N2O_Energy_Industry", "N2O_Landuse", "HFC_tot", "SF6_tot", "PFC_tot" or
-#' "baseline_sources"
+#' @param subtype data subtype.
+#'                Options are: "CH4_Energy_Industry", "CH4_Landuse",
+#'                             "N2O_Energy_Industry", "N2O_Landuse",
+#'                             "HFC_tot", "SF6_tot", "PFC_tot" or "baseline_sources"
 #' @return magpie object of the ImageMacc data
 #' @author Nele Steinmetz
 #' @seealso [readSource()]
@@ -22,6 +23,7 @@
 #' a <- readSource("ImageMacc", "baseline_sources")
 #' }
 #' @importFrom stats reshape
+
 readImageMacc <- function(subtype) {
 
   files <- c(CH4_Energy_Industry = "Costcurves_CH4_Energy_Industry.csv",
@@ -176,7 +178,6 @@ readImageMacc <- function(subtype) {
              "16" = "OCE", "17" = "JAP")
 
   row.names(x) <- regions
-  # dimnames(test)[[1]] <- regions
 
-return(x)
+  return(x)
 }

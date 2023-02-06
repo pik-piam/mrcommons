@@ -1,6 +1,7 @@
 #' @title calcAgCapLabourShare
 #'
-#' @description This function calculates historical capital shares (Capital + Labour) of the factor requirements using USDA
+#' @description This function calculates historical capital shares (Capital + Labour)
+#' of the factor requirements using USDA
 #'
 #' @return MAgPIE object
 #' @author Edna J. Molina Bacca
@@ -10,27 +11,29 @@
 #' \dontrun{
 #' calcOutput("calcAgCapLabourShare")
 #' }
+#' @importFrom madrat calcOutput
+#' @importFrom magclass collapseDim collapseNames dimSums getYears
 #'
 calcAgCapLabourShare <- function() {
   # Reads requirements shares for capital and labour based on USDA
-  Fraction <- collapseNames(calcOutput("FractionInputsUSDA", aggregate = FALSE))[, , c("Capital", "Labor")]
+  fraction <- collapseNames(calcOutput("FractionInputsUSDA", aggregate = FALSE))[, , c("Capital", "Labor")]
 
   # Determines fraction between capital and labour
-  Fraction_capital <- Fraction[, , "Capital"] / (dimSums(Fraction, dim = 3.1))
+  fractionCapital <- fraction[, , "Capital"] / (dimSums(fraction, dim = 3.1))
 
   # In case of values different to finite makes them 0
-  Fraction_capital[!is.finite(Fraction_capital)] <- 0
+  fractionCapital[!is.finite(fractionCapital)] <- 0
 
   weight <- dimSums(collapseDim(calcOutput("Production", aggregate = FALSE)[, , "dm"]), dim = 3.1)
 
   # Give 0 weigh to countries with unexpectedly high capital shares
   weight[c("BLZ", "CRI", "DOM", "HND", "JAM", "MEX", "NIC", "PAN", "SLV"), , ] <- 0
 
-  years <- intersect(getYears(weight), getYears(Fraction_capital))
+  years <- intersect(getYears(weight), getYears(fractionCapital))
 
   weight <- weight[, years, ]
-  weight[Fraction_capital[, years, ] == 0] <- 0
-  x <- setNames(Fraction_capital[, years, ], NULL)
+  weight[fractionCapital[, years, ] == 0] <- 0
+  x <- setNames(fractionCapital[, years, ], NULL)
 
   return(list(x = x,
               weight = weight,

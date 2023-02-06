@@ -12,7 +12,7 @@
 #'
 #' @importFrom lpjclass readLPJ
 
-readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") {
+readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_linter.
 
   if (grepl("\\.", subtype)) {
 
@@ -21,8 +21,8 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") {
     subtype     <- unlist(subtype)[2]
 
   } else {
-stop("readLPJmL needs version and climatetype information")
-}
+    stop("readLPJmL needs version and climatetype information")
+  }
 
   files <- c(soilc              = "soilc_natveg.bin",
              soilc_layer        = "soilc_layer_natveg.bin",
@@ -60,46 +60,47 @@ stop("readLPJmL needs version and climatetype information")
              vegc_grass         = "mean_vegc_mangrass.bin",
              litc_grass         = "litc_mangrass.bin",
              soilc_grass        = "soilc_mangrass.bin"
-  )
+             )
 
-  file_name <- toolSubtypeSelect(subtype, files)
+  filename <- toolSubtypeSelect(subtype, files)
 
   if (tmp <- file.exists(file.path(folder, "tmp.out"))) {
 
     tmp        <- readLines(file.path(folder, "tmp.out"))
     years      <- as.numeric(unlist(regmatches(tmp, gregexpr("\\d{4}", tmp))))
-    start_year <- years[1]
+    startYear  <- years[1]
     years      <- seq(years[1], years[2], 1)
 
   } else {
     # default
-    start_year  <- 1901
-    years      <- seq(start_year, 2017, 1)
+    startYear  <- 1901
+    years      <- seq(startYear, 2017, 1)
   }
 
-  unit_transform <- 0.01               # Transformation factor gC/m^2 --> t/ha
+  unitTrans <- 0.01               # Transformation factor gC/m^2 --> t/ha
 
-  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass", subtype) & subtype != "soilc_layer") {
-    start_year  <- start_year           # Start year of data set
-    years       <- years                # Vector of years that should be exported
-    nbands      <- 1                    # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+  if (grepl("soilc|litc|vegc|alitfallc|alitterfallc|alitfalln|vegc_grass|litc_grass|soilc_grass",
+            subtype) && subtype != "soilc_layer") {
+    startYear  <- startYear           # Start year of data set
+    years      <- years                # Vector of years that should be exported
+    nbands     <- 1                    # Number of bands in the .bin file
+    avgRange   <- 1                    # Number of years used for averaging
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         ncells = 67420,
         bands = nbands,
         soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         bands = nbands,
         soilcells = TRUE)
     }
@@ -109,29 +110,29 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
-      getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
+      getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
 
     } else {
       x <- collapseNames(as.magpie(x))
     }
 
-    x           <- x * unit_transform
+    x           <- x * unitTrans
     getNames(x) <- subtype
 
   } else if (grepl("*date*", subtype)) {
 
-    start_year  <- start_year           # Start year of data set
-    years       <- years                # Vector of years that should be exported
-    nbands      <- 24                   # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+    startYear  <- startYear           # Start year of data set
+    years      <- years                # Vector of years that should be exported
+    nbands     <- 24                   # Number of bands in the .bin file
+    avgRange   <- 1                    # Number of years used for averaging
 
-    x <- readLPJ(file_name = file.path(folder, file_name),
+    x <- readLPJ(file_name = file.path(folder, filename),
                  wyears = years,
-                 syear = start_year,
-                 averaging_range = avg_range,
+                 syear = startYear,
+                 averaging_range = avgRange,
                  bands = nbands,
                  datatype = integer(),
                  bytes = 2,
@@ -142,48 +143,48 @@ stop("readLPJmL needs version and climatetype information")
 
   } else if (subtype %in% c("soilc_layer")) {
 
-    start_year  <- start_year           # Start year of data set
-    years       <- years                # Vector of years that should be exported
-    nbands      <- 5                    # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+    startYear  <- startYear           # Start year of data set
+    years      <- years                # Vector of years that should be exported
+    nbands     <- 5                    # Number of bands in the .bin file
+    avgRange   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name = file.path(folder, file_name),
+      file_name = file.path(folder, filename),
       wyears = years,
-      syear = start_year,
-      averaging_range = avg_range,
+      syear = startYear,
+      averaging_range = avgRange,
       bands = nbands,
       soilcells = TRUE)
 
     x <- collapseNames(as.magpie(x))
-    x <- x * unit_transform
+    x <- x * unitTrans
 
     getNames(x)     <- paste0("soilc.", getNames(x))
     getSets(x)[4:5] <- c("data", "layer")
 
   } else if (grepl("transpiration|discharge|runoff|evaporation|evap_lake", subtype)) {
 
-    start_year  <- start_year         # Start year of data set
+    startYear  <- startYear         # Start year of data set
     years       <- years              # Vector of years that should be exported
     nbands      <- 1                  # Number of bands in the .bin file
-    avg_range   <- 1                  # Number of years used for averaging
+    avgRange   <- 1                  # Number of years used for averaging
 
     # monthly values
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         monthly = TRUE,
         ncells = 67420,
         soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         monthly = TRUE,
         soilcells = TRUE)
     }
@@ -191,42 +192,42 @@ stop("readLPJmL needs version and climatetype information")
     # unit transformation
     if (grepl("transpiration", subtype)) {
       # Transform units: liter/m^2 -> m^3/ha
-      transp_unit_transform <- 10
-      x <- x * transp_unit_transform
+      unitTransTRANSP <- 10
+      x <- x * unitTransTRANSP
 
     } else if (grepl("discharge", subtype)) {
       # In LPJmL: (monthly) discharge given in hm3/d (= mio. m3/day)
       # Transform units of discharge: mio. m^3/day -> mio. m^3/month
-      month_days <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-      names(month_days) <- dimnames(x)[[3]]
-      for (month in names(month_days)) {
-        x[, , month, ] <- x[, , month, ] * month_days[month]
+      monthDays <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+      names(monthDays) <- dimnames(x)[[3]]
+      for (month in names(monthDays)) {
+        x[, , month, ] <- x[, , month, ] * monthDays[month]
       }
 
     } else if (grepl("runoff|evap_lake", subtype)) {
-    # In LPJmL: (monthly) runoff given in LPJmL: mm/month
+      # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       if (grepl("_lpjcell", subtype)) {
         cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                              type = "cell", where = "mrcommons")
-        cell_area <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
+        cellArea <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         class(x) <- "array"
-        x <- as.magpie(x, spatial = 1)
+        x        <- as.magpie(x, spatial = 1)
         # Transform units: liter/m^2 -> liter
-        x <- x * cell_area
+        x <- x * cellArea
       } else {
         # Get cellular coordinate information and calculate cell area
         cb <- as.data.frame(magpie_coord)
-        cell_area  <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
+        cellArea  <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         # Transform units: liter/m^2 -> liter
-        x <- as.magpie(x) * cell_area
+        x <- as.magpie(x) * cellArea
       }
       # Transform units: liter -> mio. m^3
       x <- x / (1000 * 1000000)
 
     } else if (grepl("evaporation", subtype)) {
       # Transform units: liter/m^2 -> m^3/ha
-      evap_unit_transform <- 10
-      x <- x * evap_unit_transform
+      unitTransEVAP <- 10
+      x <- x * unitTransEVAP
 
     }
 
@@ -235,9 +236,9 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
-      getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
+      getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
 
     } else {
@@ -262,46 +263,46 @@ stop("readLPJmL needs version and climatetype information")
 
   } else if (grepl("*harvest*", subtype)) {
 
-    start_year  <- start_year           # Start year of data set
-    years       <- years                # Vector of years that should be exported
-    nbands      <- 32                   # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+    startYear <- startYear           # Start year of data set
+    years     <- years                # Vector of years that should be exported
+    nbands    <- 32                   # Number of bands in the .bin file
+    avgRange  <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name = file.path(folder, file_name),
+      file_name = file.path(folder, filename),
       wyears = years,
-      syear = start_year,
-      averaging_range = avg_range,
+      syear = startYear,
+      averaging_range = avgRange,
       bands = nbands,
       soilcells = TRUE)
 
     # Transformation factor gC/m^2 --> t/ha
-    yield_transform <- 0.01 / 0.45
+    yieldTrans <- 0.01 / 0.45
     x <- collapseNames(as.magpie(x))
-    x <- x * yield_transform
+    x <- x * yieldTrans
 
   } else if (grepl("irrig|cwater_b", subtype)) {
 
-    start_year  <- start_year           # Start year of data set
+    startYear  <- startYear           # Start year of data set
     years       <- years                # Vector of years that should be exported
     nbands      <- 32                   # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+    avgRange    <- 1                    # Number of years used for averaging
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         bands = nbands,
         ncells = 67420,
         soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         bands = nbands,
         soilcells = TRUE)
     }
@@ -310,44 +311,44 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
-      getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
+      getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
 
     } else {
       x <- collapseNames(as.magpie(x))
     }
     # Transform units (transform from: mm per year = liter per m^2 transform to: m^3 per ha)
-      # 1 000 liter   = 1 m^3
-      # 10 000 m^2    = 1 ha
-      # 1 liter/m^2   = 10 m^3/ha
-      # -> mm/yr * 10 = m^3/ha
-    irrig_transform  <- 10
-    x[, , "irrigated"] <- x[, , "irrigated"] * irrig_transform # units are now: m^3 per ha per year
+    # 1 000 liter   = 1 m^3
+    # 10 000 m^2    = 1 ha
+    # 1 liter/m^2   = 10 m^3/ha
+    # -> mm/yr * 10 = m^3/ha
+    irrigTransform  <- 10
+    x[, , "irrigated"] <- x[, , "irrigated"] * irrigTransform # units are now: m^3 per ha per year
 
   } else if (grepl("input_lake", subtype)) {
 
-    start_year  <- start_year           # Start year of data set
-    years       <- years                # Vector of years that should be exported
-    nbands      <- 1                    # Number of bands in the .bin file
-    avg_range   <- 1                    # Number of years used for averaging
+    startYear  <- startYear           # Start year of data set
+    years      <- years                # Vector of years that should be exported
+    nbands     <- 1                    # Number of bands in the .bin file
+    avgRange   <- 1                    # Number of years used for averaging
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         bands = nbands,
         ncells = 67420,
         soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, file_name),
+        file_name = file.path(folder, filename),
         wyears = years,
-        syear = start_year,
-        averaging_range = avg_range,
+        syear = startYear,
+        averaging_range = avgRange,
         bands = nbands,
         soilcells = TRUE)
     }
@@ -356,9 +357,9 @@ stop("readLPJmL needs version and climatetype information")
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      lpj_cell_map <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
                                      type = "cell", where = "mrcommons")
-      getCells(x)  <- paste(lpj_cell_map$ISO, 1:67420, sep = ".")
+      getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
 
     } else {
@@ -367,8 +368,8 @@ stop("readLPJmL needs version and climatetype information")
     getNames(x) <- subtype
 
   } else {
-stop(paste0("subtype ", subtype, " is not existing"))
-}
+    stop(paste0("subtype ", subtype, " is not existing"))
+  }
 
   return(x)
 

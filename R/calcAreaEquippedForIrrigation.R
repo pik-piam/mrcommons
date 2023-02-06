@@ -27,11 +27,13 @@
 
 
 calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell",
-                                          source = "LUH2v2", selectyears = "past") {
+                                          source = "LUH2v2", # nolint: undesirable_function_linter.
+                                          selectyears = "past") {
 
   selectyears <- sort(findset(selectyears, noset = "original"))
+  datasource  <- source # nolint: undesirable_function_linter.
 
-  if (source == "LUH2v2") {
+  if (datasource == "LUH2v2") {
 
     yearsNeeded <- as.integer(substring(selectyears, 2))
     yearsNeeded <- (yearsNeeded[1] - 20):tail(yearsNeeded, 1)
@@ -49,7 +51,7 @@ calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell"
       out  <- mbind(out, tmp)
     }
 
-  } else if (source == "Siebert") {
+  } else if (datasource == "Siebert") {
 
     out   <- readSource("Siebert", convert = "onlycorrect")
 
@@ -58,7 +60,7 @@ calcAreaEquippedForIrrigation <- function(cellular = FALSE, cells = "magpiecell"
            Please consider using the updated data set Mehta et al. 2022")
     }
 
-  } else if (source == "Mehta2022") {
+  } else if (datasource == "Mehta2022") {
 
     out   <- readSource("Mehta2022", convert = "onlycorrect")
 
