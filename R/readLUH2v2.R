@@ -10,9 +10,14 @@
 #' @importFrom ncdf4 nc_open
 #' @importFrom terra rast ext subset aggregate project ext<-
 #' @importFrom magclass as.magpie mbind
+#' @importFrom withr local_tempdir defer
 #' @importFrom stringr str_match str_count str_subset
 
 readLUH2v2 <- function(subtype) {
+
+  # set terra options and temporary directory
+  terraOptions(tempdir = local_tempdir(tmpdir = getConfig("tmpfolder")), todisk = TRUE, memfrac = 0.5)
+  defer(terraOptions(tempdir = tempdir()))
 
   # basic settings
   timeSel   <- seq(1901, 2015, by = 1)
@@ -110,7 +115,7 @@ readLUH2v2 <- function(subtype) {
     data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
-    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", subds = "carea"))
+    carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
     ext(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
