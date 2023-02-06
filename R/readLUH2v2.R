@@ -4,10 +4,11 @@
 #' @param subtype switch between different inputs
 #'
 #' @return List of magpie objects with results on cellular level, weight, unit and description
-#' @author Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier, Jan Philipp Dietrich
+#' @author Florian Humpenoeder, Stephen Wirth, Kristine Karstens, Felicitas Beier,
+#' Jan Philipp Dietrich, Patrick v. Jeetze
 #'
 #' @importFrom ncdf4 nc_open
-#' @importFrom raster raster extent brick subset aggregate projectRaster extent<- as.matrix
+#' @importFrom terra rast ext subset aggregate project ext<-
 #' @importFrom magclass as.magpie mbind
 #' @importFrom stringr str_match str_count str_subset
 
@@ -37,14 +38,14 @@ readLUH2v2 <- function(subtype) {
     ncFile <- nc_open(fStates)
     data    <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     # Land area
-    carea         <-  suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
-    extent(carea) <- c(-180, 180, -90, 90)
+    carea         <-  suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
+    ext(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
     for (item in data) {
-      shr <- suppressWarnings(subset(brick(fStates, varname = item), timeSel - offset))
+      shr <- suppressWarnings(subset(rast(fStates, subds = item), timeSel - offset))
       mag <- aggregate(shr * carea, fact = 2, fun = sum)
-      mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
       getYears(mag) <- timeSel
@@ -75,8 +76,8 @@ readLUH2v2 <- function(subtype) {
     zeroTrans <- grepl(paste(paste(names(lu), names(lu), sep = "_to_"),
                              collapse = "|"), luTransReduced)
    # Land area
-    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
-    extent(carea) <- c(-180, 180, -90, 90)
+    carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
+    ext(carea) <- c(-180, 180, -90, 90)
 
     x <- new.magpie(map$coords, timeSel, unique(luTransReduced[!zeroTrans]), fill = 0)
 
@@ -85,9 +86,9 @@ readLUH2v2 <- function(subtype) {
       # This attributes LUC to the year resulting from it
       print(luTrans[item])
       if (!zeroTrans[item]) {
-        shr <- suppressWarnings(subset(brick(fTrans, varname = luTrans[item]), timeSel - offset - 1))
+        shr <- suppressWarnings(subset(rast(fTrans, subds = luTrans[item]), timeSel - offset - 1))
         mag <- aggregate(shr * carea, fact = 2, fun = sum)
-        mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+        mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
         getNames(mag) <- luTransReduced[item]
         getCells(mag) <- paste(map$coords, map$iso, sep = ".")
         getYears(mag) <- timeSel
@@ -109,18 +110,18 @@ readLUH2v2 <- function(subtype) {
     data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
-    carea         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "carea"))
-    extent(carea) <- c(-180, 180, -90, 90)
+    carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
+    ext(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
     for (item in dataMan) {
-      shr    <- suppressWarnings(subset(brick(fStates, varname = data[data[, 1] == item, 2]), timeSel - offset))
-      irShr <- suppressWarnings(subset(brick(fMan,    varname = item), timeSel - offset))
+      shr    <- suppressWarnings(subset(rast(fStates, subds = data[data[, 1] == item, 2]), timeSel - offset))
+      irShr <- suppressWarnings(subset(rast(fMan,    subds = item), timeSel - offset))
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
       tmp <- shr
       for (i in seq_len(dim(tmp)[3])) tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
       mag <- aggregate(tmp, fact = 2, fun = sum)
-      mag <- as.magpie(raster::extract(mag, map[c("lon", "lat")]), spatial = 1, temporal = 2)
+      mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getYears(mag) <- timeSel
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -134,14 +135,14 @@ readLUH2v2 <- function(subtype) {
   } else if (grepl("ccode", subtype)) {
 
     # Load raster data on 0.25° and extend to full grid
-    ccode25         <- suppressWarnings(raster("staticData_quarterdeg.nc", varname = "ccode"))
-    extent(ccode25) <- c(-180, 180, -90, 90)
+    ccode25         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "ccode"))
+    ext(ccode25) <- c(-180, 180, -90, 90)
 
     # Create new raster object on 0.5° and re-project 0.25°-raster on 0.5°-raster
-    r50     <- raster(res = 0.5)
-    ccode50 <- projectRaster(ccode25, r50, over = TRUE, method = "ngb") # re-project to regular grid
+    r50     <- rast(res = 0.5)
+    ccode50 <- project(ccode25, r50, method = "near") # re-project to regular grid
 
-    x <- as.magpie(raster::extract(ccode50, map[c("lon", "lat")]), spatial = 1)
+    x <- as.magpie(terra::extract(ccode50, map[c("lon", "lat")])[, -1], spatial = 1)
     getYears(x) <- 2000
     getNames(x) <- "ccode"
     getCells(x) <- paste(map$coords, map$iso, sep = ".")
