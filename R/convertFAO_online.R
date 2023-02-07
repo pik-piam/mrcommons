@@ -80,6 +80,10 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                "Share_of_Gross_Fixed_Capital_Formation_USD_2015_prices_(percentage)",
                "Value_Local_Currency_(millions)")))
 
+if (subtype == "ValueShares") {
+    stop( "Too many missing countries in Value Shares dataset to convert. Rather use as validation. Don't forget to currency convert manually.")
+  }
+
   # select elements only if unit (dim=3.2) exists in x (otherwise magclass would complain when trying to remove
   # non-existent elements with invert=TRUE). For capital stocks selects the complete name. The dot in the original
   # dataset causes errors.

@@ -98,6 +98,7 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
     out[, , "pasture"]          <- 50 # quick google search
     out[, , "scp"]              <- 1500 # using upper end prices similar to fishmeal
     out[, , "foddr"]            <- 50 # quick google search
+    out[, , "sugar"]            <- 250 # quick google search
 
     # correct the prices from online sources for dry matter values
     out[, , missingCommodities] <- out[, , missingCommodities] / dm[, , missingCommodities]
