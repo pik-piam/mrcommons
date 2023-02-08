@@ -12,7 +12,7 @@ calcLanduseIntensity(sectoral = "kcr", rescale = TRUE)
 \item{rescale}{TRUE (default), if Tau should be rescaled in a way, that 2010 is always 1}
 }
 \value{
-Total tau data and corresonding weights as a list of two MAgPIE
+Total tau data and corresponding weights as a list of two MAgPIE
 objects
 }
 \description{
