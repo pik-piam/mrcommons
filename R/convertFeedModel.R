@@ -12,7 +12,6 @@
 convertFeedModel <- function(x, subtype = "FeedBaskets") {
 
   timesteps <- getYears(x)
-  year <- tail(timesteps, 1)
 
   createNAmatrix <- function(x) {
     tmp     <- x
@@ -31,9 +30,9 @@ convertFeedModel <- function(x, subtype = "FeedBaskets") {
 dim2 <- c(1, 3)
     }
     missing <- (dimSums(x, dim = dim) == 0)
-    val_mean <- as.magpie(apply(x + createNAmatrix(missing), dim2, mean, na.rm = TRUE))
-    val_mean[is.nan(val_mean)] <- 0
-    return(x + missing * val_mean)
+    valMean <- as.magpie(apply(x + createNAmatrix(missing), dim2, mean, na.rm = TRUE))
+    valMean[is.nan(valMean)] <- 0
+    return(x + missing * valMean)
   }
 
   if (subtype == "ProdSysRatio") {
@@ -42,11 +41,12 @@ dim2 <- c(1, 3)
 
     # some cases are not handled by the above executed automated filling of missing values
     # these are tackled by following replacement rules:
-    missing_all <- where(x[, tail(timesteps, 3), "sys_beef.livst_rum"] < 0.08)$true$regions
-    replacement <- as.magpie(apply(x[missing_all, tail(timesteps, 3), "sys_beef.livst_rum"], c(1, 3), mean, na.rm = TRUE))
+    missingAll <- where(x[, tail(timesteps, 3), "sys_beef.livst_rum"] < 0.08)$true$regions
+    replacement <- as.magpie(apply(x[missingAll, tail(timesteps, 3), "sys_beef.livst_rum"],
+                                   c(1, 3), mean, na.rm = TRUE))
     for (t in tail(timesteps, 3)) {
-      missing_t <- where(x[, t, "sys_beef.livst_rum"] < 0.08)$true$regions
-      x[missing_t, t, "sys_beef.livst_rum"] <- setYears(replacement[missing_t, , ], t)
+      missingT <- where(x[, t, "sys_beef.livst_rum"] < 0.08)$true$regions
+      x[missingT, t, "sys_beef.livst_rum"] <- setYears(replacement[missingT, , ], t)
     }
 
     # re-establishment of the underlying properties of the data set:
