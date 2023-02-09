@@ -11,7 +11,7 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
   kli                      <- findset("kli")
 
 
-  if (balanceflow == TRUE) {
+  if (balanceflow) {
 
     fbaskbalance <- calcOutput("FeedBalanceflow", aggregate = FALSE, per_livestock_unit = TRUE)
     fbaskbalance <- dimSums(fbaskbalance * attributes, dim = 3.2)
@@ -22,16 +22,16 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
     fbask[which(fbask < 0)] <- 0
   }
 
-  slaughter_factor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor", aggregate = FALSE))[, , kli]
-  attributes_living_animals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = FALSE)[, , kli]
+  slaughterFactor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor",
+                                                        aggregate = FALSE))[, , kli]
+  attributesLivingAnimals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = FALSE)[, , kli]
 
   weight <- fbask
-  SlaughterFeedShare <- slaughter_factor * attributes_living_animals / weight
+  slaughterFeedShare <- slaughterFactor * attributesLivingAnimals / weight
   # limit to max 0.85
-  SlaughterFeedShare[SlaughterFeedShare > 0.85] <- 0.85
+  slaughterFeedShare[slaughterFeedShare > 0.85] <- 0.85
 
-  # weight<-dimOrder(weight,c(1,3,2))
-  out <- toolNAreplace(SlaughterFeedShare, weight)
+  out <- toolNAreplace(slaughterFeedShare, weight)
 
 
   return(list(x = out$x,
@@ -39,6 +39,5 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
               unit = "Share of DM,Nr,P,K,WM or gross energy",
               description = "Share of feed intake that gets withdrawn by slaughtermass per product",
               min = 0,
-              max = 0.85)
-  )
+              max = 0.85))
 }
