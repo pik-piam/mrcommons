@@ -1,17 +1,16 @@
 #' @importFrom magclass getRegionList<- nregions
 calcSOMlossN <- function(cellular = FALSE) {
-  SOM <- calcOutput("SOM", aggregate = FALSE)
-  SOM <- -SOM[, , "delta_soilc"][, , "cropland"] / 15
+  som <- calcOutput("SOM", aggregate = FALSE)
+  som <- -som[, , "delta_soilc"][, , "cropland"] / 15
 
-
-  if (cellular == FALSE) {
+  if (!cellular) {
     mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    SOM  <- toolAggregate(SOM, rel = mapping, from = ifelse(nregions(SOM) > 1, "celliso", "cell"), to = "iso", dim = 1)
-    SOM  <- toolCountryFill(SOM, fill = 0)
+    som  <- toolAggregate(som, rel = mapping, from = ifelse(nregions(som) > 1, "celliso", "cell"), to = "iso", dim = 1)
+    som  <- toolCountryFill(som, fill = 0)
   }
 
   return(list(
-    x = SOM,
+    x = som,
     weight = NULL,
     unit = "Mt Nr",
     description = "Nitrogen release or bounding due to changes in Soil Organic Matter",
