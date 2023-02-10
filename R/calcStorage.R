@@ -14,33 +14,21 @@
 #' }
 #'
 calcStorage <- function(datasource = "FAO") {
+  # use mass balance here in future, IS BUGGY!
 
-aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
+  stocks <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "stock_variation"])
+  stocks  <- stocks[, , -grep("Total", getNames(stocks))]
 
-# use mass balance here in future, IS BUGGY!
+  # Weighting?
 
-stocks <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "stock_variation"])
-stocks  <- stocks[, , -grep("Total", getNames(stocks))]
+  ## with positive values being withdrawals:
+  stocks <- -1 * stocks
+  mins <- magpply(stocks, min, c(1, 3))
+  stocks <- stocks - mins
 
-# Weighting?
-
-# stocks <- toolAggregate(stocks, rel=aggregation, from="FoodBalanceItem",
-          #           to="k", dim=3, partrel=TRUE, verbosity=2)
-
-## with positive values being withdrawals:
-stocks <- -1 * stocks
-mins <- magpply(stocks, min, c(1, 3))
-stocks <- stocks - mins
-
-
-
-description <- "stock level based on FAO harmonized stock_variation assuming lowest stock change is 0"
-isocountries <- TRUE
-
- return(list(x = stocks,
+  return(list(x = stocks,
               weight = NULL,
               unit = "tonnes",
-              description = description,
-              isocountries = isocountries))
-
+              description = "stock level based on FAO harmonized stock_variation assuming lowest stock change is 0",
+              isocountries = TRUE))
 }
