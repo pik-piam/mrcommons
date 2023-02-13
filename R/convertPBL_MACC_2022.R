@@ -8,7 +8,7 @@
 #' @author Michael Windisch, Florian Humpenoeder
 #' @seealso [readSource()]
 
-convertPBL_MACC_2022 <- function(x) {
+convertPBL_MACC_2022 <- function(x) { # nolint : object_name_linter.
 
   map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv")
 

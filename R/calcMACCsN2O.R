@@ -17,9 +17,12 @@
 #' calcOutput("MACCsN2O")
 #' }
 #' @importFrom magclass getNames
-calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
+calcMACCsN2O <- function(
+    sector = "all",
+    source = "ImageMacc"  # nolint: object_name_linter.
+) {
   # readSource N2O and baseline Emissions
-  if (source == "ImageMacc") {
+  if (source == "ImageMacc") { # nolint
 
     unit <- "Tax level 200 steps each 5$/tC"
     description <- "N2O ImageMacc"
@@ -50,7 +53,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     getNames(w) <- gsub("N2O Animal waste", "n2oanwst", getNames(w))
     getNames(w) <- gsub("N2O Domestic sewage", "n2owaste", getNames(w))
 
-  } else if (source == "PBL_MACC_2019") {
+  } else if (source == "PBL_MACC_2019") { # nolint
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "N2O PBL_MACC_2019"
 
@@ -73,7 +76,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
 
-  } else if (source == "PBL_MACC_SSP2_2019") {
+  } else if (source == "PBL_MACC_SSP2_2019") { # nolint
     # relative to PBL IMAGE SSP2 BASELINE emissions
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "N2O PBL_MACC_SSP2_2019"
@@ -81,7 +84,8 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     wantedYears <- seq(2010, 2100, by = 5)
 
     n2o <- NULL
-    for (subtype in c("SSP2_n2otrans", "SSP2_n2oadac", "SSP2_n2onitac", "SSP2_n2ofert", "SSP2_n2oanwst", "SSP2_n2owaste")) {
+    for (subtype in c("SSP2_n2otrans", "SSP2_n2oadac", "SSP2_n2onitac", "SSP2_n2ofert",
+                      "SSP2_n2oanwst", "SSP2_n2owaste")) {
       x <- readSource("PBL_MACC_2019", subtype)
       existingYears <- getYears(x, as.integer = TRUE)
       tmp <- setdiff(wantedYears, existingYears)
@@ -97,7 +101,7 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
 
-  } else if (source == "PBL_MACC_2022") {
+  } else if (source == "PBL_MACC_2022") { # nolint
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "N2O PBL_MACC_2022"
 
@@ -137,14 +141,14 @@ calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {
     n2o <- n2o[, , c("n2ofert", "n2oanwst")]
     getNames(n2o) <- gsub("n2ofert", "inorg_fert_n2o", getNames(n2o))
     getNames(n2o) <- gsub("n2oanwst", "awms_manure_n2o", getNames(n2o))
-    x <- new.magpie(getRegions(n2o), seq(2105, 2150, 5), getNames(n2o), 0)
+    x <- new.magpie(getItems(n2o, dim = 1), seq(2105, 2150, 5), getNames(n2o), 0)
     x[, , ] <- setYears(n2o[, 2100, ], NULL)
     n2o <- mbind(n2o, x)
 
     w <- w[, , c("n2ofert", "n2oanwst")]
     getNames(w) <- gsub("n2ofert", "inorg_fert_n2o", getNames(w))
     getNames(w) <- gsub("n2oanwst", "awms_manure_n2o", getNames(w))
-    x <- new.magpie(getRegions(w), seq(2105, 2150, 5), getNames(w), 0)
+    x <- new.magpie(getItems(w, dim = 1), seq(2105, 2150, 5), getNames(w), 0)
     x[, , ] <- setYears(w[, 2100, ], NULL)
     w <- mbind(w, x)
   }

@@ -12,7 +12,7 @@
 #' @author Florian Humpenoeder
 #' @seealso [readSource()]
 
-convertPBL_MACC_2019 <- function(x, subtype) {
+convertPBL_MACC_2019 <- function(x, subtype) { # nolint : object_name_linter.
 
   map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv")
 
@@ -33,28 +33,26 @@ convertPBL_MACC_2019 <- function(x, subtype) {
      x[, , "n2oanwst"] <- x[, , "n2oanwst"] / 298
      x[, , "n2owaste"] <- x[, , "n2owaste"] / 298
      # weight
-    CEDS_CH4 <- readSource("CEDS", subtype = "CH4")[, 2015, ]
-    LU_MagPie <- calcOutput("MacBaseLandUse", subtype = "MAgPIE", aggregate = FALSE)[, 2015, ]
+    CEDS_CH4 <- readSource("CEDS", subtype = "CH4")[, 2015, ] # nolint : object_name_linter.
+    macBaseLandUse <- calcOutput("MacBaseLandUse", subtype = "MAgPIE", aggregate = FALSE)[, 2015, ]
     emiMac <- calcOutput("EmiMac", aggregate = FALSE)
-    FGases <- readSource("IMAGE")[, 2010, ]
     w <- new.magpie(cells_and_regions = map$CountryCode, years = NULL, names = getNames(x), sets = names(dimnames(x)))
     w[, , "ch4coal"]        <- CEDS_CH4[, , "1B1_Fugitive-solid-fuels"]
     w[, , "ch4oil"]         <- CEDS_CH4[, , "1B2_Fugitive-petr-and-gas"]
     w[, , "ch4gas"]         <- CEDS_CH4[, , "1B2_Fugitive-petr-and-gas"]
     w[, , "ch4wstl"]        <- emiMac[, , "ch4wstl"]
     w[, , "ch4wsts"]        <- emiMac[, , "ch4wsts"]
-    w[, , "ch4rice"]        <- dimReduce(LU_MagPie[, , "ch4rice.SSP2.rcp26"])
-    w[, , "ch4animals"]     <- dimReduce(LU_MagPie[, , "ch4animals.SSP2.rcp26"])
-    w[, , "ch4anmlwst"]     <- dimReduce(LU_MagPie[, , "ch4anmlwst.SSP2.rcp26"])
+    w[, , "ch4rice"]        <- dimReduce(macBaseLandUse[, , "ch4rice.SSP2.rcp26"])
+    w[, , "ch4animals"]     <- dimReduce(macBaseLandUse[, , "ch4animals.SSP2.rcp26"])
+    w[, , "ch4anmlwst"]     <- dimReduce(macBaseLandUse[, , "ch4anmlwst.SSP2.rcp26"])
     w[, , "n2otrans"]       <- emiMac[, , "n2otrans"]
     w[, , "n2oadac"]        <- emiMac[, , "n2oacid"]
     w[, , "n2onitac"]       <- emiMac[, , "n2oacid"] # correct?
-    w[, , "n2ofert"]        <- dimSums(LU_MagPie[, , c("n2ofertin.SSP2.rcp26", "n2ofertcr.SSP2.rcp26", "n2ofertsom.SSP2.rcp26")])
-    w[, , "n2oanwst"]       <- dimSums(LU_MagPie[, , c("n2oanwstc.SSP2.rcp26", "n2oanwstm.SSP2.rcp26", "n2oanwstp.SSP2.rcp26")])
+    w[, , "n2ofert"]        <- dimSums(macBaseLandUse[, , c("n2ofertin.SSP2.rcp26", "n2ofertcr.SSP2.rcp26",
+                                                            "n2ofertsom.SSP2.rcp26")])
+    w[, , "n2oanwst"]       <- dimSums(macBaseLandUse[, , c("n2oanwstc.SSP2.rcp26", "n2oanwstm.SSP2.rcp26",
+                                                            "n2oanwstp.SSP2.rcp26")])
     w[, , "n2owaste"]       <- emiMac[, , "n2owaste"]
-    # w[,,"HFC"]                             <- dimReduce(FGases[,,"SSP2-26-SPA0-V13.Emissions|HFC.kt HFC134a-equiv/yr"])
-    # w[,,"PFC"]                             <- dimReduce(FGases[,,"SSP2-26-SPA0-V13.Emissions|PFC.kt CF4-equiv/yr"])
-    # w[,,"SF6"]                             <- dimReduce(FGases[,,"SSP2-26-SPA0-V13.Emissions|SF6.kt SF6/yr"])
 
     y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode", weight = w, dim = 1, wdim = 1)
     y <- toolCountryFill(y, fill = 0)
