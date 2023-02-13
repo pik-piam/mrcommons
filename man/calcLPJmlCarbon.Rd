@@ -16,7 +16,8 @@ calcLPJmlCarbon(
 
 \item{landtype}{Switch between different land use types ("lu_maize_*", "lu_grass", "nat_veg")}
 
-\item{subtype}{Switch between diffrent input ("soil_layer", "mrh_\emph{", "lit}", "vegc") and also processed data (soilc_0-30, rh_0-30)}
+\item{subtype}{Switch between diffrent input ("soil_layer", "mrh_\emph{", "lit}", "vegc")
+and also processed data (soilc_0-30, rh_0-30)}
 
 \item{selectyears}{defaults to past}
 }

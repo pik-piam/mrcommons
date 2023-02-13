@@ -11,9 +11,11 @@ calcFertilizerByCrop(
 )
 }
 \arguments{
-\item{indicator}{total: estimates the inputs per total crop production; by_harvest estimates the inputs per ton harvest; by_area estimates the inputs per area harvested}
+\item{indicator}{total: estimates the inputs per total crop production; by_harvest estimates the inputs
+per ton harvest; by_area estimates the inputs per area harvested}
 
-\item{deposition}{if FALSE, deposition is not accounted for in the distribution. Use FALSE to avoid circularities in calcNitrogenBudget}
+\item{deposition}{if FALSE, deposition is not accounted for in the distribution. Use FALSE to avoid
+circularities in calcNitrogenBudget}
 
 \item{cellular}{cellular disaggreagation or national values}
 }

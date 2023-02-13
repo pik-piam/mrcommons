@@ -21,7 +21,8 @@ calcIntakeBodyweight(
 
 \item{tmean}{mean annual temperature}
 
-\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
+\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on
+height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
 }
 \description{
 it computes the food intake pro capita through the bodyweight

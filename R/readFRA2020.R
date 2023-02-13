@@ -15,7 +15,7 @@
 #' @importFrom magclass as.magpie getItems
 #' @importFrom madrat toolCountry2isocode
 #' @export
-readFRA2020 <- function(subtype) {
+readFRA2020 <- function(subtype) { # nolint
   # Capture source data
   fraData <- read.csv("FRA_Years_2020_12_01.csv", header = TRUE, dec = ".", na.strings = c("", " ", "NA", "."))
   colnames(fraData) <- gsub(pattern = "X", replacement = "", x = colnames(fraData), ignore.case = FALSE)

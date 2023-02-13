@@ -2,8 +2,8 @@
 % Please edit documentation in R/toolExtrapolateFodder.R
 \name{toolExtrapolateFodder}
 \alias{toolExtrapolateFodder}
-\title{\preformatted{  toolExtrapolateFodder
-}}
+\title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  toolExtrapolateFodder
+}\if{html}{\out{</div>}}}
 \usage{
 toolExtrapolateFodder(x, exyears = c(2004, 2009), average = 5, endyear = 2015)
 }

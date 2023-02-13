@@ -1,9 +1,9 @@
-population_magpie <- magclass::maxample("pop")
+populationMagpie <- magclass::maxample("pop")
 
 test_that("Expect last year after freezing to first year to be equivalent to first year", {
-  p_first       <- population_magpie[, 1, ]
-  p_freeze_last <- toolFreezeEffect(population_magpie, 1)[, length(getYears(population_magpie)), ]
-  expect_equal(setYears(p_freeze_last, NULL), setYears(p_first, NULL), ignore_attr = TRUE)
+  pFirst       <- populationMagpie[, 1, ]
+  pFreezeLast <- toolFreezeEffect(populationMagpie, 1)[, length(getYears(populationMagpie)), ]
+  expect_equal(setYears(pFreezeLast, NULL), setYears(pFirst, NULL), ignore_attr = TRUE)
 })
 
 test_that("Expect first non-zero use constrain to fix values after freeze year", {

@@ -25,18 +25,20 @@ calcRegFactorShare <- function(datasource = "USDA", factor = "cap") {
     usdaShares <- madrat::readSource("TFPUSDA")[, , c("AG_Labour", "Machinery")]
 
     # assuming the same share in the middle of the decade
-    usdaShares <- magclass::magpiesort(magclass::time_interpolate(usdaShares,
-                                                                  interpolated_year = c((getYears(usdaShares, as.integer = TRUE) + 5)),
-                                                                  extrapolation_type = "constant", integrate_interpolated_years = TRUE))
+    usdaShares <- magclass::magpiesort(
+      magclass::time_interpolate(usdaShares,
+                                 interpolated_year = c((getYears(usdaShares, as.integer = TRUE) + 5)),
+                                 extrapolation_type = "constant", integrate_interpolated_years = TRUE))
 
     # Production (in terms of dry matter) as weight
     prodCrops <- dimSums(collapseDim(calcOutput("Production", products = "kcr", aggregate = FALSE)[, , "dm"]), dim = 3)
     prodLivst <- dimSums(collapseDim(calcOutput("Production", products = "kli", aggregate = FALSE)[, , "dm"]), dim = 3)
     totalProd <- prodCrops + prodLivst
     weight <- usdaShares
-    weight[, , ] <- magclass::magpiesort(magclass::time_interpolate(totalProd[, , ], interpolated_year = c(1960, 2015),
-                                                                    extrapolation_type = "constant",
-                                                                    integrate_interpolated_years = TRUE))[, getYears(usdaShares), ]
+    weight[, , ] <- magclass::magpiesort(
+      magclass::time_interpolate(totalProd[, , ], interpolated_year = c(1960, 2015),
+                                 extrapolation_type = "constant",
+                                 integrate_interpolated_years = TRUE))[, getYears(usdaShares), ]
 
     # aggregate shares
     mapping <- madrat::toolGetMapping("regionmappingUSDATFPISO.csv", where = "mrcommons")

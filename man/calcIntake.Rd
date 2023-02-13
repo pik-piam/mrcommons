@@ -16,9 +16,11 @@ calcIntake(
 
 \item{modelinput}{if TRUE, data is aggregated to country totals for model input}
 
-\item{standardize}{if FALSE, no standardization. if "recommendations", the US recommendations are used. if BMI, a normal BMI is used.}
+\item{standardize}{if FALSE, no standardization. if "recommendations", the US recommendations are used.
+if BMI, a normal BMI is used.}
 
-\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
+\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and
+bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
 }
 \value{
 total "healthy" intake kcal/day procap for each countries divided by sex and 8 age groups.

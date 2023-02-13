@@ -13,7 +13,8 @@ calcHistEmissions(subtype = "sector")
 magpie object of historical emissions data
 }
 \description{
-provides historical emissions values per economic sector or per mac sector. For now it only includes European data.
+Provides historical emissions values per economic sector or per mac sector.
+For now it only includes European data.
 }
 \examples{
 \dontrun{
