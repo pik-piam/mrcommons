@@ -10,7 +10,7 @@
 #'
 #' @return magpie object containing output of the toolbox
 #'
-#' @importFrom magclass as.magpie collapseNames collapseDim getItems getNames getSets getSets<- getItems<-
+#' @importFrom magclass as.magpie collapseNames collapseDim getItems getNames getSets
 #' @importFrom magpiesets addLocation
 #' @importFrom lpjclass readLPJ
 #' @importFrom utils read.delim
@@ -25,6 +25,7 @@
 readLanduseToolbox <- function(subtype = "physicalArea") {
 
   if (subtype == "physicalArea") {
+
     # filename for irrigated and rainfed physical area
     physicalAreaName <- "cft_cropland_MAgPIE_cft_aggregation_20200417_20200127_30min_1950-2017.bin"
 
@@ -43,11 +44,12 @@ readLanduseToolbox <- function(subtype = "physicalArea") {
     class(physicalArea) <- "array"                                             # convert to array
     physicalArea        <- collapseNames(as.magpie(physicalArea, spatial = 1)) # convert to magpie
     physicalArea        <- collapseDim(addLocation(physicalArea), dim = "N")   # add coordinates
-    getItems(physicalArea, dim = 3) <- c("rainfed", "irrigated")          # name data
-    getSets(physicalArea)["d3.1"]   <- "irrigation"                       # name data
+    getItems(physicalArea, dim = 3) <- c("rainfed", "irrigated")               # name data
+    getSets(physicalArea)["d3.1"]   <- "irrigation"                            # name data
     output <- physicalArea
 
   } else if (subtype == "harvestedArea") {
+
     # filename
     harvestedAreaName <- "cft_MAgPIE_cft_aggregation_20200417_20200127_30min_1950-2017.bin"
 

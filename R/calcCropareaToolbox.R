@@ -50,18 +50,18 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     annualsHarvestedA   <- dimSums(harvestedArea[, , annuals], dim = c("crop", "irrigation"))
     totalHarvestedA     <- perennialHarvestedA + annualsHarvestedA
 
-    # check how  much physical area is remaining for the annuals after substracting the perennial physical area
+    # check how  much physical area is remaining for the annuals after subtracting the perennial physical area
     annualsPhysicalA <- physicalAreaSum - perennialHarvestedA # we can do that since for perennial physical=harvested
 
     # calculate a factor by which the annuals should be scaled down so the sum does not exceed annualsPhysicalA
     factorAnnuals <- ifelse(annualsPhysicalA > 0 & annualsHarvestedA > 0,
                              annualsPhysicalA / annualsHarvestedA,
-                             1)
+                            1)
 
     # calculate a factor by which the all crops in mismatch cells (i.e. no annualPhyiscalA left) should be scaled down
     factorMismatches <- ifelse(annualsPhysicalA <= 0 & totalHarvestedA > 0,
                                 physicalAreaSum / totalHarvestedA,
-                                1)
+                              1)
 
     # only scale crops down not up (i.e. keep fallow land)
     factorAnnuals[factorAnnuals > 1]       <- 1
@@ -98,7 +98,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     rm("cropAreaList")
   }
 
-  # check consitency with calcFallowLand
+  # check consistency with calcFallowLand
   if (physical == TRUE) {
     fallow <- calcOutput("FallowLand", aggregate = FALSE)
 
@@ -141,6 +141,6 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   return(list(x = cropArea,
               weight = NULL,
               description = "Croparea for different croptypes",
-              unit = "mha",
+              unit = "Mha",
               isocountries = FALSE))
 }

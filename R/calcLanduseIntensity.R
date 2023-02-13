@@ -7,7 +7,7 @@
 #'
 #' @param rescale TRUE (default), if Tau should be rescaled in a way, that 2010 is always 1
 #' @param sectoral "kcr" (default) for MAgPIE crop items and "lpj" for LPJmL crop items, "pasture" for pasture
-#' @return Total tau data and corresonding weights as a list of two MAgPIE
+#' @return Total tau data and corresponding weights as a list of two MAgPIE
 #' objects
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @seealso [calcTauTotal()], [readTau()],
