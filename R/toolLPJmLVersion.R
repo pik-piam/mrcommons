@@ -68,6 +68,15 @@ toolLPJmLVersion <- function(version, climatetype) {
       cfg$addon_scen <- paste0("_", scen)
       cfg$lpjml_version <- tmp[1]
     }
+
+    ## Specific if in case the gsadapt scenario want to be harmonized to "standard" 2020
+    # historical values and not with its own historical patterns
+
+    if (any(grepl("gsadapt2020", tmp))) {
+      cfg$climatetype    <- paste0(climatetype, "_gsadapt")
+      cfg$lpjml_version <- tmp[1]
+    }
+
   }
 
   ##### ADDON CONFIG #####
