@@ -8,7 +8,7 @@
 #' @param tmean mean annual temperature
 #' @param method method for calculating intake: either FAO_WHO_UNU1985 for estimates based on
 #' height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans
-#' @param inactivity the activity level and the bodyweight computed by the readHic2015 function
+#' @param inactivity Share of population inactive, provided as magpie object with different age groups
 #' @author Eleonora Martinelli
 
 calcIntakeBodyweight <- function(bodyweight, bodyheight = NULL, inactivity, tmean = NULL, method = NULL) {

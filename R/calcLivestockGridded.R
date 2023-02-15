@@ -58,10 +58,10 @@ calcLivestockGridded <- function(details = FALSE) {
 
   # Divide pigs and poultry in extensive and intensive depending on development state
 
-  developmentState      <- calcOutput("developmentState", aggregate = FALSE)
+  developmentState      <- calcOutput("DevelopmentState", aggregate = FALSE)
   developmentState      <- setNames(collapseNames(developmentState[, selectyears, "SSP2"]), nm = poultry[1])
   developmentState      <- mbind(developmentState, setNames(developmentState, nm = poultry[2]))
-  upper                 <- calcOutput("developmentState", upper = 30000, aggregate = FALSE)
+  upper                 <- calcOutput("DevelopmentState", upper = 30000, aggregate = FALSE)
   developmentState      <- mbind(developmentState, setNames(collapseNames(upper[, selectyears, "SSP2"]), nm = pig))
 
   pigPoultryProduction  <- collapseNames(livestockProduction[, , c(pig, poultry)])
