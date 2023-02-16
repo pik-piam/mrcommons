@@ -16,7 +16,7 @@
 calcMacBaseLandUse <- function(subtype) {
   # Create empty magclass object with all dimensions that can be filled below (so it's
   # easy to see which entries remain empty afterwards)
-  isoCountry <- read.csv2(system.file("extdata", "isoCountry.csv", package = "madrat"), row.names = NULL)
+  isoCountry <- read.csv2(system.file("extdata", "iso_country.csv", package = "madrat"), row.names = NULL)
   sources    <- c("co2luc", "n2oanwstm", "n2ofertin", "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp",
                   "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals", "ch4forest",
                   "ch4savan", "ch4agwaste")
