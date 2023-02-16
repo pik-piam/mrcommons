@@ -18,36 +18,36 @@ calcResDemand <- function(cellular = FALSE, scenario = "dafault") {
 
   mapping       <- toolGetMapping("mappingCrop2Residue.csv", where = "mrcommons", type = "sectoral")
 
-  res_cereals    <- mapping$kcr[mapping$kres == "res_cereals"]
-  res_fibrous    <- mapping$kcr[mapping$kres == "res_fibrous"]
-  res_nonfibrous <- mapping$kcr[mapping$kres == "res_nonfibrous"]
+  resCereals    <- mapping$kcr[mapping$kres == "res_cereals"]
+  resFibrous    <- mapping$kcr[mapping$kres == "res_fibrous"]
+  resNonfibrous <- mapping$kcr[mapping$kres == "res_nonfibrous"]
 
   kres           <- findset("kres")
   past           <- findset("past")
 
-  dev_state_past <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"])
+  devStatePast <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"])
 
   if (cellular) {
-    dev_state_past <- toolIso2CellCountries(dev_state_past)
+    devStatePast <- toolIso2CellCountries(devStatePast)
   }
 
   biomass1       <- add_dimension(dimSums(collapseNames(
                       calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                 scenario = scenario)[, , res_cereals]), dim = 3.1),
+                                 scenario = scenario)[, , resCereals]), dim = 3.1),
                       add = "kres", nm = "res_cereals")
   biomass2       <- add_dimension(dimSums(collapseNames(
                       calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                 scenario = scenario)[, , res_fibrous]), dim = 3.1),
+                                 scenario = scenario)[, , resFibrous]), dim = 3.1),
                       add = "kres", nm = "res_fibrous")
   biomass3       <- add_dimension(dimSums(collapseNames(
                       calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                 scenario = scenario)[, , res_nonfibrous]), dim = 3.1),
+                                 scenario = scenario)[, , resNonfibrous]), dim = 3.1),
                       add = "kres", nm = "res_nonfibrous")
   biomass        <- mbind(biomass1, biomass2, biomass3)[, past, ]
 
-  material       <- mbind(biomass[, , "res_cereals"] * (dev_state_past * 0 + (1 - dev_state_past) * 0.05),
+  material       <- mbind(biomass[, , "res_cereals"] * (devStatePast * 0 + (1 - devStatePast) * 0.05),
                           biomass[, , c("res_fibrous", "res_nonfibrous")] * 0)
-  bioenergy      <- biomass * (dev_state_past * 0 + (1 - dev_state_past) * 0.1)
+  bioenergy      <- biomass * (devStatePast * 0 + (1 - devStatePast) * 0.1)
 
   feed           <- dimSums(calcOutput("FeedPast", balanceflow = FALSE, cellular = cellular, aggregate = FALSE,
                                        nutrients = "dm")[, , kres], dim = c(3.1, 3.3))
@@ -56,15 +56,15 @@ calcResDemand <- function(cellular = FALSE, scenario = "dafault") {
 
     biomass1       <- add_dimension(dimSums(collapseNames(
                         calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                   scenario = "default")[, , res_cereals]), dim = 3.1),
+                                   scenario = "default")[, , resCereals]), dim = 3.1),
                         add = "kres", nm = "res_cereals")
     biomass2       <- add_dimension(dimSums(collapseNames(
                         calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                   scenario = "default")[, , res_fibrous]), dim = 3.1),
+                                   scenario = "default")[, , resFibrous]), dim = 3.1),
                         add = "kres", nm = "res_fibrous")
     biomass3       <- add_dimension(dimSums(collapseNames(
                         calcOutput("ResBiomass", cellular = cellular, plantparts = "ag", aggregate = FALSE,
-                                   scenario = "default")[, , res_nonfibrous]), dim = 3.1),
+                                   scenario = "default")[, , resNonfibrous]), dim = 3.1),
                         add = "kres", nm = "res_nonfibrous")
     biomassOld     <- mbind(biomass1, biomass2, biomass3)[, past, ]
 
@@ -89,10 +89,10 @@ calcResDemand <- function(cellular = FALSE, scenario = "dafault") {
 
   feed       <- attributes * feed
 
-  production <- domestic_supply <- feed + material + bioenergy
+  production <- domesticSupply <- feed + material + bioenergy
 
   out        <- mbind(add_dimension(production, dim = 3.1, nm = "production"),
-                       add_dimension(domestic_supply, dim = 3.1, nm = "domestic_supply"),
+                       add_dimension(domesticSupply, dim = 3.1, nm = "domestic_supply"),
                        add_dimension(feed, dim = 3.1, nm = "feed"),
                        add_dimension(material, dim = 3.1, nm = "other_util"),
                        add_dimension(bioenergy, dim = 3.1, nm = "bioenergy"))
