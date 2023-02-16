@@ -16,12 +16,13 @@ toolLPJmLVersion <- function(version, climatetype) {
   cfg <- NULL
 
   ##### DEFAULT CONFIG #####
-  cfg$baseline_hist <- "GSWP3-W5E5:historical"
-  cfg$ref_year_hist <- "y2010"
-  cfg$baseline_gcm <- "MRI-ESM2-0:ssp370"
-  cfg$ref_year_gcm <- "y2020"
-  cfg$lpjml_version <- version
-  cfg$climatetype <- climatetype
+  cfg$baseline_hist    <- "GSWP3-W5E5:historical"
+  cfg$ref_year_hist    <- "y2010"
+  cfg$baseline_gcm     <- "MRI-ESM2-0:ssp370"
+  cfg$ref_year_gcm     <- "y2020"
+  cfg$readin_version   <- version
+  cfg$baseline_version <- version
+  cfg$climatetype      <- climatetype
   ##### DEFAULT CONFIG #####
 
 
@@ -42,10 +43,10 @@ toolLPJmLVersion <- function(version, climatetype) {
 
     if (any(tmp == "oldGSWP3")) {
       if (climatetype == "GSWP3-W5E5:historical") {
-        if (grepl("LPJmL4", tmp[1])) cfg$lpjml_version <- "LPJmL4_for_MAgPIE_84a69edd"
-        if (grepl("ggcmi", tmp[1])) cfg$lpjml_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
+        if (grepl("LPJmL4", tmp[1])) cfg$readin_version <- "LPJmL4_for_MAgPIE_84a69edd"
+        if (grepl("ggcmi", tmp[1]))  cfg$readin_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
       } else {
-        cfg$lpjml_version <- tmp[1]
+        cfg$readin_version <- tmp[1]
       }
     }
 
@@ -65,16 +66,18 @@ toolLPJmLVersion <- function(version, climatetype) {
         list(prefix = "scen", scen = NULL)
       )$scen
 
-      cfg$addon_scen <- paste0("_", scen)
-      cfg$lpjml_version <- tmp[1]
+      cfg$addon_scen       <- paste0("_", scen)
+      cfg$readin_version   <- tmp[1]
+      cfg$baseline_version <- version
     }
 
     ## Specific if in case the gsadapt scenario want to be harmonized to "standard" 2020
     # historical values and not with its own historical patterns
 
     if (any(grepl("gsadapt2020", tmp))) {
-      cfg$climatetype    <- paste0(climatetype, "_gsadapt")
-      cfg$lpjml_version <- tmp[1]
+      cfg$climatetype      <- paste0(climatetype, "_gsadapt")
+      cfg$readin_version   <- tmp[1]
+      cfg$baseline_version <- tmp[1]
     }
 
   }
