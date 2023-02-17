@@ -15,8 +15,8 @@ convertVittis <- function(x) {
     toolAggregate(mapping, from = "ProductionItem", to = "Vittis", dim = 3)
   x <- toolAggregate(x, mapping, weight = weights, from = "Vittis", to = "kcr", dim = 3.2)
 
-  # Convert from "constant 2000 US$MER" to "constant 2010 US$MER"
-  x <- GDPuc::convertGDP(x, "constant 2000 US$MER", "constant 2010 US$MER", replace_NAs = c("linear", 0))
+  # Convert from "constant 2000 Int$PPP" to "constant 2005 Int$PPP"
+  x <- GDPuc::convertGDP(x, "constant 2000 Int$PPP", "constant 2005 Int$PPP", replace_NAs = c("linear", 0))
 
   # fill missing countries with average over corresponding world region
   mapping <- toolGetMapping("regionmappingH12.csv", type = "regional")
