@@ -45,6 +45,7 @@ readGGCMICropCalendar <- function(subtype = "fraction_of_harvested_area") {
 }
 
 toolReadArea <- function(subtype) {
+  x <- NULL
   for (crop in c("ri1", "ri2")) {
     for (irr in c("ir", "rf")) {
 
@@ -86,7 +87,7 @@ toolReadArea <- function(subtype) {
 }
 
 toolReadCal <- function() {
-
+  x <- NULL
   for (crop in c("bar", "bea", "cas", "cot", "mai", "mil",
                  "nut", "pea", "pot", "rap", "ri1", "ri2", "rye",
                  "sgb", "sgc", "sor", "soy", "sun", "swh", "wwh")) {
