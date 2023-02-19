@@ -229,13 +229,13 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
     unit            <- baseline2020$unit
     baseline2020    <- baseline2020$x
 
-    if (climatetype == cfg$baseline_gcm) {
+    if (cfg$climatetype == cfg$baseline_gcm) {
       out <- baseline2020
 
     } else {
 
       x   <- calcOutput("LPJmL_new", version = cfg$baseline_version,
-                        climatetype = climatetype, subtype = subtype,
+                        climatetype = cfg$climatetype, subtype = subtype,
                         subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$ref_year_gcm)
     }
