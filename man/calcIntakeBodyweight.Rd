@@ -17,7 +17,7 @@ calcIntakeBodyweight(
 
 \item{bodyheight}{for mehthod FAO_WHO_UNU1985}
 
-\item{inactivity}{the activity level and the bodyweight computed by the readHic2015 function}
+\item{inactivity}{Share of population inactive, provided as magpie object with different age groups}
 
 \item{tmean}{mean annual temperature}
 
