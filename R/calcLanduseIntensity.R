@@ -25,59 +25,71 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
   if (sectoral %in% c("kcr", "lpj")) {
     # Mappings
-    MAGcroptypes  <- findset("kcr")
-    MAGtoLPJ      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
-    MAGtoLPJ      <- MAGtoLPJ[MAGtoLPJ$MAgPIE %in% MAGcroptypes, ]
-    LPJCroptypes  <- levels(droplevels(factor(MAGtoLPJ$LPJmL)))
-    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    cropsMAgPIE  <- findset("kcr")
+    mag2lpj      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
+    mag2lpj      <- mag2lpj[mag2lpj$MAgPIE %in% cropsMAgPIE, ]
+    cropsLPJmL   <- levels(droplevels(factor(mag2lpj$LPJmL)))
+    country2cell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
-    LPJYields      <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
+    yieldsLPJmL  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                                climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                               stage = "smoothed", aggregate = FALSE)[, selectyears, LPJCroptypes])
-    LPJYields      <- toolCoord2Isocell(LPJYields)
-    if (sectoral == "kcr") LPJYields  <- toolAggregate(LPJYields, rel = MAGtoLPJ, from = "LPJmL", to = "MAgPIE", dim = 3.1)
-    LPJCroparea    <- calcOutput("Croparea", sectoral = sectoral, physical = TRUE, cellular = TRUE,
-                                 irrigation = TRUE, aggregate = FALSE)
+                                               stage = "smoothed", aggregate = FALSE)[, selectyears, cropsLPJmL])
+    yieldsLPJmL  <- toolCoord2Isocell(yieldsLPJmL)
 
-    LPJProduction  <- LPJYields * LPJCroparea
-    LPJProduction  <- toolAggregate(dimSums(LPJProduction, dim = 3.2),
-                                    rel = CountryToCell, from = "celliso", to = "iso", dim = 1, partrel = TRUE)
+    if (sectoral == "kcr") {
+      yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
+                                  from = "LPJmL", to = "MAgPIE", dim = 3.1)
+    }
+
+    cropareaLPJmL   <- calcOutput("Croparea", sectoral = sectoral, physical = TRUE, cellular = TRUE,
+                                  irrigation = TRUE, aggregate = FALSE)
+
+    productionLPJmL <- yieldsLPJmL * cropareaLPJmL
+    productionLPJmL <- toolAggregate(dimSums(productionLPJmL, dim = 3.2),
+                                     rel = country2cell, from = "celliso", to = "iso",
+                                     dim = 1, partrel = TRUE)
     # Load FAO data and caluculate FAO yields on country level
-    FAOProduction    <- collapseNames(calcOutput("FAOmassbalance",
-                                                 aggregate = FALSE)[, , "production"][, , "dm"][, , MAGcroptypes])
+    productionFAO   <- collapseNames(calcOutput("FAOmassbalance",
+                                                 aggregate = FALSE)[, , "production"][, , "dm"][, , cropsMAgPIE])
 
-    if (sectoral == "lpj") FAOProduction    <- toolAggregate(FAOProduction, rel = MAGtoLPJ,
+    if (sectoral == "lpj") productionFAO    <- toolAggregate(productionFAO, rel = mag2lpj,
                                                              from = "MAgPIE", to = "LPJmL", dim = 3.1)
 
     # Getting overlapping countries
-    regions          <- intersect(getRegions(LPJProduction), getRegions(FAOProduction))
-    LPJProduction    <- LPJProduction[regions, , ]
-    FAOProduction    <- FAOProduction[regions, , ]
+    regions          <- intersect(getItems(productionLPJmL, dim = 1.1),
+                                  getItems(productionFAO, dim = 1.1))
+    productionLPJmL  <- productionLPJmL[regions, , ]
+    productionFAO    <- productionFAO[regions, , ]
 
     # Calculate TAU as ratio of FAO to LPJmL yields
-    TAU              <- FAOProduction / LPJProduction
-    TAU[is.na(TAU)]  <- 0
-    TAU[TAU == Inf]  <- 0
+    tau              <- productionFAO / productionLPJmL
+    tau[is.na(tau)]  <- 0
+    tau[tau == Inf]  <- 0
 
-    CountryCroparea <- dimSums(toolAggregate(LPJCroparea, rel = CountryToCell,
-                                             from = "celliso", to = "iso", dim = 1, partrel = TRUE), dim = 3.1)
+    cropareaCountry  <- dimSums(toolAggregate(cropareaLPJmL, rel = country2cell,
+                                             from = "celliso", to = "iso",
+                                             dim = 1, partrel = TRUE),
+                               dim = 3.1)
 
     # rescale such that average in 2010 is 1
     if (rescale) {
-      Rescale2010   <- toolNAreplace(x = TAU[, "y2010", ], weight = CountryCroparea[getRegions(TAU), "y2010", ])
-      RescaleWeight <- dimSums(Rescale2010$x * Rescale2010$weight, dim = 1) / dimSums(Rescale2010$weight, dim = 1)
-      TAU           <- TAU / setYears(RescaleWeight, NULL)
-      TAU[is.na(TAU)]  <- 0
+      rescale2010   <- toolNAreplace(x = tau[, "y2010", ],
+                                     weight = cropareaCountry[getItems(tau, dim = 1.1), "y2010", ])
+      rescaleWeight <- dimSums(rescale2010$x * rescale2010$weight,
+                               dim = 1) / dimSums(rescale2010$weight,
+                                                  dim = 1)
+      tau           <- tau / setYears(rescaleWeight, NULL)
+      tau[is.na(tau)]  <- 0
     }
 
     # calculate TAU aggregated over all croptypes
-    kcr2all <- matrix(c(MAGcroptypes, rep("all", length(MAGcroptypes))),
+    kcr2all <- matrix(c(cropsMAgPIE, rep("all", length(cropsMAgPIE))),
                       ncol = 2, dimnames = list(NULL, c("kcr", "all")))
-    TAUall  <- toolAggregate(TAU, rel = kcr2all, weight = CountryCroparea, from = "kcr", to = "all", dim = 3)
+    tauall  <- toolAggregate(tau, rel = kcr2all, weight = cropareaCountry, from = "kcr", to = "all", dim = 3)
 
-    x      <- mbind(TAU, setNames(TAUall, "all"))
-    weight <- CountryCroparea
+    x      <- mbind(tau, setNames(tauall, "all"))
+    weight <- cropareaCountry
     weight <- mbind(weight, setNames(dimSums(weight, dim = 3.1, na.rm = TRUE), "all"))
     out    <- toolNAreplace(x = x, weight = weight)
     x      <- toolCountryFill(out$x, fill = 0)
@@ -86,55 +98,62 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
   } else if (sectoral == "pasture") {
     # Mappings
-    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    country2cell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
     # Load LPJ yields and area on cell level
-    LPJYields           <- toolCoord2Isocell(
+    yieldsLPJmL           <- toolCoord2Isocell(
                              calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                         climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
                                         aggregate = FALSE, years = selectyears))[, , "mgrass.rainfed"]
-    MAGPasturearea      <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[, , "past"]
-    getNames(LPJYields) <- getNames(MAGPasturearea) <- "pasture"
+    pastareaMAgPIE        <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[, , "past"]
+    getNames(yieldsLPJmL) <- getNames(pastareaMAgPIE) <- "pasture"
 
-    LPJProduction  <- LPJYields * MAGPasturearea
-    LPJProduction  <- toolAggregate(LPJProduction, rel = CountryToCell, from = "celliso", to = "iso",
-                                    dim = 1, partrel = TRUE)
+    productionLPJmL  <- yieldsLPJmL * pastareaMAgPIE
+    productionLPJmL  <- toolAggregate(productionLPJmL, rel = country2cell,
+                                      from = "celliso", to = "iso",
+                                      dim = 1, partrel = TRUE)
 
     # Load FAO data and caluculate FAO yields on country level
-    FAOProduction    <- collapseNames(calcOutput("FAOmassbalance",
+    productionFAO    <- collapseNames(calcOutput("FAOmassbalance",
                                                  aggregate = FALSE)[, , "production"][, , "dm"][, , "pasture"])
 
     # Getting overlapping countries
-    regions          <- intersect(getRegions(LPJProduction), getRegions(FAOProduction))
-    LPJProduction    <- LPJProduction[regions, , ]
-    FAOProduction    <- FAOProduction[regions, , ]
+    regions          <- intersect(getItems(productionLPJmL, dim = 1.1),
+                                  getItems(productionFAO, dim = 1.1))
+    productionLPJmL  <- productionLPJmL[regions, , ]
+    productionFAO    <- productionFAO[regions, , ]
 
     # Calculate TAU as ratio of FAO to LPJmL yields
-    TAU              <- FAOProduction / LPJProduction
-    TAU[is.na(TAU)]  <- 0
-    TAU[TAU == Inf]  <- 0
+    tau              <- productionFAO / productionLPJmL
+    tau[is.na(tau)]  <- 0
+    tau[tau == Inf]  <- 0
 
-    CountryPastarea       <- toolAggregate(MAGPasturearea, rel = CountryToCell, from = "celliso", to = "iso",
-                                           dim = 1, partrel = TRUE)
+    pastareaCountry  <- toolAggregate(pastareaMAgPIE, rel = country2cell,
+                                      from = "celliso", to = "iso",
+                                      dim = 1, partrel = TRUE)
 
     # rescale such that average in 2010 is 1
     if (rescale) {
-      Rescale2010   <- toolNAreplace(x = TAU[, "y2010", ], weight = CountryPastarea[getRegions(TAU), "y2010", ])
-      RescaleWeight <- dimSums(Rescale2010$x * Rescale2010$weight, dim = 1) / dimSums(Rescale2010$weight, dim = 1)
-      TAU           <- TAU / setYears(RescaleWeight, NULL)
+      rescale2010   <- toolNAreplace(x = tau[, "y2010", ],
+                                     weight = pastareaCountry[getItems(tau, dim = 1.1), "y2010", ])
+      rescaleWeight <- dimSums(rescale2010$x * rescale2010$weight, dim = 1) / dimSums(rescale2010$weight, dim = 1)
+      tau           <- tau / setYears(rescaleWeight, NULL)
     }
 
-    x      <- TAU
-    weight <- CountryPastarea[getRegions(TAU), getYears(TAU), ]
+    x      <- tau
+    weight <- pastareaCountry[getItems(tau, dim = 1.1), getYears(tau), ]
     out    <- toolNAreplace(x = x, weight = weight)
     x      <- toolCountryFill(out$x, fill = 0)
     weight <- toolCountryFill(out$weight, fill = 0)
 
-  } else stop("Not possible (for now) for the given item set (sectoral)!")
+  } else {
+    stop("selected sectoral setting in calcLanduseIntensity not possible (for now)!")
+  }
 
-  return(list(x = x,
-              weight = weight,
-              unit = "",
-              description = "FAO production devided by LPJml yield times LUH areas for MAgPIE representative crops and pasture",
-              note = c("")))
+  return(list(x           = x,
+              weight      = weight,
+              unit        = "",
+              description = "FAO production devided by LPJml yield
+                             times LUH areas for MAgPIE representative crops and pasture",
+              note        = c("")))
 }

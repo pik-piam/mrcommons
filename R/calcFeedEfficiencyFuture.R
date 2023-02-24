@@ -19,10 +19,10 @@ calcFeedEfficiencyFuture <- function() {
   # 2. livestock productivity x
 
   # calc livst productivity
-  lvst_prod <- calcOutput("LivestockProductivity", aggregate = FALSE)
+  lvstProd <- calcOutput("LivestockProductivity", aggregate = FALSE)
 
   # read regression coefficients for central feed shares
-  feed_eff_regr <- readSource("FeedEfficiencyReg")
+  feedEffRegr <- readSource("FeedEfficiencyReg")
 
 
   func <- function(x, a, b, z) {
@@ -34,14 +34,24 @@ calcFeedEfficiencyFuture <- function() {
   }
 
   # calculate feed efficiencies for 5 livestock commodities
-  out_eff <- new.magpie(cells_and_regions = getRegions(lvst_prod), years = getYears(lvst_prod), names = getNames(lvst_prod), fill = NA, sets = getSets(lvst_prod))
+  outEff <- new.magpie(cells_and_regions = getItems(lvstProd, dim = 1.1), years = getYears(lvstProd),
+                        names = getNames(lvstProd), fill = NA, sets = getSets(lvstProd))
 
-  out_eff[, , "sys_dairy"] <- func(lvst_prod[, , "sys_dairy"], a = feed_eff_regr[, , "sys_dairy.A"], b = feed_eff_regr[, , "sys_dairy.B"])
-  out_eff[, , "sys_beef"] <- func(lvst_prod[, , "sys_beef"], a = feed_eff_regr[, , "sys_beef.A"], b = feed_eff_regr[, , "sys_beef.B"])
-  out_eff[, , "sys_pig"] <- func(lvst_prod[, , "sys_pig"], a = feed_eff_regr[, , "sys_pig.A"], b = feed_eff_regr[, , "sys_pig.B"])
-  out_eff[, , "sys_hen"] <- func(lvst_prod[, , "sys_hen"], a = feed_eff_regr[, , "sys_hen.A"], b = feed_eff_regr[, , "sys_hen.B"])
-  out_eff[, , "sys_chicken"] <- func(lvst_prod[, , "sys_chicken"], a = feed_eff_regr[, , "sys_chicken.A"], b = feed_eff_regr[, , "sys_chicken.B"])
-
+  outEff[, , "sys_dairy"] <- func(lvstProd[, , "sys_dairy"],
+                                   a = feedEffRegr[, , "sys_dairy.A"],
+                                   b = feedEffRegr[, , "sys_dairy.B"])
+  outEff[, , "sys_beef"] <- func(lvstProd[, , "sys_beef"],
+                                  a = feedEffRegr[, , "sys_beef.A"],
+                                  b = feedEffRegr[, , "sys_beef.B"])
+  outEff[, , "sys_pig"] <- func(lvstProd[, , "sys_pig"],
+                                 a = feedEffRegr[, , "sys_pig.A"],
+                                 b = feedEffRegr[, , "sys_pig.B"])
+  outEff[, , "sys_hen"] <- func(lvstProd[, , "sys_hen"],
+                                 a = feedEffRegr[, , "sys_hen.A"],
+                                 b = feedEffRegr[, , "sys_hen.B"])
+  outEff[, , "sys_chicken"] <- func(lvstProd[, , "sys_chicken"],
+                                     a = feedEffRegr[, , "sys_chicken.A"],
+                                     b = feedEffRegr[, , "sys_chicken.B"])
 
   # use livestock production as weight
   kli <- findset("kli")
@@ -57,12 +67,10 @@ calcFeedEfficiencyFuture <- function() {
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
   weight <- toolHoldConstantBeyondEnd(weight)
 
-  out <- toolNAreplace(out_eff, weight, replaceby = 0, val.rm = 0)
+  out <- toolNAreplace(outEff, weight, replaceby = 0, val.rm = 0)
 
   return(list(x = out$x,
               weight = out$weight,
               unit = "ton DM per ton DM",
-              description = "Feed efficiency for dairy cattle, beef cattle, pigs, hens and broilers"
-  ))
-
+              description = "Feed efficiency for dairy cattle, beef cattle, pigs, hens and broilers"))
 }

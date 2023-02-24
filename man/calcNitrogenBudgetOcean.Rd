@@ -7,9 +7,11 @@
 calcNitrogenBudgetOcean(deposition = "ACCMIP", leaching = "Nsurplus")
 }
 \arguments{
-\item{deposition}{Method for calculating Atmospheric deposition: Nsurplus2 and Nsurplus are based on deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
+\item{deposition}{Method for calculating Atmospheric deposition: Nsurplus2 and Nsurplus are based on
+deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
 
-\item{leaching}{Method for calculating leaching: Nsurplus2 and Nsurplus are based on deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
+\item{leaching}{Method for calculating leaching: Nsurplus2 and Nsurplus are based on
+deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.

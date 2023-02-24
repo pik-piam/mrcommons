@@ -9,7 +9,8 @@
 #' @param time average, spline or raw (default)
 #' @param averaging_range just specify for time=="average": number of time steps to average
 #' @param dof             just specify for time=="spline": degrees of freedom
-#' @param harmonize_baseline FALSE (default) nothing happens, if a baseline is specified here data is harmonized to that baseline (from ref_year on)
+#' @param harmonize_baseline FALSE (default) nothing happens, if a baseline is
+#' specified here data is harmonized to that baseline (from ref_year on)
 #' @param ref_year just specify for harmonize_baseline != FALSE : Reference year
 #' @param limited  just specify for harmonize_baseline != FALSE : if TRUE limited approached is used
 #' @param hard_cut just specify for harmonize_baseline != FALSE : use hard cut instead of multiplicative factor
@@ -23,6 +24,10 @@
 #' calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "soilc", aggregate = FALSE)
 #' }
 #'
+#'
+#'
+# nolint start
+# deprecated soon
 calcLPJmL <- function(version = "LPJmL4", climatetype = "CRU_4", subtype = "soilc", subdata = NULL, time = "raw", averaging_range = NULL, dof = NULL,
                       harmonize_baseline = FALSE, ref_year = "y2015", limited = TRUE, hard_cut = FALSE, selectyears = "all") {
 
@@ -128,3 +133,4 @@ calcLPJmL <- function(version = "LPJmL4", climatetype = "CRU_4", subtype = "soil
     description = paste0("Carbon output from LPJmL (", subtype, ") for ", version, " and ", climatetype, "."),
     isocountries = FALSE))
 }
+# nolint end

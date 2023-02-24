@@ -1,4 +1,5 @@
 ValidationKey: '24511041'
+>>>>>>> hackathon
 AcceptedWarnings:
 - 'Warning: package ''.*'' was built under R version'
 - 'Warning: namespace ''.*'' is not available and has been replaced'
@@ -7,4 +8,4 @@ AcceptedNotes:
 - Imports includes .* non-default packages.
 - installed size is .*
 AutocreateReadme: yes
-allowLinterWarnings: yes
+allowLinterWarnings: no

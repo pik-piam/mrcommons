@@ -4,12 +4,12 @@
 \alias{toolAWMSScenarioCreation}
 \title{toolAWMSScenarioCreation}
 \usage{
-toolAWMSScenarioCreation(name, start_year, categories, values, out)
+toolAWMSScenarioCreation(name, startYear, categories, values, out)
 }
 \arguments{
 \item{name}{Name of the scenario}
 
-\item{start_year}{Year were prediction starts}
+\item{startYear}{Year were prediction starts}
 
 \item{categories}{share of manure managed in different animal waste management systems}
 
@@ -21,7 +21,8 @@ toolAWMSScenarioCreation(name, start_year, categories, values, out)
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-tool function to calculated the share of manure managed in different animal waste management systems in confinements.
+tool function to calculate the share of manure managed in different animal waste management systems
+in confinements.
 }
 \seealso{
 \code{\link[=calcAWMSconfShr]{calcAWMSconfShr()}}

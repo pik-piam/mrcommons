@@ -29,14 +29,14 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "non_fl
       warning("No missing data for total numbers assumend.")
     }
 
-    FAOdata     <- calcOutput("Croparea", sectoral = "ProductionItem",
+    FAOdata     <- calcOutput("Croparea", sectoral = "ProductionItem", # nolint : object_name_linter.
                               physical = FALSE, aggregate = FALSE)[, past, ]
 
     if (rice == "non_flooded") {
       # Rice areas are pre-determined by areas reported as flooded in LUH.
       # All additional rice areas (according to FAO) are allocated using FAO data
       nonfloodedShr                 <- calcOutput("Ricearea", cellular = FALSE, share = TRUE, aggregate = FALSE)
-      FAOdata[, , "27|Rice, paddy"] <- FAOdata[, , "27|Rice, paddy"] * nonfloodedShr
+      FAOdata[, , "27|Rice, paddy"] <- FAOdata[, , "27|Rice, paddy"] * nonfloodedShr # nolint : object_name_linter.
     }
 
     kcr         <- findset("kcr")
@@ -57,7 +57,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "non_fl
 
     aggregation <- calcOutput("LUH2MAgPIE", aggregate = FALSE, selectyears = selectyears, rice = rice)
 
-    MAG  <- dimSums(aggregation, dim = "LUH")
+    MAG  <- dimSums(aggregation, dim = "LUH") # nolint : object_name_linter.
     x    <- aggregation / MAG
     x[which(is.na(x))] <- 0
     unit <- "share of area"
@@ -101,7 +101,7 @@ calcLUH2MAgPIE <- function(share = "total", bioenergy = "ignore", rice = "non_fl
 
     aggregation <- calcOutput("LUH2MAgPIE", aggregate = FALSE, selectyears = selectyears, rice = rice)
 
-    LUH  <- dimSums(aggregation, dim = "MAG")
+    LUH  <- dimSums(aggregation, dim = "MAG") # nolint : object_name_linter.
     x    <- aggregation / LUH
     x[which(is.na(x))] <- 0
     unit <- "share of area"

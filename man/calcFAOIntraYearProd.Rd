@@ -25,7 +25,8 @@ to only give maize wheat soy and rice. Allows for more years. A bit of a David-s
 \code{\link{readGGCMICropCalendar}}}
 }
 \description{
-Distribute massbalanced or FAOSTAT staple production to monthly or quarterly interval based on GGCMI crop calendar.
+Distribute massbalanced or FAOSTAT staple production to monthly
+or quarterly interval based on GGCMI crop calendar.
 Only national level implemented for now as cellular production only available on 5 year time steps due to memory.
 Assume rainfed crop calendar date for now.
 }

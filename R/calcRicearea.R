@@ -15,6 +15,7 @@
 #' @importFrom withr local_options
 
 calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
+
   local_options(magclass_sizeLimit = 1e+12)
 
   selectyears <- findset("past")
@@ -24,30 +25,33 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
   ############################################
 
   # Country-level LUH flooded areas
-  LUH_flooded_iso  <- collapseNames(calcOutput("LUH2v2", landuse_types = "flooded",
-                                               cells = cells, aggregate = FALSE, irrigation = TRUE,
-                                               cellular = FALSE, selectyears = "past"))
+  floodedLUHiso  <- collapseNames(calcOutput("LUH2v2", landuse_types = "flooded",
+                                              cells = cells, aggregate = FALSE, irrigation = TRUE,
+                                              cellular = FALSE, selectyears = "past"))
 
   # FAO rice areas (physical to be comparable with LUH)
-  FAO_ricearea_iso <- collapseNames(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
-                                               cellular = FALSE, cells = "magpicell", irrigation = FALSE,
-                                               aggregate = FALSE)[, selectyears, "rice_pro"])
+  riceareaFAOiso <- collapseNames(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
+                                              cellular = FALSE, cells = "magpicell", irrigation = FALSE,
+                                              aggregate = FALSE)[, selectyears, "rice_pro"])
 
   # Country-level rice area
-  ricearea <- LUH_flooded_iso
+  ricearea <- floodedLUHiso
 
-  # Correction for flooded non-rice areas (LUH_flooded_iso > FAO_ricearea_iso)
-  ricearea[LUH_flooded_iso > FAO_ricearea_iso] <- FAO_ricearea_iso[LUH_flooded_iso > FAO_ricearea_iso]
-  nonriceShr                                   <- ifelse(LUH_flooded_iso > 0, ricearea / LUH_flooded_iso, 0)
+  # Correction for flooded non-rice areas (floodedLUHiso > riceareaFAOiso)
+  ricearea[floodedLUHiso > riceareaFAOiso] <- riceareaFAOiso[floodedLUHiso > riceareaFAOiso]
+  nonriceShr                               <- ifelse(floodedLUHiso > 0,
+                                                       ricearea / floodedLUHiso,
+                                                     0)
 
-  # Correction for aerobic (non-paddy) rice (LUH_flooded_iso < FAO_ricearea_iso)
-  ricearea_flooded                                     <- FAO_ricearea_iso
-  ricearea_flooded[LUH_flooded_iso < FAO_ricearea_iso] <- LUH_flooded_iso[LUH_flooded_iso < FAO_ricearea_iso]
-  floodedShr                                           <- ifelse(FAO_ricearea_iso > 0,
-                                                                 ricearea_flooded / FAO_ricearea_iso, 0)
+  # Correction for aerobic (non-paddy) rice (floodedLUHiso < riceareaFAOiso)
+  floodedRicearea                                 <- riceareaFAOiso
+  floodedRicearea[floodedLUHiso < riceareaFAOiso] <- floodedLUHiso[floodedLUHiso < riceareaFAOiso]
+  floodedShr                                      <- ifelse(riceareaFAOiso > 0,
+                                                              floodedRicearea / riceareaFAOiso,
+                                                            0)
 
   # Non-flooded rice area
-  ricearea_nonflooded <- ricearea * (1 - floodedShr)
+  nonfloodedRicearea <- ricearea * (1 - floodedShr)
 
   if (!cellular) {
 
@@ -59,11 +63,14 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
 
     } else {
 
-      ricearea            <- add_dimension(ricearea, dim = 3.1, add = "type", nm = "total")
-      ricearea_flooded    <- add_dimension(ricearea_flooded, dim = 3.1, add = "type", nm = "flooded")
-      ricearea_nonflooded <- add_dimension(ricearea_nonflooded, dim = 3.1, add = "type", nm = "nonflooded")
+      ricearea           <- add_dimension(ricearea, dim = 3.1,
+                                          add = "type", nm = "total")
+      floodedRicearea    <- add_dimension(floodedRicearea, dim = 3.1,
+                                          add = "type", nm = "flooded")
+      nonfloodedRicearea <- add_dimension(nonfloodedRicearea, dim = 3.1,
+                                          add = "type", nm = "nonflooded")
 
-      out         <- collapseNames(mbind(ricearea, ricearea_flooded, ricearea_nonflooded))
+      out         <- collapseNames(mbind(ricearea, floodedRicearea, nonfloodedRicearea))
       unit        <- "Mha"
       description <- "Physical rice area on country level"
 
@@ -75,24 +82,24 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
     ############################################
 
     # Cellular LUH flooded areas
-    LUH_flooded <- collapseNames(calcOutput("LUH2v2", landuse_types = "flooded",
+    floodedLUH <- collapseNames(calcOutput("LUH2v2", landuse_types = "flooded",
                               cells = cells, cellular = TRUE, irrigation = TRUE,
                               selectyears = "past", aggregate = FALSE))
 
-    # Correction for flooded non-rice areas (LUH_flooded_iso > FAO_ricearea_iso)
-    ricearea <- LUH_flooded * toolIso2CellCountries(nonriceShr, cells = cells)
+    # Correction for flooded non-rice areas (floodedLUHiso > riceareaFAOiso)
+    ricearea   <- floodedLUH * toolIso2CellCountries(nonriceShr, cells = cells)
 
-    # Correction for aerobic (non-paddy) rice (LUH_flooded_iso < FAO_ricearea_iso)
-    floodedShr          <- toolIso2CellCountries(floodedShr, cells = cells)
-    ricearea_flooded    <- ricearea * floodedShr
-    ricearea_nonflooded <- ricearea * (1 - floodedShr)
-    ricearea            <- ricearea_flooded + ricearea_nonflooded
+    # Correction for aerobic (non-paddy) rice (floodedLUHiso < riceareaFAOiso)
+    floodedShr         <- toolIso2CellCountries(floodedShr, cells = cells)
+    floodedRicearea    <- ricearea * floodedShr
+    nonfloodedRicearea <- ricearea * (1 - floodedShr)
+    ricearea           <- floodedRicearea + nonfloodedRicearea
 
-    ricearea            <- add_dimension(ricearea, dim = 3.1, add = "type", nm = "total")
-    ricearea_flooded    <- add_dimension(ricearea_flooded, dim = 3.1, add = "type", nm = "flooded")
-    ricearea_nonflooded <- add_dimension(ricearea_nonflooded, dim = 3.1, add = "type", nm = "nonflooded")
+    ricearea           <- add_dimension(ricearea, dim = 3.1, add = "type", nm = "total")
+    floodedRicearea    <- add_dimension(floodedRicearea, dim = 3.1, add = "type", nm = "flooded")
+    nonfloodedRicearea <- add_dimension(nonfloodedRicearea, dim = 3.1, add = "type", nm = "nonflooded")
 
-    out         <- collapseNames(mbind(ricearea_flooded, ricearea_nonflooded, ricearea))
+    out         <- collapseNames(mbind(floodedRicearea, nonfloodedRicearea, ricearea))
     unit        <- "Mha"
     description <- "Physical rice area on cellular level"
 
@@ -100,7 +107,6 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
       stop("Argument share = TRUE not supported with cellular = TRUE.
            Please select cellular = FALSE to return flooded rice area share")
     }
-
   }
 
   return(list(x            = out,

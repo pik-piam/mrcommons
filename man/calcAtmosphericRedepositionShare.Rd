@@ -13,7 +13,8 @@ calcAtmosphericRedepositionShare(
 \arguments{
 \item{cellular}{cellular or country level}
 
-\item{maxshare}{the maximum amount of emissions deposited within the same cell or country. The remainder will be handled as global emission}
+\item{maxshare}{the maximum amount of emissions deposited within the same cell or country.
+The remainder will be handled as global emission}
 
 \item{scenario}{scenario}
 }

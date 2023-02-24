@@ -17,7 +17,8 @@ toolFreezeEffect(x, year, constrain = FALSE)
 magpie object with global parameters
 }
 \description{
-This function freeze values given a specific year and optionally additionally at the first non-zero value
+This function freeze values given a specific year and optionally additionally at the first
+non-zero value
 }
 \author{
 Kristine Karstens

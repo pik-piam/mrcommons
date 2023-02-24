@@ -21,7 +21,8 @@
 #' calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 #' }
 #'
-calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "MRI-ESM2-0:ssp370",
+calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
+                          climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
   # Create settings for LPJmL from version and climatetype argument
   cfg <- toolLPJmLVersion(version = version, climatetype = climatetype)
@@ -145,13 +146,13 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
         }
       }
 
-      units <- c(aet                 = "m^3/ha",
-                 discharge           = "mio. m^3",
-                 mdischarge          = "mio. m^3",
-                 lake_evap           = "mio. m^3",
-                 input_lake          = "mio. m^3",
-                 runoff              = "mio. m^3",
-                 mrunoff             = "mio. m^3")
+      units <- c(aet        = "m^3/ha",
+                 discharge  = "mio. m^3",
+                 mdischarge = "mio. m^3",
+                 lake_evap  = "mio. m^3",
+                 input_lake = "mio. m^3",
+                 runoff     = "mio. m^3",
+                 mrunoff    = "mio. m^3")
 
       unit <- toolSubtypeSelect(subtype, units)
 

@@ -249,7 +249,6 @@ calcEmissionInventory <- function(datasource = "CEDS", targetResolution = "secto
       Please set argument to = 'PRIMAPhist'")
     }
 
-    mapping <- NULL
     ceds <- calcOutput("EmissionInventory",
                      datasource = "CEDS",
                      targetResolution = NULL,
