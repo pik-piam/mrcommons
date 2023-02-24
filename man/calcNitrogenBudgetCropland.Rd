@@ -14,11 +14,13 @@ calcNitrogenBudgetCropland(
 \arguments{
 \item{cellular}{disaggregated to 0.5 degree grid}
 
-\item{deposition}{if FALSE, deposition is not accounted for in the distribution. Use FALSE to avoid circularities in calcNitrogenBudget}
+\item{deposition}{if FALSE, deposition is not accounted for in the distribution.
+Use FALSE to avoid circularities in calcNitrogenBudget}
 
 \item{include_fertilizer}{including fertilizer in budget. Use FALSE to avoid circularities in specific cases}
 
-\item{max_snupe}{NULL or a numeric value. if numeric, an additional N balanceflow is included that takes care that the soil nitrogen uptake efficiency does not exceed the numeric value in balanceflow.}
+\item{max_snupe}{NULL or a numeric value. if numeric, an additional N balanceflow is included that takes care
+that the soil nitrogen uptake efficiency does not exceed the numeric value in balanceflow.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.

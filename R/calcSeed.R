@@ -19,25 +19,24 @@ calcSeed <- function(cellular = FALSE, products = "kall", irrigation = FALSE, at
   seed     <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "seed"][, , products])
 
 
-  if (cellular == TRUE) {
-
+  if (cellular) {
     if (!all(products %in% findset("kcr"))) {
-stop("cellular data only exists for kcr products")
-}
+      stop("cellular data only exists for kcr products")
+    }
+    productionReg <- calcOutput("Production", products = "kcr", cellular = FALSE, calibrated = TRUE,
+                                 irrigation = FALSE, aggregate = FALSE)[, , products]
+    seedShr       <- collapseNames(seed[, , "dm"] / productionReg[, , "dm"])
+    seedShr[is.na(seedShr)]       <- 0
+    seedShr[is.infinite(seedShr)] <- 0
 
-    map            <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    production_reg <- calcOutput("Production", products = "kcr", cellular = FALSE, calibrated = TRUE, irrigation = FALSE, aggregate = FALSE)[, , products]
-    seed_shr       <- collapseNames(seed[, , "dm"] / production_reg[, , "dm"])
-    seed_shr[is.na(seed_shr)]       <- 0
-    seed_shr[is.infinite(seed_shr)] <- 0
-
-    production     <- calcOutput("Production", products = "kcr", cellular = cellular, irrigation = irrigation, calibrated = TRUE, attributes = attributes, aggregate = FALSE)[, , products]
-    seed           <- production * seed_shr[getRegions(production), , ]
+    production     <- calcOutput("Production", products = "kcr", cellular = cellular, irrigation = irrigation,
+                                 calibrated = TRUE, attributes = attributes, aggregate = FALSE)[, , products]
+    seed           <- production * seedShr[getItems(production, dim = 1.1), , ]
   }
 
   if (any(attributes != "all")) {
-seed <- seed[, , attributes]
-}
+    seed <- seed[, , attributes]
+  }
 
   return(list(
     x = seed,

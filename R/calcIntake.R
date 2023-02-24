@@ -1,18 +1,18 @@
-############################
 #' @title calcIntake
 #' @description it computes the total intake kcal/day procapita through the population dataset by Lutz 2014,
 #' height and BMI data of NCDrisc, and phyiscal inactivity levels based on Halal et al.
 #' @param convert if TRUE, Lutz data is converted (interpolated completed etc)
 #' @param modelinput if TRUE, data is aggregated to country totals for model input
-#' @param standardize if FALSE, no standardization. if "recommendations", the US recommendations are used. if BMI, a normal BMI is used.
-#' @param method method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans
+#' @param standardize if FALSE, no standardization. if "recommendations", the US recommendations are used.
+#' if BMI, a normal BMI is used.
+#' @param method method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and
+#' bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans
 #' @return  total "healthy" intake kcal/day procap for each countries divided by sex and 8 age groups.
 #' @author Benjamin Leon Bodirsky
 #' @export
-
-
 calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, method = "FAO_WHO_UNU1985") {
-  ## to do for better transparency: delete scenario dimension of demo. but a bit complicated due to dimsums in this function and in calcOutput("IntakeBodyweight")
+  # to do for better transparency: delete scenario dimension of demo. but a bit complicated due to dimsums in
+  # this function and in calcOutput("IntakeBodyweight")
 
   # population dataset by Lutz 2014 and bodyweight dataset by Hic 2015
   demo <- calcOutput("Demography", convert = convert, education = FALSE, aggregate = FALSE)
@@ -22,39 +22,38 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
   tmean <- NULL
 
   # calculating calory requirements and adding pregnancy bonus
-  if (standardize == FALSE) {
+  if (isFALSE(standardize)) {
 
     height <- calcOutput("BodyHeight", convert = convert, aggregate = FALSE)
-    BMI <- readSource("NCDrisc", subtype = "BMI", convert = convert)
+    bmi <- readSource("NCDrisc", subtype = "BMI", convert = convert)
     if (method == "Froehle") {
       tmean <- calcOutput("Temperature", landusetypes = "urban", months = FALSE, aggregate = FALSE, convert = convert)
     }
 
-    if (convert == FALSE) {  # still adjust the format
+    if (isFALSE(convert)) {  # still adjust the format
       mapping <- toolGetMapping(type = "sectoral", name = "NCDrisc2Lutz.csv")
-      tmp <- new.magpie(cells_and_regions = getRegions(BMI), years = getYears(BMI), names = c(paste0(unique(mapping$lutz), ".M"), paste0(unique(mapping$lutz), ".F")))
+      tmp <- new.magpie(cells_and_regions = getItems(bmi, dim = 1.1), years = getYears(bmi),
+                        names = c(paste0(unique(mapping$lutz), ".M"), paste0(unique(mapping$lutz), ".F")))
       for (i in getNames(tmp, dim = 1)) {
         item <- mapping$NCDrisc[mapping$lutz == i]
-        tmp[, , i] <- dimSums(BMI[, , item], dim = "age") / length(item)
+        tmp[, , i] <- dimSums(bmi[, , item], dim = "age") / length(item)
       }
-      BMI <- tmp
+      bmi <- tmp
     }
 
-    if (convert == FALSE) {
-      # 1965:2010 is the period with observations for both body height and BMI
+    if (isFALSE(convert)) {
+      # 1965:2010 is the period with observations for both body height and bmi
       height <- time_interpolate(dataset = height, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
-      BMI <- time_interpolate(dataset = BMI, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
-      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
+      bmi <- time_interpolate(dataset = bmi, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
+      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = 1975:2010,
+                                     integrate_interpolated_years = FALSE)
       demo <- time_interpolate(dataset = demo, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
-      commonregions <-
-        intersect(getRegions(BMI),
-                  intersect(getRegions(height),
-                            intersect(getRegions(demo), getRegions(inactivity))
-                  )
-        )
+      commonregions <- intersect(getItems(bmi, dim = 1.1),
+                                 intersect(getItems(height, 1.1),
+                                           intersect(getItems(demo, dim = 1.1), getItems(inactivity, dim = 1.1))))
 
       if (method == "Froehle") {
-        commonregions <- intersect(commonregions, getRegions(tmean))
+        commonregions <- intersect(commonregions, getItems(tmean, dim = 1.1))
         tmean <- tmean[commonregions, , ]
         tmean <- time_interpolate(dataset = tmean, interpolated_year = 1975:2010, integrate_interpolated_years = FALSE)
       }
@@ -62,39 +61,43 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
       demo <- demo[commonregions, , ]
       height <- height[commonregions, , ]
       inactivity <- inactivity[commonregions, , ]
-      BMI <- BMI[commonregions, , ]
+      bmi <- bmi[commonregions, , ]
     } else {
       # assume constant BMI before observation period
-      height <- time_interpolate(dataset = height, interpolated_year = findset("past"), integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      BMI <- time_interpolate(dataset = BMI, interpolated_year = findset("past"), integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past"), integrate_interpolated_years = FALSE, extrapolation_type = "constant")
+      height <- time_interpolate(dataset = height, interpolated_year = findset("past"),
+                                 integrate_interpolated_years = FALSE, extrapolation_type = "constant")
+      bmi <- time_interpolate(dataset = bmi, interpolated_year = findset("past"),
+                              integrate_interpolated_years = FALSE, extrapolation_type = "constant")
+      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past"),
+                                     integrate_interpolated_years = FALSE, extrapolation_type = "constant")
       demo <- demo[, getYears(height), ]
       if (method == "Froehle") {
         tmean <- tmean[, getYears(height), ]
       }
     }
 
-
-    weight <- (height / 100)^2 * BMI
+    weight <- (height / 100)^2 * bmi
     getSets(weight) <- c("region", "year", "sex", "age")
     getSets(inactivity) <- c("region", "year", "scenario", "sex", "age")
     getSets(demo) <- c("region", "year", "scenario", "sex", "age")
 
-    intk_procap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height, inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
+    intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
+                              inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
   } else if (standardize == "recommendations") {
     if (method != "HHS_USDA") {
-stop("Method for this standadization type not available")
-}
-    if (convert == FALSE) {
-      commonregions <- intersect(getRegions(demo), getRegions(inactivity))
+      stop("Method for this standadization type not available")
+    }
+    if (isFALSE(convert)) {
+      commonregions <- intersect(getItems(demo, dim = 1.1), getItems(inactivity, dim = 1.1))
       demo <- demo[commonregions, , ]
       inactivity <- inactivity[commonregions, getYears(demo), ]
     }
-    intk_procap <- calcOutput("IntakeBodyweight", bodyweight = NULL, inactivity = inactivity, method = method, aggregate = FALSE)
+    intkProcap <- calcOutput("IntakeBodyweight", bodyweight = NULL, inactivity = inactivity,
+                              method = method, aggregate = FALSE)
   } else if (standardize == "BMI") {
     height <- calcOutput("BodyHeight", convert = convert, aggregate = FALSE)
-    commonregions <- intersect(getRegions(demo), getRegions(inactivity))
-    commonregions <- intersect(commonregions, getRegions(height))
+    commonregions <- intersect(getItems(demo, dim = 1.1), getItems(inactivity, dim = 1.1))
+    commonregions <- intersect(commonregions, getItems(height, dim = 1.1))
 
     commonyears <- intersect(getYears(height), getYears(inactivity))
     commonyears <- intersect(commonyears, getYears(height))
@@ -102,7 +105,7 @@ stop("Method for this standadization type not available")
 
     if (method == "Froehle") {
       tmean <- calcOutput("Temperature", landusetypes = "urban", months = FALSE, aggregate = FALSE, convert = convert)
-      commonregions <- intersect(commonregions, getRegions(tmean))
+      commonregions <- intersect(commonregions, getItems(tmean, dim = 1.1))
       commonyears <- intersect(commonyears, getYears(tmean))
       tmean <- tmean[commonregions, commonyears, ]
     } else {
@@ -122,54 +125,51 @@ stop("Method for this standadization type not available")
     weight[, , "15--19"] <- 21 * (height[, , "15--19"] / 100)^2
     weight[, , "15--19"] <- 21 * (height[, , "15--19"] / 100)^2
 
-
-    intk_procap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height, inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
-
-
+    intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
+                              inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
   } else {
-stop("unknown setting for standardize")
-}
+    stop("unknown setting for standardize")
+  }
 
   reproductive <- c("F.20--24", "F.25--29", "F.30--34", "F.35--39")
-  intk_procap[, , reproductive] <- intk_procap[, , reproductive] + toolPregnant(demo, reproductive)
+  intkProcap[, , reproductive] <- intkProcap[, , reproductive] + toolPregnant(demo, reproductive)
 
-  weight <- collapseNames(demo[, getYears(intk_procap), ][, , c("M", "F")]) + 0.0000001
+  weight <- collapseNames(demo[, getYears(intkProcap), ][, , c("M", "F")]) + 0.0000001
 
   weight <- add_columns(weight, addnm = "B", dim = 3.2)
   weight[, , "B"] <- dimSums(weight[, , "B", invert = TRUE], dim = 3.2)
-  intk_procap <- add_columns(intk_procap, addnm = "B", dim = 3.1)
-  Both <- dimSums(intk_procap[, , "B", invert = TRUE] * weight[, , "B", invert = TRUE], dim = 3.1) / dimSums(weight[, , "B", invert = TRUE], dim = "sex")
-  intk_procap[, , "B"] <- Both
+  intkProcap <- add_columns(intkProcap, addnm = "B", dim = 3.1)
+  both <- dimSums(intkProcap[, , "B", invert = TRUE] * weight[, , "B", invert = TRUE], dim = 3.1)
+  both <- both / dimSums(weight[, , "B", invert = TRUE], dim = "sex")
+  intkProcap[, , "B"] <- both
 
   weight <- add_columns(weight, addnm = "All", dim = 3.3)
   weight[, , "All"] <- dimSums(weight[, , "All", invert = TRUE], dim = 3.3)
 
-  intk_procap <- add_columns(intk_procap, addnm = "All", dim = 3.2)
-  All <- dimSums(intk_procap[, , "All", invert = TRUE] * weight[, , "All", invert = TRUE], dim = 3.2) / dimSums(weight[, , "All", invert = TRUE], dim = "age")
-  intk_procap[, , "All"] <- All
+  intkProcap <- add_columns(intkProcap, addnm = "All", dim = 3.2)
+  intakeAll <- dimSums(intkProcap[, , "All", invert = TRUE] * weight[, , "All", invert = TRUE], dim = 3.2)
+  intkProcap[, , "All"] <- intakeAll / dimSums(weight[, , "All", invert = TRUE], dim = "age")
 
   if (modelinput == TRUE) {
-    intk_procap <- collapseNames(intk_procap[, , "All"][, , "B"])
+    intkProcap <- collapseNames(intkProcap[, , "All"][, , "B"])
     weight <- collapseNames(weight[, , "All"][, , "B"])
   } else  if (modelinput == "age_groups_hist") {
     past <- findset("past")
-    intk_procap <- collapseNames(intk_procap[, past, "SSP2"])
-    intk_procap <- intk_procap[, , "B", invert = TRUE]
-    intk_procap <- intk_procap[, , "All", invert = TRUE]
+    intkProcap <- collapseNames(intkProcap[, past, "SSP2"])
+    intkProcap <- intkProcap[, , "B", invert = TRUE]
+    intkProcap <- intkProcap[, , "All", invert = TRUE]
     weight <- weight[, past, "SSP2"]
     weight <- weight[, , "B", invert = TRUE]
     weight <- weight[, , "All", invert = TRUE]
   } else if (modelinput != FALSE) {
-stop("unknown setting for modelinput")
-}
+    stop("unknown setting for modelinput")
+  }
 
-  return(list(x = intk_procap,
+  return(list(x = intkProcap,
               weight = weight,
               unit = "kcal per capita per day",
               description = "Intake estimate",
               min = 500,
               max = 5000,
-              isocountries = convert
-  )
-  )
+              isocountries = convert))
 }

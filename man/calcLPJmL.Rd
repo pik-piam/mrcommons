@@ -34,7 +34,8 @@ calcLPJmL(
 
 \item{dof}{just specify for time=="spline": degrees of freedom}
 
-\item{harmonize_baseline}{FALSE (default) nothing happens, if a baseline is specified here data is harmonized to that baseline (from ref_year on)}
+\item{harmonize_baseline}{FALSE (default) nothing happens, if a baseline is
+specified here data is harmonized to that baseline (from ref_year on)}
 
 \item{ref_year}{just specify for harmonize_baseline != FALSE : Reference year}
 
@@ -54,6 +55,8 @@ Handle LPJmL data and its time behaviour (averaging, approximation, harmonizing 
 \dontrun{
 calcOutput("LPJmL", version = "LPJmL4", climatetype = "CRU_4", subtype = "soilc", aggregate = FALSE)
 }
+
+
 
 }
 \seealso{

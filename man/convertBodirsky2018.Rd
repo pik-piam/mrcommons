@@ -9,7 +9,8 @@ convertBodirsky2018(x, subtype)
 \arguments{
 \item{x}{magpie object from read function}
 
-\item{subtype}{bmi_share, demand_regression, intake_regression or bodyheight_regression for the estimated regression paramters of different regressions. scenarios for scenario projections.}
+\item{subtype}{bmi_share, demand_regression, intake_regression or bodyheight_regression
+for the estimated regression paramters of different regressions. scenarios for scenario projections.}
 }
 \value{
 magpie object

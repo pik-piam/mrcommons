@@ -1,7 +1,8 @@
-#' Calculate historical distribution of livestock production across different systems based on output of MAgPIE_FEED model
+#' Calculate historical distribution of livestock production across
+#' different systems based on output of MAgPIE_FEED model
 #'
-#' @return Historical distribution of livestock production across different systems and corresonding weights as a list of two MAgPIE
-#' objects
+#' @return Historical distribution of livestock production across
+#' different systems and corresponding weights as a list of two MAgPIE objects
 #' @author Isabelle Weindl
 #' @seealso [calcOutput()], [readFeedModel()]
 #' @examples
@@ -38,5 +39,6 @@ calcProdSysRatioPast <- function() {
 
   return(list(x = out, weight = weight,
               unit = "-",
-              description = "Detailed historical system-specific feed requirements in DM per DM products generated for 5 livestock commodities."))
+              description = "Detailed historical system-specific feed requirements in
+              DM per DM products generated for 5 livestock commodities."))
 }

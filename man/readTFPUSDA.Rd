@@ -12,11 +12,6 @@ magpie object with fractions of different input factors in the overall productio
 \description{
 Reads the input shares from USDA's Agricultural total factor productivity growth indices assessment.
 }
-\examples{
-\dontrun{
-a <- readSource("TFP_USD")
-}
-}
 \seealso{
 \code{\link[=readSource]{readSource()}}
 }

@@ -13,7 +13,8 @@ readFeedModel(subtype = "FeedBaskets")
 magpie object of feed basket data
 }
 \description{
-Read in csv files containing data on production system distribution and system-specific feed baskets from the FeedModel "MAgPIE_FEED"
+Read in csv files containing data on production system distribution and system-specific feed baskets from the
+FeedModel "MAgPIE_FEED"
 }
 \examples{
 \dontrun{

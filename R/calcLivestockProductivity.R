@@ -90,11 +90,12 @@ calcLivestockProductivity <- function(future = TRUE) {
     exyears <- c(year1, year2)
     exyears <- as.numeric(gsub("y", "", exyears))
 
-    extra2020 <- time_interpolate(dataset = mbind(toolTimeAverage(histYield[, seq(exyears[1] - dt, exyears[1] + dt), ], average),
-                                            toolTimeAverage(histYield[, seq(exyears[2] - dt, exyears[2] + dt), ], average)),
-                            interpolated_year = 2020,
-                            integrate_interpolated_years = FALSE,
-                            extrapolation_type = "linear")
+    dataset <- mbind(toolTimeAverage(histYield[, seq(exyears[1] - dt, exyears[1] + dt), ], average),
+                     toolTimeAverage(histYield[, seq(exyears[2] - dt, exyears[2] + dt), ], average))
+    extra2020 <- time_interpolate(dataset = dataset,
+                                  interpolated_year = 2020,
+                                  integrate_interpolated_years = FALSE,
+                                  extrapolation_type = "linear")
 
     for (i in getNames(histYield)) {
       extra2020[, , i] <- toolConditionalReplace(extra2020[, , i], "<0", min(histYield[, , i]))
@@ -103,9 +104,9 @@ calcLivestockProductivity <- function(future = TRUE) {
     histYield <- mbind(histYield, extra2020)
 
     # selecting data for years included in magpie time steps "time"
-    mag_years <- findset("time")
-    histYield <- histYield[, intersect(getYears(histYield), mag_years), ]
-    weight <- weight[, intersect(getYears(weight), mag_years), ]
+    magYears <- findset("time")
+    histYield <- histYield[, intersect(getYears(histYield), magYears), ]
+    weight <- weight[, intersect(getYears(weight), magYears), ]
 
     outputConstant <- toolHoldConstantBeyondEnd(histYield)
     weight <- toolHoldConstantBeyondEnd(weight)

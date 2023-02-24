@@ -11,7 +11,7 @@ convertLutz2014(x)
 }
 \description{
 It fills the missing values of the output of readLutz2014 through
-the weighted average of the values of two countries with similar carachteristcs
+the weighted average of the values of two countries with similar characteristics
 to the one that has na values.
 }
 \seealso{

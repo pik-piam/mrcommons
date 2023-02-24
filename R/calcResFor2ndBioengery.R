@@ -3,7 +3,8 @@
 #' for future and different ssp scenarios
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
-#' @param products categorie (set) that should be reported, switch between "kres", "res_crop" (sum over all "kres"), "res_wood" and "all"
+#' @param products categorie (set) that should be reported, switch between "kres",
+#' "res_crop" (sum over all "kres"), "res_wood" and "all"
 #' @param product_aggr boolean, if product set should be summed up
 #' @param add_off add a column with empty supply for no residues available for 2nd gen BE
 #' @author Kristine Karstens
@@ -14,33 +15,37 @@
 #' calcOutput("ResFor2ndBioengery")
 #' }
 #'
-calcResFor2ndBioengery <- function(products = "all", product_aggr = TRUE, add_off = FALSE) {
+calcResFor2ndBioengery <- function(products = "all",
+                                   product_aggr = TRUE, add_off = FALSE) { # nolint: object_name_linter.
 
   if (length(products) > 1) {
 
     out <- NULL
     for (item in products) {
-      tmp <- calcOutput("ResFor2ndBioengery", products = item, product_aggr = FALSE, add_off = add_off, aggregate = FALSE)
+      tmp <- calcOutput("ResFor2ndBioengery", products = item, product_aggr = FALSE,
+                        add_off = add_off, aggregate = FALSE)
       out <- mbind(out, tmp)
     }
 
   } else {
 
     if (!(products %in% c("kres", "all", "res_wood", "res_crop"))) stop("This product type is not available.")
-    mag_years  <- findset("time")
-    past_years <- findset("past")
+    magYears  <- findset("time")
+    pastYears <- findset("past")
 
     oldReMIND     <- readSource("ResFor2ndBE", subtype = "oldReMIND", convert = TRUE)
-    missing_years <- setdiff(mag_years, getYears(oldReMIND))
-    oldReMIND     <- time_interpolate(oldReMIND, missing_years, integrate_interpolated_years = TRUE, extrapolation_type = "constant")[, mag_years, ]
+    missingYears <- setdiff(magYears, getYears(oldReMIND))
+    oldReMIND     <- time_interpolate(oldReMIND, missingYears, integrate_interpolated_years = TRUE,
+                                      extrapolation_type = "constant")[, magYears, ]
     # set start years
-    oldReMIND[, past_years, ] <- 0
+    oldReMIND[, pastYears, ] <- 0
 
     newAgriSupply <- readSource("ResFor2ndBE", subtype = "newAgriSupply", convert = TRUE)
-    missing_years <- setdiff(mag_years, getYears(newAgriSupply))
-    newAgriSupply <- time_interpolate(newAgriSupply, missing_years, integrate_interpolated_years = TRUE, extrapolation_type = "constant")[, mag_years, ]
+    missingYears <- setdiff(magYears, getYears(newAgriSupply))
+    newAgriSupply <- time_interpolate(newAgriSupply, missingYears, integrate_interpolated_years = TRUE,
+                                      extrapolation_type = "constant")[, magYears, ]
     # set start years
-    newAgriSupply[, past_years, ] <- 0
+    newAgriSupply[, pastYears, ] <- 0
 
     scenarios <- getNames(newAgriSupply, dim = 2)
 
@@ -77,13 +82,12 @@ calcResFor2ndBioengery <- function(products = "all", product_aggr = TRUE, add_of
               res_wood       = "Forestry",
               all            = "Agricultural and forestry")
 
-  renamed_products <- NULL
-  for (item in products) renamed_products <- rbind(renamed_products, toolSubtypeSelect(item, rename))
+  renamedProducts <- NULL
+  for (item in products) renamedProducts <- rbind(renamedProducts, toolSubtypeSelect(item, rename))
 
   return(list(x = out,
               weight = NULL,
               unit = "except generalizable energy in PJ",
-              description = paste0(paste(renamed_products, collapse = " and "), " residues potentially available for 2nd generation bio energy"))
-  )
-
+              description = paste0(paste(renamedProducts, collapse = " and "),
+                                   " residues potentially available for 2nd generation bio energy")))
 }

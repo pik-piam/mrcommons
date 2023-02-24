@@ -15,82 +15,94 @@ calcLivestockGridded <- function(details = FALSE) {
 
   selectyears <- findset("past")
 
-  CountryToCell       <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-  LivestockProduction <- calcOutput("FAOmassbalance", aggregate = FALSE)[, selectyears, "production"]
+  countryToCell       <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+  livestockProduction <- calcOutput("FAOmassbalance", aggregate = FALSE)[, selectyears, "production"]
 
-  ### Ruminents
+  ### ruminants
 
-  Ruminents             <- c("livst_milk", "livst_rum")
+  ruminants     <- c("livst_milk", "livst_rum")
 
-  # Divide ruminents in extensive and intensive depending on feedmix
-  RuminantFeed          <- collapseNames(calcOutput("FeedPast", nutrients = "nr", aggregate = FALSE)[, selectyears, c("alias_livst_milk", "alias_livst_rum")])
-  CropbasedFeed         <- dimSums(RuminantFeed[, , "pasture", invert = TRUE], dim = 3.2) / dimSums(RuminantFeed, dim = 3.2)
-  PastbasedFeed         <- collapseNames(RuminantFeed[, , "pasture"]) / dimSums(RuminantFeed, dim = 3.2)
-  CropbasedFeed[is.na(CropbasedFeed)]   <- 0
-  PastbasedFeed[is.na(PastbasedFeed)]   <- 0
+  # Divide ruminants in extensive and intensive depending on feedmix
+  feedPast      <- calcOutput("FeedPast", nutrients = "nr", aggregate = FALSE)
+  ruminantFeed  <- collapseNames(feedPast[, selectyears, c("alias_livst_milk", "alias_livst_rum")])
+  cropbasedFeed <- dimSums(ruminantFeed[, , "pasture", invert = TRUE], dim = 3.2) / dimSums(ruminantFeed, dim = 3.2)
+  pastbasedFeed <- collapseNames(ruminantFeed[, , "pasture"]) / dimSums(ruminantFeed, dim = 3.2)
+  cropbasedFeed[is.na(cropbasedFeed)] <- 0
+  pastbasedFeed[is.na(pastbasedFeed)] <- 0
 
-  getNames(PastbasedFeed) <- getNames(CropbasedFeed) <- Ruminents
+  getNames(pastbasedFeed) <- getNames(cropbasedFeed) <- ruminants
 
-  RuminentProduction    <- collapseNames(LivestockProduction[, , Ruminents])
-  ExtensiveRuminent     <- RuminentProduction * CropbasedFeed
-  IntensiveRuminent     <- RuminentProduction * PastbasedFeed
+  ruminantProduction    <- collapseNames(livestockProduction[, , ruminants])
+  extensiveRuminant     <- ruminantProduction * cropbasedFeed
+  intensiveRuminant     <- ruminantProduction * pastbasedFeed
 
-  # calculate extensive ruminent production per cell from pasture production share
-  PastureProduction     <- collapseNames(calcOutput("Production", products = "pasture", cellular = TRUE, calibrated = TRUE, aggregate = FALSE)[, selectyears, "nr"])
-  ExtensiveRuminentCell <- toolAggregate(toolIso2CellCountries(ExtensiveRuminent), rel = CountryToCell, weight = PastureProduction, from = "iso", to = "celliso", dim = 1)
+  # calculate extensive ruminant production per cell from pasture production share
+  pastureProduction     <- collapseNames(calcOutput("Production", products = "pasture", cellular = TRUE,
+                                                    calibrated = TRUE, aggregate = FALSE)[, selectyears, "nr"])
+  extensiveRuminantCell <- toolAggregate(toolIso2CellCountries(extensiveRuminant), rel = countryToCell,
+                                         weight = pastureProduction, from = "iso", to = "celliso", dim = 1)
 
-  # calculate intensive ruminent production per cell from cropland share
-  CropProduction        <- dimSums(collapseNames(toolCell2isoCell(calcOutput("Production", products = "kcr", cellular = TRUE, aggregate = FALSE))[, selectyears, "dm"][, , c("betr", "begr"), invert = TRUE]), dim = 3)
-  IntensiveRuminentCell <- toolAggregate(toolIso2CellCountries(IntensiveRuminent), rel = CountryToCell, weight = CropProduction, from = "iso", to = "celliso", dim = 1)
+  # calculate intensive ruminant production per cell from cropland share
+  kcrProduction <- toolCell2isoCell(calcOutput("Production", products = "kcr", cellular = TRUE, aggregate = FALSE))
+  kcrProduction <- kcrProduction[, selectyears, "dm"][, , c("betr", "begr"), invert = TRUE]
+  cropProduction        <- dimSums(collapseNames(kcrProduction), dim = 3)
+  intensiveRuminantCell <- toolAggregate(toolIso2CellCountries(intensiveRuminant), rel = countryToCell,
+                                         weight = cropProduction, from = "iso", to = "celliso", dim = 1)
 
-  RuminantProdCell      <- ExtensiveRuminentCell + IntensiveRuminentCell
+  ruminantProdCell      <- extensiveRuminantCell + intensiveRuminantCell
 
-  ### Poultry & Pig
+  ### poultry and pig
 
-  Poultry               <- c("livst_chick", "livst_egg")
-  Pig                   <- "livst_pig"
+  poultry               <- c("livst_chick", "livst_egg")
+  pig                   <- "livst_pig"
 
   # Divide pigs and poultry in extensive and intensive depending on development state
 
-  DevelopmentState      <- setNames(collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, selectyears, "SSP2"]), nm = Poultry[1])
-  DevelopmentState      <- mbind(DevelopmentState, setNames(DevelopmentState, nm = Poultry[2]))
-  DevelopmentState      <- mbind(DevelopmentState, setNames(collapseNames(calcOutput("DevelopmentState", upper = 30000, aggregate = FALSE)[, selectyears, "SSP2"]), nm = Pig))
+  developmentState      <- calcOutput("DevelopmentState", aggregate = FALSE)
+  developmentState      <- setNames(collapseNames(developmentState[, selectyears, "SSP2"]), nm = poultry[1])
+  developmentState      <- mbind(developmentState, setNames(developmentState, nm = poultry[2]))
+  upper                 <- calcOutput("DevelopmentState", upper = 30000, aggregate = FALSE)
+  developmentState      <- mbind(developmentState, setNames(collapseNames(upper[, selectyears, "SSP2"]), nm = pig))
 
-  PigPoultryProduction  <- collapseNames(LivestockProduction[, , c(Pig, Poultry)])
-  ExtensivePigPoultry   <- PigPoultryProduction * (1 - DevelopmentState)
-  IntensivePigPoultry   <- PigPoultryProduction * DevelopmentState
+  pigPoultryProduction  <- collapseNames(livestockProduction[, , c(pig, poultry)])
+  extensivePigPoultry   <- pigPoultryProduction * (1 - developmentState)
+  intensivePigPoultry   <- pigPoultryProduction * developmentState
 
-  # calculate extensive poultry and pig production per cell from Urbanarea share
-  Urbanarea               <- toolCell2isoCell(calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)[, selectyears, "urban"])
-  ExtensivePigPoultryCell <- toolAggregate(toolIso2CellCountries(ExtensivePigPoultry), rel = CountryToCell, weight = Urbanarea, from = "iso", to = "celliso", dim = 1)
+  # calculate extensive poultry and pig production per cell from urbanarea share
+  landuseInitialization   <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
+  urbanarea               <- toolCell2isoCell(landuseInitialization[, selectyears, "urban"])
+  extensivePigPoultryCell <- toolAggregate(toolIso2CellCountries(extensivePigPoultry), rel = countryToCell,
+                                           weight = urbanarea, from = "iso", to = "celliso", dim = 1)
 
   # calculate intensive pig poultry production per cell from cropland share
   # more ideas to come for pig poultry disaggregation
-  IntensivePigPoultryCell <- toolAggregate(toolIso2CellCountries(IntensivePigPoultry), rel = CountryToCell, weight = CropProduction, from = "iso", to = "celliso", dim = 1)
+  intensivePigPoultryCell <- toolAggregate(toolIso2CellCountries(intensivePigPoultry), rel = countryToCell,
+                                           weight = cropProduction, from = "iso", to = "celliso", dim = 1)
 
-  PigPoultryProdCell      <- ExtensivePigPoultryCell + IntensivePigPoultryCell
+  pigPoultryProdCell      <- extensivePigPoultryCell + intensivePigPoultryCell
 
   ### Total Livestock
 
   if (details == FALSE) {
 
-    MAGProduction           <- mbind(RuminantProdCell, PigPoultryProdCell)
+    magProduction           <- mbind(ruminantProdCell, pigPoultryProdCell)
 
   } else if (details == TRUE) {
 
-    MAGProduction           <- mbind(add_dimension(ExtensiveRuminentCell, dim = 3.1, add = "intensity", nm = "ext"),
-                                     add_dimension(IntensiveRuminentCell, dim = 3.1, add = "intensity", nm = "int"),
-                                     add_dimension(ExtensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
-                                     add_dimension(IntensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
+    magProduction           <- mbind(add_dimension(extensiveRuminantCell, dim = 3.1, add = "intensity", nm = "ext"),
+                                     add_dimension(intensiveRuminantCell, dim = 3.1, add = "intensity", nm = "int"),
+                                     add_dimension(extensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
+                                     add_dimension(intensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
   }
 
 
-  return(list(x = MAGProduction,
+  return(list(x = magProduction,
               weight = NULL,
               unit = "Mt DM/Nr/P/K/WM or PJ energy",
-              description = "Cellular livestock production: dry matter: Mt (dm), gross energy: PJ (ge), reactive nitrogen: Mt (nr), phosphor: Mt (p), potash: Mt (k), wet matter: Mt (wm).",
+              description = paste("Cellular livestock production: dry matter: Mt (dm),",
+                                  "gross energy: PJ (ge), reactive nitrogen: Mt (nr),",
+                                  "phosphor: Mt (p), potash: Mt (k), wet matter: Mt (wm)."),
               min = -Inf,
               max = Inf,
-              isocountries = FALSE)
-  )
+              isocountries = FALSE))
 }

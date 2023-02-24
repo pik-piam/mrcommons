@@ -11,11 +11,13 @@ calcNitrogenWithdrawalByCrop(
 )
 }
 \arguments{
-\item{indicator}{total: estimates the inputs per total crop production; by_area estimates the inputs per area harvested}
+\item{indicator}{total: estimates the inputs per total crop production;
+by_area estimates the inputs per area harvested}
 
 \item{cellular}{cellular disaggreagation or national values}
 
-\item{irrigation}{FALSE for the sum of irrigated and rainfed, FALSE for seperated categories, 'rainfed' or 'irrigated for single categories}
+\item{irrigation}{FALSE for the sum of irrigated and rainfed, FALSE for separated categories,
+'rainfed' or 'irrigated for single categories}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

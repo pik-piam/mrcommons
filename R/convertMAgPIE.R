@@ -10,6 +10,7 @@
 #' @export
 #' @importFrom magclass as.magpie dimReduce
 #' @importFrom dplyr %>% mutate select rename left_join
+#' @importFrom rlang .data
 #' @importFrom quitte as.quitte
 #'
 convertMAgPIE <- function(x, subtype) {
@@ -55,12 +56,6 @@ convertMAgPIE <- function(x, subtype) {
     getYears(weight) <- NULL
 
   } else if (subtype == "supplyCurve_magpie_40") {
-    # variable definitions needed for data.frame operations below
-    region <- NULL
-    value <- NULL
-    Total <- NULL
-    CountryCode <- NULL
-    RegionCode <- NULL
 
     # FS: Disaggregation of MAgPIE biomass supply curves to iso-countries:
     # We assume that countries that are part of a MAgPIE region have the same fix cost to produce the first unit of
@@ -85,18 +80,18 @@ convertMAgPIE <- function(x, subtype) {
 
     # calculate share of agricultural land area for each iso-country relative to the MAgPIE region it is in
     agrLandShare <- as.quitte(agrLandIso) %>%
-                  select(region, value) %>%
-                  rename(CountryCode = region) %>%
-                  left_join(mapping) %>%
-                  left_join((as.quitte(agrLandReg) %>%
-                               select(region, value) %>%
-                               rename(RegionCode = region, Total = value))) %>%
-                  mutate(value = value / Total) %>%
-                  # if no agricultural area at all -> assume very low share of 1e-5
-                  mutate(value = ifelse(value == 0, 1e-5, value)) %>%
-                  select(CountryCode, value) %>%
-                  as.magpie(spatial = 1, datacol = 2) %>%
-                  dimReduce()
+      select(.data$region, .data$value) %>%
+      rename(CountryCode = .data$region) %>%
+      left_join(mapping) %>%
+      left_join((as.quitte(agrLandReg) %>%
+                   select(.data$region, .data$value) %>%
+                   rename(RegionCode = .data$region, Total = .data$value))) %>%
+      mutate(value = .data$value / .data$Total) %>%
+      # if no agricultural area at all -> assume very low share of 1e-5
+      mutate(value = ifelse(.data$value == 0, 1e-5, .data$value)) %>%
+      select(.data$CountryCode, .data$value) %>%
+      as.magpie(spatial = 1, datacol = 2) %>%
+      dimReduce()
 
     # divide slope parameter b by agricultural land share
     y[, , "b"] <- y[, , "b"] / agrLandShare

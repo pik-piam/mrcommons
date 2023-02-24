@@ -14,7 +14,7 @@ calcNitrogenFixationPast(
 \arguments{
 \item{fixation_types}{either "fixation_crops", "fixation_freeliving", or "both"}
 
-\item{sum_plantparts}{if false, crop residues, belowground residues and harvested organ are reported seperately}
+\item{sum_plantparts}{if false, crop residues, belowground residues and harvested organ are reported separately}
 
 \item{cellular}{cellular estimates optional}
 

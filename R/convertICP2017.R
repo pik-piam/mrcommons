@@ -1,6 +1,8 @@
 #' @title convertICP2017
-#' @description  converts data of World Bank ICP round, downloaded from here: https://databank.worldbank.org/source/icp-2017
-#' mainly a currency conversion to MER05. Assume that in the original dataset, 2011 values are in 2011MER and 2017 in 2017MER, given the ICP rounds
+#' @description  converts data of World Bank ICP round, downloaded from
+#' here: https://databank.worldbank.org/source/icp-2017
+#' mainly a currency conversion to MER05. Assume that in the original dataset,
+#' 2011 values are in 2011MER and 2017 in 2017MER, given the ICP rounds
 #'
 #' @param subtype data subtype needed. Either "priceLevel", or "per_cap_exp"
 #' @param x MAgPIE object containing original values

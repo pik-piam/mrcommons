@@ -1,5 +1,6 @@
 #' @title calcEF3prp
-#' @description Returns emission factor for manure excreted during pasture range and paddock. Differs depending on the share of small ruminants.
+#' @description Returns emission factor for manure excreted during pasture range
+#' and paddock. Differs depending on the share of small ruminants.
 #'
 #' @return list of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
@@ -11,27 +12,26 @@
 #' @importFrom utils read.csv
 
 
-calcEF3prp <- function(select_years = "y2005") {
+calcEF3prp <- function(select_years = "y2005") { # nolint
   excretion <- collapseNames(calcOutput("ExcretionIPCC", aggregate = FALSE)[, , "pasture_range_paddock"])
-  # excretion<-collapseNames(calcOutput("Excretion",aggregate = F)[,,"grazing"][,,"nr"])
-  # excretion<-stocks
   cpp <- c("dairy cows", "other cattle", "dairy buffalo", "other buffalo",
-         "market swine", "breeding swine", "poultry layers", "broilers",
-         "turkey", "ducks")
+           "market swine", "breeding swine", "poultry layers", "broilers",
+           "turkey", "ducks")
 
   so <- c("dairy sheep", "other sheep",
-        "dairy goats", "other goats",
-        "dairy camels", "other camels",
-        "horses", "mules and asses")
-  ef3prp_cpp <- 0.02
-  ef3prp_so <- 0.01
+          "dairy goats", "other goats",
+          "dairy camels", "other camels",
+          "horses", "mules and asses")
+  ef3prpCpp <- 0.02
+  ef3prpSo <- 0.01
   emis <- excretion
-  emis[, , cpp] <- excretion[, , cpp] * ef3prp_cpp
-  emis[, , so] <- excretion[, , so] * ef3prp_so
+  emis[, , cpp] <- excretion[, , cpp] * ef3prpCpp
+  emis[, , so] <- excretion[, , so] * ef3prpSo
 
   relationmatrix <- read.csv(toolGetMapping(type = "sectoral", name = "IPCCitems.csv", returnPathOnly = TRUE))
   emis <- toolAggregate(x = emis, rel = relationmatrix, dim = 3.1, from = "ipcc", to = "magpie", partrel = TRUE)
-  excretion <- toolAggregate(x = excretion, rel = relationmatrix, dim = 3.1, from = "ipcc", to = "magpie", partrel = TRUE)
+  excretion <- toolAggregate(x = excretion, rel = relationmatrix, dim = 3.1,
+                             from = "ipcc", to = "magpie", partrel = TRUE)
 
   ef3prp <- emis / excretion
   ef3prp[is.na(ef3prp)] <- 0.02

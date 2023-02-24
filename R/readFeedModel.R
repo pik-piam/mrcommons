@@ -1,6 +1,7 @@
 #' Read in data of FeedModel
 #'
-#' Read in csv files containing data on production system distribution and system-specific feed baskets from the FeedModel "MAgPIE_FEED"
+#' Read in csv files containing data on production system distribution and system-specific feed baskets from the
+#' FeedModel "MAgPIE_FEED"
 #'
 #' @param subtype Available subtypes: "ProdSysRatio", "FeedBaskets" and "FeedBasketsDetailed"
 #' @return magpie object of feed basket data

@@ -15,7 +15,8 @@ calcRegFactorShare(datasource = "USDA", factor = "cap")
 MAgPIE object at global level with slope and intersect as items
 }
 \description{
-This function calculates the regression parameters (a and b) for the function Share=a*log10(GDP)+b. Where share is the adjusted share between capital and labour.
+This function calculates the regression parameters (a and b) for the function Share=a*log10(GDP)+b
+Where share is the adjusted share between capital and labour.
 }
 \examples{
 \dontrun{

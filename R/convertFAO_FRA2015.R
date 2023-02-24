@@ -13,7 +13,7 @@
 #' @importFrom magclass magpiesort
 #'
 
-convertFAO_FRA2015 <- function(x, subtype) {
+convertFAO_FRA2015 <- function(x, subtype) { # nolint: object_name_linter.
   if (any(c("fac", "production", "biodiversity", "anndat") %in% subtype)) {
     x <- toolCountryFill(x, fill = 0)
     if (any(c("ProdFor", "MulUseFor") %in% getNames(x))) {
@@ -25,16 +25,19 @@ convertFAO_FRA2015 <- function(x, subtype) {
       x[, , "IncrConif"]  <- x[, , "IncrConif"]  * 1000 # conversion from m3/ha/yr to mil.m3/mil.ha/yr
       x[, , "IncrBroa"]   <- x[, , "IncrBroa"]   * 1000 # conversion from m3/ha/yr to mil.m3/mil.ha/yr
     }
-    if (any(c("Forest", "Forchange", "NatFor", "Nfchange", "OthWooLan", "OthLan", "LanTreCov", "InWater", "Landarea", "PrimFor", "NatRegFor", "IntroSpp", "NatzedSpp", "PlantFor", "Pfchange", "IntroSppPlant"
-) %in% getNames(x))) {
-      NamesToFix <- c("Forest", "Forchange", "NatFor", "Nfchange", "OthWooLan", "OthLan", "LanTreCov", "InWater", "Landarea", "PrimFor", "NatRegFor", "IntroSpp", "NatzedSpp", "PlantFor", "Pfchange", "IntroSppPlant", "Mangrove")
-      for (i in NamesToFix) {
+    if (any(c("Forest", "Forchange", "NatFor", "Nfchange", "OthWooLan", "OthLan",
+              "LanTreCov", "InWater", "Landarea", "PrimFor", "NatRegFor", "IntroSpp",
+              "NatzedSpp", "PlantFor", "Pfchange", "IntroSppPlant") %in% getNames(x))) {
+      namesToFix <- c("Forest", "Forchange", "NatFor", "Nfchange", "OthWooLan", "OthLan",
+                      "LanTreCov", "InWater", "Landarea", "PrimFor", "NatRegFor", "IntroSpp",
+                      "NatzedSpp", "PlantFor", "Pfchange", "IntroSppPlant", "Mangrove")
+      for (i in namesToFix) {
         x[, , i] <- x[, , i] / 1000 # conversion from 1000ha to Million ha
       }
     }
     if (any(c("ForExp", "Afforest", "NatForExp", "Deforest", "HumDef", "Reforest", "ArtRef") %in% getNames(x))) {
-      NamesToFix <- c("ForExp", "Afforest", "NatForExp", "Deforest", "HumDef", "Reforest", "ArtRef")
-      for (i in NamesToFix) {
+      namesToFix <- c("ForExp", "Afforest", "NatForExp", "Deforest", "HumDef", "Reforest", "ArtRef")
+      for (i in namesToFix) {
         x[, , i] <- x[, , i] / 1000000 # conversion from ha/yr to Mil.ha/yr
       }
     }

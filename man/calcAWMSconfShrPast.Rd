@@ -13,13 +13,14 @@ calcAWMSconfShrPast(products = "magpie")
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates the share of manure excreted in different types of animal waste management systems in  confinements in the year 2005 using the IPCC Guidelines excretion rates.
+calculates the share of manure excreted in different types of
+animal waste management systems in  confinements in the year 2005 using the
+IPCC Guidelines excretion rates.
 }
 \examples{
 \dontrun{
 calcOutput("AWMSconfShrPast")
 }
-
 }
 \seealso{
 \code{\link[=calcAWMSconfShr]{calcAWMSconfShr()}},

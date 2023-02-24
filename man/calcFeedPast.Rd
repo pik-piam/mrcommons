@@ -18,8 +18,8 @@ calcFeedPast(
 
 \item{products}{products in feed baskets that shall be reported}
 
-\item{nutrients}{nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P), Generalizable Energy (GE) and wet
-matter (WM).}
+\item{nutrients}{nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P),
+Generalizable Energy (GE) and wet matter (WM).}
 }
 \value{
 List of magpie objects with results on country or cellular level, unit and description.

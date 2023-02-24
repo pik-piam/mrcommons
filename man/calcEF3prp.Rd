@@ -13,7 +13,8 @@ calcEF3prp(select_years = "y2005")
 list of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-Returns emission factor for manure excreted during pasture range and paddock. Differs depending on the share of small ruminants.
+Returns emission factor for manure excreted during pasture range
+and paddock. Differs depending on the share of small ruminants.
 }
 \examples{
 \dontrun{

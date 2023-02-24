@@ -9,6 +9,7 @@
 convertVittis <- function(x) {
   # map to MAgPIE categories with global crop areas as weights
   mapping <- toolGetMapping("VittisCropCategories.csv", type = "sectoral", where = "mrcommons")
+
   weights <- calcOutput("Croparea",
                         sectoral = "ProductionItem",
                         aggregate = "GLO")[, "y2000", unique(mapping[, "ProductionItem"])] %>%
@@ -20,15 +21,16 @@ convertVittis <- function(x) {
 
   # fill missing countries with average over corresponding world region
   mapping <- toolGetMapping("regionmappingH12.csv", type = "regional")
-  avg_costs <- toolAggregate(x,
-                             rel = mapping[mapping[, 2] %in% getRegions(x), ],
+  avgCosts <- toolAggregate(x,
+                             rel = mapping[mapping[, 2] %in% getItems(x, dim = 1), ],
                              from = "CountryCode",
                              to = "RegionCode",
-                             weight = new.magpie(getRegions(x), getYears(x), getNames(x), 1))
-  missing_countries <- setdiff(mapping[, 2], getRegions(x))
+                             weight = new.magpie(getItems(x, dim = 1), getYears(x), getNames(x), 1))
+  missingCountries <- setdiff(mapping[, 2], getItems(x, dim = 1))
+
   x <- toolCountryFill(x, verbosity = 2)
-  for (reg in missing_countries) {
-    x[reg, , ] <- avg_costs[mapping[mapping[, 2] == reg, 3], , ]
+  for (reg in missingCountries) {
+    x[reg, , ] <- avgCosts[mapping[mapping[, 2] == reg, 3], , ]
   }
 
   return(x)

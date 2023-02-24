@@ -7,7 +7,8 @@
 readFoodSystemsDashboard(subtype)
 }
 \arguments{
-\item{subtype}{Currently either "Processed" for Processed food expenditures per capita or "Industrial Processing Share"}
+\item{subtype}{Currently either "Processed" for Processed food expenditures per capita or
+"Industrial Processing Share"}
 }
 \value{
 governance index data at iso-country level

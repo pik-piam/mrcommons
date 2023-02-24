@@ -2,7 +2,8 @@
 #' @description read in Food Systems Dashboard indicators
 #' @return governance index data at iso-country level
 #'
-#' @param subtype Currently either "Processed" for Processed food expenditures per capita or "Industrial Processing Share"
+#' @param subtype Currently either "Processed" for Processed food expenditures per capita or
+#'                "Industrial Processing Share"
 #'
 #' @author David Chen
 #'
@@ -22,10 +23,10 @@ readFoodSystemsDashboard <- function(subtype) {
 
   x <- read.csv("FSD-Records_Export_Complete_Data_20211022_1554.csv")
 
-  extra_mapping <- c("Gambia The" = "GMB",
-                     "St Vincent and the Grenadines" = "VCT",
-                     "Palestinian Territory, Occupied" = "PSE",
-                     "Holy See (Vatican City)" = "VAT")
+  extraMapping <- c("Gambia The" = "GMB",
+                    "St Vincent and the Grenadines" = "VCT",
+                    "Palestinian Territory, Occupied" = "PSE",
+                    "Holy See (Vatican City)" = "VAT")
 
 
   if (subtype == "Industrial Processing Share") {
@@ -38,7 +39,7 @@ readFoodSystemsDashboard <- function(subtype) {
 
 
 
-  x2$AreaName <- toolCountry2isocode(x2$AreaName, mapping = extra_mapping)
+  x2$AreaName <- toolCountry2isocode(x2$AreaName, mapping = extraMapping)
   x2 <- filter(x2, !is.na(.data$AreaName))
   x2$DataValue <- as.numeric(x2$DataValue)
   x2$TimePeriod <- as.numeric(x2$TimePeriod)
@@ -72,11 +73,11 @@ readFoodSystemsDashboard <- function(subtype) {
       select(.data$AreaName, .data$TimePeriod, .data$Indicator,
              .data$DataValue)
 
-    extra_mapping <- c(extra_mapping,
-                       "St. Martin (French part)" = "MAF",
-                       "Macau SAR" = "MAC")
+    extraMapping <- c(extraMapping,
+                      "St. Martin (French part)" = "MAF",
+                      "Macau SAR" = "MAC")
 
-    tmp$AreaName <- toolCountry2isocode(tmp$AreaName, mapping = extra_mapping)
+    tmp$AreaName <- toolCountry2isocode(tmp$AreaName, mapping = extraMapping)
 
     tmp <- filter(tmp, !is.na(.data$AreaName))
     tmp$DataValue <- as.numeric(tmp$DataValue)
@@ -86,10 +87,10 @@ readFoodSystemsDashboard <- function(subtype) {
     return(tmp)
     }
 
-    proc_out <- .readProc(proc)
-    ultr_out <- .readProc(ultr)
+    procOut <- .readProc(proc)
+    ultrOut <- .readProc(ultr)
 
-    out <- mbind(proc_out, ultr_out)
+    out <- mbind(procOut, ultrOut)
 
   }
   return(out)

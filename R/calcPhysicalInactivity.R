@@ -19,8 +19,8 @@ calcPhysicalInactivity <- function() {
 
   observations <- readSource("WHO", "physical_inactivity_adults") / 100
   observedcountries <- where(!is.na(observations))$true$regions
-  # plot(observations[observedcountries,2010,"M"]~inactivity[observedcountries,2010,"M"][,,"AG1"][,,"SSP2"])
-  # calibrate to observations
+
+    # calibrate to observations
   inactivity[observedcountries, , ] <- inactivity[observedcountries, , ] +
                         setYears(observations[observedcountries, 2010, ] - inactivity[observedcountries, 2010, ], NULL)
 
@@ -30,10 +30,9 @@ calcPhysicalInactivity <- function() {
   inactivity2 <- dem * 0 + 1
   inactivity2 <- inactivity2 * inactivity[, getYears(dem), getNames(dem, dim = 1)]
   # informed assumption based on Hallal et al
-  # a=x/(1.5^0.5) and b=x*(1.5^0.5) results in the effect that a/b=2/3
   working <- c("20--24", "25--29", "30--34", "35--39", "40--44", "45--49", "50--54", "55--59")
   retired <- c("60--64", "65--69", "70--74", "75--79", "80--84", "85--89", "90--94", "95--99")
-  inactivity2[, , working] <- inactivity2[, , working] / (1.5^0.5)
+  inactivity2[, , working] <- inactivity2[, , working] / (1.5^0.5) # results in the effect that a/b=2/3
   inactivity2[, , retired] <- inactivity2[, , retired] * (1.5^0.5)
 
   # physical inactivity set to 80% across all incomes for kids, based on
@@ -44,16 +43,11 @@ calcPhysicalInactivity <- function() {
 
   observations <- readSource("WHO", "physical_inactivity_underaged") / 100
   observedcountries <- where(!is.na(observations))$true$regions
-  # plot(observations[observedcountries,2010,"M"]~inactivity[observedcountries,2010,"M"][,,"AG1"][,,"SSP2"])
-  # calibrate to observations
+
+    # calibrate to observations
   inactivity2[observedcountries, , underaged] <- setYears(observations[observedcountries, 2010, ], NULL)
 
   getSets(inactivity2) <- c("region", "year", "scenario", "sex", "age")
-
-  # adult=c("AG1","AG2","AG3","AG4")
-  # x=dimSums((inactivity2[,,adult]*dem[,,adult]),dim=c(3.2,3.3,3.4))/dimSums(dem[,,adult],dim=c(3.2,3.3,3.4))
-  # x[is.nan(x)]<-0
-  # plotcountrymap(x[,"y2010","SSP2"],catMethod=c(0.1,0.15,0.2,0.25,0.3,0.35,0.4))
 
   return(list(x = inactivity2,
               weight = dem,
