@@ -1,7 +1,7 @@
 #' @title correctLUH2v2
 #' @description Correct LUH2v2 content
 #'
-#' @param x magpie object provided by the read function
+#' @param x       magpie object provided by the read function
 #' @param subtype switch between different inputs
 #'
 #' @return List of magpie object with results on cellular level
@@ -31,21 +31,22 @@ correctLUH2v2 <- function(x, subtype) {
 
     # check, if in JPN pasture+rangeland is unnaturally low
     if (sum(x["JPN", "y2005", c("pastr", "range")]) < 0.01) {
+
       # if so correct all years since 2001 (first year of buggy data)
       # using secondary forest area as buffer
       buggedYears <- intersect(2001:2015, years)
       pasture     <- setYears(x["JPN", "y2000", c("pastr", "range")], NULL)
       x["JPN", buggedYears, "secdf"]             <- x["JPN", buggedYears, "secdf"] - dimSums(pasture, dim = 3)
-      x["JPN", buggedYears, c("pastr", "range")] <- x["JPN", buggedYears, c("pastr", "range")] +
-        setYears(pasture, NULL)
+      x["JPN", buggedYears, c("pastr", "range")] <- x["JPN", buggedYears, c("pastr", "range")] + pasture
 
-      # correct for negative values (first in pasture than rangelands), if secondary forest is exceeded
+      # correct for negative values if secondary forest is exceeded
       secdfNegative <- (x["JPN", buggedYears, "secdf"] < 0)
-      pastrNegative <- (x["JPN", buggedYears, "pastr"] < 0)
       x["JPN", buggedYears, "pastr"][secdfNegative] <- x["JPN", buggedYears, "pastr"][secdfNegative] +
                                                         x["JPN", buggedYears, "secdf"][secdfNegative]
       x["JPN", buggedYears, "secdf"][secdfNegative] <- 0
 
+      # correct potentially newly introduced negative values in rangelands
+      pastrNegative <- (x["JPN", buggedYears, "pastr"] < 0)
       x["JPN", buggedYears, "range"][pastrNegative] <- x["JPN", buggedYears, "range"][pastrNegative] +
                                                         x["JPN", buggedYears, "pastr"][pastrNegative]
       x["JPN", buggedYears, "pastr"][pastrNegative] <- 0
