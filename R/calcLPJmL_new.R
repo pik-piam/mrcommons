@@ -42,21 +42,20 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
       subtypeIn <- subtype
     }
 
-    readinName <- paste0(cfg$readin_version, ":", cfg$climatetype, cfg$addon_scen, ":", subtypeIn)
+    if (grepl("\\+scen", cfg$readin_version)) {
+      scen <- gsub("(.+)\\+scen:([^\\+]*)(.*)", "_\\2", cfg$readin_version)
+      cfg$readin_version <- gsub("\\+scen:([^\\+]*)", "", cfg$readin_version)
+      cfg$climatetype    <- paste0(cfg$climatetype, scen)
+    }
+    readinName <- paste(cfg$readin_version, cfg$climatetype, subtypeIn, sep = ":")
+    readinHist <- gsub("ssp[0-9]{3}", "historical", readinName)
 
     ########## PLUG HIST + FUTURE ##########
 
-    if (!grepl("historical", climatetype)) {
-      # For climate scenarios historical data has to be read in from a different file
-      readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
-                                                      scenario = NULL, variable = NULL))
-
-      # replace scenario name with 'historical' (including optional addon setting) to load historical baseline
-      readinHist <- paste(gsub(readinHist$scenario, paste0("historical", cfg$addon_scen), readinHist), collapse = ":")
+    if (!grepl("historical", cfg$climatetype)) {
 
       x     <- mbind(readSource("LPJmL_new", subtype = readinHist, convert = FALSE),
                      readSource("LPJmL_new", subtype = readinName, convert = FALSE))
-
       years <- getYears(x, as.integer = TRUE)
       x     <- x[, years[years >= 1951], ]
 
@@ -209,16 +208,10 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
     unit            <- baseline$unit
     baseline        <- baseline$x
 
-    if (climatetype == cfg$baseline_hist) {
-      out <- baseline
-
-    } else {
-
-      x   <- calcOutput("LPJmL_new", version = cfg$baseline_version,
-                        climatetype = climatetype, subtype = subtype,
-                        subdata = subdata, stage = "smoothed", aggregate = FALSE)
-      out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
-    }
+    x   <- calcOutput("LPJmL_new", version = cfg$readin_version,
+                      climatetype = cfg$climatetype, subtype = subtype,
+                      subdata = subdata, stage = "smoothed", aggregate = FALSE)
+    out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
 
   } else if (stage == "harmonized2020") {
     # read in historical data for subtype
@@ -230,12 +223,14 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
     unit            <- baseline2020$unit
     baseline2020    <- baseline2020$x
 
-    if (cfg$climatetype == cfg$baseline_gcm) {
+    if (cfg$climatetype    == cfg$baseline_gcm &&
+        cfg$readin_version == cfg$baseline_version) {
+
       out <- baseline2020
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = cfg$baseline_version,
+      x   <- calcOutput("LPJmL_new", version = cfg$readin_version,
                         climatetype = cfg$climatetype, subtype = subtype,
                         subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$ref_year_gcm)

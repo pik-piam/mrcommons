@@ -44,7 +44,7 @@ toolLPJmLVersion <- function(version, climatetype) {
     if (any(tmp == "oldGSWP3")) {
       if (climatetype == "GSWP3-W5E5:historical") {
         if (grepl("LPJmL4", tmp[1])) cfg$readin_version <- "LPJmL4_for_MAgPIE_84a69edd"
-        if (grepl("ggcmi", tmp[1]))  cfg$readin_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
+        if (grepl("ggcmi", tmp[1])) cfg$readin_version <- "ggcmi_phase3_nchecks_fbed5c8b_newparam"
       } else {
         cfg$readin_version <- tmp[1]
       }
@@ -53,30 +53,21 @@ toolLPJmLVersion <- function(version, climatetype) {
     if (any(grepl("baseline_gcm", tmp))) {
       i <- grep("baseline_gcm", tmp)
       cfg$baseline_gcm <- gsub("baseline_gcm", "", tmp[i])
+      cfg$readin_version   <- tmp[1]
     }
 
     if (any(grepl("baseline_hist", tmp))) {
       i <- grep("baseline_hist", tmp)
       cfg$baseline_hist <- gsub("baseline_hist", "", tmp[i])
-    }
-
-    if (any(grepl("scen", tmp))) {
-      scen <- toolSplitSubtype(
-        tmp[grep("scen", tmp)],
-        list(prefix = "scen", scen = NULL)
-      )$scen
-
-      cfg$addon_scen       <- paste0("_", scen)
       cfg$readin_version   <- tmp[1]
-      cfg$baseline_version <- version
     }
 
     ## Specific if in case the gsadapt scenario want to be harmonized to "standard" 2020
     # historical values and not with its own historical patterns
 
     if (any(grepl("gsadapt2020", tmp))) {
-      cfg$climatetype      <- paste0(climatetype, "_gsadapt")
-      cfg$readin_version   <- tmp[1]
+
+      cfg$readin_version   <- paste0(tmp[1], "+scen:gsadapt")
       cfg$baseline_version <- tmp[1]
     }
 
