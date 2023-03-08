@@ -16,7 +16,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
   lutz <- readSource("Lutz2014", convert = convert)
 
   mapping2 <- toolGetMapping(type = "sectoral", name = "lutz2hic2.csv")
-  demo <- speed_aggregate(x = lutz, rel = mapping2, from = "lutz", to = "hic", dim = 3.2)
+  demo <- luscale::speed_aggregate(x = lutz, rel = mapping2, from = "lutz", to = "hic", dim = 3.2)
 
   demo <- demo[, , "B", invert = TRUE]
   demo <- demo[, , "All", invert = TRUE]
@@ -27,7 +27,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   # in 2010 there are tiny differences in the demography. We still want to have a harmonized
   # dataset for 2010.
-  past <- findset("past")
+  past <- magpiesets::findset("past")
   demo[, intersect(getYears(demo), past), ] <- demo[, intersect(getYears(demo), past), "SSP2"]
 
 
@@ -35,15 +35,19 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   if (convert == TRUE) {
     scen <- getNames(demo, dim = "scenario")
-    population <- collapseNames(calcOutput("Population", aggregate = FALSE, naming = "indicator.scenario")[, , scen])
-    diff <- dimSums(demo, dim = c("sex", "age", "education")) - population[, getYears(demo), ]
+    population <- calcOutput("Population",
+                             scenario = "SSPs",
+                             naming = "scenario",
+                             years = magpiesets::findset("time"),
+                             aggregate = FALSE)
+    diff <- dimSums(demo, dim = c("sex", "age", "education")) - population[,  getYears(demo), ]
     diff[] <- abs(diff)
     if (sum(diff) > 100) {
       vcat(2, paste0(
         "Population and Demography datasets diverge: ",
-        round(mean(dimSums(diff[, intersect(getYears(diff), findset("past")), ], dim = c(1, 3)) / dim(diff)[3])),
+        round(mean(dimSums(diff[, intersect(getYears(diff), past), ], dim = c(1, 3)) / dim(diff)[3])),
         " mio per year for the past and ",
-        round(mean(dimSums(diff[, setdiff(getYears(diff), findset("past")), ], dim = c(1, 3)) / dim(diff)[3])),
+        round(mean(dimSums(diff[, setdiff(getYears(diff), past), ], dim = c(1, 3)) / dim(diff)[3])),
         "mio per year for the future. Largest divergences in ",
         where(diff == max(diff))$true$regions[1],
         "in the year ",
