@@ -34,7 +34,6 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
   # test for differences in population and demography datasets
 
   if (convert == TRUE) {
-    scen <- getNames(demo, dim = "scenario")
     population <- calcOutput("Population",
                              scenario = "SSPs",
                              naming = "scenario",
