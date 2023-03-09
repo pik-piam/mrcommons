@@ -120,10 +120,13 @@ calcHourlyLaborCosts <- function(datasource = "USDA_FAO", sector = "agriculture"
     hourlyCosts <- calcOutput("HourlyLaborCosts", datasource = datasource, sector = sector,
                               fillWithRegression = FALSE, aggregate = FALSE)
 
-    # calculate GDP pc [USD05MER] for regression
-    gdpMERpc <- calcOutput("GDPpc", GDPpcCalib = "calibSSPs", GDPpcPast = "WDI-MI",
-                           GDPpcFuture = "SSPs-MI", unit = "constant 2005 US$MER",
-                           FiveYearSteps = FALSE, naming = "scenario", aggregate = FALSE)
+    # calculate GDPpc [USD05MER] for regression
+    gdpMERpc <- calcOutput("GDPpc",
+                           scenario = "SSPs",
+                           unit = "constant 2005 US$MER",
+                           average2020 = FALSE,
+                           naming = "scenario",
+                           aggregate = FALSE)
 
     if (!isFALSE(projection)) {
       years <- setdiff(getItems(gdpMERpc, dim = 2), paste0("y", seq(2105, 2150, 5)))
