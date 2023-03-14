@@ -49,8 +49,10 @@ toolLPJmLVersion <- function(version, climatetype) {
     if (any(grepl("gsadapt2020", tmp))) {
 
       if (cfg$climatetype != cfg$baseline_hist) {
-                cfg$readin_version <- paste0(tmp[1], "+scen:gsadapt")
-      } else {  cfg$readin_version <- tmp[1] }
+        cfg$readin_version <- paste0(tmp[1], "+scen:gsadapt")
+      } else {
+        cfg$readin_version <- tmp[1]
+      }
 
       cfg$baseline_version <- tmp[1]
     }
