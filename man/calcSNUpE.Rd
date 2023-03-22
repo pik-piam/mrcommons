@@ -35,5 +35,5 @@ calcOutput("SNUpE")
 \code{\link[=calcNitrogenBudgetCropland]{calcNitrogenBudgetCropland()}}
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, Xiaoxi Wang
 }

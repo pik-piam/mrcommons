@@ -9,7 +9,7 @@
 #' @param maccbase whether future scenarios should be expressed as base efficiency, excluding additional
 #' macc improvemetns (new default)
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky
+#' @author Benjamin Leon Bodirsky, Xiaoxi Wang
 #' @seealso
 #' [calcNitrogenBudgetCropland()]
 #' @examples
@@ -60,6 +60,27 @@ calcSNUpE <- function(
     # The first type of scenarios assume that NUE changes by the same number of percentage points
     # across regions. A maximum NUE however prevents too high NUEs.
 
+    # function to incorporate CHA SNUPE due to fertilizer policy reform (Wang et al. 2023)
+    wang2023Scenariosetting3 <- function(x, scenarioname, policy2020 = 0.122011, policy2050 = 0.192011,
+                                         policy2100 = 0.292011, max = 100, adjust2050 = FALSE) {
+      y2020CHN <- policy2020 + setYears(x["CHN", "y2010", "constant"], NULL)
+      y2020CHN[y2020CHN > 70 / 100] <- 70 / 100
+      x["CHN", , scenarioname] <- convergence(origin = x["CHN", , "constant"], aim = y2020CHN, start_year = "y2010",
+                                              end_year = "y2020", type = "linear")
+      x["CHN", 2015, scenarioname] <- x["CHN", 2015, scenarioname] - 0.0028612
+
+      if (adjust2050) {
+        y2050CHN <- policy2050 + setYears(x["CHN", "y2010", "constant"], NULL)
+        y2050CHN[y2050CHN > max / 100] <- max / 100
+        y2100CHN <- policy2100 + setYears(x["CHN", "y2010", "constant"], NULL)
+        y2100CHN[y2100CHN > max / 100] <- max / 100
+        x["CHN", , scenarioname] <- convergence(origin = x["CHN", , scenarioname], aim = y2050CHN, start_year = "y2020",
+                                                end_year = "y2050", type = "linear")
+        x["CHN", , scenarioname] <- convergence(origin = x["CHN", , scenarioname], aim = y2100CHN, start_year = "y2050",
+                                                end_year = "y2100", type = "linear")
+      }
+      return(x)
+    }
 
     scenariosetting3 <- function(x, y2020 = 0.03, y2050, y2100, max = 100) {
       scenarioname <- paste0("baseeff_add", y2020 * 100, "_add", y2050 * 100, "_add", y2100 * 100, "_max", max)
@@ -72,10 +93,14 @@ calcSNUpE <- function(
       y2100[y2100 > max / 100] <- max / 100
       x[, , scenarioname] <- convergence(origin = x[, , "constant"], aim = y2020, start_year = "y2010",
                                          end_year = "y2020", type = "linear")
+      #incorporate changes in SNUPE due to fertilizer policy reform in China until 2020
+      x <-  wang2023Scenariosetting3(x, scenarioname)
+
       x[, , scenarioname] <- convergence(origin = x[, , scenarioname], aim = y2050, start_year = "y2020",
                                          end_year = "y2050", type = "linear")
       x[, , scenarioname] <- convergence(origin = x[, , scenarioname], aim = y2100, start_year = "y2050",
                                          end_year = "y2100", type = "linear")
+
       return(x)
     }
 
@@ -140,6 +165,19 @@ calcSNUpE <- function(
     # See gams code for documentation of transformation of PBL curves
     maccsTransf <- maxMaccs * implicitNue / (1 + maxMaccs * (implicitNue - 1))
 
+
+    # function to incorporate CHA SNUPE due to fertilizer policy reform (Wang et al. 2023)
+    wang2023Scenariosetting2 <- function(x, scenarioname,  policyEffect = 0.122011) {
+
+      y2020CHN <- policyEffect + x["CHN", "y2020", "constant"]
+      y2020CHN[y2020CHN > 70] <- 70
+      x["CHN", , scenarioname] <- convergence(origin = x["CHN", , "constant"], aim = y2020CHN, start_year = "y2010",
+                                            end_year = "y2020", type = "linear")
+      x["CHN", 2015, scenarioname] <- x["CHN", 2015, scenarioname] - 0.0028612
+      return(x)
+    }
+
+
     scenariosetting2 <- function(x, y2020, y2050, y2100) {
       # (1-NUE target) = (1-maccs transf)*(1-NUE_base)
       # NUE base = 1-(1-NUE target)/(1-maccs transf)
@@ -152,6 +190,10 @@ calcSNUpE <- function(
 
       x[, , scenarioname] <- convergence(origin = x[, , "constant"], aim = y2020, start_year = "y2010",
                                          end_year = "y2020", type = "linear")
+
+      #incorporate changes in SNUPE due to fertilizer policy reform in China
+      x <- wang2023Scenariosetting2(x, scenarioname)
+
       x[, , scenarioname] <- convergence(origin = x[, , scenarioname], aim = y2050, start_year = "y2020",
                                          end_year = "y2050", type = "linear")
       x[, , scenarioname] <- convergence(origin = x[, , scenarioname], aim = y2100, start_year = "y2050",
