@@ -103,12 +103,12 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     yearsSub <- yearsSub[yearsSub >= 1960]
     x <- magpiesort(x[, yearsSub, ])
 
-    # fill missing cells with 0
+    # fill missing cells with 0 if any
     map  <- toolGetMappingCoord2Country()
     missingCells <- setdiff(map$coords, getItems(x, dim = 1))
     fill <- new.magpie(cells_and_regions = missingCells, years = getYears(x),
                        names = getNames(x), fill = 0)
-    x    <- mbind(x, fill)
+    x    <- suppressWarnings(mbind(x, fill))
 
     nameClean <- function(x, subtype, order = FALSE) {
 
