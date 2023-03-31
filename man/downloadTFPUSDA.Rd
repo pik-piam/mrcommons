@@ -12,12 +12,6 @@ raw TFP file from USDA
 \description{
 Downloads data of input shares based on a TFP assessment from USDA.
 }
-\examples{
-\dontrun{
-a <- download("TFP_USD")
-}
-
-}
 \seealso{
 \code{\link[=downloadSource]{downloadSource()}}
 }

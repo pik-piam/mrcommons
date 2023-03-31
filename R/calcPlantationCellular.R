@@ -12,20 +12,22 @@
 #' }
 #'
 calcPlantationCellular <- function() {
-  planted_area <- readSource("FRA2020", "forest_area")[, , "plantedForest"]
-  planted_area <- time_interpolate(dataset = planted_area, interpolated_year = "y1995", integrate_interpolated_years = TRUE, extrapolation_type = "linear")
+  plantedArea <- readSource("FRA2020", "forest_area")[, , "plantedForest"]
+  plantedArea <- time_interpolate(dataset = plantedArea, interpolated_year = "y1995",
+                                  integrate_interpolated_years = TRUE, extrapolation_type = "linear")
   ## VegC
-  cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical", subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, "y1995", ]
+  cellvegc <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "GSWP3-W5E5:historical",
+                         subtype = "vegc", stage = "smoothed", aggregate = FALSE)[, "y1995", ]
   # reduce to 59199 cells and rename cells
   cellvegc <- toolCoord2Isocell(cellvegc)
 
-  dist_share <- NULL
-  for (reg in getRegions(cellvegc)) {
+  distShare <- NULL
+  for (reg in getItems(cellvegc, dim = 1)) {
     temp <- cellvegc[reg, , ] / dimSums(cellvegc[reg, , ], dim = 1)
-    dist_share <- mbind(dist_share, temp)
+    distShare <- mbind(distShare, temp)
   }
-  planted_cell <- planted_area[getRegions(dist_share), , ] * dist_share
-  out <- setYears(planted_cell[, "y1995", ], NULL)
+  plantedCell <- plantedArea[getItems(distShare, dim = 1), , ] * distShare
+  out <- setYears(plantedCell[, "y1995", ], NULL)
 
   return(list(
     x = out,

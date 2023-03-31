@@ -25,7 +25,8 @@ calcExcretionIPCC <- function(products = "IPCC") {
 
   development <- calcOutput("DevelopmentState", aggregate = FALSE)[, years, "SSP2"]
   tam2 <- setYears(readSource("IPCC", subtype = "ch10_table10a9", convert = FALSE), NULL)
-  tam2 <- collapseNames(collapseNames(tam2[, , "developed"]) * development + collapseNames(tam2[, , "developing"]) * (1 - development))
+  tam2 <- collapseNames(collapseNames(tam2[, , "developed"]) * development +
+                          collapseNames(tam2[, , "developing"]) * (1 - development))
   tam2 <- add_columns(tam2, dim = 3.1, addnm = getNames(tam))
   tam2[, , getNames(tam)] <- tam
 
@@ -33,11 +34,11 @@ calcExcretionIPCC <- function(products = "IPCC") {
 
   shr <- setYears(readSource("IPCC", "awmsShr"), NULL)
 
-  n_rate <- setYears(readSource("IPCC", "nExcrRate") * 365 / 1000000, NULL)
+  nRate <- setYears(readSource("IPCC", "nExcrRate") * 365 / 1000000, NULL)
 
   animals <- getNames(tam)
 
-  nex <- stocks[, , animals] * tam[, , animals] * n_rate[, , animals]
+  nex <- stocks[, , animals] * tam[, , animals] * nRate[, , animals]
   excretion <- nex * shr
 
   if (products == "magpie") {

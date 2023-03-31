@@ -16,27 +16,28 @@
 
 calcEF3confinement <- function(products = "magpie", selection = "n_pollutants_direct") {
 
-  FracGas <- readSource("IPCC", subtype = "fracgasms", convert = FALSE)
-  FracN2O <- FracGas
-  FracN2O[, , ] <- NA
-  FracN2O[, , ] <- readSource("IPCC", subtype = "awmsconfef3", convert = FALSE)
-  FracLoss <- readSource("IPCC", subtype = "fraclossms", convert = FALSE)
-  if (any(FracLoss - FracGas - FracN2O < 0)) {
+  fracGas <- readSource("IPCC", subtype = "fracgasms", convert = FALSE)
+  fracN2O <- fracGas
+  fracN2O[, , ] <- NA
+  fracN2O[, , ] <- readSource("IPCC", subtype = "awmsconfef3", convert = FALSE)
+  fracLoss <- readSource("IPCC", subtype = "fraclossms", convert = FALSE)
+  if (any(fracLoss - fracGas - fracN2O < 0)) {
     vcat(verbosity = 1, "AWMS: FracGas, FracN2O and FracLoss are incompatible. Increasing FracLossms")
-    FracLoss <- FracLoss + FracN2O
+    fracLoss <- fracLoss + fracN2O
   }
   # assumption: half of remaining losses are from leaching, which matches tier-2 estimates of 1-20% of leaching
-  FracN2 <- FracNO3N <- (FracLoss - FracGas - FracN2O) / 2
-  no2_share_volat_awms <- collapseNames(readSource("IPCC", "emissionfactors", convert = FALSE)[, , "no2_share_volat_awms"])
-  FracNO2 <- FracGas * no2_share_volat_awms
-  FracNH3 <- FracGas * (1 - no2_share_volat_awms)
+  fracN2 <- fracNO3N <- (fracLoss - fracGas - fracN2O) / 2
+  no2ShareVolatAwms <- collapseNames(readSource("IPCC", "emissionfactors", convert = FALSE)
+                                     [, , "no2_share_volat_awms"])
+  fracNO2 <- fracGas * no2ShareVolatAwms
+  fracNH3 <- fracGas * (1 - no2ShareVolatAwms)
   distribution <- mbind(
-    add_dimension(FracN2O, nm = "n2o_n_direct", dim = 3.1),
-    add_dimension(FracNH3, nm = "nh3_n", dim = 3.1),
-    add_dimension(FracNO2, nm = "no2_n", dim = 3.1),
-    add_dimension(FracNO3N, nm = "no3_n", dim = 3.1),
-    add_dimension(FracN2, nm = "n2_n", dim = 3.1),
-    add_dimension(1 - (FracN2O + FracNH3 + FracNO2 + FracNO3N + FracN2), nm = "recycling", dim = 3.1)
+    add_dimension(fracN2O, nm = "n2o_n_direct", dim = 3.1),
+    add_dimension(fracNH3, nm = "nh3_n", dim = 3.1),
+    add_dimension(fracNO2, nm = "no2_n", dim = 3.1),
+    add_dimension(fracNO3N, nm = "no3_n", dim = 3.1),
+    add_dimension(fracN2, nm = "n2_n", dim = 3.1),
+    add_dimension(1 - (fracN2O + fracNH3 + fracNO2 + fracNO3N + fracN2), nm = "recycling", dim = 3.1)
   )
   awms <- getNames(distribution, dim = 3)
   excretion <- setYears(calcOutput("ExcretionIPCC", products = "IPCC", aggregate = FALSE)[, "y2005", awms], NULL)

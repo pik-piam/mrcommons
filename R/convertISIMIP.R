@@ -17,14 +17,18 @@
 #' }
 #'
 convertISIMIP <- function(x, subtype) {
+
   if (grepl("^airww", subtype)) {
-    landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype = "states",
-                                                          convert = "onlycorrect")[, "y1995", ], dim = 3)), NULL)
+    landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype = "states_1995to1996",
+                                                          convert = "onlycorrect")[, "y1995", ], dim = 3)),
+                         NULL)
     landarea <- collapseDim(landarea, dim = "iso")
     weight   <- landarea
     weight   <- add_columns(weight, dim = 1, addnm = "178p75.-49p25", fill = 0) # add missing weight
   } else {
     stop("Aggregation rule for given subtype \"", subtype, "\" not defined!")
   }
+
   return(toolAggregateCell2Country(x, weight = weight, fill = 0))
+
 }

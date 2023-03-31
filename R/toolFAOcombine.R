@@ -20,10 +20,9 @@
 #' @export
 #'
 toolFAOcombine <- function(..., combine = "Item") {
-  # the names of the ellipsis (...) arguments
-  dotnames <- sapply(match.call()[-1], deparse)
-
   x <- list(...)
+  dotnames <- names(x)
+
   if (length(x) < 2) stop("At least two files have to be provided")
   if (length(x) > 2) stop("Function currently only working for two files")
 
@@ -66,7 +65,7 @@ toolFAOcombine <- function(..., combine = "Item") {
       # short check if global sums of the values are the same.
       for (item in inboth) {
         avg <- mean((x1GLO[, , item] + 10^-8) / (x2GLO[, , item] + 10^-8))
-        if (avg > 1.01 | avg < 0.99) {
+        if (avg > 1.01 || avg < 0.99) {
           cat(0, "For", item, "the values in the two datasets seem to differ. Manual check recommended.")
         }
       }

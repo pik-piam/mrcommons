@@ -17,7 +17,9 @@ A MAgPIE object containting the share of Nr derived from
 }
 }
 \description{
-Reads a dataset containing values for biological nitrogen fixation in agricultural systems. Source: Herridge D. F., Peoples M. B., Boddey R. M.: Global inputs of biological nitrogen fixation in agricultural systems
+Reads a dataset containing values for biological nitrogen fixation in agricultural systems.
+Source: Herridge D. F., Peoples M. B., Boddey R. M.: Global inputs of biological nitrogen fixation in agricultural
+systems
 }
 \details{
 Availables Subtypes:
@@ -29,7 +31,7 @@ Availables Subtypes:
 \examples{
 \dontrun{
 x <- readSource("Herridge", "ndfa")
-    x <-  readSource("Herridge", "freeliving", convert = F)
+x <- readSource("Herridge", "freeliving", convert = F)
 }
 
 }

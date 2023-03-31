@@ -7,9 +7,10 @@
 readImageMacc(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "CH4_Energy_Industry", "CH4_Landuse",
-"N2O_Energy_Industry", "N2O_Landuse", "HFC_tot", "SF6_tot", "PFC_tot" or
-"baseline_sources"}
+\item{subtype}{data subtype.
+Options are: "CH4_Energy_Industry", "CH4_Landuse",
+"N2O_Energy_Industry", "N2O_Landuse",
+"HFC_tot", "SF6_tot", "PFC_tot" or "baseline_sources"}
 }
 \value{
 magpie object of the ImageMacc data

@@ -7,7 +7,8 @@
 calcRegressionParameters(regression = "bmi_shr")
 }
 \arguments{
-\item{regression}{bmi_shr: Shares of BMI withina population. schofield or FAO_WHO_UNU1985: calculates intake based on anthropometrics}
+\item{regression}{bmi_shr: Shares of BMI withina population. schofield or FAO_WHO_UNU1985:
+calculates intake based on anthropometrics}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

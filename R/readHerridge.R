@@ -1,5 +1,7 @@
 #' @title readHerridge
-#' @description Reads a dataset containing values for biological nitrogen fixation in agricultural systems. Source: Herridge D. F., Peoples M. B., Boddey R. M.: Global inputs of biological nitrogen fixation in agricultural systems
+#' @description Reads a dataset containing values for biological nitrogen fixation in agricultural systems.
+#' Source: Herridge D. F., Peoples M. B., Boddey R. M.: Global inputs of biological nitrogen fixation in agricultural
+#' systems
 #' @details Availables Subtypes:
 #'  \itemize{
 #'  \item ndfa:  National values for Plant associated fixation
@@ -15,7 +17,7 @@
 #' @examples
 #' \dontrun{
 #' x <- readSource("Herridge", "ndfa")
-#'     x <-  readSource("Herridge", "freeliving", convert = F)
+#' x <- readSource("Herridge", "freeliving", convert = F)
 #' }
 #'
 readHerridge <- function(subtype = NULL) {

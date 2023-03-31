@@ -22,8 +22,8 @@ readICP2017(subtype = "per_cap_expMER")
 magpie object of relative price levels (world = 100) or per capita expenditure (USD17 MER)
 }
 \description{
-Reads data of World Bank ICP round, downloaded from here: https://databank.worldbank.org/source/icp-2017
-Reads
+Reads data of World Bank ICP round, downloaded from here:
+https://databank.worldbank.org/source/icp-2017
 }
 \examples{
 \dontrun{

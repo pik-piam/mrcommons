@@ -17,6 +17,8 @@
 #' @importFrom lpjclass as.lpj
 #' @importFrom utils tail data
 
+# nolint start
+# deprecated soon
 readLPJml_rev21 <- function(subtype = "soilc") {
 
   files <- c(soilc = "soilc_natveg.bin",
@@ -422,3 +424,4 @@ stop(paste0("subtype ", subtype, " is not existing"))
 
   return(x)
 }
+# nolint end

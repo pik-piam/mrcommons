@@ -16,17 +16,17 @@
 readLUH2v2 <- function(subtype) {
 
   # set terra options and temporary directory
-  terraOptions(tempdir = local_tempdir(tmpdir = getConfig("tmpfolder")), todisk = TRUE, memfrac = 0.5)
+  terraOptions(tempdir = local_tempdir(tmpdir = getConfig("tmpfolder")), todisk = TRUE, memfrac = 0.25)
   defer(terraOptions(tempdir = tempdir()))
 
   # basic settings
-  timeSel   <- seq(1901, 2015, by = 1)
-  offset     <- 849  # year 850=1, year 1900=1051, year 2015=1166
+  timeSel <- seq(1901, 2015, by = 1)
+  offset  <- 849  # year 850=1, year 1900=1051, year 2015=1166
   # grep years to set other than default years, if subtypes ends with '_850to1901' like time span expression
   timeSpan <- str_match(subtype, "_(\\d+)to(\\d+)")[2:3]
   if (all(!is.na(timeSpan))) {
-    timeSel  <- seq(timeSpan[1], timeSpan[2], by = 1)
-    subtype   <- gsub("_(\\d+)to(\\d+)", "", subtype)
+    timeSel <- seq(timeSpan[1], timeSpan[2], by = 1)
+    subtype <- gsub("_(\\d+)to(\\d+)", "", subtype)
   }
 
   # File to process
@@ -35,15 +35,15 @@ readLUH2v2 <- function(subtype) {
   fTrans  <- "transitions.nc"
 
   ### Define dimensions
-  map      <- toolGetMappingCoord2Country(pretty = TRUE)
+  map <- toolGetMappingCoord2Country(pretty = TRUE)
 
   if (grepl("states", subtype)) {
 
     # Open file and process information
     ncFile <- nc_open(fStates)
-    data    <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
+    data   <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     # Land area
-    carea         <-  suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
+    carea      <-  suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
     ext(carea) <- c(-180, 180, -90, 90)
 
     x  <- NULL
@@ -61,10 +61,10 @@ readLUH2v2 <- function(subtype) {
     # Convert from km^2 to Mha
     x <- x / 10000
 
-  } else  if (grepl("transition", subtype)) {
+  } else if (grepl("transition", subtype)) {
 
     # Open file and process information
-    ncFile <- nc_open(fTrans)
+    ncFile  <- nc_open(fTrans)
     luTrans <- setdiff(names(ncFile$var), c("secma", "secmb", "lat_bounds", "lon_bounds"))
     luTrans <- grep("to", luTrans, value = TRUE)
 
@@ -81,7 +81,7 @@ readLUH2v2 <- function(subtype) {
     zeroTrans <- grepl(paste(paste(names(lu), names(lu), sep = "_to_"),
                              collapse = "|"), luTransReduced)
    # Land area
-    carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
+    carea      <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
     ext(carea) <- c(-180, 180, -90, 90)
 
     x <- new.magpie(map$coords, timeSel, unique(luTransReduced[!zeroTrans]), fill = 0)
@@ -112,7 +112,7 @@ readLUH2v2 <- function(subtype) {
     # Mapping between states and management_irrigation
     dataMan    <- c("irrig_c3ann", "irrig_c3per", "irrig_c4ann", "irrig_c4per", "irrig_c3nfx", "flood")
     dataStates <- c("c3ann", "c3per", "c4ann", "c4per", "c3nfx", "c3ann")
-    data        <- matrix(data = c(dataMan, dataStates), ncol = 2)
+    data       <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
     carea         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
@@ -120,7 +120,7 @@ readLUH2v2 <- function(subtype) {
 
     x  <- NULL
     for (item in dataMan) {
-      shr    <- suppressWarnings(subset(rast(fStates, subds = data[data[, 1] == item, 2]), timeSel - offset))
+      shr   <- suppressWarnings(subset(rast(fStates, subds = data[data[, 1] == item, 2]), timeSel - offset))
       irShr <- suppressWarnings(subset(rast(fMan,    subds = item), timeSel - offset))
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
       tmp <- shr
@@ -140,7 +140,7 @@ readLUH2v2 <- function(subtype) {
   } else if (grepl("ccode", subtype)) {
 
     # Load raster data on 0.25° and extend to full grid
-    ccode25         <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "ccode"))
+    ccode25      <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "ccode"))
     ext(ccode25) <- c(-180, 180, -90, 90)
 
     # Create new raster object on 0.5° and re-project 0.25°-raster on 0.5°-raster

@@ -1,7 +1,8 @@
 #' @title readBodirsky2018
 #' @description Reads in regression parameters estimated using mrregression, and reads in some scenario
 #' based on Bodirsky et al not yet published
-#' @param subtype bmi_share, demand_regression, intake_regression or bodyheight_regression for the estimated regression paramters of different regressions. scenarios for scenario projections.
+#' @param subtype bmi_share, demand_regression, intake_regression or bodyheight_regression
+#'                for the estimated regression paramters of different regressions. scenarios for scenario projections.
 #' @return magpie object
 #'
 #' @seealso

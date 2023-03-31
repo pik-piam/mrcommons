@@ -16,7 +16,10 @@ readAdjustGrassi2021 <- function(subtype) {
   if (subtype == "data") {
     x <- NULL
     for (rcp in (c("RCP19", "RCP26", "RCP34", "RCP45", "RCP60", "RCPBU"))) {
-      inter <- read.table(paste0("Grassi_et_al_2021_adjustment_factors_", rcp, ".csv"), sep = ";", header = TRUE, check.names = FALSE)
+      inter <- read.table(paste0("Grassi_et_al_2021_adjustment_factors_", rcp, ".csv"),
+                          sep = ";",
+                          header = TRUE,
+                          check.names = FALSE)
       inter <- as.magpie(inter, spatial = 1)
       getNames(inter) <- rcp
       x <- mbind(x, inter)
@@ -24,8 +27,8 @@ readAdjustGrassi2021 <- function(subtype) {
   }
 
   if (subtype == "weight") {
-    w_table <- read.table("Grassi_et_al_2021_country_removals.csv", sep = ";", header = TRUE, check.names = FALSE)
-    x <- as.magpie(w_table, spatial = 1)
+    wTable <- read.table("Grassi_et_al_2021_country_removals.csv", sep = ";", header = TRUE, check.names = FALSE)
+    x <- as.magpie(wTable, spatial = 1)
   }
 
   return(x)

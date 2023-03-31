@@ -14,7 +14,7 @@
 #' @importFrom readxl read_excel
 #' @importFrom magclass as.magpie
 
-readIMPACT3.2.2World_Price <- function() {
+readIMPACT3.2.2World_Price <- function() { # nolint: object_name_linter.
   data <- as.data.frame(read_excel("IMPACT 3.2.2 World Price-2.xlsx", skip = 6))
   data <- data[!is.na(data[[1]]), ]
   data$scenario <- sub(".", "p", data$scenario, fixed = TRUE)

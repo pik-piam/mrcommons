@@ -14,7 +14,7 @@
 #' a <- readSource("FAO_online", "Crop", convert = TRUE)
 #' }
 #'
-correctFAO_online <- function(x, subtype) {
+correctFAO_online <- function(x, subtype) { # nolint: object_name_linter.
 
   if (subtype == "Fodder") x <- x[, , "645|Pumpkins for Fodder", invert = TRUE] # smashing some pumpkins here
 

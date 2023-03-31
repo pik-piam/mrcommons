@@ -19,7 +19,7 @@ calcBodyHeight <- function(convert = TRUE) {
   height <- readSource("NCDrisc", subtype = "height", convert = convert)
   height <- time_interpolate(height, interpolated_year = 1890:2014, extrapolation_type = "constant")
   if (!convert) {
-    demo <- demo[getRegions(height), , ]
+    demo <- demo[getItems(height, dim = 1), , ]
   }
   out <- demo * 0
 
@@ -33,11 +33,11 @@ calcBodyHeight <- function(convert = TRUE) {
       }
       low <- year_x - low
       if (low < 1892) {
-low <- 1892
-}
+        low <- 1892
+      }
       if (low > 1996) {
-low <- 1996
-}
+        low <- 1996
+      }
 
       out[, year_x, cohort] <- dimSums(height[, low:(low + 4), ], dim = 2) / 5
     }
