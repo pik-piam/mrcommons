@@ -13,7 +13,7 @@ calcFAOTradePrices <- function(aggregation = "k") {
   trade <- readSource("FAO_online", subtype = "Trade")
 
   # no conversion for heads or numbers of animals yet?
-  trade <- trade[, , c("export", "import", "export_kUS$", "import_kUS$")]
+  trade <- trade[, , c("export", "import", "import_US$MER05", "export_US$MER05")]
 
   # get mapping
   mapping <- toolGetMapping("FAOitems_online.csv", type = "sectoral")
@@ -32,20 +32,20 @@ calcFAOTradePrices <- function(aggregation = "k") {
     trade_agg <- trade
   } else stop("Only none k fbs and springmann aggregations currently")
 
-  import_prices <- collapseNames(trade_agg[, , "import_kUS$"] / trade_agg[, , "import"], collapsedim = 3)
-  getNames(import_prices, dim = 2) <- "importPrice_$kg"
+  import_prices <- collapseNames(trade_agg[, , "import_US$MER05"] / trade_agg[, , "import"], collapsedim = 3)
+  getNames(import_prices, dim = 2) <- "importPrice"
 
-  export_prices <- collapseNames(trade_agg[, , "export_kUS$"] / trade_agg[, , "export"], collapsedim = 3)
-  getNames(export_prices, dim = 2) <- "exportPrice_$kg"
+  export_prices <- collapseNames(trade_agg[, , "export_US$MER05"] / trade_agg[, , "export"], collapsedim = 3)
+  getNames(export_prices, dim = 2) <- "exportPrice"
 
   out <- mbind(import_prices, export_prices)
 
   weight <- trade_agg[, , c("export", "import")]
-  getNames(weight, dim = 2) <- c("importPrice_$kg", "exportPrice_$kg")
+  getNames(weight, dim = 2) <- c("importPrice", "exportPrice")
 
   return(list(x = out,
               weight = weight,
-              unit = "$/kg",
-              description = "Employment in agriculture, forestry and fishery (based on ILO modelled estimates)"))
+              unit = "$/t",
+              description = "FAO Prices at Trade"))
 
 }
