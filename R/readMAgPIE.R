@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2020-04"
+  ver <- "2023-03"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -52,21 +52,21 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in calcMAgPIEReport.R
 
     fileList <- c("C_SDP-Base-mag-4.mif",
-                   "C_SDP-PkBudg900-mag-4.mif",
-                   "C_SDP-PkBudg1300-mag-4.mif",
-                   "C_SDP-NDC-mag-4.mif",
-                   "C_SSP1-Base-mag-4.mif",
-                   "C_SSP1-PkBudg900-mag-4.mif",
-                   "C_SSP1-PkBudg1300-mag-4.mif",
-                   "C_SSP1-NDC-mag-4.mif",
-                   "C_SSP2-Base-mag-4.mif",
-                   "C_SSP2-PkBudg900-mag-4.mif",
-                   "C_SSP2-PkBudg1300-mag-4.mif",
-                   "C_SSP2-NDC-mag-4.mif",
-                   "C_SSP5-Base-mag-4.mif",
-                   "C_SSP5-PkBudg900-mag-4.mif",
-                   "C_SSP5-PkBudg1300-mag-4.mif",
-                   "C_SSP5-NDC-mag-4.mif")
+                  "C_SDP-PkBudg900-mag-4.mif",
+                  "C_SDP-PkBudg1300-mag-4.mif",
+                  "C_SDP-NDC-mag-4.mif",
+                  "C_SSP1-Base-mag-4.mif",
+                  "C_SSP1-PkBudg900-mag-4.mif",
+                  "C_SSP1-PkBudg1300-mag-4.mif",
+                  "C_SSP1-NDC-mag-4.mif",
+                  "oldMACCostNames-C_SSP2EU-Base-mag-4.mif",
+                  "oldMACCostNames-C_SSP2EU-PkBudg500-mag-4.mif",
+                  "oldMACCostNames-C_SSP2EU-PkBudg11500-mag-4.mif",
+                  "oldMACCostNames-C_SSP2EU-NDC-mag-4.mif",
+                  "C_SSP5-Base-mag-4.mif",
+                  "C_SSP5-PkBudg900-mag-4.mif",
+                  "C_SSP5-PkBudg1300-mag-4.mif",
+                  "C_SSP5-NDC-mag-4.mif")
 
     x <- NULL
     for (f in fileList) {
