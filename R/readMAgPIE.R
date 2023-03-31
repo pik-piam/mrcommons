@@ -61,7 +61,7 @@ readMAgPIE <- function(subtype) {
                   "C_SSP1-NDC-mag-4.mif",
                   "oldMACCostNames-C_SSP2EU-Base-mag-4.mif",
                   "oldMACCostNames-C_SSP2EU-PkBudg500-mag-4.mif",
-                  "oldMACCostNames-C_SSP2EU-PkBudg11500-mag-4.mif",
+                  "oldMACCostNames-C_SSP2EU-PkBudg1150-mag-4.mif",
                   "oldMACCostNames-C_SSP2EU-NDC-mag-4.mif",
                   "C_SSP5-Base-mag-4.mif",
                   "C_SSP5-PkBudg900-mag-4.mif",
