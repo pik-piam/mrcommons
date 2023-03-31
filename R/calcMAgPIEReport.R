@@ -10,7 +10,7 @@ calcMAgPIEReport <- function(subtype) {
     u <- "T$2005/yr"
   } else if (subtype == "CostMAC") {
     # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    x <- x[, , "Costs Accounting|+|MACCS (million US$05/yr)"] / 1000 / 1000
+    x <- x[, , "Costs|MainSolve|MACCS (million US$05/yr)"] / 1000 / 1000
     d <- "MAC Costs for LU emissions from MAgPIE"
     u <- "T$2005/yr"
   } else if (subtype == "ProductionBiomass") {
