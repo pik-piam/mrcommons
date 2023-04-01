@@ -186,6 +186,10 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
 
       unit <- "ha/ha"
 
+    } else if (grepl("mpet", subtype)) {
+
+      unit <- "mm/month"
+
     } else {
       stop(paste0("subtype ", subtype, " does not exist"))
     }
