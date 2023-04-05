@@ -15,41 +15,26 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-#' @importFrom SPEI thornthwaite
 #' @importFrom luscale weighted_mean.groupAggregate
+
 calcIPCCfracLeach <- function(cellular = TRUE) {
+
   if (cellular) {
+
     past <- findset("past")
     # approach based on
     # Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission
     # from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction. Alterra.
     # http://library.wur.nl/WebQuery/wurpubs/406284.
-    p <- readSource("LPJml_rev21", "precipitation", convert = FALSE)
-    p <- toolCell2isoCell(p)
-    t <- readSource("LPJml_rev21", "temperature", convert = FALSE)
-    t <- toolCell2isoCell(t)
-    lat <- pe <- p
-    lat[, , ] <- NA
-    pe[, , ] <- NA
-    lat <- p[, 1, 1]
-    lat[, , ] <- as.numeric(toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")$lat)
-    lat <- setNames(setYears(lat, NULL), NULL)
+    # estimate potential evapotranspiration using LPJmL (based on Priestley–Taylor PET model)
 
-    # estimate potential evapotranspiration using the thornwaite method for temperature and latitude
-
-    tmp <- t
-    tmp <- aperm(tmp, c(3, 2, 1))
-    old <- tmp
-    dim(tmp) <- c(12 * dim(t)[2], dim(t)[1])
-    tmp <- thornthwaite(tmp, lat = lat[, , ])
-    old[, , ] <- tmp
-    pet <- as.magpie(aperm(old, c(3, 2, 1)))
-
-    # komisch, weicht ab wenn man einzelne punkte vergleicht. scheint auch von den
-    # nachbarmonaten abzuhängen. pet[2,5,3]==thornthwaite(t[2,1,3],lat=lat[2,,])
-
-    pet <- pet[, past, ]
-    prec <- p[, past, ]
+    pet    <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
+                         climatetype = "GSWP3-W5E5:historical", subtype = "mpet",
+                         stage = "smoothed", aggregate = FALSE)[, past, ]
+    prec   <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+                         climatetype  = "GSWP3-W5E5:historical",
+                         variable = "precipitation:monthlySum",
+                         stage = "smoothed", aggregate = FALSE)[, past, ]
 
     ratio <- prec / (pet + 0.001)
 
@@ -67,6 +52,7 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     weight <- NULL
 
   } else if (!cellular) {
+
     lu <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
 
     fracLeachAverage <- lu
@@ -97,7 +83,6 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
                     setNames(budget3[, , "other"], "other"),
                     setNames(budget3[, , "urban"], "urban"))
   }
-
 
   return(list(x = fracLeachAverage,
               weight = weight,
