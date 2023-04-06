@@ -41,7 +41,7 @@ calcMAgPIEReport <- function(subtype) {
   } else if (subtype == "co2") {
     mapping <- inline.data.frame(
       "oldnames;newnames",
-      "Emissions|CO2|Land (Mt CO2/yr);co2luc"
+      "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr);co2luc"
     )
 
     x <- x[, , mapping$oldnames]
