@@ -17,13 +17,13 @@
 #'
 calcSOCLossShare <- function(subsystems = FALSE, rate = "change", ipcc = "guide2006") {
 
-  years                  <- findset("past")
+  years                 <- findset("past")
   kgClimate             <- readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")[, years, ]
   kgIPCC                <- toolGetMapping("mapping_koeppen_ipcc.csv", type = "sectoral")
   getNames(kgClimate)   <- tolower(getNames(kgClimate))
   kgIPCC$koeppen_geiger <- tolower(kgIPCC$koeppen_geiger)
-  year2climateClasses    <- c(guide2006 = "ipcc_reduced", guide2019 = "ipcc_reduced2019")
-  climateClasses         <- toolSubtypeSelect(ipcc, year2climateClasses)
+  year2climateClasses   <- c(guide2006 = "ipcc_reduced", guide2019 = "ipcc_reduced2019")
+  climateClasses        <- toolSubtypeSelect(ipcc, year2climateClasses)
 
   ipccClimate           <- toolAggregate(kgClimate, rel = kgIPCC, from = "koeppen_geiger", to = climateClasses, dim = 3)
 
