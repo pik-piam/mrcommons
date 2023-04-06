@@ -53,12 +53,14 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
 
   } else if (!cellular) {
 
-    lu <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
+    lu <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+    lu <- collapseDim(addLocation(lu), dim = c("N","cell"))
 
-    fracLeachAverage <- lu
-    fracLeachAverage[, , ] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+    fracLeachAverage   <- lu
+    fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
-    irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, irrigation = TRUE)
+    irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, cells = "lpjcell", irrigation = TRUE)
+    irrig <- collapseDim(addLocation(irrig), dim = c("N","cell"))
 
     irrigShr <- collapseNames(irrig[, , "irrigated"][, , "crop"] / irrig[, , "total"][, , "crop"])
     irrigShr[is.nan(irrigShr)] <- 0
@@ -66,22 +68,20 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     # set leaching to maximum for irrigated regimes
     fracLeachAverage[, , "crop"] <- fracLeachAverage[, , "crop"] * (1 - irrigShr) + 0.3 * irrigShr
 
-    weight <- lu
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    fracLeachAverage <- weighted_mean.groupAggregate(data = fracLeachAverage, weight = weight, query = mapping,
-                                                       dim = 1, na.rm = TRUE, from = "celliso", to = "iso")
+    weight  <- lu
+    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = weight, dim = 1, to = "iso")
     fracLeachAverage[is.na(fracLeachAverage)] <- 0.05 # mostly forest in desert countries
     fracLeachAverage  <- toolCountryFill(fracLeachAverage, fill = 0.3)
-    budget <- calcOutput("NitrogenBudgetCropland", aggregate = FALSE)[, , "surplus"]
-    budget2 <- calcOutput("NitrogenBudgetPasture", aggregate = FALSE)[, , "surplus"]
+    budget  <- calcOutput("NitrogenBudgetCropland",  aggregate = FALSE)[, , "surplus"]
+    budget2 <- calcOutput("NitrogenBudgetPasture",   aggregate = FALSE)[, , "surplus"]
     budget3 <- calcOutput("NitrogenBudgetNonagland", aggregate = FALSE)[, , "surplus"]
-    weight <- mbind(setNames(budget, "crop"),
-                    setNames(budget2, "past"),
-                    setNames(budget3[, , "forestry"], "forestry"),
-                    setNames(budget3[, , "primforest"], "primforest"),
-                    setNames(budget3[, , "secdforest"], "secdforest"),
-                    setNames(budget3[, , "other"], "other"),
-                    setNames(budget3[, , "urban"], "urban"))
+    weight  <- mbind(setNames(budget,  "crop"),
+                     setNames(budget2, "past"),
+                     setNames(budget3[, , "forestry"], "forestry"),
+                     setNames(budget3[, , "primforest"], "primforest"),
+                     setNames(budget3[, , "secdforest"], "secdforest"),
+                     setNames(budget3[, , "other"], "other"),
+                     setNames(budget3[, , "urban"], "urban"))
   }
 
   return(list(x = fracLeachAverage,

@@ -29,7 +29,7 @@ calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE
   }
 
   landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-  landuse <- collapseDim(addLocation(landuse), dim=c("N","cell"))
+  landuse <- collapseDim(addLocation(landuse), dim = c("N","cell"))
   landuse <- time_interpolate(landuse, interpolated_year = getYears(temp), extrapolation_type = "constant")
 
   # Aggregation
