@@ -54,13 +54,17 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
   } else if (!cellular) {
 
     lu <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-    lu <- collapseDim(addLocation(lu), dim = c("N","cell"))
+    lu <- dimOrder(collapseDim(addLocation(lu), dim = c("cell")),  perm = c(2, 3, 1), dim = 1)
+    names(dimnames(lu))[1] <- "x.y.iso"
+
+    map                     <- toolGetMappingCoord2Country()
 
     fracLeachAverage   <- lu
     fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
     irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, cells = "lpjcell", irrigation = TRUE)
-    irrig <- collapseDim(addLocation(irrig), dim = c("N","cell"))
+    irrig <- dimOrder(collapseDim(addLocation(irrig), dim = c("cell")),  perm = c(2, 3, 1), dim = 1)
+    names(dimnames(irrig))[1] <- "x.y.iso"
 
     irrigShr <- collapseNames(irrig[, , "irrigated"][, , "crop"] / irrig[, , "total"][, , "crop"])
     irrigShr[is.nan(irrigShr)] <- 0
