@@ -15,7 +15,7 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-@importFrom magpiesets addLocation
+#' @importFrom magpiesets addLocation
 
 calcIPCCfracLeach <- function(cellular = TRUE) {
 
