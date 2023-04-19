@@ -15,7 +15,7 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-#' @importFrom luscale weighted_mean.groupAggregate
+@importFrom magpiesets addLocation
 
 calcIPCCfracLeach <- function(cellular = TRUE) {
 
@@ -56,8 +56,6 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     lu <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
     lu <- dimOrder(collapseDim(addLocation(lu), dim = c("cell")),  perm = c(2, 3, 1), dim = 1)
     names(dimnames(lu))[1] <- "x.y.iso"
-
-    map                     <- toolGetMappingCoord2Country()
 
     fracLeachAverage   <- lu
     fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
