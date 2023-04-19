@@ -23,12 +23,12 @@
 #' @importFrom madrat toolSplitSubtype
 #' @importFrom magpiesets findset addLocation
 #' @importFrom magclass collapseNames collapseDim as.magpie clean_magpie
-#' @importFrom abind adrop
 #' @export
 
 readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temperature", # nolint
                                   subset  = "annualMean") {
 
+  nCells  <- 67420 # number of cells in lpjml
   subtype <- toolSplitSubtype(subtype,
                               list(version      = NULL,
                                    climatemodel = NULL,
@@ -79,7 +79,7 @@ readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temper
       x <- lpjclass::read.LPJ_input(file_name   = filename,
                                     out_years   = paste0("y", years),
                                     namesum     = TRUE,
-                                    ncells      = 67420,
+                                    ncells      = nCells,
                                     rule4binary = ">0") / noAnnualPredictions
 
       class(x) <- "array"
@@ -91,7 +91,7 @@ readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temper
       x <- lpjclass::read.LPJ_input(file_name   = filename,
                                     out_years   = paste0("y", years),
                                     namesum     = TRUE,
-                                    ncells      = 67420) / noAnnualPredictions
+                                    ncells      = nCells) / noAnnualPredictions
 
       class(x) <- "array"
       x        <- collapseNames(as.magpie(x, spatial = 1))
@@ -102,7 +102,7 @@ readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temper
       x <- lpjclass::read.LPJ_input(file_name   = filename,
                                     out_years   = paste0("y", years),
                                     namesum     = TRUE,
-                                    ncells      = 67420)
+                                    ncells      = nCells)
 
       class(x) <- "array"
       x        <- collapseNames(as.magpie(x, spatial = 1))
@@ -135,12 +135,10 @@ readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temper
         tmp <- lpjclass::read.LPJ_input(file_name = filename,
                                         out_years = paste0("y", yearsets[[b]]),
                                         namesum   = FALSE,
-                                        ncells    = 67420)
-        class(tmp) <- "array"
-        # KRISTINE: Please double-check whether following line makes sense
-        # (introduced because as.magpie doesn't work on 4-dimensional object)
-        tmp        <- abind::adrop(tmp, drop = 4)
-        tmp        <- as.magpie(tmp, spatial = 1)
+                                        ncells    = nCells)
+
+        tmp <- array(tmp, dim = dim(tmp)[1:3], dimnames = dimnames(tmp)[1:3])
+        tmp <- as.magpie(tmp, spatial = 1)
         getSets(tmp) <- c("fake", "year", "day")
         # KRISTINE: Please double-check whether following line makes sense
         # (introduced because toolAggregate doesn't work without dimension names)
@@ -167,14 +165,14 @@ readLPJmLClimateInput <- function(subtype = "ISIMIP3bv2:MRI-ESM2-0:ssp370:temper
       years    <- intersect(years, subYears)
       if (any(!(subYears %in% years))) {
         warning(paste0("Some subsetted years (subset = ", subset,
-                       ") are not availabl\n in the original data.
-                       Years set to:", years))
+                ") are not availabl\n in the original data.\n",
+                "Years set to:", years))
       }
 
       x <- lpjclass::read.LPJ_input(file_name   = filename,
                                     out_years   = paste0("y", years),
                                     namesum     = FALSE,
-                                    ncells      = 67420)
+                                    ncells      = nCells)
 
       class(x) <- "array"
       x        <- collapseNames(as.magpie(x, spatial = 1))
