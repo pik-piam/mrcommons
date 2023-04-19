@@ -15,41 +15,26 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-#' @importFrom SPEI thornthwaite
-#' @importFrom luscale weighted_mean.groupAggregate
+#' @importFrom magpiesets addLocation
+
 calcIPCCfracLeach <- function(cellular = TRUE) {
+
   if (cellular) {
+
     past <- findset("past")
     # approach based on
     # Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission
     # from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction. Alterra.
     # http://library.wur.nl/WebQuery/wurpubs/406284.
-    p <- readSource("LPJml_rev21", "precipitation", convert = FALSE)
-    p <- toolCell2isoCell(p)
-    t <- readSource("LPJml_rev21", "temperature", convert = FALSE)
-    t <- toolCell2isoCell(t)
-    lat <- pe <- p
-    lat[, , ] <- NA
-    pe[, , ] <- NA
-    lat <- p[, 1, 1]
-    lat[, , ] <- as.numeric(toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")$lat)
-    lat <- setNames(setYears(lat, NULL), NULL)
+    # estimate potential evapotranspiration using LPJmL (based on Priestley–Taylor PET model)
 
-    # estimate potential evapotranspiration using the thornwaite method for temperature and latitude
-
-    tmp <- t
-    tmp <- aperm(tmp, c(3, 2, 1))
-    old <- tmp
-    dim(tmp) <- c(12 * dim(t)[2], dim(t)[1])
-    tmp <- thornthwaite(tmp, lat = lat[, , ])
-    old[, , ] <- tmp
-    pet <- as.magpie(aperm(old, c(3, 2, 1)))
-
-    # komisch, weicht ab wenn man einzelne punkte vergleicht. scheint auch von den
-    # nachbarmonaten abzuhängen. pet[2,5,3]==thornthwaite(t[2,1,3],lat=lat[2,,])
-
-    pet <- pet[, past, ]
-    prec <- p[, past, ]
+    pet    <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
+                         climatetype = "GSWP3-W5E5:historical", subtype = "mpet",
+                         stage = "smoothed", aggregate = FALSE)[, past, ]
+    prec   <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+                         climatetype  = "GSWP3-W5E5:historical",
+                         variable = "precipitation:monthlySum",
+                         stage = "smoothed", aggregate = FALSE)[, past, ]
 
     ratio <- prec / (pet + 0.001)
 
@@ -67,12 +52,17 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     weight <- NULL
 
   } else if (!cellular) {
-    lu <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
 
-    fracLeachAverage <- lu
-    fracLeachAverage[, , ] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+    lu <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+    lu <- dimOrder(collapseDim(addLocation(lu), dim = c("cell")),  perm = c(2, 3, 1), dim = 1)
+    names(dimnames(lu))[1] <- "x.y.iso"
 
-    irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, irrigation = TRUE)
+    fracLeachAverage   <- lu
+    fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+
+    irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, cells = "lpjcell", irrigation = TRUE)
+    irrig <- dimOrder(collapseDim(addLocation(irrig), dim = c("cell")),  perm = c(2, 3, 1), dim = 1)
+    names(dimnames(irrig))[1] <- "x.y.iso"
 
     irrigShr <- collapseNames(irrig[, , "irrigated"][, , "crop"] / irrig[, , "total"][, , "crop"])
     irrigShr[is.nan(irrigShr)] <- 0
@@ -80,24 +70,21 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     # set leaching to maximum for irrigated regimes
     fracLeachAverage[, , "crop"] <- fracLeachAverage[, , "crop"] * (1 - irrigShr) + 0.3 * irrigShr
 
-    weight <- lu
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    fracLeachAverage <- weighted_mean.groupAggregate(data = fracLeachAverage, weight = weight, query = mapping,
-                                                       dim = 1, na.rm = TRUE, from = "celliso", to = "iso")
+    weight  <- lu
+    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = weight, dim = 1, to = "iso")
     fracLeachAverage[is.na(fracLeachAverage)] <- 0.05 # mostly forest in desert countries
     fracLeachAverage  <- toolCountryFill(fracLeachAverage, fill = 0.3)
-    budget <- calcOutput("NitrogenBudgetCropland", aggregate = FALSE)[, , "surplus"]
-    budget2 <- calcOutput("NitrogenBudgetPasture", aggregate = FALSE)[, , "surplus"]
+    budget  <- calcOutput("NitrogenBudgetCropland",  aggregate = FALSE)[, , "surplus"]
+    budget2 <- calcOutput("NitrogenBudgetPasture",   aggregate = FALSE)[, , "surplus"]
     budget3 <- calcOutput("NitrogenBudgetNonagland", aggregate = FALSE)[, , "surplus"]
-    weight <- mbind(setNames(budget, "crop"),
-                    setNames(budget2, "past"),
-                    setNames(budget3[, , "forestry"], "forestry"),
-                    setNames(budget3[, , "primforest"], "primforest"),
-                    setNames(budget3[, , "secdforest"], "secdforest"),
-                    setNames(budget3[, , "other"], "other"),
-                    setNames(budget3[, , "urban"], "urban"))
+    weight  <- mbind(setNames(budget,  "crop"),
+                     setNames(budget2, "past"),
+                     setNames(budget3[, , "forestry"], "forestry"),
+                     setNames(budget3[, , "primforest"], "primforest"),
+                     setNames(budget3[, , "secdforest"], "secdforest"),
+                     setNames(budget3[, , "other"], "other"),
+                     setNames(budget3[, , "urban"], "urban"))
   }
-
 
   return(list(x = fracLeachAverage,
               weight = weight,

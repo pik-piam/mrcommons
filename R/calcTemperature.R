@@ -8,8 +8,7 @@
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
-#' @seealso
-#' [readLPJml_rev21()]
+#'
 #' @examples
 #' \dontrun{
 #' calcOutput("Temperature")
@@ -19,30 +18,31 @@
 
 calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE) {
 
-  temp <- readSource("LPJml_rev21", subtype = "temperature", convert = FALSE)
-  temp <- toolCell2isoCell(temp)
+  temp <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+                       climatetype = "GSWP3-W5E5:historical",
+                       variable    = "temperature:monthlyMean",
+                       stage       = "smoothed", aggregate = FALSE)
 
   if (!months) {
     temp <- dimSums(temp, dim = 3.1) / 12
   }
 
-  landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
+  landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+  landuse <- collapseDim(addLocation(landuse), dim = c("N", "cell"))
   landuse <- time_interpolate(landuse, interpolated_year = getYears(temp), extrapolation_type = "constant")
 
   # Aggregation
-  countryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
   landuseSum <- dimSums(landuse, dim = 3)
-  outSum <- toolAggregate(x = temp, rel = countryToCell, weight = landuseSum,
-                          from = "celliso", to = "iso", partrel = TRUE)
+  outSum     <- toolAggregate(x = temp, weight = landuseSum, to = "iso")
 
   # using 15 degrees for countries without values
   missing <- unique(which(outSum == 0, arr.ind = TRUE)[, 1])
-  outSum <- outSum[-missing, , ]
+  outSum  <- outSum[-missing, , ]
 
   if (landusetypes != "all") {
     # Aggregation by landuse type
     landuse <- landuse[, , landusetypes]
-    out <- toolAggregate(x = temp, rel = countryToCell, weight = landuse, from = "celliso", to = "iso", partrel = TRUE)
+    out <- toolAggregate(x = temp, weight = landuse, to = "iso")
     out <- out[-missing, , ]
 
     # put average temperature to landusetypes without measurements

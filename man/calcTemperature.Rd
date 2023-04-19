@@ -25,9 +25,6 @@ calculates average monthly temperature on different landuse types
 calcOutput("Temperature")
 }
 }
-\seealso{
-\code{\link[=readLPJml_rev21]{readLPJml_rev21()}}
-}
 \author{
 Benjamin Leon Bodirsky
 }
