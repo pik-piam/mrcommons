@@ -8,8 +8,7 @@
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
-#' @seealso
-#' [readLPJml_rev21()]
+#'
 #' @examples
 #' \dontrun{
 #' calcOutput("Temperature")
@@ -29,7 +28,7 @@ calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE
   }
 
   landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-  landuse <- collapseDim(addLocation(landuse), dim = c("N","cell"))
+  landuse <- collapseDim(addLocation(landuse), dim = c("N", "cell"))
   landuse <- time_interpolate(landuse, interpolated_year = getYears(temp), extrapolation_type = "constant")
 
   # Aggregation

@@ -47,7 +47,7 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # to do: include EmisNitrogenShareNature
   # (Benni suggested to convert the previous warning to this comment)
 
-  fracLeach <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+  fracLeach <- toolCoord2Isocell(calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE))
   leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
   no3 <- surplus * fracLeach * leachingMultiplicationFactor
 
