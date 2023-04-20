@@ -5,7 +5,9 @@
 #' @param climatetype Switch between different climate scenarios
 #' @param subtype Switch between different lpjml input as specified in readLPJmL
 #' @param subdata Switch between data dimension subitems
-#' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
+#' @param stage Degree of processing: raw, smoothed - raw or smoothed data from 1930|1951
+#'                                    raw1901, smoothed1901 - raw or smoothed data from 1901
+#'                                    harmonized, harmonized2020 - based on toolLPJmLVersion
 #'
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #'
@@ -24,10 +26,11 @@
 calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
                           climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
+
   # Create settings for LPJmL from version and climatetype argument
   cfg <- toolLPJmLVersion(version = version, climatetype = climatetype)
 
-  if (stage %in% c("raw", "smoothed")) {
+  if (grepl("raw|smoothed", stage)) {
 
     if (subtype %in% c("discharge", "runoff", "lake_evap", "input_lake")) {
       # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes
@@ -63,7 +66,8 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
 
       x     <- readSource("LPJmL_new", subtype = readinName, convert = FALSE)
       years <- getYears(x, as.integer = TRUE)
-      x     <- x[, years[years >= 1930], ]
+      if (!grepl("1901", stage)) x <- x[, years[years >= 1930], ]
+
     }
     ########## PLUG HIST + FUTURE ##########
 
@@ -196,7 +200,7 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
 
     ########## UNIT TRANSFORMATION ###############
 
-    if (stage == "smoothed") {
+    if (grepl("smoothed", stage)) {
       out <- toolSmooth(x)
     } else {
       out <- x

@@ -4,7 +4,9 @@
 #'
 #' @param climatetype Switch between different climate scenario
 #' @param variable Switch between different climate inputs and temporal resolution
-#' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
+#' @param stage Degree of processing: raw, smoothed - raw or smoothed data from 1930|1951
+#'                                    raw1901, smoothed1901 - raw or smoothed data from 1901
+#'                                    harmonized, harmonized2020 - based on toolLPJmLVersion
 #' @param lpjmlVersion LPJmL Version hand over
 #'
 #' @return magpie object in cellular resolution
@@ -35,9 +37,9 @@ calcLPJmLClimateInput <- function(climatetype = "MRI-ESM2-0:ssp370",
   var <- toolSplitSubtype(variable, list(type = NULL, timeres = NULL))
   outtype <- ifelse(var$timeres != "wetDaysMonth", var$type, "wetDaysMonth")
 
-  if (stage %in% c("raw", "smoothed")) {
-    ########## PLUG HIST + FUTURE ##########
+  if (grepl("raw|smoothed", stage)) {
 
+    ########## PLUG HIST + FUTURE ##########
 
     if (!grepl("historical", climatetype)) {
 
@@ -58,11 +60,11 @@ calcLPJmLClimateInput <- function(climatetype = "MRI-ESM2-0:ssp370",
       x     <- readSource("LPJmLClimateInput", subtype = .subtypeHist,
                           subset = var$timeres, convert = "onlycorrect")
       years <- getYears(x, as.integer = TRUE)
-      x     <- x[, years[years >= 1930], ]
+      if (!grepl("1901", stage)) x     <- x[, years[years >= 1930], ]
     }
     ########## PLUG HIST + FUTURE ##########
 
-    if (stage == "smoothed") {
+    if (grepl("smoothed", stage)) {
       out <- toolSmooth(x)
     } else {
       out <- x

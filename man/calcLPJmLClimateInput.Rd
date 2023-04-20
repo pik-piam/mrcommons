@@ -16,7 +16,9 @@ calcLPJmLClimateInput(
 
 \item{variable}{Switch between different climate inputs and temporal resolution}
 
-\item{stage}{Degree of processing: raw, smoothed, harmonized, harmonized2020}
+\item{stage}{Degree of processing: raw, smoothed - raw or smoothed data from 1930|1951
+raw1901, smoothed1901 - raw or smoothed data from 1901
+harmonized, harmonized2020 - based on toolLPJmLVersion}
 
 \item{lpjmlVersion}{LPJmL Version hand over}
 }

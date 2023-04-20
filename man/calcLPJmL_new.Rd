@@ -21,7 +21,9 @@ calcLPJmL_new(
 
 \item{subdata}{Switch between data dimension subitems}
 
-\item{stage}{Degree of processing: raw, smoothed, harmonized, harmonized2020}
+\item{stage}{Degree of processing: raw, smoothed - raw or smoothed data from 1930|1951
+raw1901, smoothed1901 - raw or smoothed data from 1901
+harmonized, harmonized2020 - based on toolLPJmLVersion}
 }
 \value{
 List of magpie objects with results on cellular level, weight, unit and description.
