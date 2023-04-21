@@ -66,7 +66,8 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
 
         tau            <- calcOutput("LanduseIntensity", sectoral = "kcr", rescale = FALSE,
                                      aggregate = FALSE)[, selectyears, magCropTypes]
-        tauCell        <- toolAggregate(x = tau, rel = mappingCountryCell, from = "iso", to = "celliso", partrel = TRUE)
+        tauCell        <- toolAggregate(x = tau, rel = mappingCountryCell,
+                                        from = "iso", to = "celliso", partrel = TRUE)
 
         yieldsMAG      <- tauCell * yieldsMAG
       }
@@ -106,15 +107,18 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
                           from = "iso", to = "celliso")
         }
 
-        # correct item with no total cropland area for known data mismatches - so far known:
-        # * MUS (Mauritius) as non align LUH (no area at all) and FAO data
-
+        # correct items with no total cropland area for known data mismatches - so far known:
+        # * MUS (Mauritius) and BHS (Bahamas) where no croparea according to LUH, but FAO production
         isoMAGTotCrop  <- dimSums(isoMAGCroparea, dim = 3)
         noMAGTotCrop   <- (isoMAGTotCrop == 0) * isoMismatch
 
         if (any(noMAGTotCrop["MUS", , ] != 0)) {
-
-           productionMAG["MUS", , "rainfed"]  <- productionFAO["MUS", , ]
+           productionMAG["MUS", , "rainfed"]  <- productionFAO["MUS", , ] /
+                                                  length(getItems(productionMAG["MUS", , "rainfed"], dim = 1))
+        }
+        if (any(noMAGTotCrop["BHS", , ] != 0)) {
+          productionMAG["BHS", , "rainfed"] <- productionFAO["BHS", , ] /
+                                                 length(getItems(productionMAG["BHS", , "rainfed"], dim = 1))
         }
 
         # correct items with no yields
