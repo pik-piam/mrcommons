@@ -3729,435 +3729,385 @@ readJRC_IDEES <- function(subtype) { #nolint
     Residential = { list(
       pattern = '^JRC-IDEES-2015_Residential_.*\\.xlsx$',
       sheets = { list(
-        'RES_summary' = { list(
-          prefix = 'Residential|',
-          rows = tibble(
-            name = {
-              c(
-                "Household consumption expenditure (M\u20ac2010)",
-                "Population (inhabitants)",
-                "Number of households (no)",
-                "Total households useful surface area (in 000 sqm)",
-                "Number of new and renovated households (no) ",
-                "New and renovated households useful surface area (in 000 sqm)",
-                "Actual heating degree-days (no)",
-                "Mean heating degree-days over period 1980 - 2015 (no)",
-                "Relative heating degree-days (no)",
-                NA,
-                "Households size (inhabitants/household)",
-                "Households useful surface area (in sqm/capita)",
-                "Households useful surface area (in sqm/household)",
-                "New and renovated households useful surface area (in sqm/capita)",
-                "New and renovated households useful surface area (in sqm/household)",
-                "Household consumption expenditure per capita (\u20ac2010)",
-                "Household consumption expenditure per household (\u20ac2010)",
-                "Consumption expenditure per capita relative to EU28 (?)",
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                "Energy consumption by fuel - Eurostat structure (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Solids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Gases (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biogas (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Solar (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Derived heat (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Electricity (ktoe)",
-                "Energy consumption by end-uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Space heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooling (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Water heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooking (ktoe)",
-                "Energy consumption by end-uses|Specific electricity uses (appliances and lighting) (ktoe)",
-                "Shares of energy consumption in end-uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Space heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooling (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Water heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooking (%)",
-                "Shares of energy consumption in end-uses|Specific electricity uses (appliances and lighting) (%)",
-                NA,
-                "Emissions by fuel - Eurostat structure (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Solids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Gases (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biogas (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Solar (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Derived heat (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Electricity (kt of CO2)",
-                "Emissions by end-uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Space heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooling (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Water heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooking (kt of CO2)",
-                "Emissions by end-uses|Specific electricity uses (appliances and lighting) (kt of CO2)",
-                "Share of emissions in end-uses (%)",
-                "Share of emissions in end-uses|Thermal uses (%)",
-                "Share of emissions in end-uses|Thermal uses|Space heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooling (%)",
-                "Share of emissions in end-uses|Thermal uses|Water heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooking (%)",
-                "Share of emissions in end-uses|Specific electricity uses (appliances and lighting) (%)",
-                NA,
-                "Energy consumption per household (kWh / household)",
-                "Energy consumption per household|Thermal uses (kWh / household)",
-                "Energy consumption per household|Thermal uses|Space heating (kWh / household)",
-                "Energy consumption per household|Thermal uses|Cooling (kWh / household)",
-                "Energy consumption per household|Thermal uses|Water heating (kWh / household)",
-                "Energy consumption per household|Thermal uses|Cooking (kWh / household)",
-                "Energy consumption per household|Specific electricity uses (appliances and lighting) (kWh / household)",
-                "Thermal energy service per household (kWh useful / household)",
-                "Thermal energy service per household|Space heating (kWh useful / household)",
-                "Thermal energy service per household|Cooling (kWh useful / household)",
-                "Thermal energy service per household|Water heating (kWh useful / household)",
-                "Thermal energy service per household|Cooking (kWh useful / household)",
-                "Emissions per household (kg CO2 / household)",
-                "Emissions per household|Thermal uses (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Space heating (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Cooling (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Water heating (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Cooking (kg CO2 / household)",
-                "Emissions per household|Specific electricity uses (appliances and lighting) (kg CO2 / household)",
-                "Ratio of energy service to energy consumption (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Space heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooling (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Water heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooking (system efficiency indicator)",
-                "Energy consumption per surface area (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Space heating (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Cooling (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Water heating (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Cooking (kWh / sqm)",
-                "Energy consumption per surface area|Specific electricity uses (appliances and lighting) (kWh / sqm)",
-                "Thermal energy service per surface area (kWh useful / sqm)",
-                "Thermal energy service per surface area|Space heating (kWh useful / sqm)",
-                "Thermal energy service per surface area|Cooling (kWh useful / sqm)",
-                "Thermal energy service per surface area|Water heating (kWh useful / sqm)",
-                "Thermal energy service per surface area|Cooking (kWh useful / sqm)",
-                "Emissions per surface area (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Space heating (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Cooling (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Water heating (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Cooking (kg CO2 / sqm)",
-                "Emissions per surface area|Specific electricity uses (appliances and lighting) (kg CO2 / sqm)",
-                "Energy consumption per capita (kWh / capita)",
-                "Energy consumption per capita|Thermal uses (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Space heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooling (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Water heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooking (kWh / capita)",
-                "Energy consumption per capita|Specific electricity uses (appliances and lighting) (kWh / capita)",
-                "Thermal energy service per capita (kWh useful / capita)",
-                "Thermal energy service per capita|Space heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooling (kWh useful / capita)",
-                "Thermal energy service per capita|Water heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooking (kWh useful / capita)",
-                "Emissions per capita (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Space heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooling (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Water heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooking (kg CO2 / capita)",
-                "Emissions per capita|Specific electricity uses (appliances and lighting) (kg CO2 / capita)"
-              )
-            }
-          ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
-        ) },
         'RES_hh_num' = { list(
-          prefix = 'Residential|',
+          prefix = 'Residential|Stock of households',
           rows = tibble(
             name = { c(
-              "Stock of households (no)",
+              " (no)",
 
-              "Stock of households|Space heating (no)",
-              "Stock of households|Space heating|Solids (no)",
-              "Stock of households|Space heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of households|Space heating|Gases incl. biogas (no)",
-              "Stock of households|Space heating|Biomass and wastes (no)",
-              "Stock of households|Space heating|Geothermal energy (no)",
-              "Stock of households|Space heating|Derived heat (no)",
-              "Stock of households|Space heating|Advanced electric heating (no)",
-              "Stock of households|Space heating|Conventional electric heating (no)",
-              "Stock of households|Space heating|Circulation (no)",
+              "|Space heating (no)",
+              "|Space heating|Solids (no)",
+              "|Space heating|Liquified petroleum gas (LPG) (no)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Space heating|Gases incl. biogas (no)",
+              "|Space heating|Biomass and wastes (no)",
+              "|Space heating|Geothermal energy (no)",
+              "|Space heating|Derived heat (no)",
+              "|Space heating|Advanced electric heating (no)",
+              "|Space heating|Conventional electric heating (no)",
+              "|Space heating|Circulation (no)",
 
-              "Stock of households|Space cooling (no)",
-              "Stock of households|Space cooling|Air conditioning (no)",
+              "|Space cooling (no)",
+              "|Space cooling|Air conditioning (no)",
 
-              "Stock of households|Water heating (no)",
-              "Stock of households|Water heating|Solids (no)",
-              "Stock of households|Water heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Water heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of households|Water heating|Gases incl. biogas (no)",
-              "Stock of households|Water heating|Biomass and wastes (no)",
-              "Stock of households|Water heating|Geothermal energy (no)",
-              "Stock of households|Water heating|Derived heat (no)",
-              "Stock of households|Water heating|Electricity (no)",
-              "Stock of households|Water heating|Solar (no)",
+              "|Water heating (no)",
+              "|Water heating|Solids (no)",
+              "|Water heating|Liquified petroleum gas (LPG) (no)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Water heating|Gases incl. biogas (no)",
+              "|Water heating|Biomass and wastes (no)",
+              "|Water heating|Geothermal energy (no)",
+              "|Water heating|Derived heat (no)",
+              "|Water heating|Electricity (no)",
+              "|Water heating|Solar (no)",
 
-              "Stock of households|Cooking (no)",
-              "Stock of households|Cooking|Solids (no)",
-              "Stock of households|Cooking|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Cooking|Gases incl. biogas (no)",
-              "Stock of households|Cooking|Biomass and wastes (no)",
-              "Stock of households|Cooking|Electricity (no)"
+              "|Cooking (no)",
+              "|Cooking|Solids (no)",
+              "|Cooking|Liquified petroleum gas (LPG) (no)",
+              "|Cooking|Gases incl. biogas (no)",
+              "|Cooking|Biomass and wastes (no)",
+              "|Cooking|Electricity (no)"
             ) }
           ) %>%
             extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_fec' = { list(
+          prefix = 'Residential|Final energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+
+              "|Space heating (ktoe)",
+              "|Space heating|Solids (ktoe)",
+              "|Space heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Space heating|Gases incl. biogas (ktoe)",
+              "|Space heating|Biomass and wastes (ktoe)",
+              "|Space heating|Geothermal energy (ktoe)",
+              "|Space heating|Derived heat (ktoe)",
+              "|Space heating|Advanced electric heating (ktoe)",
+              "|Space heating|Conventional electric heating (ktoe)",
+              "|Space heating|Circulation (ktoe)",
+
+              "|Space cooling (ktoe)",
+              "|Space cooling|Air conditioning (ktoe)",
+
+              "|Water heating (ktoe)",
+              "|Water heating|Solids (ktoe)",
+              "|Water heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Water heating|Gases incl. biogas (ktoe)",
+              "|Water heating|Biomass and wastes (ktoe)",
+              "|Water heating|Geothermal energy (ktoe)",
+              "|Water heating|Derived heat (ktoe)",
+              "|Water heating|Electricity (ktoe)",
+              "|Water heating|Solar (ktoe)",
+
+              "|Cooking (ktoe)",
+              "|Cooking|Solids (ktoe)",
+              "|Cooking|Liquified petroleum gas (LPG) (ktoe)",
+              "|Cooking|Gases incl. biogas (ktoe)",
+              "|Cooking|Biomass and wastes (ktoe)",
+              "|Cooking|Electricity (ktoe)"
+            ) }
+          ) %>%
+            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_eff' = { list(
+          prefix = 'Residential|Ratio of energy service to energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (system efficiency indicator)",
+
+              "|Space heating (system efficiency indicator)",
+              "|Space heating|Solids (system efficiency indicator)",
+              "|Space heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Space heating|Gases incl. biogas (system efficiency indicator)",
+              "|Space heating|Biomass and wastes (system efficiency indicator)",
+              "|Space heating|Geothermal energy (system efficiency indicator)",
+              "|Space heating|Derived heat (system efficiency indicator)",
+              "|Space heating|Advanced electric heating (system efficiency indicator)",
+              "|Space heating|Conventional electric heating (system efficiency indicator)",
+              "|Space heating|Circulation (system efficiency indicator)",
+
+              "|Space cooling (system efficiency indicator)",
+              "|Space cooling|Air conditioning (system efficiency indicator)",
+
+              "|Water heating (system efficiency indicator)",
+              "|Water heating|Solids (system efficiency indicator)",
+              "|Water heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Water heating|Gases incl. biogas (system efficiency indicator)",
+              "|Water heating|Biomass and wastes (system efficiency indicator)",
+              "|Water heating|Geothermal energy (system efficiency indicator)",
+              "|Water heating|Derived heat (system efficiency indicator)",
+              "|Water heating|Electricity (system efficiency indicator)",
+              "|Water heating|Solar (system efficiency indicator)",
+
+              "|Cooking (system efficiency indicator)",
+              "|Cooking|Solids (system efficiency indicator)",
+              "|Cooking|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Cooking|Gases incl. biogas (system efficiency indicator)",
+              "|Cooking|Biomass and wastes (system efficiency indicator)",
+              "|Cooking|Electricity (system efficiency indicator)"
+            ) }
+          ) %>%
+            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_emi' = { list(
+          prefix = 'Residential|CO2 emissions',
+          rows = tibble(
+            name = { c(
+              " (kt of CO2)",
+
+              "|Space heating (kt of CO2)",
+              "|Space heating|Solids (kt of CO2)",
+              "|Space heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Space heating|Gases incl. biogas (kt of CO2)",
+              "|Space heating|Biomass and wastes (kt of CO2)",
+              "|Space heating|Geothermal energy (kt of CO2)",
+              "|Space heating|Derived heat (kt of CO2)",
+              "|Space heating|Advanced electric heating (kt of CO2)",
+              "|Space heating|Conventional electric heating (kt of CO2)",
+              "|Space heating|Circulation (kt of CO2)",
+
+              "|Space cooling (kt of CO2)",
+              "|Space cooling|Air conditioning (kt of CO2)",
+
+              "|Water heating (kt of CO2)",
+              "|Water heating|Solids (kt of CO2)",
+              "|Water heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Water heating|Gases incl. biogas (kt of CO2)",
+              "|Water heating|Biomass and wastes (kt of CO2)",
+              "|Water heating|Geothermal energy (kt of CO2)",
+              "|Water heating|Derived heat (kt of CO2)",
+              "|Water heating|Electricity (kt of CO2)",
+              "|Water heating|Solar (kt of CO2)",
+
+              "|Cooking (kt of CO2)",
+              "|Cooking|Solids (kt of CO2)",
+              "|Cooking|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Cooking|Gases incl. biogas (kt of CO2)",
+              "|Cooking|Biomass and wastes (kt of CO2)",
+              "|Cooking|Electricity (kt of CO2)"
+            ) }
+          )  %>%
+            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_se-appl' = { list(
+          prefix = 'Residential|Final energy consumption|Specific electric uses in services',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+              "|White appliances (ktoe)",
+              "|White appliances|Refrigerators and freezers (ktoe)",
+              "|White appliances|Washing machine (ktoe)",
+              "|White appliances|Clothes dryer (ktoe)",
+              "|White appliances|Dishwasher (ktoe)",
+              "|Brown appliances (ktoe)",
+              "|Brown appliances|TV and multimedia (ktoe)",
+              "|Brown appliances|ICT equipment (ktoe)",
+              "|Lighting and other electricity uses (ktoe)",
+              "|Lighting and other electricity uses|Lighting  (ktoe)",
+              "|Lighting and other electricity uses|Other appliances (vacuum cleaners, irons etc.) (ktoe)",
+              rep(NA, 120) # more data available but disregarded here
+            )
+          }
+        ) %>%
+          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
-      )  }
+      ) }
     ) },
     Tertiary= { list(
       pattern = '^JRC-IDEES-2015_Tertiary_.*\\.xlsx$',
       sheets = { list(
-        'SER_summary' = { list(
-          prefix = 'Tertiary|',
-          rows = tibble(
-            name = {
-              c(
-
-
-                "Population (inhabitants)",
-                "Gross Domestic product (M\u20ac2010)",
-                "Value added (M\u20ac2010)",
-                "Employment data (employees)",
-
-                "Number of representative building cells (no)",
-                "Total services useful surface area (in 000 sqm)",
-                "Number of new and renovated buildings (no)",
-                "New and renovated buildings useful surface area (in 000 sqm)",
-
-                "Actual heating degree-days ()",
-                "Mean heating degree-days over period 1980 - 2015 ()",
-                "Relative heating degree-days ()",
-
-                NA,
-
-                "GDP per capita (\u20ac2010)",
-                "Value added per employee (\u20ac2010)",
-                "Value added per capita (\u20ac2010)",
-                "Value added per capita relative to EU28 ()",
-                "Representative building cell size (employees/representative building cell)",
-                "Services useful surface area (in sqm/capita)",
-                "Services useful surface area (in sqm/employee)",
-                "Services useful surface area (in sqm/representative building cell)",
-                "New and renovated buildings useful surface area (in sqm/representative building cell)",
-
-                NA,
-
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-
-                NA,
-
-                "Energy consumption by fuel - Eurostat structure (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Solids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Gases (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biogas (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Solar (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Derived heat (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Electricity (ktoe)",
-
-                "Energy consumption by end-uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Space heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooling (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Hot water (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Catering (ktoe)",
-                "Energy consumption by end-uses|Specific electricity uses (ktoe)",
-
-                NA,
-                "Shares of energy consumption in end-uses|Thermal uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Space heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooling (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Hot water (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Catering (%)",
-                "Shares of energy consumption in end-uses|Specific electricity uses (%)",
-
-                NA,
-
-                "Emissions by fuel - Eurostat structure (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Solids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Gases (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biogas (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Solar (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Derived heat (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Electricity (kt of CO2)",
-
-                "Emissions by end-uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Space heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooling (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Hot water (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Catering (kt of CO2)",
-                "Emissions by end-uses|Specific electricity uses (kt of CO2)",
-
-                NA,
-                "Share of emissions in end-uses|Thermal uses (%)",
-                "Share of emissions in end-uses|Thermal uses|Space heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooling (%)",
-                "Share of emissions in end-uses|Thermal uses|Hot water (%)",
-                "Share of emissions in end-uses|Thermal uses|Catering (%)",
-                "Share of emissions in end-uses|Specific electricity uses (%)",
-
-                NA,
-
-                "Energy consumption per building (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Space heating (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Cooling (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Hot water (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Catering (kWh / representative building cell)",
-                "Energy consumption per building|Catering (kWh / representative building cell)",
-                "Energy consumption per building|Specific electricity uses (kWh / representative building cell)",
-
-                "Thermal energy service per building (kWh useful / representative building cell)",
-                "Thermal energy service per building|Space heating (kWh useful / representative building cell)",
-                "Thermal energy service per building|Cooling (kWh useful / representative building cell)",
-                "Thermal energy service per building|Hot water (kWh useful / representative building cell)",
-                "Thermal energy service per building|Catering (kWh useful / representative building cell)",
-
-                "Emissions per building (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Space heating (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Cooling (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Hot water (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Catering (kg CO2 / representative building cell)",
-                "Emissions per building|Specific electricity uses (kg CO2 / representative building cell)",
-
-                "Ratio of energy service to energy consumption (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Space heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooling (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Hot water (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Catering (system efficiency indicator)",
-
-
-
-                "Energy consumption per useful surface area (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Space heating (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Cooling (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Hot water (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Catering (kWh / sqm)",
-                "Energy consumption per useful surface area|Specific electricity uses (kWh / sqm)",
-
-                "Thermal energy service per useful surface area(kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Space heating (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Cooling (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Hot water (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Catering (kWh useful / sqm)",
-
-                "Emissions per useful surface area (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Space heating (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Cooling (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Hot water (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Catering (kg CO2 / sqm)",
-                "Emissions per useful surface area|Specific electricity uses (kg CO2 / sqm)",
-
-
-
-                "Energy consumption per capita (kWh / capita)",
-                "Energy consumption per capita|Thermal uses (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Space heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooling (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Hot water (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Catering (kWh / capita)",
-                "Energy consumption per capita|Specific electricity uses (kWh / capita)",
-
-                "Thermal energy service per capita (kWh useful / capita)",
-                "Thermal energy service per capita|Space heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooling (kWh useful / capita)",
-                "Thermal energy service per capita|Hot water (kWh useful / capita)",
-                "Thermal energy service per capita|Catering (kWh useful / capita)",
-
-                "Emissions per capita (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Space heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooling (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Hot water (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Catering (kg CO2 / capita)",
-                "Emissions per capita|Specific electricity uses (kg CO2 / capita)"
-              )
-            }
-          ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
-        ) },
         'SER_hh_num' = { list(
-          prefix = 'Tertiary|',
+          prefix = 'Tertiary|Stock of buildings',
           rows = tibble(
             name = { c(
-              "Stock of buildings (no)",
+              " (no)",
 
-              "Stock of buildings|Space heating (no)",
-              "Stock of buildings|Space heating|Solids (no)",
-              "Stock of buildings|Space heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of buildings|Space heating|Gas heat pumps (no)",
-              "Stock of buildings|Space heating|Conventional gas heaters (no)",
-              "Stock of buildings|Space heating|Biomass and wastes (no)",
-              "Stock of buildings|Space heating|Geothermal energy (no)",
-              "Stock of buildings|Space heating|Derived heat (no)",
-              "Stock of buildings|Space heating|Advanced electric heating (no)",
-              "Stock of buildings|Space heating|Conventional electric heating (no)",
-              "Stock of buildings|Space heating|Circulation, other electricity (no)",
+              "|Space heating (no)",
+              "|Space heating|Solids (no)",
+              "|Space heating|Liquified petroleum gas (LPG) (no)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Space heating|Gas heat pumps (no)",
+              "|Space heating|Conventional gas heaters (no)",
+              "|Space heating|Biomass and wastes (no)",
+              "|Space heating|Geothermal energy (no)",
+              "|Space heating|Derived heat (no)",
+              "|Space heating|Advanced electric heating (no)",
+              "|Space heating|Conventional electric heating (no)",
+              "|Space heating|Circulation, other electricity (no)",
 
-              "Stock of buildings|Space cooling (no)",
-              "Stock of buildings|Space cooling|Gas heat pumps (no)",
-              "Stock of buildings|Space cooling|Electric space cooling (no)",
+              "|Space cooling (no)",
+              "|Space cooling|Gas heat pumps (no)",
+              "|Space cooling|Electric space cooling (no)",
 
-              "Stock of buildings|Hot water (no)",
-              "Stock of buildings|Hot water|Solids (no)",
-              "Stock of buildings|Hot water|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Hot water|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of buildings|Hot water|Gases incl. biogas (no)",
-              "Stock of buildings|Hot water|Biomass and wastes (no)",
-              "Stock of buildings|Hot water|Derived heat (no)",
-              "Stock of buildings|Hot water|Electricity (no)",
-              "Stock of buildings|Hot water|Solar (no)",
+              "|Hot water (no)",
+              "|Hot water|Solids (no)",
+              "|Hot water|Liquified petroleum gas (LPG) (no)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Hot water|Gases incl. biogas (no)",
+              "|Hot water|Biomass and wastes (no)",
+              "|Hot water|Derived heat (no)",
+              "|Hot water|Electricity (no)",
+              "|Hot water|Solar (no)",
               NA,
-              "Stock of buildings|Catering (no)",
-              "Stock of buildings|Catering|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Catering|Gases incl. biogas (no)",
-              "Stock of buildings|Catering|Biomass and wastes (no)",
-              "Stock of buildings|Catering|Electricity (no)"
+              "|Catering (no)",
+              "|Catering|Liquified petroleum gas (LPG) (no)",
+              "|Catering|Gases incl. biogas (no)",
+              "|Catering|Biomass and wastes (no)",
+              "|Catering|Electricity (no)"
+            )
+          }
+        ) %>%
+          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_fec' = { list(
+          prefix = 'Tertiary|Final energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+
+              "|Space heating (ktoe)",
+              "|Space heating|Solids (ktoe)",
+              "|Space heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Space heating|Gas heat pumps (ktoe)",
+              "|Space heating|Conventional gas heaters (ktoe)",
+              "|Space heating|Biomass and wastes (ktoe)",
+              "|Space heating|Geothermal energy (ktoe)",
+              "|Space heating|Derived heat (ktoe)",
+              "|Space heating|Advanced electric heating (ktoe)",
+              "|Space heating|Conventional electric heating (ktoe)",
+              "|Space heating|Circulation, other electricity (ktoe)",
+
+              "|Space cooling (ktoe)",
+              "|Space cooling|Gas heat pumps (ktoe)",
+              "|Space cooling|Electric space cooling (ktoe)",
+
+              "|Hot water (ktoe)",
+              "|Hot water|Solids (ktoe)",
+              "|Hot water|Liquified petroleum gas (LPG) (ktoe)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Hot water|Gases incl. biogas (ktoe)",
+              "|Hot water|Biomass and wastes (ktoe)",
+              "|Hot water|Derived heat (ktoe)",
+              "|Hot water|Electricity (ktoe)",
+              "|Hot water|Solar (ktoe)",
+              NA,
+              "|Catering (ktoe)",
+              "|Catering|Liquified petroleum gas (LPG) (ktoe)",
+              "|Catering|Gases incl. biogas (ktoe)",
+              "|Catering|Biomass and wastes (ktoe)",
+              "|Catering|Electricity (ktoe)"
+            )
+          }
+        ) %>%
+          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_eff' = { list(
+          prefix = 'Tertiary|Ratio of energy service to energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (system efficiency indicator)",
+
+              "|Space heating (system efficiency indicator)",
+              "|Space heating|Solids (system efficiency indicator)",
+              "|Space heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Space heating|Gas heat pumps (system efficiency indicator)",
+              "|Space heating|Conventional gas heaters (system efficiency indicator)",
+              "|Space heating|Biomass and wastes (system efficiency indicator)",
+              "|Space heating|Geothermal energy (system efficiency indicator)",
+              "|Space heating|Derived heat (system efficiency indicator)",
+              "|Space heating|Advanced electric heating (system efficiency indicator)",
+              "|Space heating|Conventional electric heating (system efficiency indicator)",
+              "|Space heating|Circulation, other electricity (system efficiency indicator)",
+
+              "|Space cooling (system efficiency indicator)",
+              "|Space cooling|Gas heat pumps (system efficiency indicator)",
+              "|Space cooling|Electric space cooling (system efficiency indicator)",
+
+              "|Hot water (system efficiency indicator)",
+              "|Hot water|Solids (system efficiency indicator)",
+              "|Hot water|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Hot water|Gases incl. biogas (system efficiency indicator)",
+              "|Hot water|Biomass and wastes (system efficiency indicator)",
+              "|Hot water|Derived heat (system efficiency indicator)",
+              "|Hot water|Electricity (system efficiency indicator)",
+              "|Hot water|Solar (system efficiency indicator)",
+              NA,
+              "|Catering (system efficiency indicator)",
+              "|Catering|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Catering|Gases incl. biogas (system efficiency indicator)",
+              "|Catering|Biomass and wastes (system efficiency indicator)",
+              "|Catering|Electricity (system efficiency indicator)"
+            )
+          }
+        ) %>%
+          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_emi' = { list(
+          prefix = 'Tertiary|CO2 emissions',
+          rows = tibble(
+            name = { c(
+              " (kt of CO2)",
+
+              "|Space heating (kt of CO2)",
+              "|Space heating|Solids (kt of CO2)",
+              "|Space heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Space heating|Gas heat pumps (kt of CO2)",
+              "|Space heating|Conventional gas heaters (kt of CO2)",
+              "|Space heating|Biomass and wastes (kt of CO2)",
+              "|Space heating|Geothermal energy (kt of CO2)",
+              "|Space heating|Derived heat (kt of CO2)",
+              "|Space heating|Advanced electric heating (kt of CO2)",
+              "|Space heating|Conventional electric heating (kt of CO2)",
+              "|Space heating|Circulation, other electricity (kt of CO2)",
+
+              "|Space cooling (kt of CO2)",
+              "|Space cooling|Gas heat pumps (kt of CO2)",
+              "|Space cooling|Electric space cooling (kt of CO2)",
+
+              "|Hot water (kt of CO2)",
+              "|Hot water|Solids (kt of CO2)",
+              "|Hot water|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Hot water|Gases incl. biogas (kt of CO2)",
+              "|Hot water|Biomass and wastes (kt of CO2)",
+              "|Hot water|Derived heat (kt of CO2)",
+              "|Hot water|Electricity (kt of CO2)",
+              "|Hot water|Solar (kt of CO2)",
+              NA,
+              "|Catering (kt of CO2)",
+              "|Catering|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Catering|Gases incl. biogas (kt of CO2)",
+              "|Catering|Biomass and wastes (kt of CO2)",
+              "|Catering|Electricity (kt of CO2)"
+            )
+          }
+        ) %>%
+          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_se-appl' = { list(
+          prefix = 'Tertiary|Final energy consumption|Specific electric uses in services',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+              "|Ventilation and others (ktoe)",
+              "|Street lighting (ktoe)",
+              "|Building lighting (ktoe)",
+              "|Commercial  refrigeration (ktoe)",
+              "|Miscellaneous building technologies (ktoe)",
+              "|ICT and multimedia (ktoe)",
+              rep(NA, 56) # more data available but disregarded here
             )
           }
         ) %>%
