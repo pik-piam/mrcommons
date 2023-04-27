@@ -316,10 +316,13 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
     ## Adjust prices of live animal weight to the carcass weight
     mapping <- toolGetMapping("FAO_livestock_carcass_price_factor.csv", type = "sectoral", where = "mrcommons")
     for (item in mapping$FAO_carcass) {
+      itemn <- gsub("([0-9]+).*$", "\\1", item)
       litem <- mapping$FAO_live_weigth[grep(item, mapping$FAO_carcass)]
-      countries <- unique(rownames(which(!is.na(x[, , item]), arr.ind = TRUE)))
+      litemn <- gsub("([0-9]+).*$", "\\1", litem)
+      countries <- unique(rownames(which(!is.na(x[, , itemn, pmatch = TRUE]), arr.ind = TRUE)))
       countries <- setdiff(getItems(x, dim = 1.1), countries)
-      x[countries, , item] <- x[countries, , litem] / mapping$Price_factor[grep(item, mapping$FAO_carcass)]
+      x[countries, , itemn, pmatch = TRUE] <- x[countries, , litemn, pmatch = TRUE] /
+                                               mapping$Price_factor[grep(item, mapping$FAO_carcass)]
     }
     x[is.na(x)] <- 0
     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
