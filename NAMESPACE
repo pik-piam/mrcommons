@@ -2,7 +2,6 @@
 
 export(calc1stBioenergyPast)
 export(calcAdjustGrassi2021)
-export(calcAreaEquippedForIrrigation)
 export(calcBodyHeight)
 export(calcConstructionWoodDemand)
 export(calcDemography)
@@ -248,5 +247,4 @@ importFrom(utils,write.table)
 importFrom(withr,defer)
 importFrom(withr,local_options)
 importFrom(withr,local_tempdir)
-importFrom(withr,with_options)
 importFrom(zoo,na.locf)
