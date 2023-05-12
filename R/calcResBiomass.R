@@ -1,13 +1,14 @@
 #' @title calcResBiomass
 #' @description Provides MAgPIE-FEED data for aboveground and belowground residues biomass
 #'
-#' @param cellular If TRUE calculation and output on cellular level
+#' @param cellular   If TRUE calculation and output on cellular level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param plantparts both, ag (aboveground) or belowground (bg). Both can have memory
 #'                   problems for cellular outputs
 #' @param irrigation if TRUE, distinguishes irrigated and non-irrigated crops
 #' @param attributes in dm, wm, ge, nr, p, k
-#' @param scenario define scenario switch for sensititvy analysis
-#'                 for historical SOC budget
+#' @param scenario   define scenario switch for sensititvy analysis
+#'                   for historical SOC budget
 #'
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
@@ -18,20 +19,23 @@
 #' calcOutput("ResBiomass")
 #' }
 #'
-calcResBiomass <- function(cellular = FALSE, plantparts = "both",
+calcResBiomass <- function(cellular = FALSE, cells = "magpiecell",
+                           plantparts = "both",
                            irrigation = FALSE, attributes = "all",
                            scenario = "default") {
 
-  MAGcroptypes   <- findset("kcr") #nolint
+  croptypesMAG <- findset("kcr")
 
   # memory problems for cellular data
   if (plantparts == "both") {
     aboveGroundResidues   <- calcOutput("ResBiomass", cellular = cellular,
+                                        cells = "lpjcell",
                                         aggregate = FALSE, plantparts = "ag",
                                         irrigation = irrigation,
                                         attributes = attributes,
                                         scenario = scenario)
     belowGroundResidues   <- calcOutput("ResBiomass", cellular = cellular,
+                                        cells = "lpjcell",
                                         aggregate = FALSE, plantparts = "bg",
                                         irrigation = irrigation,
                                         attributes = attributes,
@@ -41,11 +45,11 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
   } else if (plantparts %in% c("ag", "bg")) {
     # read in area harvested
     harvestedArea  <- calcOutput("Croparea", sectoral = "kcr", physical = FALSE,
-                                 cellular = cellular, irrigation = irrigation,
-                                 aggregate = FALSE)
+                                 cellular = cellular, cells = "lpjcell",
+                                 irrigation = irrigation, aggregate = FALSE)
     # cyears here above
-    cropProduction <- collapseNames(calcOutput("Production", products = "kcr",
-                                               cellular = cellular, attributes = "dm",
+    cropProduction <- collapseNames(calcOutput("Production", products = "kcr", attributes = "dm",
+                                               cellular = cellular, cells = "lpjcell",
                                                irrigation = irrigation, aggregate = FALSE))
     cyears         <- intersect(getYears(harvestedArea),
                                 getYears(cropProduction))
@@ -53,7 +57,7 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
     cropProduction <- cropProduction[, cyears, ]
     harvestedArea  <- harvestedArea[, cyears, ]
 
-    harvestIndex   <- setYears(readSource("HI"), NULL)[, , MAGcroptypes]
+    harvestIndex   <- setYears(readSource("HI"), NULL)[, , croptypesMAG]
 
     if (grepl("freeze*", scenario)) {
       # select year by scenario name
@@ -79,7 +83,7 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
                                   resWithHarvestedArea[, cyears])
       # read in residues attributes
       attributesAboveGround <- readSource("ProductAttributes",
-                                          subtype = "AgResidues")[, , MAGcroptypes]
+                                          subtype = "AgResidues")[, , croptypesMAG]
       if (!all(attributes %in% "all")) { # for problems with memory size
         attributesAboveGround <- attributesAboveGround[, , attributes]
       }
@@ -90,6 +94,7 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
     } else if (plantparts == "bg") {
 
       aboveGroundResidues <- collapseNames(calcOutput("ResBiomass", cellular = cellular,
+                                                      cells = "lpjcell",
                                                       plantparts = "ag", attributes = "dm",
                                                       irrigation = irrigation, aggregate = FALSE,
                                                       scenario = scenario))
@@ -98,7 +103,7 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
                              collapseNames(harvestIndex[, , "bg_to_ag"])
       # read in residues attributes
       attributesBelowGround <- readSource("ProductAttributes",
-                                          subtype = "BgResidues")[, , MAGcroptypes]
+                                          subtype = "BgResidues")[, , croptypesMAG]
 
       if (!all(attributes %in% getNames(attributesBelowGround, dim = 1))) {
         # for problems with memory size
@@ -120,12 +125,17 @@ calcResBiomass <- function(cellular = FALSE, plantparts = "both",
                                            add = "residues", nm = "bg")
     }
   } else {
-
     stop("unkown plantpart")
   }
 
   if (!all(attributes %in% "all")) { # for problems with memory size
     residueProduction <- residueProduction[, , attributes]
+  }
+
+  if (cellular) {
+    if (cells == "magpiecell") {
+      residueProduction <- toolCoord2Isocell(residueProduction, cells = cells)
+    }
   }
 
   return(list(x            = residueProduction,

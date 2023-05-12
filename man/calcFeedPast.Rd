@@ -7,6 +7,7 @@
 calcFeedPast(
   balanceflow = TRUE,
   cellular = FALSE,
+  cells = "magpiecell",
   products = "kall",
   nutrients = "all"
 )
@@ -15,6 +16,8 @@ calcFeedPast(
 \item{balanceflow}{if TRUE, non-eaten food is included in feed baskets, if not it is excluded.}
 
 \item{cellular}{if TRUE value is calculate on cellular level with returned datajust in dry matter}
+
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{products}{products in feed baskets that shall be reported}
 

@@ -84,7 +84,9 @@ calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
   # ATTENTION: depending on the settings this might remove some cells
   #            from the data set!
   if (cellular) {
-    x <- toolCoord2Isocell(x, cells = cells)
+    if (cells == "magpiecell") {
+      x <- toolCoord2Isocell(x, cells = cells)
+    }
   } else {
     x <- toolConv2CountryByCelltype(x, cells = cells)
   }

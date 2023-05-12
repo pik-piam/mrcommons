@@ -1,8 +1,9 @@
 #' @title calcSeed
 #' @description Calculates Seed demand
 #'
-#' @param cellular cellular or regional level
-#' @param products kcr or also kall, which includes seeds for eggs and fish
+#' @param cellular   cellular or regional level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
+#' @param products   kcr or also kall, which includes seeds for eggs and fish
 #' @param irrigation if TRUE, distinguishes irrigated and non-irrigated crops
 #' @param attributes in dm, wm, ge, nr, p, k
 #' @return List of magpie object with results and weight on country or cellular level, unit and description.
@@ -13,25 +14,31 @@
 #' }
 #' @importFrom magpiesets findset
 
-calcSeed <- function(cellular = FALSE, products = "kall", irrigation = FALSE, attributes = "all") {
+calcSeed <- function(cellular = FALSE, cells = "magpiecell", products = "kall",
+                     irrigation = FALSE, attributes = "all") {
 
   products <- findset(products, noset = "original")
   seed     <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "seed"][, , products])
-
 
   if (cellular) {
     if (!all(products %in% findset("kcr"))) {
       stop("cellular data only exists for kcr products")
     }
     productionReg <- calcOutput("Production", products = "kcr", cellular = FALSE, calibrated = TRUE,
-                                 irrigation = FALSE, aggregate = FALSE)[, , products]
+                                 irrigation = FALSE, aggregate = FALSE)[, getItems(seed, dim = 2), products]
     seedShr       <- collapseNames(seed[, , "dm"] / productionReg[, , "dm"])
     seedShr[is.na(seedShr)]       <- 0
     seedShr[is.infinite(seedShr)] <- 0
 
-    production     <- calcOutput("Production", products = "kcr", cellular = cellular, irrigation = irrigation,
+    production     <- calcOutput("Production", products = "kcr",
+                                 cellular = cellular, cells = "lpjcell",
+                                 irrigation = irrigation,
                                  calibrated = TRUE, attributes = attributes, aggregate = FALSE)[, , products]
-    seed           <- production * seedShr[getItems(production, dim = 1.1), , ]
+    seed           <- production * seedShr[getItems(production, dim = 1.3), , ]
+
+    if (cells == "magpiecell") {
+      seed <- toolCoord2Isocell(seed, cells = cells)
+    }
   }
 
   if (any(attributes != "all")) {

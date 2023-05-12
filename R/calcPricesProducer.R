@@ -65,8 +65,8 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
                                          from = "FoodBalanceItem", to = "k", weight = weightPrice[, years, names],
                                          dim = 3, wdim = 3)
     } else {
-stop("only production and consumption weights")
-}
+      stop("only production and consumption weights")
+    }
 
     missing <- setdiff(findset("kcr"), getNames(pricesProdFAOkcr))
 
@@ -89,8 +89,8 @@ stop("only production and consumption weights")
                                                   aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
                          dim = 3.2))[, , kcr]
     } else {
- stop("invalid type")
-}
+      stop("invalid type")
+    }
 
     # years and names subseting
     years <- intersect(getYears(weight), getYears(x))
@@ -122,7 +122,7 @@ stop("only production and consumption weights")
 
   } else {
    stop("Type not valid")
- }
+  }
 
   } else if (products == "kli") {
 
@@ -171,8 +171,8 @@ stop("only production and consumption weights")
                                          from = "FoodBalanceItem", to = "k", weight = weightPrice[, years, names],
                                          dim = 3, wdim = 3)
     } else {
-stop("only production and consumption weights")
-}
+      stop("only production and consumption weights")
+    }
 
    # convert from wet matter to dry matter
     attributes <- collapseNames(calcOutput("Attributes", aggregate = FALSE)[, , "wm"])
@@ -181,16 +181,16 @@ stop("only production and consumption weights")
 
       x <- pricesProdFAOkli
       # weight setup
- if (weighting == "production") {
+    if (weighting == "production") {
       weight <- collapseNames(calcOutput("Production", products = "kli", aggregate = FALSE, attributes = "dm"))
-      } else if (weighting == "consumption") {
+    } else if (weighting == "consumption") {
         kli <- findset("kli")
-      weight  <- collapseNames(dimSums(calcOutput("FAOmassbalance",
+        weight <- collapseNames(dimSums(calcOutput("FAOmassbalance",
                                                   aggregate = FALSE)[, , "dm"][, , c("food", "flour1")],
                          dim = 3.2))[, , kli]
     } else {
-stop("invalid type")
-}
+      stop("invalid type")
+    }
 
       years <- intersect(getYears(weight), getYears(x))
       names <- intersect(getNames(weight), getNames(x))

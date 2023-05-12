@@ -4,10 +4,12 @@
 \alias{calcExcretion}
 \title{calcExcretion}
 \usage{
-calcExcretion(cellular = FALSE, attributes = "npk")
+calcExcretion(cellular = FALSE, cells = "magpiecell", attributes = "npk")
 }
 \arguments{
 \item{cellular}{if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level}
+
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{attributes}{npk (default) or npkc (inclusing carbon) can be selected}
 }
@@ -15,8 +17,10 @@ calcExcretion(cellular = FALSE, attributes = "npk")
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates excretion during grazing, cropland-grazing, confinement and collected for fuel.
-Based on MAgPIE Feed baskets, slaughter biomass and simple allocation rules.
+calculates excretion during grazing, cropland-grazing,
+confinement and collected for fuel.
+Based on MAgPIE Feed baskets, slaughter biomass and
+simple allocation rules.
 }
 \examples{
 \dontrun{

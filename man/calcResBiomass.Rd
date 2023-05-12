@@ -6,6 +6,7 @@
 \usage{
 calcResBiomass(
   cellular = FALSE,
+  cells = "magpiecell",
   plantparts = "both",
   irrigation = FALSE,
   attributes = "all",
@@ -14,6 +15,8 @@ calcResBiomass(
 }
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}
+
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{plantparts}{both, ag (aboveground) or belowground (bg). Both can have memory
 problems for cellular outputs}

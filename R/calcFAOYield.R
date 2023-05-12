@@ -16,14 +16,16 @@
 calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
                          cellular = FALSE, cut = FALSE, average = 5, areaSource = "FAO") {
 
-  production <- calcOutput("Production", aggregate = FALSE, attributes = attributes,
-                           irrigation = irrigation, cellular = cellular, products = "kcr")
+  production <- calcOutput("Production", products = "kcr", attributes = attributes,
+                           irrigation = irrigation, cellular = cellular,
+                           cells = "lpjcell", aggregate = FALSE)
   selectyears <- getItems(production, dim = "year")
 
   if (areaSource == "FAO") {
 
     area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                        irrigation = irrigation, aggregate = FALSE, cellular = cellular)
+                        cellular = cellular, cells = "lpjcell",
+                        irrigation = irrigation, aggregate = FALSE)
 
   } else if (areaSource == "Toolbox") {
 

@@ -40,7 +40,8 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   cropcal <- cropcal[, , c("swh", "wwh"), inv = TRUE]
 
   ## mask cropcal to current area, assume 2010 area for now to avoid very large dataset
-  areaMask <- calcOutput("Croparea", cellular = TRUE, aggregate = FALSE)[, 2010, ]
+  areaMask <- calcOutput("Croparea", cellular = TRUE, cells = "lpjcell",
+                         aggregate = FALSE)[, 2010, ]
   areaMask <- ifelse(areaMask > 0, 1, 0)
   areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), inv = TRUE]
 
@@ -70,11 +71,11 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   daysMapping <- toolGetMapping("day_month_quarter.csv", type = "sectoral")
 
   if (frequency == "monthly") {
-  cropcaldf <- toolAggregate(cropcaldf, rel = daysMapping, from = "day",
-                                        to = "month", dim = 2, partrel = TRUE)
+    cropcaldf <- toolAggregate(cropcaldf, rel = daysMapping, from = "day",
+                               to = "month", dim = 2, partrel = TRUE)
   } else if (frequency == "quarterly") {
     cropcaldf <- toolAggregate(cropcaldf, rel = daysMapping, from = "day",
-                                          to = "quarter", dim = 2, partrel = TRUE)
+                               to = "quarter", dim = 2, partrel = TRUE)
   }
 
   # distribute rice 1 and 2 based on fraction of harvested area.
@@ -82,17 +83,16 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   # rye to tece based on average ratios of national FAO production
   # Distribute bean and pea to pulses
   rice <-  readSource("GGCMICropCalendar", subtype = "rice_areas", convert = FALSE)
+
   # aggregate rice to national harvested areas
-
-  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-
-  rice <- toolAggregate(rice, rel = mapping, from = "celliso", to = "iso",
+  mapping <- toolGetMappingCoord2Country()
+  mapping$coordiso <- paste(mapping$coords, mapping$iso, sep = ".")
+  rice <- toolAggregate(rice, rel = mapping, from = "coordiso", to = "iso",
                          weight = new.magpie(cells_and_regions = getItems(rice, dim = 1), years = NULL,
                                             names = getNames(rice), fill = 1))
   rice <- toolCountryFill(rice, fill = 0)
 
-
-if (products == "kcr") {
+  if (products == "kcr") {
     #### production
     prod <- collapseNames(calcOutput("Production", products = products,
                                      cellular = FALSE, attributes = "dm", aggregate = FALSE))
@@ -100,10 +100,10 @@ if (products == "kcr") {
 
 
   if (frequency == "monthly") {
-  iprod <- add_dimension(prod, dim = 2.2, add = "month", nm = c(unique(daysMapping$month)))
+    iprod <- add_dimension(prod, dim = 2.2, add = "month", nm = c(unique(daysMapping$month)))
   } else if (frequency == "quarterly") {
     iprod <- add_dimension(prod, dim = 2.2, add = "quarter", nm = c(unique(daysMapping$quarter)))
- }
+  }
 
   iprod[, , "rice_pro"] <- prod[, , "rice_pro"] *
                    (setNames(rice[, , "ri1"] * cropcaldf[, , "ri1"], NULL) +

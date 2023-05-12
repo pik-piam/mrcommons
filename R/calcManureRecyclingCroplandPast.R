@@ -21,15 +21,17 @@ calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE) 
   past               <- findset("past")
   excretion          <- collapseNames(calcOutput("Excretion", cellular = cellular, attributes = "npkc",
                                                  aggregate = FALSE)[, past, "confinement"])
-  emissionFactorsN  <- calcOutput("EF3confinement", selection = "recycling", aggregate = FALSE)
-  lossRatesC        <- calcOutput("ClossConfinement", aggregate = FALSE)
+  emissionFactorsN   <- calcOutput("EF3confinement", selection = "recycling", aggregate = FALSE)
+  lossRatesC         <- calcOutput("ClossConfinement", aggregate = FALSE)
   animalWasteMSShare <- collapseNames(calcOutput("AWMSconfShr", aggregate = FALSE)[, past, "constant"])
 
   if (cellular) {
 
-    emissionFactorsN  <- toolIso2CellCountries(emissionFactorsN)
-    lossRatesC        <- toolIso2CellCountries(lossRatesC)
-    animalWasteMSShare <- toolIso2CellCountries(animalWasteMSShare)
+    countries <- getItems(excretion, dim = "iso")
+
+    emissionFactorsN   <- emissionFactorsN[countries, , ]
+    lossRatesC         <- lossRatesC[countries, , ]
+    animalWasteMSShare <- animalWasteMSShare[countries, , ]
   }
 
   if (products == "sum") {

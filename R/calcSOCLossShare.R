@@ -5,7 +5,8 @@
 #'                   if TRUE crop specific values will be reported,
 #'                   if aggregated crop specific factors will be aggregated using crop area
 #' @param rate if change, change rates will be reported; if loss, loss rates will be reported
-#' @param ipcc switch for different ipcc versions
+#' @param factor switch for different ipcc versions (ipccReduced, ipccReduced2019)
+#' @param cells "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #'
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #' @author Kristine Karstens
@@ -15,21 +16,16 @@
 #' calcOutput("SOCLossShare", aggregate = FALSE)
 #' }
 #'
-calcSOCLossShare <- function(subsystems = FALSE, rate = "change", ipcc = "guide2006") {
+calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipccReduced",
+                             cells = "magpiecell") {
 
-  years                 <- findset("past")
-  kgClimate             <- readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")[, years, ]
-  kgIPCC                <- toolGetMapping("mapping_koeppen_ipcc.csv", type = "sectoral")
-  getNames(kgClimate)   <- tolower(getNames(kgClimate))
-  kgIPCC$koeppen_geiger <- tolower(kgIPCC$koeppen_geiger)
-  year2climateClasses   <- c(guide2006 = "ipcc_reduced", guide2019 = "ipcc_reduced2019")
-  climateClasses        <- toolSubtypeSelect(ipcc, year2climateClasses)
+  ipccClimate        <- calcOutput("ClimateClass", aggregate = FALSE,
+                                      datasource = factor, cells = cells)
 
-  ipccClimate           <- toolAggregate(kgClimate, rel = kgIPCC, from = "koeppen_geiger", to = climateClasses, dim = 3)
-
-  year2SCF               <- c(guide2006 = "SCF_sub", guide2019 = "SCF_sub2019")
-  scf                    <- toolSubtypeSelect(ipcc, year2SCF)
-  scfSub2IPCCclimate     <- readSource("IPCC",    subtype = scf, convert = FALSE)[, , getNames(ipccClimate)]
+  factor2SCF         <- c(ipccReduced     = "SCF_sub",
+                          ipccReduced2019 = "SCF_sub2019")
+  scf                <- toolSubtypeSelect(factor, factor2SCF)
+  scfSub2IPCCclimate <- readSource("IPCC", subtype = scf, convert = FALSE)[, , getNames(ipccClimate)]
 
   if (subsystems == FALSE) {
 
@@ -41,7 +37,8 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", ipcc = "guide2
     socLossShare           <- dimSums(ipccClimate * scfSub2IPCCclimate, dim = 3.1)
 
     if (subsystems == "aggregated") {
-      magCrop      <- calcOutput("Croparea", physical = TRUE, cellular = TRUE, irrigation = FALSE, aggregate = FALSE)
+      magCrop      <- calcOutput("Croparea", physical = TRUE, cellular = TRUE, cells = cells,
+                                 irrigation = FALSE, aggregate = FALSE)
       kcr2all      <- data.frame(list(kcr = getNames(socLossShare), all = rep("all", 19)))
       socLossShare <- toolAggregate(socLossShare, weight = magCrop, rel = kcr2all, from = "kcr", to = "all", dim = 3)
       getNames(socLossShare) <- "cshare"
@@ -55,7 +52,7 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", ipcc = "guide2
   }
 
   weight <- dimSums(calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE,
-                               input_magpie = FALSE, years = "y1995", round = 6), dim = 3)
+                               cells = cells, years = "y1995", round = 6), dim = 3)
 
   return(list(
     x            = socLossShare,

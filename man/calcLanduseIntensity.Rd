@@ -32,5 +32,5 @@ calcOutput("LanduseIntensity")
 \code{\link[=convertTau]{convertTau()}}
 }
 \author{
-Benjamin Leon Bodirsky, Kristine Karstens
+Benjamin Leon Bodirsky, Kristine Karstens, Felicitas Beier
 }

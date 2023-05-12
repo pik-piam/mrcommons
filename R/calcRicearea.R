@@ -87,12 +87,20 @@ calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
                               selectyears = "past", aggregate = FALSE))
 
     # Correction for flooded non-rice areas (floodedLUHiso > riceareaFAOiso)
-    ricearea   <- floodedLUH * toolIso2CellCountries(nonriceShr, cells = cells)
+    if (cells == "magpiecell") {
+      commonCountries <- intersect(getItems(nonriceShr, dim = "country"), getItems(floodedLUH, dim = "country"))
+      ricearea   <- floodedLUH * toolIso2CellCountries(nonriceShr, cells = cells)
+    } else if (cells == "lpjcell") {
+      commonCountries <- intersect(getItems(nonriceShr, dim = "country"), getItems(floodedLUH, dim = "iso"))
+      ricearea <- floodedLUH * nonriceShr[commonCountries, , ]
+    } else {
+      stop("When cellular==TRUE in calcRicearea: please select number of cells
+            (magpiecell or lpjcell) via cells argument")
+    }
 
     # Correction for aerobic (non-paddy) rice (floodedLUHiso < riceareaFAOiso)
-    floodedShr         <- toolIso2CellCountries(floodedShr, cells = cells)
-    floodedRicearea    <- ricearea * floodedShr
-    nonfloodedRicearea <- ricearea * (1 - floodedShr)
+    floodedRicearea    <- ricearea * floodedShr[commonCountries, , ]
+    nonfloodedRicearea <- ricearea * (1 - floodedShr)[commonCountries, , ]
     ricearea           <- floodedRicearea + nonfloodedRicearea
 
     ricearea           <- add_dimension(ricearea, dim = 3.1, add = "type", nm = "total")

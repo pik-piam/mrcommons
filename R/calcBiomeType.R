@@ -19,6 +19,7 @@
 #' }
 #'
 calcBiomeType <- function(cells = "magpiecell") {
+
   # get processed data from 'the nature conservancy'
   x <- readSource("TNC2019", convert = "onlycorrect")
 
@@ -29,9 +30,8 @@ calcBiomeType <- function(cells = "magpiecell") {
   }
 
   weight <- calcOutput("LanduseInitialisation",
-    aggregate = FALSE, cellular = TRUE,
-    input_magpie = TRUE, years = "y1995", round = 6
-  )
+                      aggregate = FALSE, cellular = TRUE, cells = cells,
+                      input_magpie = TRUE, years = "y1995", round = 6)
   weight <- dimSums(weight, dim = 3)
 
   if (length(unique(dimSums(x, dim = 3))) > 2) {
@@ -40,11 +40,10 @@ calcBiomeType <- function(cells = "magpiecell") {
   # do not apply weight where sum over all biome types is zero
   weight <- weight * dimSums(x, dim = 3)
 
-  return(list(
-    x = x,
-    weight = weight,
-    unit = "Share",
-    description = "Share of biome type of each biogeographic realm in each spatial unit (cell)",
-    isocountries = FALSE
-  ))
+  return(list(x = x,
+              weight = weight,
+              unit = "Share",
+              description = "Share of biome type of each
+              biogeographic realm in each spatial unit (cell)",
+              isocountries = FALSE))
 }

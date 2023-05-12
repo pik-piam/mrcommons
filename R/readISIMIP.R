@@ -26,6 +26,9 @@
 #' @importFrom raster brick subset stack
 readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
 
+  # map of 67420 grid cells
+  map <- toolGetMappingCoord2Country()
+
   if (grepl("airww", subtype)) {
 
     .timevector <- function(start, end) {
@@ -45,10 +48,13 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
 
     x <- as.magpie(r, temporal = 1)
     getSets(x, fulldim = FALSE)[2] <- "year.month"
-  }
+    # add missing cell
+    x <- add_columns(x, dim = 1,
+                     addnm = setdiff(map$coords, getItems(x, dim = 1)),
+                     fill = 0)
 
+  } else if (grepl("yield", subtype)) {
 
-  if (grepl("yield", subtype)) {
     files <- Sys.glob("*.nc")
     if (length(file) < 1) stop("Not able to identify input file!")
 
@@ -93,7 +99,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
       offset <- 2014
     }
 
-    x <- as.magpie(r)
+    x <- as.magpie(r, spatial = 1)
 
     getNames(x) <- tolower(getNames(x))
     getYears(x) <- getYears(x, as.integer = TRUE) + offset
@@ -104,10 +110,11 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     x <- magpiesort(x[, yearsSub, ])
 
     # fill missing cells with 0 if any
-    map  <- toolGetMappingCoord2Country()
     missingCells <- setdiff(map$coords, getItems(x, dim = 1))
-    fill <- new.magpie(cells_and_regions = missingCells, years = getYears(x),
-                       names = getNames(x), fill = 0)
+    fill         <- new.magpie(cells_and_regions = missingCells,
+                               years = getYears(x),
+                               names = getNames(x),
+                              fill = 0)
     x    <- suppressWarnings(mbind(x, fill))
 
     nameClean <- function(x, subtype, order = FALSE) {
@@ -117,47 +124,48 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
         x <- dimOrder(x = x, perm = c(2, 1))
       }
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   |
-                               getNames(x, dim = 1) == "maize" |
-                               getNames(x, dim = 1) == "Maize"] <- "maiz"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "mai"   |
+                              getNames(x, dim = 1) == "maize" |
+                              getNames(x, dim = 1) == "Maize"] <- "maiz"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "soy" |
-                               getNames(x, dim = 1) == "Soybean"] <- "soybean"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "soy" |
+                              getNames(x, dim = 1) == "Soybean"] <- "soybean"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri1" |
-                               getNames(x, dim = 1) == "riceA"] <- "ricea"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "ri1" |
+                              getNames(x, dim = 1) == "riceA"] <- "ricea"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "ri2" |
-                               getNames(x, dim = 1) == "riceB"] <- "riceb"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "ri2" |
+                              getNames(x, dim = 1) == "riceB"] <- "riceb"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "swh" |
-                               getNames(x, dim = 1) == "Springwheat"] <- "springwheat"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "swh" |
+                              getNames(x, dim = 1) == "Springwheat"] <- "springwheat"
 
-        getNames(x, dim = 1)[getNames(x, dim = 1) == "wwh" |
-                               getNames(x, dim = 1) == "Winterwheat"] <- "winterwheat"
+      getNames(x, dim = 1)[getNames(x, dim = 1) == "wwh" |
+                              getNames(x, dim = 1) == "Winterwheat"] <- "winterwheat"
 
-        getNames(x, dim = 2)[getNames(x, dim = 2) == "fullyirrigated" |
-                               getNames(x, dim = 2) == "firr" |
-                               getNames(x, dim = 2) == "ir"] <- "irrigated"
+      getNames(x, dim = 2)[getNames(x, dim = 2) == "fullyirrigated" |
+                              getNames(x, dim = 2) == "firr" |
+                              getNames(x, dim = 2) == "ir"] <- "irrigated"
 
-        getNames(x, dim = 2)[getNames(x, dim = 2) == "noirrigation" |
-                               getNames(x, dim = 2) == "noirr" |
-                               getNames(x, dim = 2) == "rf"] <- "rainfed"
-
-
+      getNames(x, dim = 2)[getNames(x, dim = 2) == "noirrigation" |
+                              getNames(x, dim = 2) == "noirr" |
+                              getNames(x, dim = 2) == "rf"] <- "rainfed"
 
       return(x)
     }
 
     x <- nameClean(x, subtype, order = TRUE)
+    x <- x[map$coords, , ]
 
     # Harvest year correction. If maturity day<planting date values correspond to y+1
-    plantDay <- collapseNames(readSource("GGCMICropCalendar",
-                                         subtype = "planting_day")[, , c("ri1", "ri2", "wwh",
-                                                                         "swh", "soy", "mai")][, , c("rf", "ir")])
-    maturityDay <- collapseNames(readSource("GGCMICropCalendar",
+    plantDay    <- readSource("GGCMICropCalendar",
+                              subtype = "planting_day")[, , c("ri1", "ri2", "wwh",
+                                                               "swh", "soy", "mai")][, , c("rf", "ir")]
+    plantDay    <- collapseNames(plantDay)[map$coords, , ]
+    maturityDay <- readSource("GGCMICropCalendar",
                                             subtype = "maturity_day")[, , c("ri1", "ri2", "wwh",
-                                                                            "swh", "soy", "mai")][, , c("rf", "ir")])
+                                                                            "swh", "soy", "mai")][, , c("rf", "ir")]
+    maturityDay <- collapseNames(maturityDay)[map$coords, , ]
 
     diff <- maturityDay - plantDay
     diff <- nameClean(diff, subtype, order = FALSE)
@@ -173,9 +181,12 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
     }
 
     x <- xCorrected
-
-
+    getSets(x) <- c("x", "y", "iso", "year", "data")
   }
+
+  # naming of cell dimension (first sort)
+  x <- x[map$coords, , ]
+  getItems(x, dim = 1, raw = TRUE) <- paste(map$coords, map$iso, sep = ".")
 
   return(x)
 }

@@ -4,7 +4,12 @@
 \alias{calcSOCLossShare}
 \title{calcSOCLossShare}
 \usage{
-calcSOCLossShare(subsystems = FALSE, rate = "change", ipcc = "guide2006")
+calcSOCLossShare(
+  subsystems = FALSE,
+  rate = "change",
+  factor = "ipccReduced",
+  cells = "magpiecell"
+)
 }
 \arguments{
 \item{subsystems}{if FALSE just generic values will be used per climate zone ,
@@ -13,7 +18,9 @@ if aggregated crop specific factors will be aggregated using crop area}
 
 \item{rate}{if change, change rates will be reported; if loss, loss rates will be reported}
 
-\item{ipcc}{switch for different ipcc versions}
+\item{factor}{switch for different ipcc versions (ipccReduced, ipccReduced2019)}
+
+\item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 }
 \value{
 List of magpie objects with results on cellular level, weight, unit and description.

@@ -24,7 +24,6 @@ more settings.
 \dontrun{
 calcOutput("LanduseInitialisationBase")
 }
-
 }
 \author{
 Jan Philipp Dietrich, Benjamin Leon Bodirsky, Kristine Karstens, Felcitas Beier, Patrick v. Jeetze

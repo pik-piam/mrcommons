@@ -1,11 +1,11 @@
 #' @title toolForestRelocate
-#' @description Reallocates cellular forest information from LUH2 to better match FAO
-#' forest information
+#' @description Reallocates cellular forest information from LUH2
+#'              to better match FAO forest information
 #'
-#' @param lu uncorrected landuse initialisation data set (cell level)
+#' @param lu        uncorrected landuse initialisation data set (cell level)
 #' @param luCountry uncorrected landuse initialisation on country level
 #' @param natTarget target natural land allocation on country level
-#' @param vegC vegetation carbon data used as reallocation weight
+#' @param vegC      vegetation carbon data used as reallocation weight
 #' @return List of magpie object with results on cellular level
 #' @author Kristine Karstens, Jan Philipp Dietrich, Felicitas Beier, Patrick v. Jeetze
 #' @importFrom magclass setNames setItems new.magpie nyears
@@ -45,7 +45,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
   }
 
   # loop over countries
-  countries <- getItems(lu, dim = 1.1)
+  countries <- getItems(lu, dim = "iso")
   l <- list()
   for (iso in countries) {
 
@@ -130,7 +130,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
             }
 
             if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
-            remove <- l[[iso]][, , cat] * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+            remove <- l[[iso]][, , cat] * (1 - (1 - as.magpie(cellweight, spatial = 2))^as.magpie(p))
             remove[, !t, ] <- 0
           } else {
             remove <- 0
@@ -179,7 +179,7 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
         }
 
         if (any(p[t] < 0)) vcat(1, "Negative weight of p=", p, " for: ", cat, " ", iso, " ", t)
-        add <- allocate * (1 - (1 - as.magpie(cellweight))^as.magpie(p))
+        add <- allocate * (1 - (1 - as.magpie(cellweight, spatial = 2))^as.magpie(p))
       }
       add[, !t, ] <- 0
 
@@ -225,7 +225,8 @@ toolForestRelocate <- function(lu, luCountry, natTarget, vegC) { # nolint
   }
   .checkCellArea(lu, luCellArea)
 
-  error <- abs(toolSum2Country(lu[, , nature]) - natTarget)
+  error <- abs(toolCountryFill(dimSums(lu[, , nature], dim = c("x", "y")),
+                                fill = 0, verbosity = 2) - natTarget)
   if (max(error) > 10e-4) {
     country <- rownames(which(error == max(error), arr.ind = TRUE))
     warning("Missmatch between computed and target land use (max error = ", max(error), " in ", country, ")")

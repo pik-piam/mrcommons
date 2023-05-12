@@ -13,8 +13,8 @@ calcLanduseInitialisation(
 )
 }
 \arguments{
-\item{cellular}{cellular (TRUE) or country-level/regional (FALSE) data? For country-level vs regional data,
-remember to set "aggregate" to false.}
+\item{cellular}{cellular (TRUE) or country-level/regional (FALSE) data?
+For country-level vs regional data: remember to set "aggregate" to FALSE.}
 
 \item{nclasses}{options are either "six", "seven" or "nine".
 \itemize{
@@ -38,8 +38,9 @@ List of magpie object with results on country or cellular level, weight on cellu
 unit and description.
 }
 \description{
-Calculates the cellular MAgPIE landuse initialisation area. Data from FAO on forestry is used
-to split the secondary forest pool of the LU2v2 dataset into forestry and secd_forest.
+Calculates the cellular MAgPIE landuse initialisation area.
+Data from FAO on forestry is used to split the secondary forest pool
+of the LU2v2 dataset into forestry and secd_forest.
 }
 \examples{
 \dontrun{

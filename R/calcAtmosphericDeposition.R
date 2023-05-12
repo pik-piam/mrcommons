@@ -14,7 +14,9 @@
 #' \dontrun{
 #' calcOutput("AtmosphericDeposition")
 #' }
-calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = FALSE, cellular = FALSE, emission = FALSE, scenario = NULL) { # nolint
+calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = FALSE, # nolint
+                                      cellular = FALSE, emission = FALSE, scenario = NULL) {
+
   luhdata <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
 
   if (is.null(scenario)) scenario <- "rcp45"
@@ -117,13 +119,12 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   }
   out[out < 0] <- 0
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr, NH3N and NO2N",
-    isocountries = (!cellular & (nregions(out) != 1)),
-    min = 0,
-    max = 200,
-    description = paste("Atmospheric deposition, natural (1870 levels) and anthropogenic in the",
-                        "year 1995 (actually 1993) for different landuse classes.")))
+  return(list(x = out,
+              weight = NULL,
+              unit = "Mt Nr, NH3N and NO2N",
+              isocountries = (!cellular & (nregions(out) != 1)),
+              min = 0,
+              max = 200,
+              description = paste("Atmospheric deposition, natural (1870 levels) and anthropogenic in the",
+                                  "year 1995 (actually 1993) for different landuse classes.")))
 }
