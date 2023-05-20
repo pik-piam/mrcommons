@@ -20,8 +20,8 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
 
   # calibrating the natural rate of leaching ####
   fixnat <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
-  land <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
-  fix <- fixnat * land
+  land   <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
+  fix    <- fixnat * land
   inputs <- (58 + 6 + 2.9 + 1.6 + 1.6 + 4)
 
   surplus <- fix / 58 * inputs
@@ -48,8 +48,6 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # (Benni suggested to convert the previous warning to this comment)
 
   fracLeach <- toolCoord2Isocell(calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE))
-  leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
-  no3 <- surplus * fracLeach * leachingMultiplicationFactor
 
   # accumulation in deserts
 
@@ -68,9 +66,15 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # Cycles 7, 557–597 (1993).
   n2o <- (6.8) / inputsNonDesert * surplusNonDeserts
 
-  # n2
+  # leaching losses
+  leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
 
-  n2 <- surplus - no3 - accumulationDeserts - nox - nh3 - n2o
+  # surplus after gaseous losses
+  surplusAfterLosses <- surplus - nox - nh3 - n2o
+  no3                <- surplusAfterLosses * fracLeach * leachingMultiplicationFactor
+
+  # n2
+  n2 <- surplusAfterLosses - no3 - accumulationDeserts
 
   out <- mbind(
     add_dimension(no3, dim = 3.1, add = "form", nm = "no3_n"),
