@@ -8,11 +8,13 @@ calcMAgPIEReport <- function(subtype) {
     x <- x[, , "Costs|MainSolve w/o GHG Emissions (million US$05/yr)"] / 1000 / 1000
     d <- "Total Landuse Costs from MAgPIE excluding emission costs"
     u <- "T$2005/yr"
+    #xxx w/o GHG emissions needs to be calculated manually now I think, or is this variable still available and good?
   } else if (subtype == "CostMAC") {
     # with transformation factor from 10E6 US$2005 to 10E12 US$2005
     x <- x[, , "Costs|MainSolve|MACCS (million US$05/yr)"] / 1000 / 1000
     d <- "MAC Costs for LU emissions from MAgPIE"
     u <- "T$2005/yr"
+    #xxx update variable name
   } else if (subtype == "ProductionBiomass") {
     x <- x[, , "Demand|Bioenergy|++|2nd generation (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
@@ -30,6 +32,7 @@ calcMAgPIEReport <- function(subtype) {
       "Emissions before technical mitigation|N2O|Land|Agriculture|Agricultural Soils|+|Manure applied to Croplands (Mt N2O/yr);n2oanwstc",
       "Emissions before technical mitigation|N2O|Land|Agriculture|Agricultural Soils|+|Pasture (Mt N2O/yr);n2oanwstp",
       "Emissions before technical mitigation|N2O|Land|Agriculture|Agricultural Soils|+|Soil Organic Matter Loss (Mt N2O/yr);n2ofertsom"
+      #xxx add peatland ch4 and n2o
     )
     # nolint end
 
@@ -63,9 +66,9 @@ calcMAgPIEReport <- function(subtype) {
   getNames(x) <- getNames(x) %>%
     stringr::str_replace_all(c(
       "^C_"               = "",
-      "-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
+      #"-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
       "-PkBudg500-mag-4"  = ".rcp20",
-      "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
+      #"-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
       "-PkBudg1150-mag-4" = ".rcp26",
       "-NDC-mag-4"        = ".rcp45",
       "-Base-mag-4"       = ".none",
