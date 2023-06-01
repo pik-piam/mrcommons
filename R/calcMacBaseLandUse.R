@@ -25,13 +25,6 @@ calcMacBaseLandUse <- function(subtype) {
                   years = seq(2005, 2150, 5),
                   names = sources,
                   sets = c("region", "year", "type"))
-  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP"))
-  y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20", "rcp26", "rcp45", "none"))
-
-  y <- new.magpie(cells_and_regions = isoCountry$x,
-                  years = seq(2005, 2150, 5),
-                  names = sources,
-                  sets = c("region", "year", "type"))
   y <- add_dimension(y,
                      dim = 3.2,
                      add = "c_LU_emi_scen",
