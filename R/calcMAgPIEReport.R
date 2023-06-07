@@ -76,7 +76,7 @@ calcMAgPIEReport <- function(subtype) {
       "-NDC-mag-4"        = ".rcp45",
       "-Base-mag-4"       = ".none",
       "SSP2EU"            = "SSP2",
-      "SDP_MC"            = "SDP",
+      "SDP_MC"            = "SDP"
     ))
 
   return(list(
