@@ -18,8 +18,8 @@ calcMacBaseLandUse <- function(subtype) {
   # easy to see which entries remain empty afterwards)
   isoCountry <- read.csv2(system.file("extdata", "iso_country.csv", package = "madrat"), row.names = NULL)
   sources    <- c("co2luc", "n2oanwstm", "n2ofertin", "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp",
-                  "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals", "ch4forest",
-                  "ch4savan", "ch4agwaste")
+                  "n2opeatland", "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals",
+                  "ch4peatland", "ch4forest", "ch4savan", "ch4agwaste")
 
   y <- new.magpie(cells_and_regions = isoCountry$x,
                   years = seq(2005, 2150, 5),
@@ -120,24 +120,26 @@ calcMacBaseLandUse <- function(subtype) {
 
   } else if (subtype == "DirectlyFromMAgPIE") {
     # Read emission baselines for REMIND directly from MAgPIE reports.
-    # The reports are taken from coupled runs, not from runs that have only been started to calcualte the MAC.
+    # The reports are taken from coupled runs, not from runs that have only been started to calculate the MAC.
 
-    # CO2: NO MAC was calcualted, no MAC must be active in REMIND.
+    # CO2: NO MAC was calculated, no MAC must be active in REMIND.
     # CH4/N2O: take emissions before technical mitigation from MAgPIE, apply MAC in REMIND (the same MAC as in MAgPIE).
 
-    # emission types that are updated with new MAgPIE 4 data
-    emiMag <- c("co2luc",
-                 "n2oanwstm",
-                 "n2ofertin",
-                 "n2oanwstc",
-                 "n2ofertcr",
-                 "n2ofertsom",
-                 "n2oanwstp",
-                 "ch4rice",
-                 "ch4anmlwst",
-                 "ch4animals")
+    # emission types in REMIND that are updated with MAgPIE data
+    emiMacMagpie <- c("co2luc",
+                      "n2oanwstm",
+                      "n2ofertin",
+                      "n2oanwstc",
+                      "n2ofertcr",
+                      "n2ofertsom",
+                      "n2oanwstp",
+                      "n2opeatland",
+                      "ch4rice",
+                      "ch4anmlwst",
+                      "ch4animals",
+                      "ch4peatland")
 
-    y <- y[, , emiMag]
+    y <- y[, , emiMacMagpie]
 
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
     xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE)
@@ -189,7 +191,7 @@ calcMacBaseLandUse <- function(subtype) {
     x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
 
-    # emission subtype that are not updated with new MAgPIE 4 data
+    # emission subtype that are not updated with new MAgPIE data
     emiExo <- c("n2oforest",
                  "n2osavan",
                  "n2oagwaste",
