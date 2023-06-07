@@ -45,9 +45,6 @@ readMAgPIE <- function(subtype) {
 
   } else if (subtype == "MAgPIEReport_extensive") {
 
-    # last version before the current /p/tmp/aloisdir/magpie/output
-    # current version /p/projects/piam/runs/coupled-magpie/output
-
     # !!! ATTENTION !!!
     # Please update scenario names in calcMAgPIEReport.R
 
