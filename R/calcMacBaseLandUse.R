@@ -83,7 +83,7 @@ calcMacBaseLandUse <- function(subtype) {
     # Read ch4 and n2o emissions from MAgpIE Base scenario
     xCH4N2O <- calcOutput("MAgPIEReport", subtype = "ch4n2o", aggregate = FALSE)
     # remove peatland emissions
-    xCH4N2O <- xCH4N2O[,,c("ch4peatland", "n2opeatland"), invert = TRUE]
+    xCH4N2O <- xCH4N2O[, , c("ch4peatland", "n2opeatland"), invert = TRUE]
     # change the order of the entries in the 3. dimension
     getNames(xCH4N2O) <- sub("^([^\\.]*)\\.([^\\.]*)\\.([^\\.]*)$", "\\3.\\1.\\2", getNames(xCH4N2O))
 
