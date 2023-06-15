@@ -10,7 +10,7 @@
 #' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param irrigation If true: cellular areas are returned separated
 #'                   into irrigated and rainfed
-#' @param selectyears extract certain years from the data, y1950 - 2017 is available
+#' @param selectyears extract certain years from the data
 #'
 #' @return Magpie object with cropareas
 #'
@@ -18,20 +18,21 @@
 #'
 #' @importFrom madrat readSource toolConditionalReplace toolCountryFill toolAggregate
 #' @importFrom magclass dimSums getItems
+#' @importFrom mstools toolHoldConstant
 #'
 calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
-                                cells = "magpiecell", irrigation = FALSE,
-                                selectyears = c("y1965", "y1970", "y1975",
-                                                "y1980", "y1985", "y1990",
-                                                "y1995", "y2000", "y2005",
-                                                "y2010")) {
-  if (is.numeric(selectyears)) {
-    selectyears <- paste0("y", selectyears)
-  }
+                                cells = "magpiecell", irrigation = FALSE, selectyears = "all") {
 
   harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
   nonCrops      <- c("pasture")
   harvestedArea <- harvestedArea[, , nonCrops, invert = TRUE]
+
+  if (any(selectyears == "all")) {
+    selectyears <- getItems(harvestedArea, dim = 2)
+  }
+  if (is.numeric(selectyears)) {
+    selectyears <- paste0("y", selectyears)
+  }
 
   if (!physical) {
     cropArea <- harvestedArea
@@ -73,6 +74,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     physicalAreaCrop <- physicalAreaCrop * factorMismatches
 
     cropArea <- physicalAreaCrop
+    rm(factorMismatches, factorAnnuals, physicalAreaCrop)
   }
 
   if (sectoral == "kcr") {
@@ -89,6 +91,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   if (irrigation == TRUE) {
     # this is already the format of cropArea
   } else {
+    # split into single years for memory reasons
     years        <- getItems(cropArea, dim = "year")
     cropAreaList <- vector(mode = "list", length = length(years))
     for (y in seq(1, length(years))) {
@@ -103,7 +106,15 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     fallow <- calcOutput("FallowLand", aggregate = FALSE)
 
     if (irrigation == TRUE) {
-      physicalCropSum <- dimSums(cropArea, dim = c("crop", "irrigation"))
+      # split into single years for memory reasons
+      years               <- getItems(cropArea, dim = "year")
+      physicalCropSumList <- vector(mode = "list", length = length(years))
+      for (y in seq(1, length(years))) {
+        physicalCropSumList[[y]] <- dimSums(cropArea[, years[y], ], dim = c("crop", "irrigation"))
+
+      }
+      physicalCropSum <- mbind(physicalCropSumList)
+      rm(physicalCropSumList)
     } else {
       physicalCropSum <- dimSums(cropArea, dim = c("crop"))
     }
@@ -113,20 +124,21 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     }
   }
 
-  if (all(selectyears %in% getItems(cropArea, dim = "year"))) {
-    cropArea <- cropArea[, selectyears, ]
-  } else {
-    stop("The selected years are not supported (0nly 1950 - 2017).")
-  }
-
   # Aggregation to iso-level
   if (!cellular) {
-    cropArea <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
-                           irrigation = irrigation, selectyears = selectyears,
-                           cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-    cropArea <- dimSums(cropArea, dim = c("x", "y"))
-    cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
-                                       conditions = "is.na()", replaceby = 0)
+    # split into single years for memory reasons
+    years               <- getItems(cropArea, dim = "year")
+    cropAreaList <- vector(mode = "list", length = length(years))
+    for (y in seq(1, length(years))) {
+      cropAreaList <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
+                            irrigation = irrigation,
+                            cellular = TRUE, cells = "lpjcell", aggregate = FALSE)[, years, ]
+      cropAreaList <- dimSums(cropAreaList, dim = c("x", "y"))
+      cropAreaList <- toolConditionalReplace(x = toolCountryFill(cropAreaList),
+                                        conditions = "is.na()", replaceby = 0)
+    }
+    cropArea <- mbind(cropAreaList)
+    rm("cropAreaList")
   } else {
 
     if (cells == "magpiecell") {
@@ -134,8 +146,15 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     } else if (cells == "lpjcell") {
       # this is already the format of cropArea
     } else {
-      stop("This value for the cell parameter not supported, choose between \"magpiecell\" and \"lpjcell\"")
+      stop("This value for the cell parameter is not supported,
+            choose between \"magpiecell\" and \"lpjcell\"")
     }
+  }
+
+  if (all(selectyears %in% getItems(cropArea, dim = "year"))) {
+    cropArea <- cropArea[, selectyears, ]
+  } else {
+    cropArea <- mstools::toolHoldConstant(cropArea, selectyears)
   }
 
   return(list(x = cropArea,

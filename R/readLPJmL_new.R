@@ -110,7 +110,7 @@ readLPJmL_new <- function(subtype = "LPJmL4_for_MAgPIE_44ac93de:GSWP3-W5E5:histo
     x <- .prepareLPJ(nbands = 5)
   } else if (grepl("mdischarge|mrunoff|mpet|mgpp_grass_ir|mgpp_grass_rf|met_grass_ir|met_grass_rf", subtype)) {
     x <- .prepareLPJ(monthly = TRUE)
-  } else if (grepl("harvest|irrig|cwater_b|grass_pft|cft_gpp_grass_rf|cft_gpp_grass_ir|cft_et_grass_rf|cft_et_grass_ir",
+  } else if (grepl("harvest|irrig|cwater_b|grass_pft|cft_gpp_grass_rf|cft_gpp_grass_ir|cft_et_grass_rf|cft_et_grass_ir|cft_transp_pft", # nolint
                    subtype)) {
     x <- .prepareLPJ(nbands = 32)
   } else if (grepl("fpc", subtype)) {
