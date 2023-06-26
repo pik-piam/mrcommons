@@ -52,7 +52,8 @@ readIPCC <- function(subtype) {
              SCF_sub2019      = "ch5_F_LU_2019.csv",
              SCF_LU           = "ch5_F_LU_raw.csv",
              SCF_LU2019       = "ch5_F_LU_2019_raw.csv",
-             manure_table5p5c = "19R_V4_Ch05_Cropland_Table5p5C.csv")
+             manure_table5p5c = "19R_V4_Ch05_Cropland_Table5p5C.csv",
+             residues_table5p5b = "19R_V4_Ch05_Cropland_Table5p5B.csv")
 
   file <- toolSubtypeSelect(subtype, files)
 
