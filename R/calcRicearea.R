@@ -14,7 +14,7 @@
 #' @importFrom magpiesets findset
 #' @importFrom withr local_options
 
-calcRicearea <- function(cellular = FALSE, cells = "magpiecell", share = TRUE) {
+calcRicearea <- function(cellular = FALSE, cells = "lpjcell", share = TRUE) {
 
   local_options(magclass_sizeLimit = 1e+12)
 

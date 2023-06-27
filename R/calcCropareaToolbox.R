@@ -21,7 +21,7 @@
 #' @importFrom mstools toolHoldConstant
 #'
 calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
-                                cells = "magpiecell", irrigation = FALSE, selectyears = "all") {
+                                cells = "lpjcell", irrigation = FALSE, selectyears = "all") {
 
   harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
   nonCrops      <- c("pasture")

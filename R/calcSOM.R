@@ -26,7 +26,7 @@
 #' calcOutput("SOM2")
 #' }
 #'
-calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "magpiecell") {
+calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjcell") {
 
   years      <- seq(1951, 2010, 1)
 

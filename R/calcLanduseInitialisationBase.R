@@ -13,7 +13,7 @@
 #' calcOutput("LanduseInitialisationBase")
 #' }
 
-calcLanduseInitialisationBase <- function(cells = "magpiecell", selectyears = "past") {
+calcLanduseInitialisationBase <- function(cells = "lpjcell", selectyears = "past") {
 
   selectyears <- sort(findset(selectyears, noset = "original"))
 

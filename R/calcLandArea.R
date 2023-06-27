@@ -9,7 +9,7 @@
 #' calcOutput("LandArea", aggregate = FALSE)
 #' }
 #'
-calcLandArea <- function(cells = "magpiecell") {
+calcLandArea <- function(cells = "lpjcell") {
 
   x <- calcOutput("LanduseInitialisation", input_magpie = TRUE,
                    aggregate = FALSE, cellular = TRUE, cells = cells,

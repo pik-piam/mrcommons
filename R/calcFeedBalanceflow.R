@@ -17,7 +17,7 @@
 
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 cellular = FALSE,
-                                cells = "magpiecell",
+                                cells = "lpjcell",
                                 products = "kall",
                                 future = "constant") {
 

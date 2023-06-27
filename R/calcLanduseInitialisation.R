@@ -28,7 +28,8 @@
 #' @importFrom magclass setNames where
 
 
-calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven", cells = "magpiecell", selectyears = "past",
+calcLanduseInitialisation <- function(cellular = FALSE, nclasses = "seven",
+                                      cells = "lpjcell", selectyears = "past",
                                       input_magpie = FALSE) { # nolint
 
   if (isFALSE(cellular)) {

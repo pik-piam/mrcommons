@@ -18,7 +18,7 @@
 #' calcOutput("BiomeType", aggregate = FALSE)
 #' }
 #'
-calcBiomeType <- function(cells = "magpiecell") {
+calcBiomeType <- function(cells = "lpjcell") {
 
   # get processed data from 'the nature conservancy'
   x <- readSource("TNC2019", convert = "onlycorrect")

@@ -18,7 +18,7 @@
 #' }
 #' @importFrom magclass getNames<-
 
-calcExcretion <- function(cellular = FALSE, cells = "magpiecell", attributes = "npk") {
+calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk") {
 
   # read in sets
   nutrients  <- c("nr", "p", "k")

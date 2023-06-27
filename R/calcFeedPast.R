@@ -16,7 +16,7 @@
 #' @importFrom magpiesets findset
 #' @importFrom magclass getNames
 
-calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "magpiecell",
+calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell",
                          products = "kall", nutrients = "all") {
 
   if (cellular && (length(nutrients) > 1)) {

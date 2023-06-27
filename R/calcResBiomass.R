@@ -19,7 +19,7 @@
 #' calcOutput("ResBiomass")
 #' }
 #'
-calcResBiomass <- function(cellular = FALSE, cells = "magpiecell",
+calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
                            plantparts = "both",
                            irrigation = FALSE, attributes = "all",
                            scenario = "default") {

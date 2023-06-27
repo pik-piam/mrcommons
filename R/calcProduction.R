@@ -23,7 +23,7 @@
 
 
 calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
-                           cells = "magpiecell", calibrated = TRUE,
+                           cells = "lpjcell", calibrated = TRUE,
                            attributes = "all", irrigation = FALSE) {
 
   selectyears <- findset("past")

@@ -19,7 +19,7 @@
 #'
 #' @export
 
-calcClimateClass <- function(datasource = "koeppen", cells = "magpiecell") {
+calcClimateClass <- function(datasource = "koeppen", cells = "lpjcell") {
 
   if (datasource == "koeppen") {
 

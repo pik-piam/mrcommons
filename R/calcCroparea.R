@@ -30,7 +30,7 @@
 #' @importFrom withr local_options
 
 calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
-                         cells = "magpiecell", irrigation = FALSE) {
+                         cells = "lpjcell", irrigation = FALSE) {
 
   local_options(magclass_sizeLimit = 1e+10)
 

@@ -25,7 +25,7 @@
 #' @importFrom magpiesets findset
 
 calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
-                       cellular = FALSE, cells = "magpiecell", selectyears = "past") {
+                       cellular = FALSE, cells = "lpjcell", selectyears = "past") {
 
   selectyears <- sort(findset(selectyears, noset = "original"))
 

@@ -14,7 +14,7 @@
 #' }
 #' @importFrom magpiesets findset
 
-calcSeed <- function(cellular = FALSE, cells = "magpiecell", products = "kall",
+calcSeed <- function(cellular = FALSE, cells = "lpjcell", products = "kall",
                      irrigation = FALSE, attributes = "all") {
 
   products <- findset(products, noset = "original")

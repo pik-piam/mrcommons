@@ -15,7 +15,7 @@
 #' @importFrom magclass collapseNames dimSums setYears
 #' @importFrom magpiesets findset
 
-calcNitrogenFixationRateNatural <- function(cells = "magpiecell") {
+calcNitrogenFixationRateNatural <- function(cells = "lpjcell") {
 
   years <- findset("past")
 
