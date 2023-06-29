@@ -1,18 +1,15 @@
 #' @title calcSOMlossN
-#' @importFrom magclass getRegionList<- nregions
 
 calcSOMlossN <- function(cellular = FALSE, cells = "lpjcell") {
+  
   som <- calcOutput("SOM", cells = cells, aggregate = FALSE)
   som <- -som[, , "delta_soilc"][, , "cropland"] / 15
 
   if (!cellular) {
 
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds",
-                              where = "mrcommons")
-    som  <- toolAggregate(som, rel = mapping,
-                          from = ifelse(nregions(som) > 1, "celliso", "cell"),
-                          to = "iso", dim = 1)
-    som  <- toolCountryFill(som, fill = 0)
+    # sum to iso-country level
+    som <- dimSums(som, dim = c("x", "y"))
+    som <- toolCountryFill(som, fill = 0)
   }
 
   return(list(
