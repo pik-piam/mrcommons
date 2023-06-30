@@ -21,10 +21,10 @@ if (output %in% c("qty", "value")) {
 
 im <- collapseNames(readSource("FAOTradeMatrix",
                                 subtype = paste("import", output, products, sep = "_"), convert = TRUE))
-im <- im[, c(min(getYears(im, as.integer = TRUE)):1994), inv = TRUE] # subset years for lighter load on mem
+im <- im[, c(min(getYears(im, as.integer = TRUE)):1994), invert = TRUE] # subset years for lighter load on mem
 ex <- collapseNames(readSource("FAOTradeMatrix",
                                 subtype = paste("export", output, products, sep = "_"), convert = TRUE))
-ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), inv = TRUE]
+ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), invert = TRUE]
 
   if (fiveYear) {
    im <- im[, seq(1995, 2020, 5), ]

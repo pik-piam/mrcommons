@@ -37,12 +37,12 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   cropcal[, , "wwh"] <- cropcal[, , "wwh"] * wheat[, , "wwh"]
   cropcal <- add_columns(cropcal, addnm = "wheat", dim = 3.1, fill = 0)
   cropcal[, , "wheat"] <- cropcal[, , "swh"] + cropcal[, , "wwh"]
-  cropcal <- cropcal[, , c("swh", "wwh"), inv = TRUE]
+  cropcal <- cropcal[, , c("swh", "wwh"), invert = TRUE]
 
   ## mask cropcal to current area, assume 2010 area for now to avoid very large dataset
   areaMask <- calcOutput("Croparea", cellular = TRUE, aggregate = FALSE)[, 2010, ]
   areaMask <- ifelse(areaMask > 0, 1, 0)
-  areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), inv = TRUE]
+  areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), invert = TRUE]
 
   ggcmiMapping <- toolGetMapping("MAgPIE_GGCMI.csv", type = "sectoral")
   areaMask <- toolAggregate(areaMask, rel = ggcmiMapping, from = "MagPIE", to = "GGCMI", dim = 3, partrel = TRUE)

@@ -92,10 +92,11 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
 
       unit <- "day of the year"
 
-    } else if (grepl("aet|discharge|runoff|lake_evap|input_lake", subtype)) {
+    } else if (grepl("aet|cft_transp_pft|discharge|runoff|lake_evap|input_lake", subtype)) {
       # unit transformation
-      if (grepl("aet", subtype)) {
+      if (grepl("aet|cft_transp_pft", subtype)) {
         # Annual evapotranspiration (evaporation + transpiration + interception) given in liter/m^2
+        # Plant transpiration in liter/m^2 per season
         # Transform units: liter/m^2 -> m^3/ha
         unitTransform <- 10
         x             <- x * unitTransform

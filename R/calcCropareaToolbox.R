@@ -18,6 +18,7 @@
 #'
 #' @importFrom madrat readSource toolConditionalReplace toolCountryFill toolAggregate
 #' @importFrom magclass dimSums getItems
+#' @importFrom mstools toolHoldConstant
 #'
 calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
                                 cells = "magpiecell", irrigation = FALSE, selectyears = "all") {
@@ -26,7 +27,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   nonCrops      <- c("pasture")
   harvestedArea <- harvestedArea[, , nonCrops, invert = TRUE]
 
-  if (selectyears == "all") {
+  if (any(selectyears == "all")) {
     selectyears <- getItems(harvestedArea, dim = 2)
   }
   if (is.numeric(selectyears)) {
@@ -150,11 +151,13 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     }
   }
 
-  if (all(selectyears %in% getItems(cropArea, dim = "year"))) {
-    cropArea <- cropArea[, selectyears, ]
-  } else {
+  # extrapolate years
+  if (!all(selectyears %in% getItems(cropArea, dim = "year"))) {
     cropArea <- mstools::toolHoldConstant(cropArea, selectyears)
   }
+
+  # reduce to selected number of years
+  cropArea <- cropArea[, selectyears, ]
 
   return(list(x = cropArea,
               weight = NULL,
