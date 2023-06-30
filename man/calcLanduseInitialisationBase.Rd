@@ -4,7 +4,7 @@
 \alias{calcLanduseInitialisationBase}
 \title{calcLanduseInitialisationBase}
 \usage{
-calcLanduseInitialisationBase(cells = "magpiecell", selectyears = "past")
+calcLanduseInitialisationBase(cells = "lpjcell", selectyears = "past")
 }
 \arguments{
 \item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}

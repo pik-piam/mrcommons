@@ -8,7 +8,7 @@ calcSOCLossShare(
   subsystems = FALSE,
   rate = "change",
   factor = "ipccReduced",
-  cells = "magpiecell"
+  cells = "lpjcell"
 )
 }
 \arguments{

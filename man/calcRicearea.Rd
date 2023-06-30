@@ -4,7 +4,7 @@
 \alias{calcRicearea}
 \title{calcRicearea}
 \usage{
-calcRicearea(cellular = FALSE, cells = "magpiecell", share = TRUE)
+calcRicearea(cellular = FALSE, cells = "lpjcell", share = TRUE)
 }
 \arguments{
 \item{cellular}{If TRUE: calculates cellular rice area}

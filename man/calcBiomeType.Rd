@@ -4,7 +4,7 @@
 \alias{calcBiomeType}
 \title{calcBiomeType}
 \usage{
-calcBiomeType(cells = "magpiecell")
+calcBiomeType(cells = "lpjcell")
 }
 \arguments{
 \item{cells}{magpiecell (59199 cells) or lpjcell (67420 cells)}

@@ -41,7 +41,9 @@
 #' }
 #' @importFrom magclass read.magpie hasCoords
 #' @importFrom stringr str_sub
-#' @importFrom ncdf4 nc_open ncvar_get nc_close
+#' @importFrom ncdf4 nc_open
+#' @importFrom ncdf4 ncvar_get
+#' @importFrom ncdf4 nc_close
 #'
 readACCMIP <- function(subtype = NULL) {
 
@@ -49,9 +51,8 @@ readACCMIP <- function(subtype = NULL) {
     glo <- TRUE
     subtype <- substring(subtype, 5)
   } else {
-    glo <- FALSE
-  }
-
+glo <- FALSE
+}
   files <- c(nhx_1850 = "accmip_nhx_acchist_1850.nc",
              noy_1850 = "accmip_noy_acchist_1850.nc",
              sox_1850 = "accmip_sox_acchist_1850.nc",

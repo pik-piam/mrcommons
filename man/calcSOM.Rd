@@ -4,7 +4,7 @@
 \alias{calcSOM}
 \title{calcSOM}
 \usage{
-calcSOM(climatetype = "historical", subtype = "stock", cells = "magpiecell")
+calcSOM(climatetype = "historical", subtype = "stock", cells = "lpjcell")
 }
 \arguments{
 \item{climatetype}{Switch between different climate scenarios (default on "historical")}

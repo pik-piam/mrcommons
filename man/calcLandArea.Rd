@@ -4,7 +4,7 @@
 \alias{calcLandArea}
 \title{calcLandArea}
 \usage{
-calcLandArea(cells = "magpiecell")
+calcLandArea(cells = "lpjcell")
 }
 \arguments{
 \item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}

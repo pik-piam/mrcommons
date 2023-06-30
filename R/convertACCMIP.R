@@ -12,10 +12,7 @@
 #' readSource("ACCMIP", subtype = "nhx_1850")
 #' }
 convertACCMIP <- function(x) {
-
-  map <- toolGetMappingCoord2Country(pretty = TRUE)
-
-  y <- toolAggregate(x, map, from = "coords", to = "iso", dim = 1)
+  y <- toolConv2CountryByCelltype(x, cells = "lpjcell")
   y <- toolCountryFill(y, fill = NA)
 
   return(y)

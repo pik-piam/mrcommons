@@ -7,7 +7,7 @@
 calcFeedBalanceflow(
   per_livestock_unit = FALSE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   products = "kall",
   future = "constant"
 )

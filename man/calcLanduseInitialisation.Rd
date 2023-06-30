@@ -7,7 +7,7 @@
 calcLanduseInitialisation(
   cellular = FALSE,
   nclasses = "seven",
-  cells = "magpiecell",
+  cells = "lpjcell",
   selectyears = "past",
   input_magpie = FALSE
 )

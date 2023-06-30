@@ -7,7 +7,7 @@
 calcProduction(
   products = "kcr",
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   calibrated = TRUE,
   attributes = "all",
   irrigation = FALSE

@@ -7,7 +7,7 @@
 calcFeedPast(
   balanceflow = TRUE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   products = "kall",
   nutrients = "all"
 )

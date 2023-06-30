@@ -6,7 +6,7 @@
 \usage{
 calcResBiomass(
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   plantparts = "both",
   irrigation = FALSE,
   attributes = "all",

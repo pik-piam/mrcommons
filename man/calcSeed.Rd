@@ -6,7 +6,7 @@
 \usage{
 calcSeed(
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   products = "kall",
   irrigation = FALSE,
   attributes = "all"

@@ -4,7 +4,7 @@
 \alias{calcExcretion}
 \title{calcExcretion}
 \usage{
-calcExcretion(cellular = FALSE, cells = "magpiecell", attributes = "npk")
+calcExcretion(cellular = FALSE, cells = "lpjcell", attributes = "npk")
 }
 \arguments{
 \item{cellular}{if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level}
