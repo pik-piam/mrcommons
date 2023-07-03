@@ -53,7 +53,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, calibrated = TRUE
       yieldsLPJ      <- toolCoord2Isocell(yieldsLPJ)
 
       mappingCountryCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-      mappingMAG2LPJ     <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
+      mappingMAG2LPJ     <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv", where = "mappingfolder")
       mappingMAG2LPJ     <- mappingMAG2LPJ[which(mappingMAG2LPJ$MAgPIE %in% magCropTypes), ]
 
       yieldsMAG      <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ, from = "LPJmL", to = "MAgPIE",

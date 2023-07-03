@@ -30,8 +30,7 @@ calcFAOharmonized <- function() {
   prod <- readSource("FAO_online", "Crop", convert = TRUE)
 
   ## aggregate Prod to CB units
-  aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral",
- where                                = "mappingfolder")
+  aggregation <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
     # remove  aggregate categories
   remove <- setdiff(getNames(prod, dim = 1), aggregation$ProductionItem)

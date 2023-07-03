@@ -50,7 +50,8 @@ calcVoPcrops <- function(fillGaps = TRUE) {
     # fill with region averages where possible
     pricesRegional <- collapseDim(calcOutput(type = "PriceAgriculture", datasource = "FAO",
                                              aggregate = TRUE, regionmapping = "regionmappingH12.csv"))
-    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping("regionmappingH12.csv"),
+    pricesRegional <- toolAggregate(pricesRegional, rel = toolGetMapping("regionmappingH12.csv",
+                                    where = "mappingfolder"),
                                     from = "RegionCode", to = "CountryCode")[, , kPrices]
     prices[prices == 0] <- pricesRegional[prices == 0]
 

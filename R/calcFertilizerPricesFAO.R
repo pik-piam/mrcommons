@@ -16,7 +16,7 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
   ## read FAO data on fertilizer by product and subset to relevant products
   fertByProduct <- complete_magpie(readSource("FAO_online", "FertilizerProducts"), fill = 0)
-  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral")
+  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral", where = "mappingfolder")
   products <- mapping[mapping[, subtype] != "other", "product"]
   fertByProduct <- fertByProduct[, , products]
 

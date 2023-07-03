@@ -22,7 +22,7 @@ calcFAOTradePrices <- function(aggregation = "k") {
   trade <- trade[, , c("export", "import", "import_US$MER05", "export_US$MER05")]
 
   # get mapping
-  mapping <- toolGetMapping("FAOitems_online.csv", type = "sectoral")
+  mapping <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
   if (aggregation == "k") {
     tradeAgg <- toolAggregate(trade, rel = mapping,
@@ -37,7 +37,7 @@ calcFAOTradePrices <- function(aggregation = "k") {
                                from = "ProductionItem", to = "FoodBalanceItem",
                                partrel = TRUE, dim = 3.1)
     mappingSpringmann <- toolGetMapping("springmann_fbs_mapping.csv",
-                                        type = "sectoral")
+                                        type = "sectoral", where = "mappingfolder")
     getNames(tradeFBS, dim = 1) <- gsub(".*\\|", "", getNames(tradeFBS, dim = 1))
     tradeAgg <- toolAggregate(tradeFBS, rel = mappingSpringmann,
                                from = "FBS.item", to = "Food.group",

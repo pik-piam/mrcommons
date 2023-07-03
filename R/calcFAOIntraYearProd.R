@@ -44,7 +44,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   areaMask <- ifelse(areaMask > 0, 1, 0)
   areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), invert = TRUE]
 
-  ggcmiMapping <- toolGetMapping("MAgPIE_GGCMI.csv", type = "sectoral")
+  ggcmiMapping <- toolGetMapping("MAgPIE_GGCMI.csv", type = "sectoral", where = "mappingfolder")
   areaMask <- toolAggregate(areaMask, rel = ggcmiMapping, from = "MagPIE", to = "GGCMI", dim = 3, partrel = TRUE)
 
   cropcal <- cropcal * setYears(areaMask, NULL)
@@ -67,7 +67,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   cropcaldf <- toolCountryFill(cropcaldf, fill = 0)
   cropcaldf[is.na(cropcaldf)] <- 0
 
-  daysMapping <- toolGetMapping("day_month_quarter.csv", type = "sectoral")
+  daysMapping <- toolGetMapping("day_month_quarter.csv", type = "sectoral", where = "mappingfolder")
 
   if (frequency == "monthly") {
   cropcaldf <- toolAggregate(cropcaldf, rel = daysMapping, from = "day",

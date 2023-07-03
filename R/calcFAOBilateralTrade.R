@@ -123,7 +123,7 @@ unit <- "US$05/tDM"
  if (prodAgg) {
  # aggregate to get a preliminary cif/fob ratio
  out[is.na(out)] <- 0
- mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral")
+ mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mappingfolder")
  out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
                            to = "k", partrel = TRUE, dim = 3.1)
 

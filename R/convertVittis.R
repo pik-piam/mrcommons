@@ -20,7 +20,7 @@ convertVittis <- function(x) {
   x <- GDPuc::convertGDP(x, "constant 2000 Int$PPP", "constant 2005 Int$PPP", replace_NAs = c("linear", 0))
 
   # fill missing countries with average over corresponding world region
-  mapping <- toolGetMapping("regionmappingH12.csv", type = "regional")
+  mapping <- toolGetMapping("regionmappingH12.csv", type = "regional", where = "mappingfolder")
   avgCosts <- toolAggregate(x,
                              rel = mapping[mapping[, 2] %in% getItems(x, dim = 1), ],
                              from = "CountryCode",
