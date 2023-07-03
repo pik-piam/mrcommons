@@ -43,7 +43,7 @@ calcPricesProducer <- function(products = "kcr", calculation = "VoP", weighting 
                                          dim = 3, wdim = 3)[, , "remaining", invert = TRUE]
     } else if (weighting == "consumption") {
       # map prices to FoodBalanceITems first
-    mappingFAO <- toolGetMapping("FAOitems_online.csv", type = "sectoral")
+    mappingFAO <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
     weightProd <- collapseNames(readSource("FAO_online", "Crop")[, , "production"])
     witemsIntersect <- intersect(getNames(pricesProdFAO), unique(mappingFAO$ProductionItem))
@@ -148,7 +148,7 @@ stop("only production and consumption weights")
 
     } else if (weighting == "consumption") {
       # map prices to FoodBalanceITems first
-    mappingFAO <- toolGetMapping("FAOitems_online.csv", type = "sectoral")
+    mappingFAO <- toolGetMapping("FAOitems_online.csv", type = "sectoral", where = "mappingfolder")
 
     weightProd <- collapseNames(readSource("FAO", "LivePrim")[, , "production"])
     witemsIntersect <- intersect(getNames(pricesProdFAO), unique(mappingFAO$ProductionItem))

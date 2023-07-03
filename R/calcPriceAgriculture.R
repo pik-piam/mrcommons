@@ -44,7 +44,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     out <- readSource(type = "IMPACT3.2.2World_Price")
 
     # get the mapping
-    mapping <- toolGetMapping("impact2magpie.csv", type = "sectoral")
+    mapping <- toolGetMapping("impact2magpie.csv", type = "sectoral", where = "mappingfolder")
     mapping <- mapping[-which(mapping$MAgPIE == ""), ]
 
     # aggregate to MAgPIE crops
@@ -74,7 +74,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     x <- calcOutput("WBGEM", aggregate = FALSE)
 
     # sectoral mappings
-    mapping <- toolGetMapping(type = "sectoral", name = "mappingWBGEM2MAgPIEnew.csv")
+    mapping <- toolGetMapping(type = "sectoral", name = "mappingWBGEM2MAgPIEnew.csv", where = "mappingfolder")
     mapping <- mapping[mapping$wbgem %in% getNames(x), ]
 
     x   <- x[, , mapping$wbgem]

@@ -25,7 +25,7 @@ convertNCDrisc <- function(x, subtype) {
     return(x)
 
   } else if (subtype == "BMI") {
-    mapping <- toolGetMapping(type = "sectoral", name = "NCDrisc2Lutz.csv")
+    mapping <- toolGetMapping(type = "sectoral", name = "NCDrisc2Lutz.csv", where = "mappingfolder")
     BMI <- new.magpie( # nolint: object_name_linter.
       cells_and_regions = magclass::getItems(x, dim = 1),
       years = getYears(x),

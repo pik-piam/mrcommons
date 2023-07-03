@@ -66,7 +66,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- add_columns(out, addnm = c("soils", "agri"))
     out[, , "soils"] <- dimSums(out[, , c("cropland_soils", "pasture_soils")], dim = 3.1)
     out[, , "agri"] <- dimSums(out[, , c("soils", "awms")], dim = 3.1)
-    map  <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv")
+    map  <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv", where = "mappingfolder")
     out <- out[, , getNames(out, dim = 1)[getNames(out, dim = 1) %in% map[, 1]]]
     out <- groupAggregate(data = out, dim = 3.1, query = map, from = "IPCC", to = "MAgPIE")
     out <- out[, , sort(getNames(out, dim = 1))]
@@ -126,7 +126,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out[, , "soils"] <- dimSums(out[, , c("inorg_fert", "man_crop", "resid", "som", "rice", "pasture_soils")],
                                 dim = 3.1)
     out[, , "agri"]  <- dimSums(out[, , c("soils", "awms")], dim = 3.1)
-    map <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv")
+    map <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv", where = "mappingfolder")
     out <- out[, , getNames(out, dim = 1)[getNames(out, dim = 1) %in% map[, 1]]]
     out <- groupAggregate(data = out, dim = 3.1, query = map, from = datasource, to = "MAgPIE")
     out <- out[, , sort(getNames(out, dim = 1))]
@@ -184,7 +184,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
     edgar <- .formatToReporting(edgar, "co2_c", "co2", (44 / 12))
 
     # Rename emissions according to their MAgPIE reporting names
-    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv")
+    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv", where = "mappingfolder")
     edgar     <- toolAggregate(x = edgar, rel = sectorMap,
                                from = "EDGAR6", to = "MAgPIE_reporting",
                                dim = 3, partrel = FALSE)
@@ -210,7 +210,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
   } else if (datasource == "FAO_EmisAg") {
 
     total   <- readSource("FAO_online", subtype = "EmisAgTotal")
-    mapping <- toolGetMapping(type = "sectoral", name = "FAO_online_emissionsMapping.csv")
+    mapping <- toolGetMapping(type = "sectoral", name = "FAO_online_emissionsMapping.csv", where = "mappingfolder")
 
     .calculateEmissions <- function(faoName, magpieName) {
       emission <- toolAggregate(total[, , faoName],

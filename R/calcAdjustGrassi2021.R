@@ -21,8 +21,8 @@ calcAdjustGrassi2021 <- function() {
   wf <- toolCountryFill(wf, fill = 0)
   wf <- abs(wf)
 
-  mf <- toolGetMapping(type = "regional", name = "IPCC_AR6_10region.csv")
-
+  mf <- toolGetMapping(type = "regional", name = "IPCC_AR6_10region.csv",
+                      where = "mappingfolder")
   # downscale from 10 IPCC regions to country level using country removals as weight
   x <- toolAggregate(df, rel = mf, weight = wf, dim = 1, partrel = FALSE, from = "RegionCode", to = "CountryCode")
 

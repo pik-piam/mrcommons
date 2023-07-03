@@ -45,7 +45,7 @@ calcEF3confinement <- function(products = "magpie", selection = "n_pollutants_di
     # add a marginal amount to each animal waste management system to avoid NAs
     excretion <- excretion + 0.00000001
     tmp <- excretion * distribution
-    map <- toolGetMapping(type = "sectoral", name = "IPCCitems.csv")
+    map <- toolGetMapping(type = "sectoral", name = "IPCCitems.csv", where = "mappingfolder")
     tmp <- toolAggregate(x = tmp, dim = 3.1, rel = map, from = "ipcc", to = "magpie", partrel = TRUE)
     excretion <- toolAggregate(x = excretion, dim = 3.1, rel = map, from = "ipcc", to = "magpie", partrel = TRUE)
     distribution <- tmp <- tmp / excretion

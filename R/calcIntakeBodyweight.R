@@ -36,7 +36,7 @@ calcIntakeBodyweight <- function(bodyweight, bodyheight = NULL, inactivity, tmea
 
     requirement <- readSource("HHS_USDA", convert = FALSE)
     weight <- requirement * 0 + 1
-    mapping <- toolGetMapping(type = "sectoral", name = "HHS_USDA2hic.csv")
+    mapping <- toolGetMapping(type = "sectoral", name = "HHS_USDA2hic.csv", where = "mappingfolder")
     requirement <- speed_aggregate(x = requirement, rel = mapping, weight = weight,
                                    from = "HHS_USDA", to = "hic", dim = 3.2)
 

@@ -14,7 +14,7 @@
 
 convertPBL_MACC_2019 <- function(x, subtype) { # nolint : object_name_linter.
 
-  map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv")
+  map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv", where = "mappingfolder")
 
   if (subtype == "baseline_sources") {
     # convert back to CH4 and N2O using AR4 GWP factors

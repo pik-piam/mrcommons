@@ -261,7 +261,7 @@ calcEmissionInventory <- function(datasource = "CEDS", targetResolution = "secto
     jointYears <- intersect(getYears(ceds), getYears(primap))
 
     # aggregate ceds categories to primap categories
-    map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toPRIMAP.csv")
+    map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toPRIMAP.csv", where = "mappingfolder")
 
     cedsAgg <- toolAggregate(ceds, map, dim = 3.1)
     getSets(primap) <- getSets(ceds)
@@ -284,9 +284,9 @@ stop("datasource unknown")
   if (!is.null(targetResolution)) {
     # aggregate and rename CEDS59 sectors to CEDS16 sectors
     if (targetResolution == "sectoral") {
-      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toSectors.csv")
+      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toSectors.csv", where = "mappingfolder")
     } else if (targetResolution == "magpie") {
-      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toMAgPIE.csv")
+      map <- toolGetMapping(type = "sectoral", name = "mappingCEDS59toMAgPIE.csv", where = "mappingfolder")
     } else {
       stop("Unknown target resolution \"", targetResolution, "\".")
     }

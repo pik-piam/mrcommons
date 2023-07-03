@@ -75,7 +75,7 @@ calcLUH2v2 <- function(landuse_types = "magpie", irrigation = FALSE, # nolint
       }
     }
     if (landuse_types == "magpie") {
-      mapping <- toolGetMapping(type = "sectoral", name = "LUH2v2.csv")
+      mapping <- toolGetMapping(type = "sectoral", name = "LUH2v2.csv", where = "mappingfolder")
       x       <- toolAggregate(x, mapping, dim = 3.1, from = "luh2v2", to = "land")
     }
   }

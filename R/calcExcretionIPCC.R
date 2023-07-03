@@ -42,7 +42,7 @@ calcExcretionIPCC <- function(products = "IPCC") {
   excretion <- nex * shr
 
   if (products == "magpie") {
-    map <- toolGetMapping(type = "sectoral", name = "IPCCitems.csv")
+    map <- toolGetMapping(type = "sectoral", name = "IPCCitems.csv", where = "mappingfolder")
     excretion <- toolAggregate(x = excretion, dim = 3.1, rel = map, from = "ipcc", to = "magpie", partrel = TRUE)
   } else if (products == "IPCC") {
     excretion <- excretion

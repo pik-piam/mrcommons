@@ -97,7 +97,7 @@ calcLaborCosts <- function(datasource = "ILO", subsectors = TRUE, inclFish = FAL
                    getItems(sharesCrops, dim = 2))
 
     # filling missing values with region average, using production as weight
-    h12 <- toolGetMapping("regionmappingH12.csv", type = "regional")
+    h12 <- toolGetMapping("regionmappingH12.csv", type = "regional", where = "mappingfolder")
     weight <- dimSums(collapseDim(calcOutput("Production", aggregate = FALSE)[, , "dm"]), dim = 3.1)
     weight <- time_interpolate(weight, interpolated_year = setdiff(y, getItems(weight, dim = 2)),
                                extrapolation_type = "constant", integrate_interpolated_years = TRUE)[, y, ]
