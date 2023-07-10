@@ -47,18 +47,16 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # to do: include EmisNitrogenShareNature
   # (Benni suggested to convert the previous warning to this comment)
 
-  fracLeach <- toolCoord2Isocell(calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE))
+  fracLeach <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
   # accumulation in deserts
-
   deserts <- (fracLeach == 0)
   accumulationDeserts <- surplus * deserts
-  surplusNonDeserts <- surplus - accumulationDeserts
-  inputsNonDesert <- inputs * (1 - deserts)
+  surplusNonDeserts   <- surplus - accumulationDeserts
+  inputsNonDesert     <- inputs * (1 - deserts)
   inputsNonDesert[inputsNonDesert == 0] <- 10^-10
 
   # gaseous losses ####
-
   nox <- (1.6 + 2.9) / inputsNonDesert * surplusNonDeserts
   nh3 <- (6 + 1.6) / inputsNonDesert * surplusNonDeserts
   # 6.8 Tg from Bouwman, A. F., Fung, I., Matthews, E. & John, J. Global analysis
@@ -90,8 +88,7 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   }
 
   if (cellular == FALSE) {
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    out <- toolAggregate(x = out, rel = mapping, from = "celliso", to = "iso")
+    out <- dimSums(out, dim = c("x", "y"))
     out <- toolCountryFill(out, fill = colSums(out) * 10^-10)
   }
 
