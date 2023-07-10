@@ -28,7 +28,8 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   if (datasource %in% c("ACCMIP")) {
     accmip <- calcOutput("ACCMIP", glo_incl_oceans = glo_incl_oceans, aggregate = FALSE)
     if (emission == FALSE) {
-      accmip2 <- add_dimension(dimSums(accmip[, , c("drydep", "wetdep")][, , c("nh3_n", "no2_n")], dim = 3.2),
+      accmip2 <- add_dimension(dimSums(accmip[, , c("drydep", "wetdep")][, , c("nh3_n", "no2_n")],
+                                       dim = 3.2),
                                dim = 3.2, nm = "deposition")
     } else {
       accmip2 <- accmip[, , c("emi")][, , c("nh3_n", "no2_n")]
@@ -50,8 +51,8 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
       out <- accmip2
     }
     if ((cellular == FALSE) && (glo_incl_oceans == FALSE)) {
-      out <- toolConv2CountryByCelltype(out, cells = "lpjcells")
-      out  <- toolCountryFill(out, fill = 0, verbosity = 2)
+      out <- dimSums(out, dim = c("x", "y"))
+      out <- toolCountryFill(out, fill = 0, verbosity = 2)
     }
     out <- out[, , scenario]
   } else {
@@ -99,6 +100,6 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
               isocountries = (!cellular & (nregions(out) != 1)),
               min = 0,
               max = 200,
-              description = paste("Atmospheric deposition, natural (1870 levels) and anthropogenic in the",
+              description = paste0("Atmospheric deposition, natural (1870 levels) and anthropogenic in the ",
                                   "year 1995 (actually 1993) for different landuse classes.")))
 }
