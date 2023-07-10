@@ -278,8 +278,8 @@ calcEmissionInventory <- function(datasource = "CEDS", targetResolution = "secto
 
 
   } else {
-stop("datasource unknown")
-}
+    stop("datasource unknown")
+  }
 
   if (!is.null(targetResolution)) {
     # aggregate and rename CEDS59 sectors to CEDS16 sectors
