@@ -12,7 +12,7 @@
 #'
 convertIFPRIsubsidy <- function(x) {
   # create mapping to disaggregate EU
-  h12 <- toolGetMapping("regionmappingH12.csv", type = "spatial", where = "mappingfolder")
+  h12 <- toolGetMapping("regionmappingH12.csv", type = "regional", where = "mappingfolder")
   h12$RegionCode[h12$RegionCode != "EUR"] <- h12$CountryCode[h12$RegionCode != "EUR"]
   h12 <- h12[h12$RegionCode %in% getItems(x, dim = 1), ]
 
