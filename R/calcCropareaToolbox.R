@@ -154,7 +154,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
 
   # extrapolate years
   if (!all(selectyears %in% getItems(cropArea, dim = "year"))) {
-    cropArea <- mstools::toolHoldConstant(cropArea, selectyears)
+    cropArea <- toolHoldConstant(cropArea, selectyears)
   }
 
   # reduce to selected number of years
