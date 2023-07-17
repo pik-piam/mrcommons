@@ -150,13 +150,14 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
         }
       }
 
-      units <- c(aet        = "m^3/ha",
-                 discharge  = "mio. m^3",
-                 mdischarge = "mio. m^3",
-                 lake_evap  = "mio. m^3",
-                 input_lake = "mio. m^3",
-                 runoff     = "mio. m^3",
-                 mrunoff    = "mio. m^3")
+      units <- c(aet            = "m^3/ha",
+                 cft_transp_pft = "m^3/ha",
+                 discharge      = "mio. m^3",
+                 mdischarge     = "mio. m^3",
+                 lake_evap      = "mio. m^3",
+                 input_lake     = "mio. m^3",
+                 runoff         = "mio. m^3",
+                 mrunoff        = "mio. m^3")
 
       unit <- toolSubtypeSelect(subtype, units)
 
