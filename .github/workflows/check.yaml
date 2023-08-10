@@ -22,10 +22,18 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::lucode2, any::covr
-          upgrade: "TRUE"
-          # upgrade: TRUE ensures that the latest versions all deps are used, which is
-          # especially important for piam packages which are also available on CRAN
+          extra-packages: |
+            any::lucode2
+            any::covr
+            any::madrat
+            any::magclass
+            any::citation
+            any::gms
+            any::goxygen
+            any::GDPuc
+          # explicitly installing all piam packages which are also on
+          # CRAN (madrat, magclass, citation, gms, goxygen, GDPuc) to
+          # get newest version instead of outdated binary version from CRAN
 
       - uses: actions/setup-python@v4
         with:
