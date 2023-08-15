@@ -3,6 +3,7 @@
 #' (and their shares per country) and emission factors for nitrogenous emissions in livestock confinements
 #'
 #' @param cellular if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products "sum" (default) or "kli"
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
@@ -16,10 +17,10 @@
 #' @importFrom magclass getNames<-
 
 
-calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE) {
+calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE, cells = "lpjcell") {
 
   past               <- findset("past")
-  excretion          <- collapseNames(calcOutput("Excretion", cellular = cellular, attributes = "npkc",
+  excretion          <- collapseNames(calcOutput("Excretion", cellular = cellular, cells = cells, attributes = "npkc",
                                                  aggregate = FALSE)[, past, "confinement"])
   emissionFactorsN   <- calcOutput("EF3confinement", selection = "recycling", aggregate = FALSE)
   lossRatesC         <- calcOutput("ClossConfinement", aggregate = FALSE)
@@ -27,7 +28,7 @@ calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE) 
 
   if (cellular) {
 
-    countries <- getItems(excretion, dim = "iso")
+    countries <- getItems(excretion, dim = ifelse(cells == "lpjcell", 1.3, 1.1))
 
     emissionFactorsN   <- emissionFactorsN[countries, , ]
     lossRatesC         <- lossRatesC[countries, , ]

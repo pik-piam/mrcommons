@@ -65,7 +65,9 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
                                       years = getItems(livestockProduction, dim = 2),
                                       names = outer(getNames(excretion, dim = 1),
                                                     getNames(excretion, dim = 2), paste, sep = "."),
-                                      fill = 0)
+                                      fill = 0,
+                                      sets = c(getSets(livestockProduction, fulldim = FALSE)[1:2],
+                                               "source.kli"))
 
     livstRumMilk <- c("livst_rum", "livst_milk")
     productionWeights[, , "grazing"][, , livstRumMilk]          <- livestockProduction[, , "ext"][, , livstRumMilk]
