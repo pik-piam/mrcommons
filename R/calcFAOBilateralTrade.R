@@ -21,10 +21,10 @@ if (output %in% c("qty", "value")) {
 
 im <- collapseNames(readSource("FAOTradeMatrix",
                                 subtype = paste("import", output, products, sep = "_"), convert = TRUE))
-im <- im[, c(min(getYears(im, as.integer = TRUE)):1994), inv = TRUE] # subset years for lighter load on mem
+im <- im[, c(min(getYears(im, as.integer = TRUE)):1994), invert = TRUE] # subset years for lighter load on mem
 ex <- collapseNames(readSource("FAOTradeMatrix",
                                 subtype = paste("export", output, products, sep = "_"), convert = TRUE))
-ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), inv = TRUE]
+ex <- ex[, c(min(getYears(ex, as.integer = TRUE)):1994), invert = TRUE]
 
   if (fiveYear) {
    im <- im[, seq(1995, 2020, 5), ]
@@ -123,8 +123,8 @@ unit <- "US$05/tDM"
  if (prodAgg) {
  # aggregate to get a preliminary cif/fob ratio
  out[is.na(out)] <- 0
- mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral")
- out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
+ mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrcommons")
+out <- toolAggregate(out, rel = mapping, from = "new_FAOoriginalItem_fromWebsite",
                            to = "k", partrel = TRUE, dim = 3.1)
 
     if (output == "qty") {

@@ -2,25 +2,31 @@
 #' @description Calculates iso-level total global transport costs from GTAP for GTAP food commodities
 #' @return List of magpie object with results on country level, unit and description.
 #' @author David M Chen
+#' @param costType transport or wholesale
 #' @examples
 #' \dontrun{
 #' calcOutput("GTAPTotalTransportCosts")
 #' }
 #'
-calcGTAPTotalTransportCosts <- function() {
+calcGTAPTotalTransportCosts <- function(costType = "transport") {
 
 nvfa <- readSource("GTAP81", subtype = "SF01")
 
-gtapFoods <- c("pdr", "wht", "gro", "v_f", "osd", "c_b", "pfb", "ocr", "ctl", "oap", "rmk", "wol", "frs", "fsh")
+gtapFoods <- c("pdr", "wht", "gro", "v_f", "osd", "c_b", "pfb", "ocr", "ctl", "oap", "rmk", "wol", "frs", "fsh",
+               "pcr", "sgr", "vol", "mil", "cmt", "omt", "b_t")
 
-transpInputs <- c("trd", "otp", "wtp", "atp")
+if (costType == "transport") {
+    transpInputs <-  c("otp", "wtp", "atp")
+} else if (costType == "wholesale") {
+    transpInputs <- "trd"
+}
 
 nonTranspInputs <- c("pdr", "wht", "gro", "v_f", "osd", "c_b", "pfb",
                        "ocr", "ctl", "oap", "rmk", "wol", "frs", "fsh",
                        "coa", "oil", "gas", "omn", "cmt", "omt", "vol",
                        "mil", "pcr", "sgr", "ofd", "b_t", "tex", "wap",
                        "lea", "lum", "ppp", "p_c", "crp", "nmm", "i_s",
-                       "nfm", "fmp")
+                       "nfm", "fmp", "trd")
 
 # sum imported and domestic inputs - very little imported transport inputs
 nvfa <- dimSums(nvfa, dim = 3.3, na.rm = TRUE)
@@ -39,8 +45,11 @@ tcostToSecondary <- dimSums(tcostToSecondary, dim = "DEMD_COMM")
 # half of transport of inputs to market and half of transport from market to consumer
 totalTcosts <- (tcostInputs + tcostToSecondary) / 2
 
+totalTcosts <-  GDPuc::convertGDP(totalTcosts, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
+                          replace_NAs = "no_conversion")
+
 return(list(x = totalTcosts,
             weight = NULL,
-            unit = "million current US$MER/yr",
-            description = "Transport costs of GTAP commodities (half of input to market and market to value"))
+            unit = "million constant 2005 US$MER/yr",
+            description = "Costs for GTAP commodities (half of input to market and market to value"))
 }

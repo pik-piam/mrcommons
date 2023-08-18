@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.31.1
-Date: 2023-08-15
+Version: 1.33.4.9001
+Date: 2023-08-18
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -52,6 +52,7 @@ Imports:
     magpiesets (>= 0.44.2),
     ncdf4,
     nleqslv,
+    openxlsx,
     purrr,
     quitte,
     raster,
@@ -70,7 +71,6 @@ Suggests:
     HARr,
     knitr,
     lifecycle,
-    Rilostat,
     rmarkdown,
     testthat,
     XML

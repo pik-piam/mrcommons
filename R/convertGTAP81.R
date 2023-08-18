@@ -14,7 +14,7 @@ convertGTAP81 <- function(x, subtype) {
   # this shouldn't have a big impact
   gdpMer <- calcOutput("GDPPast", GDPPast = "WDI-MI", unit = "constant 2005 US$MER", aggregate = FALSE)
   gdpMer <- gdpMer[, getYears(x), , drop = TRUE]
-  mapping <- toolGetMapping("regionmappingGTAP81.csv", type = "regional")
+  mapping <- toolGetMapping("regionmappingGTAP81.csv", type = "regional", where = "mappingfolder")
   x <- toolAggregate(x, rel = mapping, weight = gdpMer, from = "GTAPCode", to = "CountryCode", dim = 1)
 
   if ("REG2" %in% getSets(x)) {

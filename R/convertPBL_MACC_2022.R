@@ -10,7 +10,7 @@
 
 convertPBL_MACC_2022 <- function(x) { # nolint : object_name_linter.
 
-  map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv")
+  map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv", where = "mappingfolder")
 
    y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode")
    y <- toolCountryFill(y, fill = 0)

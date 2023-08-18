@@ -43,7 +43,7 @@ calcHistEmissions <- function(subtype = "sector") {
     }
     emiOt <- emiOt[, , "6B_Other-not-in-total", invert = TRUE]
     mapCEDS59ToSec  <- read.csv2(toolGetMapping(type = "sectoral", name = "mappingCEDS59toSECTOR17.csv",
-                                                returnPathOnly = TRUE),
+                                                returnPathOnly = TRUE, where = "mappingfolder"),
                                  stringsAsFactors = FALSE)
     emiOt <- toolAggregate(x = emiOt, weight = NULL, dim = 3.1, rel = mapCEDS59ToSec, from = "CEDS59", to = "SECTOR")
     # add cdr-process and indirect-process
@@ -93,7 +93,7 @@ calcHistEmissions <- function(subtype = "sector") {
     co2 <- co2[, , "6B_Other-not-in-total", invert = TRUE]
     n2o <- n2o[, , "6B_Other-not-in-total", invert = TRUE]
     mapCEDS59ToMAC  <- read.csv2(toolGetMapping(type = "sectoral", name = "mappingCEDS59toMACperGas.csv",
-                                                returnPathOnly = TRUE),
+                                                returnPathOnly = TRUE, where = "mappingfolder"),
                                  stringsAsFactors = FALSE)
     ch4 <- toolAggregate(x = ch4, weight = NULL, dim = 3.1, rel = mapCEDS59ToMAC, from = "CEDS59", to = "MAC.ch4")
     co2 <- toolAggregate(x = co2, weight = NULL, dim = 3.1, rel = mapCEDS59ToMAC, from = "CEDS59", to = "MAC.co2")

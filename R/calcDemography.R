@@ -15,7 +15,8 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   lutz <- readSource("Lutz2014", convert = convert)
 
-  mapping2 <- toolGetMapping(type = "sectoral", name = "lutz2hic2.csv")
+  mapping2 <- toolGetMapping(type = "sectoral", name = "lutz2hic2.csv",
+                              where = "mappingfolder")
   demo <- luscale::speed_aggregate(x = lutz, rel = mapping2, from = "lutz", to = "hic", dim = 3.2)
 
   demo <- demo[, , "B", invert = TRUE]

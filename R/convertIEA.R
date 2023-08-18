@@ -36,7 +36,8 @@ convertIEA <- function(x, subtype) {
     # disaggregating Other Africa (IAF),
     # Other non-OECD Americas (ILA) and
     # Other non-OECD Asia (IAS) regions to countries
-    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA_Other2016.csv", returnPathOnly = TRUE)
+    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA_Other2016.csv",
+                                  returnPathOnly = TRUE, where = "mappingfolder")
     mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
       filter(!(!!sym("CountryCode") %in% getItems(x, dim = 1)))
     xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])

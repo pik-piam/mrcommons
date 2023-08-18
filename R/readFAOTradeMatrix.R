@@ -110,7 +110,7 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 
 # subset by both trade column and product column
-mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral")
+mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrcommons")
 mapping <- mapping[, c("new_FAOoriginalItem_fromWebsite", "k")]
 colnames(mapping)[1] <- "ItemCodeItem"
 mapping <- distinct(mapping)

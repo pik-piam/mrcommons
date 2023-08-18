@@ -88,8 +88,11 @@ calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
 
       magCroparea <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
                                 cellular = FALSE, irrigation = FALSE, aggregate = FALSE)
-      mag2lpj     <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
-      mag2lpj     <- mag2lpj[!(mag2lpj$MAgPIE == "pasture"), ]
+
+      mag2lpj    <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv",
+                                   where = "mappingfolder")
+      mag2lpj    <- mag2lpj[!(mag2lpj$MAgPIE == "pasture"), ]
+
       lpjCroparea <- toolAggregate(magCroparea, rel = mag2lpj, from = "MAgPIE", to = "LPJmL", dim = 3.1)
       data        <- lpjCroparea
 
@@ -196,13 +199,14 @@ calcCroparea <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
 
     } else if (sectoral == "lpj") {
 
-      magCroparea <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                                cellular = TRUE, irrigation = irrigation,
-                                cells = cells, aggregate = FALSE)
-      mag2lpj     <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
-      mag2lpj     <- mag2lpj[!(mag2lpj$MAgPIE == "pasture"), ]
-      lpjCroparea <- toolAggregate(magCroparea, rel = mag2lpj, from = "MAgPIE", to = "LPJmL", dim = "MAG")
-      data        <- lpjCroparea
+      magCroparea   <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
+                                  cellular = TRUE, irrigation = irrigation,
+                                  cells = cells, aggregate = FALSE)
+      mag2lpj      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv",
+                                      where = "mappingfolder")
+      mag2lpj      <- mag2lpj[!(mag2lpj$MAgPIE == "pasture"), ]
+      lpjCroparea   <- toolAggregate(magCroparea, rel = mag2lpj, from = "MAgPIE", to = "LPJmL", dim = "MAG")
+      data          <- lpjCroparea
 
     } else {
       stop("Not possible (for now) for the given item set (sectoral)!")
