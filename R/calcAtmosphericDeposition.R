@@ -82,7 +82,6 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
                             rel = coordMapping, from = "iso", to = "coords",
                             partrel = FALSE)
         out <- toolCoord2Isocoord(out)
-        getSets(out) <- c("x", "y", "iso", "year", "data")
       }
     }
 
