@@ -13,17 +13,17 @@
 
 readNitrogenBoundariesGridded <- function() {
 
-  lon <- seq(-179.750, 179.750, by = 0.50)
-  lat <- seq(89.750, -89.750, by = -0.50)
+  longitude <- seq(-179.750, 179.750, by = 0.50)
+  latitude <- seq(89.750, -89.750, by = -0.50)
 
   d <- read.table("nsur_crit_mi_all_ph.asc",
-                  col.names = lon,
+                  col.names = longitude,
                   header = FALSE, skip = 6, check.names = FALSE)
 
   d <- as.data.frame(d) %>%
-    dplyr::mutate(lat = lat) %>%
+    dplyr::mutate(lat = latitude) %>%
     tidyr::pivot_longer(cols = -"lat", names_to = "lon", values_to = "critNitrSurplus") %>%
-    dplyr::mutate(lon = as.numeric(lon))
+    dplyr::mutate(lon = as.numeric(.data[["lon"]]))
 
   d$critNitrSurplus <- replace(d$critNitrSurplus, d$critNitrSurplus == -9999, NA)
 
