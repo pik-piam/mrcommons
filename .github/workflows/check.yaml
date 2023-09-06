@@ -31,9 +31,9 @@ jobs:
             any::gms
             any::goxygen
             any::GDPuc
-          # explicitly installing all piam packages which are also on
-          # CRAN (madrat, magclass, citation, gms, goxygen, GDPuc) to
-          # get newest version instead of outdated binary version from CRAN
+          # piam packages also available on CRAN (madrat, magclass, citation,
+          # gms, goxygen, GDPuc) will usually have an outdated binary version
+          # available; by using extra-packages we get the newest version
 
       - uses: actions/setup-python@v4
         with:
