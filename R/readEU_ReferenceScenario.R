@@ -29,11 +29,11 @@ readEU_ReferenceScenario <- function(subtype) { # nolint: object_name_linter.
     subsubtype <- sub("^techAssump\\.", "", subtype)
 
     # read excel sheet
-    rawdata <- read.xlsx(
-      file.path("ref2020_technology_assumptions",
-                "REF2020_Technology Assumptions_Energy.xlsx"),
-      sheet = subsubtype, startRow = 2, colNames = FALSE, skipEmptyRows = TRUE,
-      fillMergedCells = TRUE)
+    rawdata <- read.xlsx(file.path("ref2020_technology_assumptions",
+                                   "REF2020_Technology Assumptions_Energy.xlsx"),
+                         sheet = subsubtype, startRow = 2,
+                         colNames = FALSE, skipEmptyRows = TRUE,
+                         fillMergedCells = TRUE)
 
     # remove notes at the bottom
     data <- rawdata[cumsum(grepl("^Notes", rawdata[, 1])) == 0, ]
@@ -71,7 +71,7 @@ readEU_ReferenceScenario <- function(subtype) { # nolint: object_name_linter.
           # identify group lines (end uses and units)
           groupLines <- do.call(cbind, lapply(varCols, function(cols) {
             data.frame(
-              var = apply(chunk[, cols], 1, function(l) length(unique(l))))
+              var = apply(chunk[, cols], 1, function(l) length(unique(l)))) # nolint: indentation_linter
           }))
           groupLines <- as.vector(apply(groupLines, 1, function(l) all(l == 1)))
           groupLines[1:3] <- FALSE
@@ -86,7 +86,7 @@ readEU_ReferenceScenario <- function(subtype) { # nolint: object_name_linter.
           if (subsubtype == "Domestic") {
             units <- do.call(cbind, lapply(varCols, function(cols) {
               dfCol <- data.frame(
-                var = apply(chunk[groupLines, cols], 1, function(l) unique(l)))
+                var = apply(chunk[groupLines, cols], 1, function(l) unique(l))) # nolint: indentation_linter
               colnames(dfCol) <- chunk[1, head(cols, 1)]
               return(dfCol)
             }))
@@ -195,8 +195,8 @@ readEU_ReferenceScenario <- function(subtype) { # nolint: object_name_linter.
   mapping <- NULL
 
   # load mapping and data
-  mapping$A <- suppressMessages(read_excel(paste0("EU_ReferenceScenario2REMIND_", subtype, ".xlsx"), sheet = "A"))
-  mapping$B <- suppressMessages(read_excel(paste0("EU_ReferenceScenario2REMIND_", subtype, ".xlsx"), sheet = "B"))
+  mapping$A <- suppressMessages(read_excel(paste0("EUReferenceScenario2REMIND_", subtype, ".xlsx"), sheet = "A"))
+  mapping$B <- suppressMessages(read_excel(paste0("EUReferenceScenario2REMIND_", subtype, ".xlsx"), sheet = "B"))
 
   if (subtype == "2016") {
     sourceFile <- "AppendixRefSce.xls"
