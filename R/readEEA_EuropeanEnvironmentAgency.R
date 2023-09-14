@@ -70,11 +70,10 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
     timeframe <- seq(2005, 2017) # excluding WEM projections
 
     for (s in sheets) {
-      tmp <- suppressMessages(read_excel(
-        path = "GHG_ETS_ES_Projections_by_sector.xlsx", sheet = s, skip = 1,
-        trim_ws = TRUE)) %>%
+      tmp <- suppressMessages(read_excel(path = "GHG_ETS_ES_Projections_by_sector.xlsx",
+                                         sheet = s, skip = 1, trim_ws = TRUE)) %>%
         melt(id.vars = 1) %>%
-        mutate(value = replace_na(.data[["value"]], 0))
+        mutate(value = replace_na(as.numeric(.data[["value"]]), 0))
       colnames(tmp) <- c("label", "period", "value")
       tmp <- cbind(tmp[!is.na(tmp$value) & tmp$period %in% timeframe, ], region = s)
       historical <- rbind(historical, tmp)
