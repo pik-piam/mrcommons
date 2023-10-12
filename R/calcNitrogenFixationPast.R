@@ -22,7 +22,7 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
   fixBiomass <- NULL
   fixFreeliving <- NULL
   past <- findset("past")
-  if ((fixation_types == "both") && (sum_plantparts == FALSE)) {
+  if ((fixation_types == "both") && !sum_plantparts) {
     warning("sum_plantparts set to true")
     sum_plantparts <- TRUE # nolint: object_name_linter.
   }
@@ -31,15 +31,15 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
                                         attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
     harvest <- add_dimension(harvest, dim = 3.1, add = "data1", nm = "organ")
     resAg <- collapseNames(calcOutput("ResBiomass", cellular = cellular,
-                                       plantparts = "ag", irrigation = irrigation,
-                                       attributes = "nr", aggregate = FALSE)[, past, ],
-                            collapsedim = "attributes")
+                                      plantparts = "ag", irrigation = irrigation,
+                                      attributes = "nr", aggregate = FALSE)[, past, ],
+                           collapsedim = "attributes")
     resBg <- collapseNames(calcOutput("ResBiomass", cellular = cellular,
-                                       plantparts = "bg", irrigation = irrigation,
-                                       attributes = "nr", aggregate = FALSE)[, past, ],
-                            collapsedim = "attributes")
+                                      plantparts = "bg", irrigation = irrigation,
+                                      attributes = "nr", aggregate = FALSE)[, past, ],
+                           collapsedim = "attributes")
     biomass <- mbind(harvest, resAg, resBg)
-    if (sum_plantparts == TRUE) {
+    if (sum_plantparts) {
       biomass <- dimSums(biomass, dim = 3.1)
     }
     ndfa <- setYears(readSource("Herridge", subtype = "ndfa"), NULL)
@@ -62,6 +62,5 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
               weight = NULL,
               unit = "Mt Nr",
               description = "Nitrogen fixation by crops and freeliving bacteria",
-              isocountries = !cellular
-              ))
+              isocountries = !cellular))
 }

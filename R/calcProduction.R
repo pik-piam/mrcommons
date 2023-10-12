@@ -61,13 +61,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
                                       dim = 3.1, partrel = TRUE)[, , magCropTypes]
 
       cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
-                                    cellular = TRUE, cells = "lpjcell",
-                                    irrigation = TRUE, aggregate = FALSE)[, selectyears, magCropTypes]
+                                   cellular = TRUE, cells = "lpjcell",
+                                   irrigation = TRUE, aggregate = FALSE)[, selectyears, magCropTypes]
 
-      if (calibrated == TRUE) {
+      if (calibrated) {
 
         tau       <- calcOutput("LanduseIntensity", sectoral = "kcr", rescale = FALSE,
-                                 aggregate = FALSE)[, selectyears, magCropTypes]
+                                aggregate = FALSE)[, selectyears, magCropTypes]
         tauCell   <- toolAggregate(x = tau, rel = mappingCountryCell,
                                    from = "iso", to = "coordiso", partrel = TRUE)
         getSets(tauCell) <- c("x", "y", "iso", "year", "ItemCodeItem")
@@ -122,60 +122,60 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
             length(getItems(productionMAG["MUS", , ], dim = 1))
         }
         if (any(noMAGTotCrop["KIR", , ] != 0)) {
-           productionMAG["KIR", , "rainfed"]  <- productionFAO["KIR", , ] /
-                                                  length(getItems(productionMAG["KIR", , ], dim = 1))
+          productionMAG["KIR", , "rainfed"]  <- productionFAO["KIR", , ] /
+            length(getItems(productionMAG["KIR", , ], dim = 1))
         }
         if (any(noMAGTotCrop["PYF", , ] != 0)) {
           productionMAG["PYF", , "rainfed"] <- productionFAO["PYF", , ] /
-                                                  length(getItems(productionMAG["PYF", , ], dim = 1))
+            length(getItems(productionMAG["PYF", , ], dim = 1))
         }
         if (any(noMAGTotCrop["BMU", , ] != 0)) {
           productionMAG["BMU", , "rainfed"] <- productionFAO["BMU", , ] /
-                                                  length(getItems(productionMAG["BMU", , ], dim = 1))
+            length(getItems(productionMAG["BMU", , ], dim = 1))
         }
         if (any(noMAGTotCrop["KNA", , ] != 0)) {
           productionMAG["KNA", , "rainfed"] <- productionFAO["KNA", , ] /
-                                                  length(getItems(productionMAG["KNA", , ], dim = 1))
+            length(getItems(productionMAG["KNA", , ], dim = 1))
         }
         if (any(noMAGTotCrop["GRD", , ] != 0)) {
           productionMAG["GRD", , "rainfed"] <- productionFAO["GRD", , ] /
-                                                  length(getItems(productionMAG["GRD", , ], dim = 1))
+            length(getItems(productionMAG["GRD", , ], dim = 1))
         }
         if (any(noMAGTotCrop["ATG", , ] != 0)) {
           productionMAG["ATG", , "rainfed"] <- productionFAO["ATG", , ] /
-                                                  length(getItems(productionMAG["ATG", , ], dim = 1))
+            length(getItems(productionMAG["ATG", , ], dim = 1))
         }
         if (any(noMAGTotCrop["DMA", , ] != 0)) {
           productionMAG["DMA", , "rainfed"] <- productionFAO["DMA", , ] /
-                                                  length(getItems(productionMAG["DMA", , ], dim = 1))
+            length(getItems(productionMAG["DMA", , ], dim = 1))
         }
         if (any(noMAGTotCrop["LCA", , ] != 0)) {
           productionMAG["LCA", , "rainfed"] <- productionFAO["LCA", , ] /
-                                                  length(getItems(productionMAG["LCA", , ], dim = 1))
+            length(getItems(productionMAG["LCA", , ], dim = 1))
         }
         if (any(noMAGTotCrop["BRB", , ] != 0)) {
           productionMAG["BRB", , "rainfed"] <- productionFAO["BRB", , ] /
-                                                  length(getItems(productionMAG["BRB", , ], dim = 1))
+            length(getItems(productionMAG["BRB", , ], dim = 1))
         }
         if (any(noMAGTotCrop["STP", , ] != 0)) {
           productionMAG["STP", , "rainfed"] <- productionFAO["STP", , ] /
-                                                  length(getItems(productionMAG["STP", , ], dim = 1))
+            length(getItems(productionMAG["STP", , ], dim = 1))
         }
         if (any(noMAGTotCrop["MDV", , ] != 0)) {
           productionMAG["MDV", , "rainfed"] <- productionFAO["MDV", , ] /
-                                                  length(getItems(productionMAG["MDV", , ], dim = 1))
+            length(getItems(productionMAG["MDV", , ], dim = 1))
         }
         if (any(noMAGTotCrop["HKG", , ] != 0)) {
           productionMAG["HKG", , "rainfed"] <- productionFAO["HKG", , ] /
-                                                  length(getItems(productionMAG["HKG", , ], dim = 1))
+            length(getItems(productionMAG["HKG", , ], dim = 1))
         }
         if (any(noMAGTotCrop["MLT", , ] != 0)) {
           productionMAG["MLT", , "rainfed"] <- productionFAO["MLT", , ] /
-                                                  length(getItems(productionMAG["MLT", , ], dim = 1))
+            length(getItems(productionMAG["MLT", , ], dim = 1))
         }
         if (any(noMAGTotCrop["BHR", , ] != 0)) {
           productionMAG["BHR", , "rainfed"] <- productionFAO["BHR", , ] /
-                                                  length(getItems(productionMAG["BHR", , ], dim = 1))
+            length(getItems(productionMAG["BHR", , ], dim = 1))
         }
 
         # correct items with no yields
@@ -242,19 +242,20 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       ####################################
 
       areaPasture    <- collapseNames(calcOutput("LanduseInitialisation",
-                                                cellular = TRUE, cells = "lpjcell",
-                                                aggregate = FALSE)[, selectyears, "past"])
+                                                 cellular = TRUE, cells = "lpjcell",
+                                                 aggregate = FALSE)[, selectyears, "past"])
       yieldsPasture  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                      climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
-                                      aggregate = FALSE, years = selectyears)[, , "mgrass.rainfed"])
+                                                 climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
+                                                 stage = "smoothed", aggregate = FALSE,
+                                                 years = selectyears)[, , "mgrass.rainfed"])
 
       mappingCountryCell <- toolGetMappingCoord2Country()
       mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
 
-      if (calibrated == TRUE) {
+      if (calibrated) {
 
         tau           <- calcOutput("LanduseIntensity", sectoral = "pasture", rescale = FALSE,
-                                     aggregate = FALSE)[, selectyears, ]
+                                    aggregate = FALSE)[, selectyears, ]
         tauCell       <- toolAggregate(x = tau, rel = mappingCountryCell,
                                        from = "iso", to = "coordiso", partrel = TRUE)
 
@@ -282,7 +283,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           # distribute equally over all cells
           productionMAG     <- productionMAG * (1 - noPastureArea) +
             magpie_expand(noPastureArea * productionFAO, productionMAG) /
-            new.magpie(names(getCPR(productionMAG, dim = 1.3)), fill = getCPR(productionMAG, dim = 1.3))
+              new.magpie(names(getCPR(productionMAG, dim = 1.3)), fill = getCPR(productionMAG, dim = 1.3))
         }
 
         # correct items with no yields
