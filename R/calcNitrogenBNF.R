@@ -17,9 +17,7 @@ calcNitrogenBNF <- function(cellular = FALSE) {
   bnf[, , c("crop", "urban")] <- 0
 
   if (!cellular) {
-    mapping <- data.frame(celliso = getItems(bnf, 1, full = TRUE),
-                          iso = getItems(bnf, if (dimExists("iso", bnf)) "iso" else 1.1, full = TRUE))
-    bnf <- toolAggregate(bnf, rel = mapping, from = "celliso", to = "iso")
+    bnf <- dimSums(bnf, c("x", "y"))
     bnf <- toolCountryFill(bnf, fill = 0)
   }
 
