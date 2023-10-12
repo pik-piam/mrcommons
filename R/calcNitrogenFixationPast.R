@@ -43,7 +43,7 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
       biomass <- dimSums(biomass, dim = 3.1)
     }
     ndfa <- setYears(readSource("Herridge", subtype = "ndfa"), NULL)
-    ndfa <- ndfa[getItems(biomass, dim = 1.1), , ]
+    ndfa <- ndfa[getItems(biomass, dim = if (dimExists("iso", biomass)) "iso" else 1.1), , ]
     biomass <- biomass * ndfa
     fixBiomass <- add_dimension(biomass, dim = 3.1, nm = "fixation_crops")
   }
