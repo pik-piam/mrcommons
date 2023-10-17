@@ -63,7 +63,7 @@ convertMAgPIE <- function(x, subtype) {
     # FS: Disaggregation of MAgPIE biomass supply curves to iso-countries:
     # We assume that countries that are part of a MAgPIE region have the same fix cost to produce the first unit of
     # biomass (same offset parameter). For the slope parameter, we assume that biomass can be produced at lower cost in
-    # countries that currently have a large agricultural areas We therefore divide the slope parameter of the MagPIE
+    # countries that currently have a large agricultural area. We therefore divide the slope parameter of the MAgPIE
     # region by the share in agricultural area of the iso country relative to the MAgPIE region to obtain the
     # disaggregated slope parameter of the iso-country. Note: This disaggregation does not work if iso-countries cover
     # more than one MAgPIE region. For this case, this needs to be reworked!
