@@ -43,7 +43,7 @@ convertMAgPIE <- function(x, subtype) {
   } else if (subtype == "macBase") {
 
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingMAgPIE.csv",
-    returnPathOnly = TRUE, where = "mappingfolder")
+                                  returnPathOnly = TRUE, where = "mappingfolder")
     mapping <- read.csv2(mappingfile)
     primap <- readSource("PRIMAPhist", subtype = "hist")
     weight <- dimSums(primap[, "y2005", c("CAT4", "CAT5")][, , c("n2o_n", "ch4")], dim = 3)
@@ -51,7 +51,7 @@ convertMAgPIE <- function(x, subtype) {
   } else if (subtype %in% c("co2tax", "macBaseCO2luc")) {
 
     mapping <- toolGetMapping(type = "regional", name = "regionmappingH12.csv",
-    returnPathOnly = TRUE, where = "mappingfolder")
+                              returnPathOnly = TRUE, where = "mappingfolder")
     # use total land area as weight
     weight <- calcOutput("LanduseInitialisation", aggregate = FALSE)[, 2005, ]
     # sum over 3.dimension

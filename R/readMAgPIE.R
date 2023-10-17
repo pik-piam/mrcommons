@@ -76,21 +76,21 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in calcBiomassPrice.R if necessary
 
     scenarioNames <- c("f30_bioen_price_SDP-MC-NDC-nocc_hist-NDC_replaced_flat",
-                       "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg500_replaced_flat",
-                       "f30_bioen_price_SDP-MC-NPI-nocc_hist-Base_replaced_flat",
-                       "f30_bioen_price_SSP1-NDC-nocc_hist-NDC_replaced_flat",
-                       "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1150_replaced_flat",
-                       "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg500_replaced_flat",
-                       "f30_bioen_price_SSP1-NPI-nocc_hist-Base_replaced_flat",
-                       "f30_bioen_price_SSP2-NDC-nocc_hist-NDC_replaced_flat",
-                       "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1150_replaced_flat",
-                       "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg500_replaced_flat",
-                       "f30_bioen_price_SSP2-NPI-nocc_hist-Base_replaced_flat",
-                       "f30_bioen_price_SSP5-NDC-nocc_hist-NDC_replaced_flat",
-                       "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1150_replaced_flat",
-                       "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg500_replaced_flat",
-                       "f30_bioen_price_SSP5-NPI-nocc_hist-Base_replaced_flat"
-                      )
+      "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SDP-MC-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP1-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP2-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP5-NPI-nocc_hist-Base_replaced_flat"
+    )
 
     fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
     setnames  <- c("region", "year", "scenario", "char")
