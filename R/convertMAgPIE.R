@@ -43,7 +43,7 @@ convertMAgPIE <- function(x, subtype) {
   } else if (subtype == "macBase") {
 
     mappingfile <- toolGetMapping(type = "regional", name = "regionmappingMAgPIE.csv",
-    returnPathOnly = TRUE, where = "mappingfolder")
+                                  returnPathOnly = TRUE, where = "mappingfolder")
     mapping <- read.csv2(mappingfile)
     primap <- readSource("PRIMAPhist", subtype = "hist")
     weight <- dimSums(primap[, "y2005", c("CAT4", "CAT5")][, , c("n2o_n", "ch4")], dim = 3)
@@ -51,7 +51,7 @@ convertMAgPIE <- function(x, subtype) {
   } else if (subtype %in% c("co2tax", "macBaseCO2luc")) {
 
     mapping <- toolGetMapping(type = "regional", name = "regionmappingH12.csv",
-    returnPathOnly = TRUE, where = "mappingfolder")
+                              returnPathOnly = TRUE, where = "mappingfolder")
     # use total land area as weight
     weight <- calcOutput("LanduseInitialisation", aggregate = FALSE)[, 2005, ]
     # sum over 3.dimension
@@ -63,7 +63,7 @@ convertMAgPIE <- function(x, subtype) {
     # FS: Disaggregation of MAgPIE biomass supply curves to iso-countries:
     # We assume that countries that are part of a MAgPIE region have the same fix cost to produce the first unit of
     # biomass (same offset parameter). For the slope parameter, we assume that biomass can be produced at lower cost in
-    # countries that currently have a large agricultural areas We therefore divide the slope parameter of the MagPIE
+    # countries that currently have a large agricultural area. We therefore divide the slope parameter of the MAgPIE
     # region by the share in agricultural area of the iso country relative to the MAgPIE region to obtain the
     # disaggregated slope parameter of the iso-country. Note: This disaggregation does not work if iso-countries cover
     # more than one MAgPIE region. For this case, this needs to be reworked!
