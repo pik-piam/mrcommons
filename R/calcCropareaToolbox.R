@@ -54,6 +54,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   if (!all(selectyears %in% getItems(physicalArea, dim = "year"))) {
     physicalArea  <- toolHoldConstant(physicalArea, selectyears)
     harvestedArea <- toolHoldConstant(harvestedArea, selectyears)
+    fallow        <- toolHoldConstant(fallow, selectyears)
   }
 
   # reduce to selected number of years
