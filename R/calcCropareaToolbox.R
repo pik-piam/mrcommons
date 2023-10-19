@@ -12,7 +12,7 @@
 #'                   into irrigated and rainfed
 #' @param selectyears extract certain years from the data
 #'
-#' @return Magpie object with cropareas
+#' @return MAgPIE object with cropareas
 #'
 #' @author David Hoetten, Felicitas Beier
 #'
@@ -26,6 +26,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
   nonCrops      <- c("pasture")
   harvestedArea <- harvestedArea[, , nonCrops, invert = TRUE]
+  perennials    <- c("sugr_cane", "oilpalm")
 
   if (any(selectyears == "all")) {
     selectyears <- getItems(harvestedArea, dim = 2)
@@ -35,18 +36,45 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
   }
 
   if (!physical) {
+    # harvested area by crop as of LandInG data
     cropArea <- harvestedArea
 
+    # physical area by crop as calculated in this function
+    physArea <- calcOutput("CropareaToolbox", sectoral = "kcr", physical = TRUE, cellular = TRUE,
+                           cells = "lpjcell", irrigation = TRUE, selectyears = selectyears,
+                           aggregate = FALSE)
+
+    # Check whether more than 5% of harvested area would be lost
+    if (any(dimSums(cropArea[, , perennials] - physArea[, , perennials],
+                    dim = c(1, 3.2)) / dimSums(cropArea, dim = c(1, 3.2)) * 100) > 5) {
+      stop("More than 5% of global harvested area is lost through perennial area correction")
+    }
+    # Check whether more than 10% of harvested area would be lost in any country
+    # that has more than 100 000 ha total harvested area
+    # (year loop due to memory issues)
+    # (note: the loop takes 1.197 min. Check for performance improvement)
+    for (y in selectyears) {
+      if (any(dimSums(cropArea[, y, ], dim = c(1.1, 1.2, 3)) > 0.1 &
+                (dimSums(cropArea[, y, perennials] - physArea[, y, perennials],
+                         dim = c(1.1, 1.2, 3)) / dimSums(cropArea[, y, ], dim = c(1.1, 1.2, 3)) * 100) > 10,
+              na.rm = TRUE)) {
+        stop(paste0("Some countries (with more than 100 000 ha harvested area) would loose more than 10% in year ", y))
+      }
+    }
+
+    # in the allocation of perennials to physical area, some harvested area is lost and needs to be corrected
+    cropArea[, , perennials] <- physArea[, , perennials]
+
   } else {
+    # total physical are from LandInG
     physicalArea    <- readSource("LanduseToolbox", subtype = "physicalArea")
     physicalAreaSum <- dimSums(physicalArea, dim = "irrigation")
 
-    # for the following crops we know that no multicropping is happening, so physical area = harvested area
-    perennials <- c("sugr_cane", "oilpalm")
+    # for the perennial crops no multicropping is happening, so physical area = harvested area
     crops      <- getItems(harvestedArea, dim = "crop")
     annuals    <- crops[!crops %in% perennials]
 
-    # calculate the harvestedAreas for  different cropgroups
+    # calculate the total harvestedAreas for different cropgroups
     perennialHarvestedA <- dimSums(harvestedArea[, , perennials], dim = c("crop", "irrigation"))
     annualsHarvestedA   <- dimSums(harvestedArea[, , annuals], dim = c("crop", "irrigation"))
     totalHarvestedA     <- perennialHarvestedA + annualsHarvestedA
@@ -56,13 +84,13 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
 
     # calculate a factor by which the annuals should be scaled down so the sum does not exceed annualsPhysicalA
     factorAnnuals <- ifelse(annualsPhysicalA > 0 & annualsHarvestedA > 0,
-                             annualsPhysicalA / annualsHarvestedA,
+                            annualsPhysicalA / annualsHarvestedA,
                             1)
 
-    # calculate a factor by which the all crops in mismatch cells (i.e. no annualPhyiscalA left) should be scaled down
+    # calculate a factor by which all crops in mismatch cells (i.e. no annualPhyiscalA left) should be scaled down
     factorMismatches <- ifelse(annualsPhysicalA <= 0 & totalHarvestedA > 0,
-                                physicalAreaSum / totalHarvestedA,
-                              1)
+                               physicalAreaSum / totalHarvestedA,
+                               1)
 
     # only scale crops down not up (i.e. keep fallow land)
     factorAnnuals[factorAnnuals > 1]       <- 1
@@ -132,11 +160,11 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     cropAreaList <- vector(mode = "list", length = length(years))
     for (y in seq(1, length(years))) {
       cropAreaList <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
-                            irrigation = irrigation,
-                            cellular = TRUE, cells = "lpjcell", aggregate = FALSE)[, years, ]
+                                 irrigation = irrigation,
+                                 cellular = TRUE, cells = "lpjcell", aggregate = FALSE)[, years, ]
       cropAreaList <- dimSums(cropAreaList, dim = c("x", "y"))
       cropAreaList <- toolConditionalReplace(x = toolCountryFill(cropAreaList),
-                                        conditions = "is.na()", replaceby = 0)
+                                             conditions = "is.na()", replaceby = 0)
     }
     cropArea <- mbind(cropAreaList)
     rm("cropAreaList")

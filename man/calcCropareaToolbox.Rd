@@ -30,7 +30,7 @@ into irrigated and rainfed}
 \item{selectyears}{extract certain years from the data}
 }
 \value{
-Magpie object with cropareas
+MAgPIE object with cropareas
 }
 \description{
 This function uses the data from the LPJmL io Toolbox
