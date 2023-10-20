@@ -12,10 +12,10 @@
 #'
 #' @importFrom magclass as.magpie collapseNames collapseDim getItems getNames getSets
 #' @importFrom magpiesets addLocation
-#' @importFrom lpjclass readLPJ
+#' @importFrom lpjmlkit read_io
 #' @importFrom utils read.delim
 #'
-#' @author David Hoetten, Felicitas Beier
+#' @author Felicitas Beier
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' \dontrun{
@@ -26,32 +26,69 @@ readLandInG <- function(subtype = "physicalArea") {
 
   if (subtype == "physicalArea") {
 
+    bands <- c("rainfed", "irrigated")
+
     # filename for irrigated and rainfed physical area
     physicalAreaName <- paste0("OutputForMAgPIE_2023-10-20/",
                                "cft_cropland_MAgPIE_cft_aggregation_20200417_20200127_madrat_",
                                "multicropping_LUH2v2_disaggregated_30min_1960-2015.bin")
     # unit: ha
 
-    physicalArea <- readLPJ(
-      file_name = physicalAreaName,
-      syear = 1950,
-      wyears = 1950:(1950 + 67),
-      bands = 2,
-      headlines = 51,
-      flexbands = TRUE,
-      averaging_range = 1,
-      ncells = 67420,
-      cellyear = TRUE
-    )
-
-    class(physicalArea) <- "array"                                             # convert to array
-    physicalArea        <- collapseNames(as.magpie(physicalArea, spatial = 1)) # convert to magpie
-    physicalArea        <- collapseDim(addLocation(physicalArea), dim = "N")   # add coordinates
-    getItems(physicalArea, dim = 3) <- c("rainfed", "irrigated")               # name data
-    getSets(physicalArea)["d3.1"]   <- "irrigation"                            # name data
-    output <- physicalArea
+    # read in data and transform to MAgPIE object
+    x <- as.magpie(read_io(filename = physicalAreaName,
+                           band_names = bands))
+    # add coordinates
+    x <- collapseDim(addLocation(x), dim = "N")
+    # rename dimensions
+    years <- paste0("y", gsub("-12-31", "", getItems(x, dim = "time")))
+    getItems(x, dim = "time") <- years
+    x          <- clean_magpie(x)
+    getSets(x) <- c("x", "y", "iso", "year", "irrigation")
 
   } else if (subtype == "harvestedArea") {
+    # Ordered list of band names
+    # Note: This hard-coded list can be removed as soon as output
+    #       is provided as json file.
+    bands <- c("rainfed tece",
+               "rainfed maiz",
+               "rainfed trce",
+               "rainfed rice_pro",
+               "rainfed soybean",
+               "rainfed rapeseed",
+               "rainfed groundnut",
+               "rainfed sunflower",
+               "rainfed oilpalm",
+               "rainfed puls_pro",
+               "rainfed potato",
+               "rainfed cassav_sp",
+               "rainfed sugr_cane",
+               "rainfed sugr_beet",
+               "rainfed others",
+               "rainfed cottn_pro",
+               "rainfed foddr",
+               "rainfed pasture",
+               "rainfed begr",
+               "rainfed betr",
+               "irrigated tece",
+               "irrigated maiz",
+               "irrigated trce",
+               "irrigated rice_pro",
+               "irrigated soybean",
+               "irrigated rapeseed",
+               "irrigated groundnut",
+               "irrigated sunflower",
+               "irrigated oilpalm",
+               "irrigated puls_pro",
+               "irrigated potato",
+               "irrigated cassav_sp",
+               "irrigated sugr_cane",
+               "irrigated sugr_beet",
+               "irrigated others",
+               "irrigated cottn_pro",
+               "irrigated foddr",
+               "irrigated pasture",
+               "irrigated begr",
+               "irrigated betr")
 
     # filename
     harvestedAreaName <- paste0("OutputForMAgPIE_2023-10-20/",
@@ -59,31 +96,17 @@ readLandInG <- function(subtype = "physicalArea") {
                                 "multicropping_LUH2v2_disaggregated_30min_1960-2015.bin")
     # unit: ha
 
-    # convert to lpjclass object
-    harvestedArea <- readLPJ(
-      file_name = harvestedAreaName,
-      syear = 1950,
-      wyears = 1950:(1950 + 67),
-      bands = 40,
-      headlines = 51,
-      flexbands = TRUE,
-      averaging_range = 1,
-      ncells = 67420,
-      cellyear = TRUE
-    )
-
-    class(harvestedArea) <- "array"                                              # convert to array
-    harvestedArea        <- collapseNames(as.magpie(harvestedArea, spatial = 1)) # convert to magpie
-    harvestedArea        <- collapseDim(addLocation(harvestedArea), dim = "N")   # add coordinates
-    cftBands <- read.delim("cft_bands.txt", header = FALSE)                      # get band names from file
-    getItems(harvestedArea, dim = 3) <- unlist(unname(cftBands))                 # name data according to file
-    getNames(harvestedArea)          <- gsub("\\s", ".", getNames(harvestedArea))         # prepare to add subdim
-    getSets(harvestedArea)           <- c("x", "y", "iso", "year", "irrigation", "crop")  # add subdim
-    output <- harvestedArea
+    # read in data and transform to MAgPIE object
+    x <- as.magpie(read_io(filename = harvestedAreaName,
+                           band_names = bands))
+    # rename dimensions
+    years                     <- paste0("y", gsub("-12-31", "", getItems(x, dim = "time")))
+    getItems(x, dim = "time") <- years
+    getItems(x, dim = 3, raw = TRUE) <- gsub(" ", ".", getItems(x, dim = 3))
+    x          <- clean_magpie(x)
+    getSets(x) <- c("x", "y", "iso", "year", "irrigation", "crop")
 
   }
 
-  output <- clean_magpie(output)
-
-  return(output)
+  return(x)
 }

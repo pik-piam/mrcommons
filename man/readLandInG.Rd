@@ -29,5 +29,5 @@ A <- readSource("LanduseToolbox", subtype = "harvestedArea", aggregate = FALSE)
 \code{\link{readSource}}
 }
 \author{
-David Hoetten, Felicitas Beier
+Felicitas Beier
 }

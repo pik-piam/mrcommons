@@ -1,7 +1,7 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.36.6
+Version: 1.36.7
 Date: 2023-10-20
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -48,6 +48,7 @@ Imports:
     hdf5r,
     GDPuc,
     lpjclass,
+    lpjmlkit,
     luscale,
     magpiesets (>= 0.44.2),
     ncdf4,
