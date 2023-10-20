@@ -1,4 +1,4 @@
-#' @title calcCropareaToolbox
+#' @title calcCropareaLandInG
 #' @description This function uses the data from the LPJmL io Toolbox
 #'              to calculate cropareas in various formats.
 #'
@@ -20,23 +20,23 @@
 #' @importFrom magclass dimSums getItems
 #' @importFrom mstools toolHoldConstant
 #'
-calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
+calcCropareaLandInG <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
                                 cells = "magpiecell", irrigation = FALSE, selectyears = "all") {
 
   withr::local_options(magclass_sizeLimit = 1e+12)
 
   ### Read in data ###
   # total physical area from LandInG (in Mha)
-  physicalArea <- readSource("LanduseToolbox", subtype = "physicalArea")
+  physicalArea <- readSource("LandInG", subtype = "physicalArea")
   # crop-specific harvested area (in Mha)
-  harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
+  harvestedArea <- readSource("LandInG", subtype = "harvestedArea")
 
   if (physical) {
     # read in fallow land (for check below)
-    fallow <- calcOutput("FallowLandOLD", aggregate = FALSE)
+    fallow <- calcOutput("FallowLand", aggregate = FALSE)
   } else {
     # crop-specific physical area (in Mha)
-    physicalAreaCrop <- calcOutput("CropareaToolbox",
+    physicalAreaCrop <- calcOutput("CropareaLandInG",
                                    sectoral = "kcr", physical = TRUE, cellular = TRUE,
                                    cells = "lpjcell", irrigation = TRUE, selectyears = selectyears,
                                    aggregate = FALSE)
@@ -152,7 +152,7 @@ calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FA
       cropArea <- toolAggregate(cropArea, rel = mapMagToLpj,
                                 from = "MAgPIE", to = "LPJmL", dim = "crop")
     } else {
-      stop("This sectoral aggregation is not available in calcCropareaToolbox")
+      stop("This sectoral aggregation is not available in calcCropareaLandInG")
     }
 
     if (irrigation == TRUE) {
