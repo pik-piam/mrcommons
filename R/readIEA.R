@@ -30,13 +30,13 @@ readIEA <- function(subtype) {
     data$COUNTRY <- toolCountry2isocode(data$COUNTRY, warn = FALSE)
 
     data <- data %>%
-      filter(!is.na(!!sym("ktoe")), !is.na(!!sym("COUNTRY"))) %>%
+      filter(!is.na(!!sym("ktoe")),
+             !is.na(!!sym("COUNTRY")),
+             !!sym("TIME") !=  2021) %>% # exclude 2021, as data is incomplete
       mutate(!!sym("ktoe") := as.numeric(!!sym("ktoe")))
 
-    mdata <- as.magpie(data,
-                       datacol = dim(data)[2], spatial = which(colnames(data) == "COUNTRY"),
-                       temporal = which(colnames(data) == "TIME")
-    )
+    mdata <- as.magpie(data, datacol = dim(data)[2], spatial = which(colnames(data) == "COUNTRY"),
+                       temporal = which(colnames(data) == "TIME"))
 
   } else if (subtype == "Emissions") {
     data <- read.csv("emissions2013.csv")

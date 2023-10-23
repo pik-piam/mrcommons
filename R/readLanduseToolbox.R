@@ -1,6 +1,6 @@
 #' @title readLanduseToolbox
 #'
-#' @description Reads in landuse output of LPJmL input toolbox
+#' @description Reads in landuse output of LandInG data
 #'
 #' @param subtype Type of toolbox output data that should be read:
 #' \itemize{
