@@ -1,33 +1,33 @@
-#' @title calcFallowLand
+#' @title calcFallowLandOLD
 #' @description
 #' Calculates fallow land on grid cell level,
 #' based on physical cropland extend and harvested area output
-#' of LandInG data.
+#' of LPJML io toolbox.
 #' The formula
 #' "fallow land are = max( physical cropland area - harvested cropland area, 0)"
 #' is used.
 #' Due to multiple cropping, harvested cropland area can be greater than non-fallow land area
 #' and even greater than physical cropland area.
-#' Thus, the results can only be considered a rough estimate of fallow land area.
+#' Thus the results can only be considered a rough estimate of fallow land area.
 #'
-#' @return MAgPIE object containing fallow land in Mha
-#' @author David Hoetten, Felicitas Beier
+#' @return Magpie object with fallow land in ha
+#' @author David Hoetten
 #' @seealso
 #' \code{\link{readLanduseToolbox}}
 #' @examples
 #' \dontrun{
-#' calcOutput("FallowLand")
+#' calcOutput("FallowLandOLD")
 #' }
 #' @importFrom magclass dimSums mbind
 #' @importFrom madrat toolConditionalReplace
 #'
-calcFallowLand <- function() {
+calcFallowLandOLD <- function() {
 
-  harvestedArea <- readSource("LandInG", subtype = "harvestedArea")
+  harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
 
   harvestedAreaCrops <- harvestedArea[, , c("pasture"), invert = TRUE]
 
-  physicalArea <- readSource("LandInG", subtype = "physicalArea")
+  physicalArea <- readSource("LanduseToolbox", subtype = "physicalArea")
 
   fallowLand <- dimSums(physicalArea, "irrigation") -
     dimSums(harvestedAreaCrops, c("irrigation", "crop"))
@@ -36,8 +36,8 @@ calcFallowLand <- function() {
 
   return(list(x = fallowLand,
               weight = NULL,
-              description = "Fallow land at grid cell level",
-              unit = "Mha",
+              description = "Fallow land on grid cell level",
+              unit = "mha",
               isocountries = FALSE))
 
 }

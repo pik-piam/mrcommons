@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2023-06"
+  ver <- "2023-10"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -70,34 +70,27 @@ readMAgPIE <- function(subtype) {
     }
 
   } else if (subtype == "supplyCurve_magpie_40") {
-    regcode <- "690d3718e151be1b450b394c1064b1c5"
+    regcode <- ""
 
     # !!! ATTENTION !!!
     # Please update scenario names in calcBiomassPrice.R if necessary
 
-    scenarioNames <- c("f30_bioen_price_SDP-NDC-NDC_replaced_flat_",
-                        "f30_bioen_price_SDP-NDC-PkBudg1300_replaced_flat_",
-                        "f30_bioen_price_SDP-NDC-PkBudg900_replaced_flat_",
-                        "f30_bioen_price_SDP-NPI-Base_replaced_flat_",
-                        "f30_bioen_price_SSP1-NDC-NDC_",
-                        "f30_bioen_price_SSP1-NDC-PkBudg1300_replaced_flat_",
-                        "f30_bioen_price_SSP1-NDC-PkBudg900_",
-                        "f30_bioen_price_SSP1-NPI-Base_",
-                        "f30_bioen_price_SSP2-NDC-NDC_",
-                        "f30_bioen_price_SSP2-NDC-PkBudg1300_",
-                        "f30_bioen_price_SSP2-NDC-PkBudg900_replaced_flat_",
-                        "f30_bioen_price_SSP2-NPI-Base_",
-                        "f30_bioen_price_SSP5-NDC-NDC_replaced_flat_",
-                        "f30_bioen_price_SSP5-NDC-PkBudg1300_replaced_flat_",
-                        "f30_bioen_price_SSP5-NDC-PkBudg900_replaced_flat_",
-                        "f30_bioen_price_SSP5-NPI-Base_replaced_flat_",
-                        "f30_bioen_price_SSP2-NDC-nocc-NDC_replaced_flat_",
-                        "f30_bioen_price_SSP2-NPI-nocc-Base_replaced_flat_",
-                        "f30_bioen_price_SSP2-NPI-nocc-NPI_replaced_flat_",
-                        "f30_bioen_price_SSP2-NDC-nocc-PkBudg500_replaced_flat_",
-                        "f30_bioen_price_SSP2-NDC-nocc-PkBudg1150_replaced_flat_"
-                        )
-
+    scenarioNames <- c("f30_bioen_price_SDP-MC-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SDP-MC-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP1-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP2-NPI-nocc_hist-Base_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1150_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP5-NPI-nocc_hist-Base_replaced_flat"
+    )
 
     fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
     setnames  <- c("region", "year", "scenario", "char")
@@ -111,19 +104,6 @@ readMAgPIE <- function(subtype) {
       x <- mbind(x, read.magpie(f))
     }
     getSets(x) <- setnames
-
-    # make SSP2EU scenario using SSP2 data --- ATTENTION: needs to be deleted as soon as we have data for SSP2EU
-    xSSP2EU <- x[, , c("SSP2-NDC-NDC", "SSP2-NDC-PkBudg1300", "SSP2-NDC-PkBudg900", "SSP2-NPI-Base")]
-    getNames(xSSP2EU) <- gsub("SSP2", "SSP2EU", getNames(xSSP2EU))
-    x <- mbind(x, xSSP2EU)
-    # make SDP* scenarios using SSP1 data --- ATTENTION: needs to be deleted as soon as we have data for SDP*
-    xSDPEI <- x[, , c("SSP1-NDC-NDC", "SSP1-NDC-PkBudg1300", "SSP1-NDC-PkBudg900", "SSP1-NPI-Base")]
-    getNames(xSDPEI) <- gsub("SSP1", "SDP_EI", getNames(xSDPEI))
-    xSDPRC <- x[, , c("SSP1-NDC-NDC", "SSP1-NDC-PkBudg1300", "SSP1-NDC-PkBudg900", "SSP1-NPI-Base")]
-    getNames(xSDPRC) <- gsub("SSP1", "SDP_RC", getNames(xSDPRC))
-    xSDPMC <- x[, , c("SSP1-NDC-NDC", "SSP1-NDC-PkBudg1300", "SSP1-NDC-PkBudg900", "SSP1-NPI-Base")]
-    getNames(xSDPMC) <- gsub("SSP1", "SDP_MC", getNames(xSDPMC))
-    x <- mbind(x, xSDPEI, xSDPRC, xSDPMC)
 
   } else {
     stop("Not a valid subtype!")
