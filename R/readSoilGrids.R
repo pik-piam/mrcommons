@@ -59,7 +59,7 @@ readSoilGrids <- function(subtype) {
       res(tmp) <- c(0.5, 0.5)
       out <- tmp
     } else {
-      out <- aggregate(tmp, fact = 240, fun = mean)
+      out <- aggregate(tmp, fact = 240, fun = mean,  na.rm = TRUE)
       writeRaster(out, filename = paste0(subtype, ".grd"))
     }
 

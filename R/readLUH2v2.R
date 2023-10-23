@@ -49,7 +49,7 @@ readLUH2v2 <- function(subtype) {
     x  <- NULL
     for (item in data) {
       shr <- suppressWarnings(subset(rast(fStates, subds = item), timeSel - offset))
-      mag <- aggregate(shr * carea, fact = 2, fun = sum)
+      mag <- aggregate(shr * carea, fact = 2, fun = sum, na.rm = TRUE)
       mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -92,7 +92,7 @@ readLUH2v2 <- function(subtype) {
       print(luTrans[item])
       if (!zeroTrans[item]) {
         shr <- suppressWarnings(subset(rast(fTrans, subds = luTrans[item]), timeSel - offset - 1))
-        mag <- aggregate(shr * carea, fact = 2, fun = sum)
+        mag <- aggregate(shr * carea, fact = 2, fun = sum, na.rm = TRUE)
         mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
         getNames(mag) <- luTransReduced[item]
         getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -125,7 +125,7 @@ readLUH2v2 <- function(subtype) {
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
       tmp <- shr
       for (i in seq_len(dim(tmp)[3])) tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
-      mag <- aggregate(tmp, fact = 2, fun = sum)
+      mag <- aggregate(tmp, fact = 2, fun = sum, na.rm = TRUE)
       mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getYears(mag) <- timeSel
