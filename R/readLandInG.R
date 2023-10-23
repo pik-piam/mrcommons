@@ -36,7 +36,8 @@ readLandInG <- function(subtype = "physicalArea") {
 
     # read in data and transform to MAgPIE object
     x <- as.magpie(read_io(filename = physicalAreaName,
-                           band_names = bands))
+                           band_names = bands,
+                           nstep = 1, timestep = 1))
     # add coordinates
     x <- collapseDim(addLocation(x), dim = "N")
     # rename dimensions
@@ -98,7 +99,8 @@ readLandInG <- function(subtype = "physicalArea") {
 
     # read in data and transform to MAgPIE object
     x <- as.magpie(read_io(filename = harvestedAreaName,
-                           band_names = bands))
+                           band_names = bands,
+                           nstep = 1, timestep = 1))
     # add coordinates
     x <- collapseDim(addLocation(x), dim = "N")
     # rename dimensions
