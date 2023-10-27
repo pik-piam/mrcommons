@@ -26,7 +26,7 @@ calcOutput("FallowLand")
 }
 }
 \seealso{
-\code{\link{readLanduseToolbox}}
+\code{\link{readLandInG}}
 }
 \author{
 David Hoetten, Felicitas Beier

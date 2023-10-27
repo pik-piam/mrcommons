@@ -8,7 +8,7 @@
 #' \item \code{harvestedArea}: Harvested area separated in different crop types
 #' }
 #'
-#' @return magpie object containing output of the toolbox
+#' @return magpie object
 #'
 #' @importFrom magclass as.magpie collapseNames collapseDim getItems getNames getSets
 #' @importFrom magpiesets addLocation
@@ -19,7 +19,7 @@
 #' @seealso \code{\link{readSource}}
 #' @examples
 #' \dontrun{
-#' A <- readSource("LanduseToolbox", subtype = "harvestedArea", aggregate = FALSE)
+#' A <- readSource("LandInG", subtype = "harvestedArea", aggregate = FALSE)
 #' }
 #'
 readLandInG <- function(subtype = "physicalArea") {

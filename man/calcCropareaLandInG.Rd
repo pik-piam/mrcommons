@@ -17,7 +17,7 @@ calcCropareaLandInG(
 \item{sectoral}{"kcr" MAgPIE items, and "lpj" LPJmL items}
 
 \item{physical}{if TRUE the sum over all crops plus fallow land (of calcFallowLand)
-agrees with the physical cropland of readLanduseToolbox(subtype = physical)}
+agrees with the physical cropland of readLanduseLandInG(subtype = physical)}
 
 \item{cellular}{if TRUE: calculates cellular crop area for all magpie croptypes.
 Option FALSE is not (yet) available.}
@@ -33,7 +33,7 @@ into irrigated and rainfed}
 MAgPIE object with cropareas
 }
 \description{
-This function uses the data from the LPJmL io Toolbox
+This function uses the data from LandInG
 to calculate cropareas in various formats.
 }
 \author{

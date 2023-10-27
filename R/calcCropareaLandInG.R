@@ -1,10 +1,10 @@
 #' @title calcCropareaLandInG
-#' @description This function uses the data from the LPJmL io Toolbox
+#' @description This function uses the data from LandInG
 #'              to calculate cropareas in various formats.
 #'
 #' @param sectoral   "kcr" MAgPIE items, and "lpj" LPJmL items
 #' @param physical   if TRUE the sum over all crops plus fallow land (of calcFallowLand)
-#'                   agrees with the physical cropland of readLanduseToolbox(subtype = physical)
+#'                   agrees with the physical cropland of readLanduseLandInG(subtype = physical)
 #' @param cellular   if TRUE: calculates cellular crop area for all magpie croptypes.
 #'                   Option FALSE is not (yet) available.
 #' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
