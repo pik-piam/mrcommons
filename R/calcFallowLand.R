@@ -13,7 +13,7 @@
 #' @return MAgPIE object containing fallow land in Mha
 #' @author David Hoetten, Felicitas Beier
 #' @seealso
-#' \code{\link{readLanduseToolbox}}
+#' \code{\link{readLandInG}}
 #' @examples
 #' \dontrun{
 #' calcOutput("FallowLand")

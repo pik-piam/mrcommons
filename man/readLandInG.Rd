@@ -14,14 +14,14 @@ readLandInG(subtype = "physicalArea")
 }}
 }
 \value{
-magpie object containing output of the toolbox
+magpie object
 }
 \description{
 Reads in LandInG data
 }
 \examples{
 \dontrun{
-A <- readSource("LanduseToolbox", subtype = "harvestedArea", aggregate = FALSE)
+A <- readSource("LandInG", subtype = "harvestedArea", aggregate = FALSE)
 }
 
 }
