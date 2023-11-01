@@ -346,6 +346,9 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
     stop("calcProduction produced NA values")
   }
 
+  # Set negatives due to rounding imprecision to 0
+  x[x < 0] <- 0
+
   return(list(x = x,
               weight = NULL,
               unit = "Mt DM/Nr/P/K/WM or PJ energy",
