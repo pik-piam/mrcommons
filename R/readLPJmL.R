@@ -25,42 +25,42 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
   }
 
   files <- c(soilc              = "soilc_natveg.bin",
-             soilc_layer        = "soilc_layer_natveg.bin",
-             litc               = "litc_natveg.bin",
-             vegc               = "vegc_natveg.bin",
-             vegc_lpjcell       = "vegc_natveg.bin",
-             alitfallc          = "alitfallc_natveg.bin",
-             alitterfallc       = "alitterfallc_natveg.bin",
-             alitfalln          = "alitfalln_natveg.bin",
-             harvest            = "pft_harvest.pft.bin",
-             irrig              = "cft_airrig.pft.bin",
-             irrig_lpjcell      = "cft_airrig.pft.bin",
-             cwater_b           = "cft_consump_water_b.pft.bin",
-             cwater_b_lpjcell   = "cft_consump_water_b.pft.bin",
-             sdate              = "sdate.bin",
-             hdate              = "hdate.bin",
-             transpiration      = "mtransp_natveg.bin",
-             discharge          = "mdischarge_natveg.bin",
-             discharge_lpjcell  = "mdischarge_natveg.bin",
-             runoff             = "mrunoff_natveg.bin",
-             runoff_lpjcell     = "mrunoff_natveg.bin",
-             evaporation        = "mevap_natveg.bin",
-             evap_lake          = "mevap_lake.bin",
-             evap_lake_lpjcell  = "mevap_lake.bin",
-             mevap_lake         = "mevap_lake.bin",
-             mevap_lake_lpjcell = "mevap_lake.bin",
-             input_lake         = "input_lake.bin",
-             input_lake_lpjcell = "input_lake.bin",
-             mtranspiration     = "mtransp_natveg.bin",
-             mdischarge         = "mdischarge_natveg.bin",
-             mdischarge_lpjcell = "mdischarge_natveg.bin",
-             mrunoff            = "mrunoff_natveg.bin",
-             mrunoff_lpjcell    = "mrunoff_natveg.bin",
-             mevaporation       = "mevap_natveg.bin",
-             vegc_grass         = "mean_vegc_mangrass.bin",
-             litc_grass         = "litc_mangrass.bin",
-             soilc_grass        = "soilc_mangrass.bin"
-             )
+    soilc_layer        = "soilc_layer_natveg.bin",
+    litc               = "litc_natveg.bin",
+    vegc               = "vegc_natveg.bin",
+    vegc_lpjcell       = "vegc_natveg.bin",
+    alitfallc          = "alitfallc_natveg.bin",
+    alitterfallc       = "alitterfallc_natveg.bin",
+    alitfalln          = "alitfalln_natveg.bin",
+    harvest            = "pft_harvest.pft.bin",
+    irrig              = "cft_airrig.pft.bin",
+    irrig_lpjcell      = "cft_airrig.pft.bin",
+
+    cwater_b_lpjcell   = "cft_consump_water_b.pft.bin",
+    sdate              = "sdate.bin",
+    hdate              = "hdate.bin",
+    transpiration      = "mtransp_natveg.bin",
+    discharge          = "mdischarge_natveg.bin",
+    discharge_lpjcell  = "mdischarge_natveg.bin",
+
+    runoff_lpjcell     = "mrunoff_natveg.bin",
+    evaporation        = "mevap_natveg.bin",
+    evap_lake          = "mevap_lake.bin",
+    evap_lake_lpjcell  = "mevap_lake.bin",
+    mevap_lake         = "mevap_lake.bin",
+    mevap_lake_lpjcell = "mevap_lake.bin",
+    input_lake         = "input_lake.bin",
+    input_lake_lpjcell = "input_lake.bin",
+    mtranspiration     = "mtransp_natveg.bin",
+    mdischarge         = "mdischarge_natveg.bin",
+    mdischarge_lpjcell = "mdischarge_natveg.bin",
+    mrunoff            = "mrunoff_natveg.bin",
+    mrunoff_lpjcell    = "mrunoff_natveg.bin",
+    mevaporation       = "mevap_natveg.bin",
+    vegc_grass         = "mean_vegc_mangrass.bin",
+    litc_grass         = "litc_mangrass.bin",
+    soilc_grass        = "soilc_mangrass.bin"
+  )
 
   filename <- toolSubtypeSelect(subtype, files)
 
@@ -88,21 +88,21 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        ncells = 67420,
-        bands = nbands,
-        soilcells = FALSE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   ncells = 67420,
+                   bands = nbands,
+                   soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        bands = nbands,
-        soilcells = TRUE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   bands = nbands,
+                   soilcells = TRUE)
     }
 
     # Transform to MAgPIE object
@@ -149,12 +149,12 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
     avgRange   <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name = file.path(folder, filename),
-      wyears = years,
-      syear = startYear,
-      averaging_range = avgRange,
-      bands = nbands,
-      soilcells = TRUE)
+                 file_name = file.path(folder, filename),
+                 wyears = years,
+                 syear = startYear,
+                 averaging_range = avgRange,
+                 bands = nbands,
+                 soilcells = TRUE)
 
     x <- collapseNames(as.magpie(x))
     x <- x * unitTrans
@@ -172,21 +172,21 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
     # monthly values
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        monthly = TRUE,
-        ncells = 67420,
-        soilcells = FALSE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   monthly = TRUE,
+                   ncells = 67420,
+                   soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        monthly = TRUE,
-        soilcells = TRUE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   monthly = TRUE,
+                   soilcells = TRUE)
     }
 
     # unit transformation
@@ -269,12 +269,12 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
     avgRange  <- 1                    # Number of years used for averaging
 
     x <- readLPJ(
-      file_name = file.path(folder, filename),
-      wyears = years,
-      syear = startYear,
-      averaging_range = avgRange,
-      bands = nbands,
-      soilcells = TRUE)
+                 file_name = file.path(folder, filename),
+                 wyears = years,
+                 syear = startYear,
+                 averaging_range = avgRange,
+                 bands = nbands,
+                 soilcells = TRUE)
 
     # Transformation factor gC/m^2 --> t/ha
     yieldTrans <- 0.01 / 0.45
@@ -290,21 +290,21 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        bands = nbands,
-        ncells = 67420,
-        soilcells = FALSE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   bands = nbands,
+                   ncells = 67420,
+                   soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        bands = nbands,
-        soilcells = TRUE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   bands = nbands,
+                   soilcells = TRUE)
     }
 
     if (grepl("_lpjcell", subtype)) {
@@ -336,21 +336,21 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
     if (grepl("_lpjcell", subtype)) {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        bands = nbands,
-        ncells = 67420,
-        soilcells = FALSE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   bands = nbands,
+                   ncells = 67420,
+                   soilcells = FALSE)
     } else {
       x <- readLPJ(
-        file_name = file.path(folder, filename),
-        wyears = years,
-        syear = startYear,
-        averaging_range = avgRange,
-        bands = nbands,
-        soilcells = TRUE)
+                   file_name = file.path(folder, filename),
+                   wyears = years,
+                   syear = startYear,
+                   averaging_range = avgRange,
+                   bands = nbands,
+                   soilcells = TRUE)
     }
 
     if (grepl("_lpjcell", subtype)) {
@@ -358,7 +358,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
       mapLPJcell <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
-                                     type = "cell", where = "mrcommons")
+                                   type = "cell", where = "mrcommons")
       getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
 
