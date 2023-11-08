@@ -14,7 +14,8 @@
 calc1stBioenergyPast <- function() {
   df <- toolCalcIEAfromStructureMappingPEFE(
     readSource("IEA", subtype = "EnergyBalances"),
-    toolGetMapping(type = "sectoral", name = "structuremappingPE.csv", returnPathOnly = TRUE, where = "mappingfolder"),
+    toolGetMapping(type = "sectoral", name = "structuremappingPE.csv",
+                   where = "mrcommons", returnPathOnly = TRUE),
     subtype = "magpie")
 
   # Unit conversion from ktoe to PJ
