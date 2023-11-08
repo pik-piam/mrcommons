@@ -110,7 +110,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -207,7 +207,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
     } else if (grepl("runoff|evap_lake", subtype)) {
       # In LPJmL: (monthly) runoff given in LPJmL: mm/month
       if (grepl("_lpjcell", subtype)) {
-        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+        cb <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
                              type = "cell", where = "mrcommons")
         cellArea <- (111e3 * 0.5) * (111e3 * 0.5) * cos(cb$lat / 180 * pi)
         class(x) <- "array"
@@ -236,7 +236,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -311,7 +311,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell   <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
@@ -357,7 +357,7 @@ readLPJmL <- function(subtype = "LPJmL5:CRU4p02.soilc") { # nolint: cyclocomp_li
 
       class(x)     <- "array"
       x            <- collapseNames(as.magpie(x, spatial = 1))
-      mapLPJcell <- toolGetMapping("LPJ_CellBelongingsToCountries.csv",
+      mapLPJcell <- toolGetMapping("LPJ_CellBelongingsToCountries.rds",
                                      type = "cell", where = "mrcommons")
       getCells(x)  <- paste(mapLPJcell$ISO, 1:67420, sep = ".")
       names(dimnames(x))[1] <- paste0(names(dimnames(x))[1], ".region")
