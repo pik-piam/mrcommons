@@ -8,7 +8,7 @@ calcCropareaToolbox(
   sectoral = "kcr",
   physical = TRUE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   irrigation = FALSE,
   selectyears = "all"
 )

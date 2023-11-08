@@ -21,7 +21,7 @@
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows bind_cols select mutate
 #' @importFrom readxl read_xlsx
-#' @importFrom tidyr drop_na pivot_longer extract
+#' @importFrom tidyr drop_na pivot_longer
 #' @importFrom rlang sym is_empty
 #' @importFrom magclass as.magpie
 
@@ -121,7 +121,7 @@ readJRC_IDEES <- function(subtype) { #nolint
           )
         }
       ) %>%
-        extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
     )
     },
     Energy = { list(
@@ -221,7 +221,7 @@ readJRC_IDEES <- function(subtype) { #nolint
           )
         }
       ) %>%
-        extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
     )
     },
     Industry = { list(
@@ -335,7 +335,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'CHI_emi' = { list(
           prefix = 'Chemicals Industry|CO2 Emissions|',
@@ -589,7 +589,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'CHI_fec' = { list(
           prefix = 'Chemicals Industry|Final Energy Consumption|',
@@ -843,7 +843,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'Ind_Summary' = { list(
           prefix = 'Industry Summary|',
@@ -1030,7 +1030,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'Ind_Summary_emi' = { list(
           prefix = 'Industry Summary|CO2 Emissions|',
@@ -1091,7 +1091,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI' = { list(
           prefix = 'Iron and Steel|',
@@ -1165,7 +1165,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI_emi' = { list(
           prefix = 'Iron and Steel|CO2 Emissions|',
@@ -1327,7 +1327,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI_fec' = { list(
           prefix = 'Iron and Steel|Final Energy Consumption|',
@@ -1488,7 +1488,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NFM_emi' = { list(
           prefix = 'Non Ferrous Metals|CO2 Emissions|',
@@ -1752,7 +1752,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM' = { list(
           prefix = 'Non-metallic mineral products|',
@@ -1837,7 +1837,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM_emi' = {list(
           prefix = 'Non-metallic mineral products|CO2 Emissions|',
@@ -2055,7 +2055,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM_fec' = { list(
           prefix = 'Non-metallic mineral products|Final Energy Consumption|',
@@ -2273,7 +2273,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
@@ -2495,7 +2495,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Emission intensity|Freight transport|Coastal shipping and inland waterways|Inland waterways (kg of CO2 / 000 tkm)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRail_emi' = { list(
           prefix = 'Transport|Rail|CO2 Emissions|',
@@ -2569,7 +2569,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of CO2 emissions|Freight transport|Electric (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRail_ene' = { list(
           prefix = 'Transport|Rail|Energy Consumption|',
@@ -2646,7 +2646,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of total energy consumption|Freight transport|Electric (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_act' = { list(
           prefix = 'Transport|Road|Activity|',
@@ -2925,7 +2925,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Market shares of vehicle km|Freight transport|Heavy duty vehicles|International (% of km)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_emi' = { list(
           prefix = 'Transport|Road|CO2 Emissions|',
@@ -3091,7 +3091,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of CO2 emissions|Freight transport|Heavy duty vehicles|International (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_ene' = { list(
             prefix = 'Transport|Road|Energy Consumption|',
@@ -3263,7 +3263,7 @@ readJRC_IDEES <- function(subtype) { #nolint
                 'Shares of total energy consumption|Freight transport|Heavy duty vehicles|International (%)'
               ) }
             ) %>%
-              extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+              tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
           ) },
         'TrAvia_act' = { list(
           prefix = 'Transport|Aviation|Activity|',
@@ -3391,7 +3391,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               NA
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrAvia_emi' = { list(
           prefix = 'Transport|Aviation|CO2 Emissions|',
@@ -3453,7 +3453,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of CO2 emissions|Freight transport|International - Extra-EU (%)'
             )}
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrAvia_ene' = { list(
           prefix = 'Transport|Aviation|Energy Consumption|',
@@ -3540,7 +3540,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               NA
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrNavi_emi' = { list(
           prefix = 'Transport|Navigation|CO2 Emissions|',
@@ -3573,7 +3573,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of CO2 emissions|Inland waterways (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         )},
         'TrNavi_ene' = { list(
           prefix = 'Transport|Navigation|Energy Consumption|',
@@ -3614,7 +3614,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of total energy consumption|Inland waterways (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
@@ -3648,7 +3648,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Market shares of vehicle km|Extra-EU (% of tkm)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'MBunk_emi' = { list(
           prefix = 'Maritime Bunkers|CO2 Emissions|',
@@ -3681,7 +3681,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of CO2 emissions|Extra-EU (%)'
             ) }
           )  %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'MBunk_ene' = { list(
           prefix = 'Maritime Bunkers|Energy Consumption|',
@@ -3722,7 +3722,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               'Shares of total energy consumption|Extra-EU (%)'
             ) }
           )  %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
@@ -3769,7 +3769,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               "|Cooking|Electricity (no)"
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'RES_hh_fec' = { list(
           prefix = 'Residential|Final energy consumption|Thermal uses',
@@ -3811,7 +3811,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               "|Cooking|Electricity (ktoe)"
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'RES_hh_eff' = { list(
           prefix = 'Residential|Ratio of energy service to energy consumption|Thermal uses',
@@ -3853,7 +3853,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               "|Cooking|Electricity (system efficiency indicator)"
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'RES_hh_emi' = { list(
           prefix = 'Residential|CO2 emissions',
@@ -3895,7 +3895,7 @@ readJRC_IDEES <- function(subtype) { #nolint
               "|Cooking|Electricity (kt of CO2)"
             ) }
           )  %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'RES_se-appl' = { list(
           prefix = 'Residential|Final energy consumption|Specific electric uses in services',
@@ -3917,7 +3917,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       ) }
     ) },
@@ -3965,7 +3965,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'SER_hh_fec' = { list(
           prefix = 'Tertiary|Final energy consumption|Thermal uses',
@@ -4008,7 +4008,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'SER_hh_eff' = { list(
           prefix = 'Tertiary|Ratio of energy service to energy consumption|Thermal uses',
@@ -4051,7 +4051,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'SER_hh_emi' = { list(
           prefix = 'Tertiary|CO2 emissions',
@@ -4094,7 +4094,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'SER_se-appl' = { list(
           prefix = 'Tertiary|Final energy consumption|Specific electric uses in services',
@@ -4111,7 +4111,7 @@ readJRC_IDEES <- function(subtype) { #nolint
             )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )  }
     ) }

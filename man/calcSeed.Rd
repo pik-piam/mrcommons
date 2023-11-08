@@ -6,6 +6,7 @@
 \usage{
 calcSeed(
   cellular = FALSE,
+  cells = "lpjcell",
   products = "kall",
   irrigation = FALSE,
   attributes = "all"
@@ -13,6 +14,8 @@ calcSeed(
 }
 \arguments{
 \item{cellular}{cellular or regional level}
+
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{products}{kcr or also kall, which includes seeds for eggs and fish}
 

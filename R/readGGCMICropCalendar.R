@@ -77,10 +77,16 @@ toolReadArea <- function(subtype) {
   wheat <- add_dimension(wheat, dim = 3.3, add = "var", nm = subtype)
   x <- mbind(x, wheat)
 
+  # get spatial mapping with 67420 cells
+  map <- toolGetMappingCoord2Country(pretty = TRUE)
+  x <- x[map$coords, , ]
+  getItems(x, dim = 1, raw = TRUE) <- paste(map$coords, map$iso, sep = ".")
+  getSets(x) <- c("x", "y", "iso", "year", "data", "irr", "var")
+
   if (subtype == "wheat_areas") {
-    x <- toolCoord2Isocell(collapseNames(x[, , c("wwh", "swh")]))
+    x <- collapseNames(x[, , c("wwh", "swh")])
   } else if (subtype == "rice_areas") {
-    x <- toolCoord2Isocell(collapseNames(x[, , c("ri1", "ri2")][, , "ir"]))
+    x <- collapseNames(x[, , c("ri1", "ri2")][, , "ir"])
   }
 
   return(x)
@@ -116,13 +122,20 @@ toolReadCal <- function() {
   ## some crops are left for some days after maturity until harvest, Elliott et al. 2015source data from
   ## pdf in source folder
   daysToHarvest <- new.magpie(cells_and_regions = getItems(x, dim = 1),
-                              years = NULL, names = getItems(x, dim = 3.1), fill = 0)
+                              years = NULL,
+                              names = getItems(x, dim = 3.1),
+                              fill = 0)
   daysToHarvest[, , c("mai", "soy")] <- 21
   daysToHarvest[, , c("swh", "wwh", "bar", "rye", "rap")] <- 7
 
   x <- magclass::add_columns(x, addnm = "harvest_day", dim = 3.3, fill = 0)
   x[, , "harvest_day"] <- x[, , "maturity_day"] + daysToHarvest
 
-  x <- toolCoord2Isocell(x)
+  # get spatial mapping with 67420 cells
+  map <- toolGetMappingCoord2Country(pretty = TRUE)
+  x   <- x[map$coords, , ]
+  getItems(x, dim = 1, raw = TRUE) <- paste(map$coords, map$iso, sep = ".")
+  getSets(x) <- c("x", "y", "iso", "year", "data", "irr", "var")
+
   return(x)
 }

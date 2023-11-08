@@ -46,12 +46,13 @@
 #' @importFrom ncdf4 nc_close
 #'
 readACCMIP <- function(subtype = NULL) {
+
   if (substr(subtype, 1, 4) == "glo_") {
     glo <- TRUE
     subtype <- substring(subtype, 5)
   } else {
-glo <- FALSE
-}
+    glo <- FALSE
+  }
   files <- c(nhx_1850 = "accmip_nhx_acchist_1850.nc",
              noy_1850 = "accmip_noy_acchist_1850.nc",
              sox_1850 = "accmip_sox_acchist_1850.nc",
@@ -86,7 +87,7 @@ glo <- FALSE
   if (glo == FALSE) {
 
     a <- read.magpie(file_name = file, file_type = "nc")
-    d <- a
+    d <- toolCoord2Isocoord(a)
 
     getYears(d) <- c(paste("y", str_sub(file, -7, -4), sep = ""))
     # kg(N)/m²/s to t(N)/ha/y
@@ -99,23 +100,16 @@ glo <- FALSE
     f <- add_columns(e, dim = 3.1, addnm = "area")
     f[, , "area"] <- d[, , "area"] / 10^12 * 100 # transform from square km to ha
 
-    if (hasCoords(f)) {
-      f <- addLocation(f)
-      f <- f["0", , , invert = TRUE]
-      f <- magpiesort(collapseDim(f, c("x", "y")))
-    } else {
-      map <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-      getCells(f) <- map$celliso
-    }
     out <- clean_magpie(f)
 
     if ("no2_n_std" %in% c(getNames(out, dim = 2))) {
       out <- out[, , "no2_n_std", invert = TRUE]
     }
 
-
     return(out)
+
   } else {
+
     getGlobSum <- function(ncFile) {
 
       ncFileData <- nc_open(ncFile)
@@ -140,11 +134,14 @@ glo <- FALSE
 
       return(sums[-length(sums)])
     }
+
     out <- as.magpie(getGlobSum(file)) / 10^6
+
     getYears(out) <- c(paste("y", str_sub(file, -7, -4), sep = ""))
     getNames(out) <- sub(getNames(out), pattern = "_", replacement = ".")
     getNames(out) <- sub(getNames(out), pattern = "noy", replacement = "no2_n")
     getNames(out) <- sub(getNames(out), pattern = "nhx", replacement = "nh3_n")
+
     if ("no2_n_std" %in% c(getNames(out, dim = 2))) {
       out <- out[, , "no2_n_std", invert = TRUE]
     }

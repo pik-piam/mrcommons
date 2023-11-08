@@ -4,12 +4,14 @@
 \alias{calcSOM}
 \title{calcSOM}
 \usage{
-calcSOM(climatetype = "historical", subtype = "stock")
+calcSOM(climatetype = "historical", subtype = "stock", cells = "lpjcell")
 }
 \arguments{
 \item{climatetype}{Switch between different climate scenarios (default on "historical")}
 
 \item{subtype}{"stock" (default) for absoulte values, "density" for per hectar values}
+
+\item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 }
 \value{
 List of magpie object with results on country or cellular level,

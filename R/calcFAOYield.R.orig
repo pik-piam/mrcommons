@@ -24,8 +24,12 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
   if (areaSource == "FAO") {
 
     area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                       cellular = cellular, cells = "lpjcell",
-                       irrigation = irrigation, aggregate = FALSE)
+<<<<<<< HEAD
+                        cellular = cellular, cells = "lpjcell",
+                        irrigation = irrigation, aggregate = FALSE)
+=======
+                       irrigation = irrigation, aggregate = FALSE, cellular = cellular)
+>>>>>>> master
 
   } else if (areaSource == "LandInG") {
 

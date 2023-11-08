@@ -19,8 +19,8 @@ toolForestRelocate(lu, luCountry, natTarget, vegC)
 List of magpie object with results on cellular level
 }
 \description{
-Reallocates cellular forest information from LUH2 to better match FAO
-forest information
+Reallocates cellular forest information from LUH2
+to better match FAO forest information
 }
 \author{
 Kristine Karstens, Jan Philipp Dietrich, Felicitas Beier, Patrick v. Jeetze

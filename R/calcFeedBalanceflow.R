@@ -2,7 +2,8 @@
 #' @description Calculates feed balanceflows from MAgPIE-Feed model to meet FAO data
 #'
 #' @param per_livestock_unit default false
-#' @param cellular if TRUE value is calculate on cellular level
+#' @param cellular   if TRUE value is calculate on cellular level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @return List of magpie objects with results on country or cellular level, unit and description.
@@ -14,17 +15,19 @@
 #'
 #' @importFrom magclass getNames lowpass convergence
 
-calcFeedBalanceflow <- function(
-    per_livestock_unit = FALSE, # nolint
-    cellular = FALSE,
-    products = "kall",
-    future = "constant") {
+calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
+                                cellular = FALSE,
+                                cells = "lpjcell",
+                                products = "kall",
+                                future = "constant") {
+
+  perLivestockUnit <- per_livestock_unit # nolint
 
   products2 <- findset(products, noset = "orignal")
-  past <- findset("past")
+  past      <- findset("past")
 
-  if (!per_livestock_unit) {
-    prodAttributes      <- calcOutput("Attributes", aggregate = FALSE) # nolint
+  if (!perLivestockUnit) {
+    prodAttributes      <- calcOutput("Attributes", aggregate = FALSE)
 
     faoFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, "feed"])
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
@@ -73,7 +76,7 @@ calcFeedBalanceflow <- function(
         "Difficult to distribute the balanceflow between different livestock",
         "commodities, because it is not used at all in the feedbaskets.",
         "Distributed to ruminants for now."))
-      overflow                              <- feedBalanceflow - dimSums(feedBalanceflow2, dim = 3.1)
+      overflow                                <- feedBalanceflow - dimSums(feedBalanceflow2, dim = 3.1)
       feedBalanceflow2[, , "alias_livst_rum"] <- feedBalanceflow2[, , "alias_livst_rum"] + overflow
 
     }
@@ -82,17 +85,19 @@ calcFeedBalanceflow <- function(
 
     if (cellular) {
 
-      countryToCell    <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-      magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE, cellular = TRUE,
+      countryToCell <- toolGetMappingCoord2Country()
+      countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
+      magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE,
+                                     cellular = TRUE, cells = "lpjcell",
                                      aggregate = FALSE, nutrients = "dm", products = products)
       magFeedCell      <- magFeedCell[, , commonproducts]
       magFeedCountry   <- toolAggregate(magFeedCell, rel = countryToCell,
-                                        from = "celliso", to = "iso", dim = 1, partrel = TRUE)
+                                        from = "coordiso", to = "iso", dim = 1, partrel = TRUE)
       magFeedCellshare <- collapseNames(magFeedCell / magFeedCountry)
-      magFeedCellshare[is.na(magFeedCellshare)]   <- 0
+      magFeedCellshare[is.na(magFeedCellshare)] <- 0
 
       feedBalanceflow  <- toolAggregate(feedBalanceflow, rel = countryToCell, from = "iso",
-                                        to = "celliso", dim = 1, partrel = TRUE)
+                                        to = "coordiso", dim = 1, partrel = TRUE)
 
       for (livst_x in getNames(feedBalanceflow, dim = 1)) {
         feedBalanceflow[, , livst_x]  <- feedBalanceflow[, , livst_x] * magFeedCellshare[, , livst_x]
@@ -119,32 +124,38 @@ calcFeedBalanceflow <- function(
     unit   <- "t DM"
     getNames(feedBalanceflow, dim = 1) <- substring(getNames(feedBalanceflow, dim = 1), 7)
 
-  } else if (per_livestock_unit) {
+  } else if (perLivestockUnit) {
 
-    kli                           <- findset("kli")
-    past                           <- findset("past")
+    kli  <- findset("kli")
+    past <- findset("past")
 
-    feedBalanceflow               <- calcOutput("FeedBalanceflow", cellular = cellular,
-                                                products = products, future = future, aggregate = FALSE)
-    livestockProduction           <- collapseNames(calcOutput(
-      "Production",
-      products = "kli", cellular = cellular, aggregate = FALSE)[, , kli][, past, "dm"])
-    livestockProduction           <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
+    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
+                                  products = products, future = future, aggregate = FALSE)
+    livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
+                                                    cellular = cellular, cells = "lpjcell",
+                                                    aggregate = FALSE)[, , kli][, past, "dm"])
+    livestockProduction <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
     livestockProduction[, , "fish"] <- 0
 
     if (!cellular) {
-      livestockProduction         <- toolHoldConstantBeyondEnd(livestockProduction)
+      livestockProduction <- toolHoldConstantBeyondEnd(livestockProduction)
     }
 
-    feedBalanceflow               <- feedBalanceflow / livestockProduction
+    feedBalanceflow <- feedBalanceflow / livestockProduction
     feedBalanceflow[is.na(feedBalanceflow)] <- 0
     feedBalanceflow[is.infinite(feedBalanceflow)] <- 0
 
-    weight       <- livestockProduction
-    unit         <- "1"
+    weight <- livestockProduction
+    unit   <- "1"
 
   } else {
     stop("per_livestock_unit has to be boolean")
+  }
+
+  if (cellular) {
+    if (cells == "magpiecell") {
+      feedBalanceflow <- toolCoord2Isocell(feedBalanceflow, cells = cells)
+    }
   }
 
   return(list(x = feedBalanceflow,

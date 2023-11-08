@@ -1,11 +1,14 @@
 #' @title calcAtmosphericDeposition
-#' @description Conputes Atmospheric (nitrogen) deposition on different land-use types.
-#' It distinguishes ammonia (Nh3) and Nitrogen oxides (NOx) as well
+#' @description Computes Atmospheric (nitrogen) deposition on different land-use types.
+#'              It distinguishes ammonia (Nh3) and Nitrogen oxides (NOx) as well
+#'
 #' @param datasource deposition inventory
 #' @param cellular cellular or country level emissions
-#' @param emission if TRUE, not the depositio but the cellular emissions are reported
+#' @param cells    magpiecell (59199 cells) or lpjcell (67420 cells)
+#' @param emission if TRUE, not the deposition but the cellular emissions are reported
 #' @param scenario if dataset contains several scenarios (e.g. ACCMIP), one scenario can be selected.
-#' @param glo_incl_oceans provides global values that include oceans, as ocenas are not part of the country mapping
+#' @param glo_incl_oceans provides global values that include oceans, as oceans are not part of the country mapping
+#'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
@@ -14,15 +17,19 @@
 #' \dontrun{
 #' calcOutput("AtmosphericDeposition")
 #' }
-calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = FALSE, cellular = FALSE, emission = FALSE, scenario = NULL) { # nolint
-  luhdata <- calcOutput("LanduseInitialisation", cellular = TRUE, aggregate = FALSE)
+calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = FALSE, # nolint
+                                      cellular = FALSE, cells = "lpjcell",
+                                      emission = FALSE, scenario = NULL) {
+
+  luhdata <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
 
   if (is.null(scenario)) scenario <- "rcp45"
 
   if (datasource %in% c("ACCMIP")) {
     accmip <- calcOutput("ACCMIP", glo_incl_oceans = glo_incl_oceans, aggregate = FALSE)
     if (emission == FALSE) {
-      accmip2 <- add_dimension(dimSums(accmip[, , c("drydep", "wetdep")][, , c("nh3_n", "no2_n")], dim = 3.2),
+      accmip2 <- add_dimension(dimSums(accmip[, , c("drydep", "wetdep")][, , c("nh3_n", "no2_n")],
+                                       dim = 3.2),
                                dim = 3.2, nm = "deposition")
     } else {
       accmip2 <- accmip[, , c("emi")][, , c("nh3_n", "no2_n")]
@@ -34,7 +41,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
 
     if (glo_incl_oceans == FALSE) {
       vcat(2, "using constant landuse patterns for future deposition.",
-              " Does not affect model results as they will be scaled with area lateron")
+           " Does not affect model results as they will be scaled with area lateron")
       luhdata2 <- toolHoldConstantBeyondEnd(luhdata)
       if (emission) {
         luhdata2 <- dimSums(luhdata2, dim = 3)
@@ -44,36 +51,10 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
       out <- accmip2
     }
     if ((cellular == FALSE) && (glo_incl_oceans == FALSE)) {
-      mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-      out <- groupAggregate(out, query = mapping, dim = 1, from = "celliso", to = "iso")
-      out  <- toolCountryFill(out, fill = 0, verbosity = 2)
+      out <- dimSums(out, dim = c("x", "y"))
+      out <- toolCountryFill(out, fill = 0, verbosity = 2)
     }
     out <- out[, , scenario]
-  } else if (datasource == "Dentener") {
-    if (emission == TRUE) {
-      stop("option 'emission' so far only for ACCMIP")
-    }
-    dentener <- readSource("Dentener", convert = FALSE)
-    dentener <- dentener[, "y1993", ]
-    # wschl fehler in y1860 china!
-
-    vcat(verbosity = 1, paste(round(sum(dentener < 0) / length(dentener) * 100, 2),
-                              " % of data points with negative values in Dentener. set to 0."))
-    dentener[dentener < 0] <- 0
-
-    # use deposition rates of 1993 for 1995
-    dep <- luhdata[, "y1995", ] * setYears(dentener, "y1995")
-
-    out <- dep[, , c("no2_n", "nh3_n")]
-    out <- add_dimension(out, dim = 3.2, nm = "history")
-    out <- add_dimension(out, dim = 3.3, nm = "deposition")
-
-    if (cellular == FALSE) {
-      mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-      out <- groupAggregate(out, query = mapping, dim = 1, from = "celliso", to = "iso")
-      out  <- toolCountryFill(out, fill = 0)
-    }
-
   } else {
     emi <- calcOutput("EmissionInventory", aggregate = FALSE, datasource = datasource, targetResolution = NULL)
     emi <- dimSums(emi[, , c("nh3_n", "no2_n")], dim = 3.1)
@@ -89,22 +70,18 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
       out <- collapseNames(domestic + transboundary)
       out <- dimOrder(out, perm = c(2, 1))
       if (cellular) {
-        weight <- calcOutput("AtmosphericDeposition", datasource = "ACCMIP", glo = FALSE, cellular = TRUE,
-                             emission = FALSE, scenario = NULL, aggregate = FALSE)
-        mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-        mapping <- mapping[which(mapping$iso %in% getItems(weight, dim = 1.1)), ]
-
-        ### the following section can be removed when toolAggregate is bugfixed
-        weight <- collapseNames(weight)
-        out <- out[getItems(weight, dim = 1.1), , ]
-        getCells(weight) <- gsub(pattern = "\\.", replacement = "_", x = getCells(weight))
-        weight <- clean_magpie(weight)
-        mapping$celliso <- gsub(pattern = "\\.", replacement = "_", x = mapping$celliso)
-        ### till here.
-
-        out <- toolAggregate(x = out, rel = mapping, weight = weight[, getYears(out), ], from = "iso", to = "celliso")
-        getCells(out) <- gsub(pattern = "_", replacement = "\\.", x = getCells(out))
-
+        weight <- collapseNames(calcOutput("AtmosphericDeposition", datasource = "ACCMIP", glo = FALSE, cellular = TRUE,
+                             cells = "lpjcell", emission = FALSE, scenario = NULL, aggregate = FALSE))
+        commonCtries <- intersect(getItems(weight, dim = "iso"), getItems(out, dim = 1))
+        out <- out[commonCtries, , ]
+        getSets(out) <- c("iso", "year", "landuse", "data1")
+        weight <- weight[, getItems(out, dim = 2), ]
+        weight <- weight[, , getItems(out, dim = 3)]
+        coordMapping <- toolGetMappingCoord2Country()
+        out <- toolAggregate(out, weight = weight,
+                            rel = coordMapping, from = "iso", to = "coords",
+                            partrel = FALSE)
+        out <- toolCoord2Isocoord(out)
       }
     }
 
@@ -117,13 +94,17 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   }
   out[out < 0] <- 0
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr, NH3N and NO2N",
-    isocountries = (!cellular & (nregions(out) != 1)),
-    min = 0,
-    max = 200,
-    description = paste("Atmospheric deposition, natural (1870 levels) and anthropogenic in the",
-                        "year 1995 (actually 1993) for different landuse classes.")))
+  # Reduce number of grid cells to 59199
+  if (cells == "magpiecell" && cellular == TRUE) {
+    out <- toolCoord2Isocell(out, cells = "magpiecell")
+  }
+
+  return(list(x = out,
+              weight = NULL,
+              unit = "Mt Nr, NH3N and NO2N",
+              isocountries = (!cellular & (nregions(out) != 1)),
+              min = 0,
+              max = 200,
+              description = paste0("Atmospheric deposition, natural (1870 levels) and anthropogenic in the ",
+                                  "year 1995 (actually 1993) for different landuse classes.")))
 }

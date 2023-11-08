@@ -21,7 +21,7 @@
 #' @importFrom mstools toolHoldConstant
 #'
 calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
-                                cells = "magpiecell", irrigation = FALSE, selectyears = "all") {
+                                cells = "lpjcell", irrigation = FALSE, selectyears = "all") {
 
   withr::local_options(magclass_sizeLimit = 1e+12)
 

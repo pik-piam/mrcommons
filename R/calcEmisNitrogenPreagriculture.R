@@ -20,8 +20,8 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
 
   # calibrating the natural rate of leaching ####
   fixnat <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
-  land <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
-  fix <- fixnat * land
+  land   <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
+  fix    <- fixnat * land
   inputs <- (58 + 6 + 2.9 + 1.6 + 1.6 + 4)
 
   surplus <- fix / 58 * inputs
@@ -47,20 +47,16 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # to do: include EmisNitrogenShareNature
   # (Benni suggested to convert the previous warning to this comment)
 
-  fracLeach <- toolCoord2Isocell(calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE))
-  leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
-  no3 <- surplus * fracLeach * leachingMultiplicationFactor
+  fracLeach <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
   # accumulation in deserts
-
   deserts <- (fracLeach == 0)
   accumulationDeserts <- surplus * deserts
-  surplusNonDeserts <- surplus - accumulationDeserts
-  inputsNonDesert <- inputs * (1 - deserts)
+  surplusNonDeserts   <- surplus - accumulationDeserts
+  inputsNonDesert     <- inputs * (1 - deserts)
   inputsNonDesert[inputsNonDesert == 0] <- 10^-10
 
   # gaseous losses ####
-
   nox <- (1.6 + 2.9) / inputsNonDesert * surplusNonDeserts
   nh3 <- (6 + 1.6) / inputsNonDesert * surplusNonDeserts
   # 6.8 Tg from Bouwman, A. F., Fung, I., Matthews, E. & John, J. Global analysis
@@ -68,9 +64,15 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # Cycles 7, 557–597 (1993).
   n2o <- (6.8) / inputsNonDesert * surplusNonDeserts
 
-  # n2
+  # leaching losses
+  leachingMultiplicationFactor <- setYears(35 / dimSums(surplus * fracLeach, dim = c(1, 3))[, "y1965", ], NULL)
 
-  n2 <- surplus - no3 - accumulationDeserts - nox - nh3 - n2o
+  # surplus after gaseous losses
+  surplusAfterLosses <- surplus - nox - nh3 - n2o
+  no3                <- surplusAfterLosses * fracLeach * leachingMultiplicationFactor
+
+  # n2
+  n2 <- surplusAfterLosses - no3 - accumulationDeserts
 
   out <- mbind(
     add_dimension(no3, dim = 3.1, add = "form", nm = "no3_n"),
@@ -86,8 +88,7 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   }
 
   if (cellular == FALSE) {
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    out <- toolAggregate(x = out, rel = mapping, from = "celliso", to = "iso")
+    out <- dimSums(out, dim = c("x", "y"))
     out <- toolCountryFill(out, fill = colSums(out) * 10^-10)
   }
 

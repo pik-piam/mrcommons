@@ -8,7 +8,7 @@ calcLUH2v2(
   landuse_types = "magpie",
   irrigation = FALSE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   selectyears = "past"
 )
 }
