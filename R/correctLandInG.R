@@ -17,7 +17,7 @@ correctLandInG <- function(x) {
   # replace NAs and negatives with 0
   x <- toolConditionalReplace(x, conditions = c("is.na()", "<0"), replaceby = 0)
   # convert from ha to Mha
-  x <- x * 10^-6
+  x <- x * 1e-06
 
   return(x)
 
