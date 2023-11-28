@@ -39,7 +39,7 @@ convertGTAPv8v9 <- function(x, subtype) {
     w1 <- GDPuc::convertGDP(gdpMer, unit_in = "constant 2005 US$MER",
                             unit_out = "current US$MER",
                             replace_NAs = "no_conversion")
-    getNames(weight) <- NULL
+    getNames(w1) <- NULL
     w2 <- w1
   }
   mapping <- toolGetMapping("regionmappingGTAP.csv", where = "mrcommons")
