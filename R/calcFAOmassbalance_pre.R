@@ -165,7 +165,7 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     # perform massbalance tests:
     # 1) input goods balanced?
     diff <- (dimSums(object[, , list(goodsIn, c(reportAs, residual))], dim = c("ElementShort"))
-              - dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")))
+             - dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort")))
     if (any(abs(diff) > threshold)) {
       stop("NAs in dataset or function corrupt: process not balanced for ",
            paste(goodsIn, collapse = ", "), " reported as ", paste(reportAs, collapse = ", "))
@@ -175,8 +175,8 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     if (!is.null(goodsOut)) {
       # ... with input goods?
       diff <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort", "ItemCodeItem"))
-               - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
-               - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
+        - dimSums(object[, , list(goodsIn, residual)], dim = c("ElementShort", "ItemCodeItem"))
+        - dimSums(object[, , list(goodsOut, "production_estimated")], dim = c("ElementShort", "ItemCodeItem"))
       )
       if (any(abs(diff) > threshold)) {
         stop("NAs in dataset or function corrupt: goods not balanced for ",
@@ -254,9 +254,9 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     # calculating possible extraction quantity per attribute
     attributesFrom   <- dimSums(object[, , list(goodIn, from), drop = TRUE], dim = "region") /
-                            dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region"))
+      dimSums(object[, , list(goodIn, from, extractionAttribute), drop = TRUE], dim = c("region"))
     attributesTo     <- prodAttributes[, , goodOut, drop = TRUE] /
-                            prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE]
+      prodAttributes[, , list(goodOut, extractionAttribute), drop = TRUE]
     extractionFactor <- attributesFrom[, , attrNoWM] / attributesTo[, , attrNoWM]
 
     # maximum extraction quantity as minimum over the possible quantity per attribute
@@ -291,13 +291,13 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
   # conversion factors per attribute instead of using an "extractionQuantity"
   # and "extractionAttribute" for calculations.
   .processingGlobal <- function(object,
-                                goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
-                                from,     # e.g. "processed"
+    goodsIn,  # e.g. c("2536|Sugar cane", "2537|Sugar beet")
+                                from,     # e.g. "processed" #nolint
                                 process,  # e.g. "refining"
                                 goodsOut, # e.g. c("2818|Sugar, Refined Equiv", "2544|Molasses") - (the order matters!)
                                 reportAs, # e.g. c("sugar1", "molasses1") - (the order matters!)
                                 residual  # e.g. "refiningloss"
-                                ) {
+  ) {
     if (any(object[, , list(goodsIn, c(reportAs, residual))] != 0)) {
       stop("Output flows already exist.")
     }
@@ -310,7 +310,7 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     # calculate global conversion factor per attributes
     convFactor <- (dimSums(object[, , list(goodsOut, "production")], dim = c("region", "ElementShort"))
-                    / dimSums(object[, , list(goodsIn, from)], dim = c("region", "ItemCodeItem", "ElementShort")))
+                   / dimSums(object[, , list(goodsIn, from)], dim = c("region", "ItemCodeItem", "ElementShort")))
 
     factors <- dimSums(convFactor[, , list(goodsOut, relevantAttributes)], dim = "ItemCodeItem")
     if (any(factors > 1)) {
@@ -321,14 +321,14 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     # estimate outputs
     for (j in seq_along(goodsOut)) {
       object[, , list(goodsIn, reportAs[j])] <- dimSums(object[, , list(goodsIn, from)], dim = "ElementShort") *
-                                                                              convFactor[, , goodsOut[j], drop = TRUE]
+        convFactor[, , goodsOut[j], drop = TRUE]
       object[, , list(goodsOut[j], "production_estimated")] <- dimSums(object[, , list(goodsIn, reportAs[j])],
                                                                        dim = c("ElementShort", "ItemCodeItem"))
     }
 
     # calculate refining losses as mass balance difference
     object[, , list(goodsIn, residual)] <- (dimSums(object[, , list(goodsIn, from)], dim = c("ElementShort"))
-                                             - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
+                                            - dimSums(object[, , list(goodsIn, reportAs)], dim = c("ElementShort")))
 
     # check results and clear processed position
     object <- .checkAndClear(object, goodsIn, from, process, reportAs, residual, relevantAttributes, goodsOut)
@@ -419,7 +419,7 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
       vcat(1, "branshr should not be smaller than zero.")
     }
     object[, , list(cereals, "households", relAttributes)] <- (1 - branshr) *
-                                                                object[, , list(cereals, "households", relAttributes)]
+      object[, , list(cereals, "households", relAttributes)]
     object[, , list(brans, "households", relAttributes)]   <- object[, , list(brans, milled, relAttributes)]
 
     return(object)
@@ -460,42 +460,42 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     # ethanol processing from tece and maize (ethanol1, distillers_grain, and distillingloss)
     for (j in seq_along(teceMaize)) {
       object[, , c(teceMaize[j], "X001|Ethanol")] <- .extractGoodFromFlow(
-                                                          object = object[, , c(teceMaize[j], "X001|Ethanol")],
-                                                          goodIn = teceMaize[j],
-                                                          from = "other_util",
-                                                          process = "distilling",
-                                                          goodOut = "X001|Ethanol",
-                                                          reportAs = "ethanol1",
-                                                          residual = "intermediate",
-                                                          extractionQuantity = extractionQuantityTeceMaize[j],
-                                                          extractionAttribute = "dm",
-                                                          prodAttributes = prodAttributes)
+        object = object[, , c(teceMaize[j], "X001|Ethanol")], # nolint
+        goodIn = teceMaize[j],
+        from = "other_util",
+        process = "distilling",
+        goodOut = "X001|Ethanol",
+        reportAs = "ethanol1",
+        residual = "intermediate",
+        extractionQuantity = extractionQuantityTeceMaize[j],
+        extractionAttribute = "dm",
+        prodAttributes = prodAttributes)
 
       object[, , c(teceMaize[j], "X002|Distillers_grain")] <- .extractGoodFromFlow(
-                                                          object = object[, , c(teceMaize[j], "X002|Distillers_grain")],
-                                                          goodIn = teceMaize[j],
-                                                          from = "intermediate",
-                                                          process = "intermediate",
-                                                          goodOut = "X002|Distillers_grain",
-                                                          reportAs = "distillers_grain1",
-                                                          residual = "distillingloss",
-                                                          extractionQuantity = "max",
-                                                          extractionAttribute = "nr",
-                                                          prodAttributes = prodAttributes)
+        object = object[, , c(teceMaize[j], "X002|Distillers_grain")], # nolint
+        goodIn = teceMaize[j],
+        from = "intermediate",
+        process = "intermediate",
+        goodOut = "X002|Distillers_grain",
+        reportAs = "distillers_grain1",
+        residual = "distillingloss",
+        extractionQuantity = "max",
+        extractionAttribute = "nr",
+        prodAttributes = prodAttributes)
     }
 
     # ethanol processing from sugarcane (only ethanol1 and distillingloss)
     object[, , c("2536|Sugar cane", "X001|Ethanol")] <- .extractGoodFromFlow(
-                                                              object = object[, , c("2536|Sugar cane", "X001|Ethanol")],
-                                                              goodIn = "2536|Sugar cane",
-                                                              from = "other_util",
-                                                              process = "distilling",
-                                                              goodOut = "X001|Ethanol",
-                                                              reportAs = "ethanol1",
-                                                              residual = "distillingloss",
-                                                              extractionQuantity = extractionQuantitySugarcane,
-                                                              extractionAttribute = "dm",
-                                                              prodAttributes = prodAttributes)
+      object = object[, , c("2536|Sugar cane", "X001|Ethanol")], # nolint
+      goodIn = "2536|Sugar cane",
+      from = "other_util",
+      process = "distilling",
+      goodOut = "X001|Ethanol",
+      reportAs = "ethanol1",
+      residual = "distillingloss",
+      extractionQuantity = extractionQuantitySugarcane,
+      extractionAttribute = "dm",
+      prodAttributes = prodAttributes)
 
     return(object)
   }
@@ -506,12 +506,12 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     beercereals <- .getFAOitems("tece")
 
     object[, , c(beercereals, "2656|Beer")] <- .processingGlobal(object = object[, , c(beercereals, "2656|Beer")],
-                                                                goodsIn = beercereals,
-                                                                from = "processed",
-                                                                process = "fermentation",
-                                                                goodsOut = "2656|Beer",
-                                                                reportAs = "alcohol1",
-                                                                residual = "intermediate")
+                                                                 goodsIn = beercereals,
+                                                                 from = "processed",
+                                                                 process = "fermentation",
+                                                                 goodsOut = "2656|Beer",
+                                                                 reportAs = "alcohol1",
+                                                                 residual = "intermediate")
 
     for (x in beercereals) {
       object[, , c(x, "X004|Brewers_grain")] <- .extractGoodFromFlow(object = object[, , c(x, "X004|Brewers_grain")],
@@ -535,22 +535,22 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     goodsIn <- c("2536|Sugar cane", "2537|Sugar beet")
     goodsOut <- c("2818|Sugar, Refined Equiv", "2544|Molasses")
     object[, , c(goodsIn, goodsOut)] <- .processingGlobal(object = object[, , c(goodsIn, goodsOut)],
-                                                           goodsIn = goodsIn,
-                                                           from = "processed",
-                                                           process = "refining",
-                                                           goodsOut = goodsOut,
-                                                           reportAs = c("sugar1", "molasses1"),
-                                                           residual = "refiningloss")
+                                                          goodsIn = goodsIn,
+                                                          from = "processed",
+                                                          process = "refining",
+                                                          goodsOut = goodsOut,
+                                                          reportAs = c("sugar1", "molasses1"),
+                                                          residual = "refiningloss")
 
     goodsIn <- c("2514|Maize and products")
     goodsOut <- c("2543|Sweeteners, Other")
     object[, , c(goodsIn, goodsOut)] <- .processingGlobal(object = object[, , c(goodsIn, goodsOut)],
-                                                           goodsIn = goodsIn,
-                                                           from = "processed",
-                                                           process = "refining",
-                                                           goodsOut = goodsOut,
-                                                           reportAs = c("sugar1"),
-                                                           residual = "refiningloss")
+                                                          goodsIn = goodsIn,
+                                                          from = "processed",
+                                                          process = "refining",
+                                                          goodsOut = goodsOut,
+                                                          reportAs = c("sugar1"),
+                                                          residual = "refiningloss")
 
     return(object)
   }
@@ -570,12 +570,12 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     goodsOut2 <- "2595|Palmkernel Cake"
 
     object[, , c(goodIn, goodsOut1)] <- .processingGlobal(object = object[, , c(goodIn, goodsOut1)],
-                                                         goodsIn = goodIn,
-                                                         from = "processed",
-                                                         process = "extracting",
-                                                         goodsOut = goodsOut1,
-                                                         reportAs = c("oil1", "oil2"),
-                                                         residual = "intermediate")
+                                                          goodsIn = goodIn,
+                                                          from = "processed",
+                                                          process = "extracting",
+                                                          goodsOut = goodsOut1,
+                                                          reportAs = c("oil1", "oil2"),
+                                                          residual = "intermediate")
 
     object[, , c(goodIn, goodsOut2)] <- .extractGoodFromFlow(object = object[, , c(goodIn, goodsOut2)],
                                                              goodIn = goodIn,
@@ -595,14 +595,14 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
   .oilProcessing <- function(object) {
     # orders must match!
     cropsIn <- c("2555|Soyabeans", "2820|Groundnuts (in Shell Eq)", "2557|Sunflower seed",
-                  "2559|Cottonseed", "2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra",
-                  "2561|Sesame seed")
+                 "2559|Cottonseed", "2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra",
+                 "2561|Sesame seed")
     oilOut <- c("2571|Soyabean Oil", "2572|Groundnut Oil", "2573|Sunflowerseed Oil",
-                  "2575|Cottonseed Oil", "2574|Rape and Mustard Oil", "2578|Coconut Oil",
-                  "2579|Sesameseed Oil")
+                "2575|Cottonseed Oil", "2574|Rape and Mustard Oil", "2578|Coconut Oil",
+                "2579|Sesameseed Oil")
     cakeOut <- c("2590|Soyabean Cake", "2591|Groundnut Cake", "2592|Sunflowerseed Cake",
-                  "2594|Cottonseed Cake", "2593|Rape and Mustard Cake", "2596|Copra Cake",
-                  "2597|Sesameseed Cake")
+                 "2594|Cottonseed Cake", "2593|Rape and Mustard Cake", "2596|Copra Cake",
+                 "2597|Sesameseed Cake")
 
     otherCropsIn <- c("2570|Oilcrops, Other", "2563|Olives (including preserved)")
     otherOilOut <- "2586|Oilcrops Oil, Other"
@@ -611,12 +611,12 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     # main oil crops
     for (j in seq_along(cropsIn)) {
       object[, , c(cropsIn[j], oilOut[j])] <- .processingGlobal(object = object[, , c(cropsIn[j], oilOut[j])],
-                                                                 goodsIn = cropsIn[j],
-                                                                 from = "processed",
-                                                                 process = "extracting",
-                                                                 goodsOut = oilOut[j],
-                                                                 reportAs = "oil1",
-                                                                 residual = "intermediate")
+                                                                goodsIn = cropsIn[j],
+                                                                from = "processed",
+                                                                process = "extracting",
+                                                                goodsOut = oilOut[j],
+                                                                reportAs = "oil1",
+                                                                residual = "intermediate")
       object[, , c(cropsIn[j], cakeOut[j])] <- .extractGoodFromFlow(object = object[, , c(cropsIn[j], cakeOut[j])],
                                                                     goodIn = cropsIn[j],
                                                                     from = "intermediate",
@@ -632,24 +632,24 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     # other oil crops
     object[, , c(otherCropsIn, otherOilOut)] <- .processingGlobal(object = object[, , c(otherCropsIn, otherOilOut)],
-                                                                     goodsIn = otherCropsIn,
-                                                                     from = "processed",
-                                                                     process = "extracting",
-                                                                     goodsOut = otherOilOut,
-                                                                     reportAs = "oil1",
-                                                                     residual = "intermediate")
+                                                                  goodsIn = otherCropsIn,
+                                                                  from = "processed",
+                                                                  process = "extracting",
+                                                                  goodsOut = otherOilOut,
+                                                                  reportAs = "oil1",
+                                                                  residual = "intermediate")
 
     for (goodIn in otherCropsIn) {
       object[, , c(goodIn, otherCakeOut)] <- .extractGoodFromFlow(object = object[, , c(goodIn, otherCakeOut)],
-                                                                   goodIn = goodIn,
-                                                                   from = "intermediate",
-                                                                   process = "intermediate",
-                                                                   goodOut = otherCakeOut,
-                                                                   reportAs = "oilcakes1",
-                                                                   residual = "extractionloss",
-                                                                   extractionQuantity = "max",
-                                                                   extractionAttribute = "dm",
-                                                                   prodAttributes = prodAttributes)
+                                                                  goodIn = goodIn,
+                                                                  from = "intermediate",
+                                                                  process = "intermediate",
+                                                                  goodOut = otherCakeOut,
+                                                                  reportAs = "oilcakes1",
+                                                                  residual = "extractionloss",
+                                                                  extractionQuantity = "max",
+                                                                  extractionAttribute = "dm",
+                                                                  prodAttributes = prodAttributes)
     }
 
     return(object)
@@ -704,22 +704,22 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
                              "X003|Palmoil_Kerneloil_Kernelcake")
     extractingProducts2 <- setdiff(.getFAOitems(c("soybean", "groundnut", "sunflower", "cottn_pro",
                                                   "rapeseed", "oils", "oilcakes")),
-                                  c(extractingProducts1, "2580|Olive Oil", "2581|Ricebran Oil", "2582|Maize Germ Oil"))
+                                   c(extractingProducts1, "2580|Olive Oil", "2581|Ricebran Oil", "2582|Maize Germ Oil"))
 
 
     # Food processing calculations
     flowsCBC[, , list(millingProducts, millingDimensions)] <-
-                                   .cerealMillingGlobal(flowsCBC[, , list(millingProducts, millingDimensions)])
+      .cerealMillingGlobal(flowsCBC[, , list(millingProducts, millingDimensions)])
     flowsCBC[, , list(distillingProducts, distillingDimensions)] <-
-                                  .ethanolProcessing(flowsCBC[, , list(distillingProducts, distillingDimensions)])
+      .ethanolProcessing(flowsCBC[, , list(distillingProducts, distillingDimensions)])
     flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <-
-                                  .beerProcessing(flowsCBC[, , list(fermentationProducts, fermentationDimensions)])
+      .beerProcessing(flowsCBC[, , list(fermentationProducts, fermentationDimensions)])
     flowsCBC[, , list(refiningProducts, refiningDimensions)] <-
-                                  .sugarProcessing(flowsCBC[, , list(refiningProducts, refiningDimensions)])
+      .sugarProcessing(flowsCBC[, , list(refiningProducts, refiningDimensions)])
     flowsCBC[, , list(extractingProducts1, extractingDimensions)] <-
-                                  .oilpalmProcessing(flowsCBC[, , list(extractingProducts1, extractingDimensions)])
+      .oilpalmProcessing(flowsCBC[, , list(extractingProducts1, extractingDimensions)])
     flowsCBC[, , list(extractingProducts2, extractingDimensions)] <-
-                                  .oilProcessing(flowsCBC[, , list(extractingProducts2, extractingDimensions)])
+      .oilProcessing(flowsCBC[, , list(extractingProducts2, extractingDimensions)])
 
     # harmonizing conversion factors within the rapeseed group
     goodsIn  <- list("2558|Rape and Mustardseed", "2560|Coconuts - Incl Copra", "2561|Sesame seed",
@@ -730,7 +730,7 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     for (from in c("oil1", "oilcakes1", "extractionloss")) {
       factor <- dimSums(flowsCBC[, , list(unlist(goodsIn), from)], dim = c(1, 3.1, 3.2)) /
-                                      dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2))
+        dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")], dim = c(1, 3.1, 3.2))
       flowsCBC[, , list(unlist(goodsIn), from)] <- factor * dimSums(flowsCBC[, , list(unlist(goodsIn), "extracting")],
                                                                     dim = 3.2)
       gc()
@@ -752,21 +752,21 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     fermentationProducts <- .getFAOitems(c("tece", "others", "trce", "rice_pro", "potato", "cassav_sp", "sugar",
                                            "molasses", "brans", "alcohol", "distillers_grain"))
     flowsCBC[, , list(fermentationProducts, fermentationDimensions)] <- .processingGlobal(
-                                                    flowsCBC[, , list(fermentationProducts, fermentationDimensions)],
-                                                    goodsIn  = cropsAlcohol,
-                                                    from      = "processed",
-                                                    process   = "fermentation",
-                                                    goodsOut = c("2655|Wine", "2657|Beverages, Fermented",
-                                                                 "2658|Beverages, Alcoholic", "2659|Alcohol, Non-Food"),
-                                                    reportAs = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"),
-                                                    residual  = "alcoholloss")
+      flowsCBC[, , list(fermentationProducts, fermentationDimensions)], # nolint
+      goodsIn  = cropsAlcohol,
+      from      = "processed",
+      process   = "fermentation",
+      goodsOut = c("2655|Wine", "2657|Beverages, Fermented",
+                   "2658|Beverages, Alcoholic", "2659|Alcohol, Non-Food"),
+      reportAs = c("alcohol1", "alcohol2", "alcohol3", "alcohol4"), # nolint
+      residual  = "alcoholloss")
 
     # Define use of products that are not existing in FAOSTAT
     goods <- c("X002|Distillers_grain", "X004|Brewers_grain")
     flowsCBC[, , list(goods, c("production", "domestic_supply", "feed"))]  <-
-                                                flowsCBC[, , list(goods, "production_estimated"), drop = TRUE]
+      flowsCBC[, , list(goods, "production_estimated"), drop = TRUE]
     flowsCBC[, , list("X001|Ethanol", c("production", "domestic_supply", "other_util"))] <-
-                                                flowsCBC[, , list("X001|Ethanol", "production_estimated"), drop = TRUE]
+      flowsCBC[, , list("X001|Ethanol", "production_estimated"), drop = TRUE]
     gc()
 
     # add remaining 'processed' to 'other_util' and remove obsolete dimensions
@@ -776,11 +776,11 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     # map to magpie categories
     massbalanceProcessing <- toolAggregate(x = flowsCBC,
-                                            rel = relationmatrix,
-                                            dim = 3.1,
-                                            from = "FoodBalanceItem",
-                                            to = "k",
-                                            partrel = TRUE)
+                                           rel = relationmatrix,
+                                           dim = 3.1,
+                                           from = "FoodBalanceItem",
+                                           to = "k",
+                                           partrel = TRUE)
     gc()
     return(massbalanceProcessing)
   }
@@ -804,7 +804,8 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
     noProcessingCBC[, , list("households", "nr")] <- noProcessingCBC[, , list("protein_supply", "wm")] / 6.25
     noProcessingCBC[, , list("households", "wm")] <- noProcessingCBC[, , list("food_supply", "wm")]
     noProcessingCBC <- noProcessingCBC[, , setdiff(getNames(noProcessingCBC, dim = "ElementShort"),
-                                                 c("food_supply_kcal", "protein_supply", "food_supply", "fat_supply"))]
+                                                   c("food_supply_kcal", "protein_supply",
+                                                     "food_supply", "fat_supply"))]
 
     # fill NAs and NaNs
     noProcessingCBC[is.na(noProcessingCBC)]  <- 0
@@ -816,11 +817,11 @@ calcFAOmassbalance_pre <- function(years = NULL) { # nolint
 
     # map to magpie categories
     massbalanceNoProcessing <- toolAggregate(x = noProcessingCBC,
-                                               rel = relationmatrix,
-                                               dim = 3.1,
-                                               from = "FoodBalanceItem",
-                                               to = "k",
-                                               partrel = TRUE)
+                                             rel = relationmatrix,
+                                             dim = 3.1,
+                                             from = "FoodBalanceItem",
+                                             to = "k",
+                                             partrel = TRUE)
     gc()
     return(massbalanceNoProcessing)
   }

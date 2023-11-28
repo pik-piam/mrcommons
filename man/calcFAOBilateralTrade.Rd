@@ -29,7 +29,7 @@ Calculates bilateral trade values based on FAO trade matrix
 }
 \examples{
 \dontrun{
-calcOutput("BilateralTradeValue")
+calcOutput("FAOBilateralTrade", output = "qty", products = "kcr")
 }
 
 }
