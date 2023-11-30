@@ -20,8 +20,11 @@ readGTAPv8v9 <- function(subtype) {
   split <- toolSplitSubtype(subtype, list(version = NULL, header = NULL))
 
   # maps headers (variables) in BaseData, BaseRate, BaseView, TStrade, gsdvole, GTAPSam and CO2 to respective files
-  fileMapping <- toolGetMapping(paste0("GTAP", split$version, "Header2File.csv"),
-                                where = "mrcommons")
+  if (split$version == "81") {
+    fileMapping <- toolGetMapping("GTAP81Header2File.csv", where = "mrcommons")
+  } else if (split$version == 9) {
+    fileMapping <-    toolGetMapping("GTAP9Header2File.csv", where = "mrcommons")
+  }
   file <- fileMapping$file[fileMapping$header == split$header]
 
   # function to load variable from one GTAP dataset (either 2004 or 2007)
