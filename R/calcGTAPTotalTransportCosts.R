@@ -32,15 +32,15 @@ calcGTAPTotalTransportCosts <- function(costType = "transport") {
   nvfa <- dimSums(nvfa, dim = 3.3, na.rm = TRUE)
 
   # subset to market expenditure (no taxes) and GTAP foods
-  nvfa  <- collapseNames(nvfa[, , "mktexp"][, , list("PROD_COMM" = gtapFoods)])
+  nvfa  <- collapseNames(nvfa[, , "mktexp"][, , list("prod_comm" = gtapFoods)])
 
-  tcostInputs <- dimSums(nvfa[, , list("DEMD_COMM" = transpInputs)], dim = 3.1)
-  nonTcostInputs <-  dimSums(nvfa[, , list("DEMD_COMM" = nonTranspInputs)], dim = 3.1)
+  tcostInputs <- dimSums(nvfa[, , list("demd_comm" = transpInputs)], dim = 3.1)
+  nonTcostInputs <-  dimSums(nvfa[, , list("demd_comm" = nonTranspInputs)], dim = 3.1)
 
   tcostPerUnitInput <- tcostInputs / nonTcostInputs
 
-  tcostToSecondary <- tcostPerUnitInput * nvfa[, , list("DEMD_COMM" = gtapFoods)]
-  tcostToSecondary <- dimSums(tcostToSecondary, dim = "DEMD_COMM")
+  tcostToSecondary <- tcostPerUnitInput * nvfa[, , list("demd_comm" = gtapFoods)]
+  tcostToSecondary <- dimSums(tcostToSecondary, dim = "demd_comm")
 
   # half of transport of inputs to market and half of transport from market to consumer
   totalTcosts <- (tcostInputs + tcostToSecondary) / 2
