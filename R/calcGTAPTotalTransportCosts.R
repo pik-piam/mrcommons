@@ -3,14 +3,15 @@
 #' @return List of magpie object with results on country level, unit and description.
 #' @author David M Chen
 #' @param costType transport or wholesale
+#' @param version "81" or "9"
 #' @examples
 #' \dontrun{
 #' calcOutput("GTAPTotalTransportCosts")
 #' }
 #'
-calcGTAPTotalTransportCosts <- function(costType = "transport") {
+calcGTAPTotalTransportCosts <- function(costType = "transport", version = "9") {
 
-  nvfa <- readSource("GTAPv8v9", subtype = "81:SF01")
+  nvfa <- readSource("GTAPv8v9", subtype = paste0(version, ":SF01"))
 
   gtapFoods <- c("pdr", "wht", "gro", "v_f", "osd", "c_b", "pfb", "ocr", "ctl", "oap", "rmk", "wol", "frs", "fsh",
                  "pcr", "sgr", "vol", "mil", "cmt", "omt", "b_t")
@@ -45,7 +46,8 @@ calcGTAPTotalTransportCosts <- function(costType = "transport") {
   # half of transport of inputs to market and half of transport from market to consumer
   totalTcosts <- (tcostInputs + tcostToSecondary) / 2
 
-  totalTcosts <-  GDPuc::convertGDP(totalTcosts, unit_in = "current US$MER", unit_out = "constant 2005 US$MER",
+  totalTcosts <-  GDPuc::convertGDP(totalTcosts, unit_in = "current US$MER",
+                                    unit_out = "constant 2005 US$MER",
                                     replace_NAs = "no_conversion")
 
   return(list(x = totalTcosts,
