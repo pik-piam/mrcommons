@@ -66,9 +66,11 @@ calcMAgPIEReport <- function(subtype) {
     stringr::str_replace_all(c(
       "^C_"               = "",
       #"-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
-      "-PkBudg500-mag-4"  = ".rcp20",
+      #"-PkBudg500-mag-4"  = ".rcp20",
+      "-PkBudg650-mag-4"  = ".rcp20",
       #"-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
-      "-PkBudg1150-mag-4" = ".rcp26",
+      #"-PkBudg1150-mag-4" = ".rcp26",
+      "-PkBudg1050-mag-4" = ".rcp26",
       "-NDC-mag-4"        = ".rcp45",
       "-Base-mag-4"       = ".none",
       "SSP2EU"            = "SSP2",

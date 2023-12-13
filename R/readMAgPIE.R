@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2023-10"
+  ver <- "2023-12"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -50,19 +50,19 @@ readMAgPIE <- function(subtype) {
 
     fileList <- c("C_SDP_MC-Base-mag-4.mif",
                   "C_SDP_MC-NDC-mag-4.mif",
-                  "C_SDP_MC-PkBudg500-mag-4.mif",
+                  "C_SDP_MC-PkBudg650-mag-4.mif",
                   "C_SSP1-Base-mag-4.mif",
                   "C_SSP1-NDC-mag-4.mif",
-                  "C_SSP1-PkBudg1150-mag-4.mif",
-                  "C_SSP1-PkBudg500-mag-4.mif",
+                  "C_SSP1-PkBudg1050-mag-4.mif",
+                  "C_SSP1-PkBudg650-mag-4.mif",
                   "C_SSP2EU-Base-mag-4.mif",
                   "C_SSP2EU-NDC-mag-4.mif",
-                  "C_SSP2EU-PkBudg1150-mag-4.mif",
-                  "C_SSP2EU-PkBudg500-mag-4.mif",
+                  "C_SSP2EU-PkBudg1050-mag-4.mif",
+                  "C_SSP2EU-PkBudg650-mag-4.mif",
                   "C_SSP5-Base-mag-4.mif",
                   "C_SSP5-NDC-mag-4.mif",
-                  "C_SSP5-PkBudg1150-mag-4.mif",
-                  "C_SSP5-PkBudg500-mag-4.mif")
+                  "C_SSP5-PkBudg1050-mag-4.mif",
+                  "C_SSP5-PkBudg650-mag-4.mif")
 
     x <- NULL
     for (f in fileList) {
@@ -70,25 +70,26 @@ readMAgPIE <- function(subtype) {
     }
 
   } else if (subtype == "supplyCurve_magpie_40") {
-    regcode <- ""
+    regcode <- "62eff8f7"
 
     # !!! ATTENTION !!!
-    # Please update scenario names in calcBiomassPrice.R if necessary
+    # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
 
-    scenarioNames <- c("f30_bioen_price_SDP-MC-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg500_replaced_flat",
+    scenarioNames <- c(
+      "f30_bioen_price_SDP-MC-NDC-nocc_hist-NDC_replaced_flat",
+      "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg650_replaced_flat",
       "f30_bioen_price_SDP-MC-NPI-nocc_hist-Base_replaced_flat",
       "f30_bioen_price_SSP1-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1150_replaced_flat",
-      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1050_replaced_flat",
+      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg650_replaced_flat",
       "f30_bioen_price_SSP1-NPI-nocc_hist-Base_replaced_flat",
       "f30_bioen_price_SSP2-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1150_replaced_flat",
-      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1050_replaced_flat",
+      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg650_replaced_flat",
       "f30_bioen_price_SSP2-NPI-nocc_hist-Base_replaced_flat",
       "f30_bioen_price_SSP5-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1150_replaced_flat",
-      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg500_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1050_replaced_flat",
+      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg650_replaced_flat",
       "f30_bioen_price_SSP5-NPI-nocc_hist-Base_replaced_flat"
     )
 
