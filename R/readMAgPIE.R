@@ -70,7 +70,7 @@ readMAgPIE <- function(subtype) {
     }
 
   } else if (subtype == "supplyCurve_magpie_40") {
-    regcode <- "62eff8f7"
+    regcode <- "_62eff8f7"
 
     # !!! ATTENTION !!!
     # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
