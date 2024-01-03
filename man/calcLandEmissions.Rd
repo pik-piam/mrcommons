@@ -7,7 +7,9 @@
 calcLandEmissions(datasource = "CEDS")
 }
 \arguments{
-\item{datasource}{The Emission Inventory that shall be used. For futher information, best see function calcEmissionInventory. Options are e.g.  CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)}
+\item{datasource}{The Emission Inventory that shall be used. For futher information, best see function
+calcEmissionInventory. Options are e.g.  CEDS, combined_CEDS_IPCC (including own estimates where available),
+IPCC(own estimates), Nsurplus (own estimates)}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.

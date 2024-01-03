@@ -16,10 +16,10 @@ List of magpie objects with results on country level, weight on country level, u
 Nutrient Budget for Wastewater treatment and sewage
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("NutrientBudgetSewage")
 }
+
 
 }
 \seealso{

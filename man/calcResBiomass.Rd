@@ -6,6 +6,7 @@
 \usage{
 calcResBiomass(
   cellular = FALSE,
+  cells = "lpjcell",
   plantparts = "both",
   irrigation = FALSE,
   attributes = "all",
@@ -15,7 +16,10 @@ calcResBiomass(
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}
 
-\item{plantparts}{both, ag (aboveground) or belowground (bg). Both can have memory problems for cellular outputs}
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
+
+\item{plantparts}{both, ag (aboveground) or belowground (bg). Both can have memory
+problems for cellular outputs}
 
 \item{irrigation}{if TRUE, distinguishes irrigated and non-irrigated crops}
 
@@ -32,10 +36,8 @@ two MAgPIE objects
 Provides MAgPIE-FEED data for aboveground and belowground residues biomass
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResBiomass")
-
 }
 
 }

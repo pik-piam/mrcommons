@@ -8,10 +8,9 @@ calcCropareaToolbox(
   sectoral = "kcr",
   physical = TRUE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   irrigation = FALSE,
-  selectyears = c("y1965", "y1970", "y1975", "y1980", "y1985", "y1990", "y1995", "y2000",
-    "y2005", "y2010")
+  selectyears = "all"
 )
 }
 \arguments{
@@ -28,10 +27,10 @@ Option FALSE is not (yet) available.}
 \item{irrigation}{If true: cellular areas are returned separated
 into irrigated and rainfed}
 
-\item{selectyears}{extract certain years from the data, y1950 - 2017 is available}
+\item{selectyears}{extract certain years from the data}
 }
 \value{
-Magpie object with cropareas
+MAgPIE object with cropareas
 }
 \description{
 This function uses the data from the LPJmL io Toolbox

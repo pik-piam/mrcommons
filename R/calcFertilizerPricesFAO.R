@@ -16,23 +16,9 @@ calcFertilizerPricesFAO <- function(subtype = "N", by = "nutrient") {
 
   ## read FAO data on fertilizer by product and subset to relevant products
   fertByProduct <- complete_magpie(readSource("FAO_online", "FertilizerProducts"), fill = 0)
-  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral")
+  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral", where = "mappingfolder")
   products <- mapping[mapping[, subtype] != "other", "product"]
   fertByProduct <- fertByProduct[, , products]
-
-  ## fix dimension names and currency unit
-  currencyDims <- c("import_kUS$", "export_kUS$")
-  fertByProduc_currentUSD <- fertByProduct
-  fertByProduct[, , currencyDims] <- convertGDP(fertByProduc_currentUSD[, , currencyDims],
-                                                unit_in = "current US$MER",
-                                                unit_out = "constant 2005 US$MER",
-                                                replace_NAs = "no_conversion") * 1000
-  # for countries with missing conversion factors we assume no inflation:
-  fertByProduct[is.na(fertByProduct)] <- fertByProduc_currentUSD[is.na(fertByProduct)]
-
-  getNames(fertByProduct, dim = 2)[getNames(fertByProduct, dim = 2) == "import_kUS$"] <- "import_US$MER05"
-  getNames(fertByProduct, dim = 2)[getNames(fertByProduct, dim = 2) == "export_kUS$"] <- "export_US$MER05"
-
 
   ## fertilizer price (per amount of fertilizer products)
   # calculate prices for import and export

@@ -1,7 +1,7 @@
 #' @title readHHS_USDA
-#' @description reads calory requirement for a standardized population from 
-#' HHS & USDA. 2015. "2015-2020 Dietary Guidelines for Americans." 
-#' 8. Dietary Guidelines for Americans. 
+#' @description reads calory requirement for a standardized population from
+#' HHS & USDA. 2015. "2015-2020 Dietary Guidelines for Americans."
+#' 8. Dietary Guidelines for Americans.
 #' https://health.gov/dietaryguidelines/2015/resources/2015-2020_Dietary_Guidelines.pdf.
 #' Appendix 2
 #'
@@ -10,17 +10,11 @@
 #' @seealso
 #' [convertLassaletta2014()],
 #' [readSource()]
-#' @examples
-#' 
-#' \dontrun{ 
-#' readSource("Lassaletta2014",subtype="budget",convert=FALSE)
-#' }
+#'
+readHHS_USDA <- function() { # nolint: object_name_linter.
+  a <- read.csv("appendix2.csv", sep = ";", header = TRUE)
 
-
-readHHS_USDA<-function(){
-  a<-read.csv("appendix2.csv",sep = ";",header = T)
-  
-  a<-as.magpie(a)
-  getSets(a)=c("region","year","sex","age","activity")
+  a <- as.magpie(a)
+  getSets(a) <- c("region", "year", "sex", "age", "activity")
   return(a)
 }

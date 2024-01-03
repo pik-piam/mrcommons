@@ -2,167 +2,165 @@
 #' @description calculates Soil Organic Matter Pool, accounting for the management history.
 #' We assume carbon Stocks from LPJml natural vegetation as a starting point.
 #' Here we use the upper 30cm soil layer (0-20cm of + 1/3 of 30-50 cm).
-#' We then correct carbon pools by lost c-share depending on the climate region, using default factors of IPCC Guidelines 2006 table 5.5.
+#' We then correct carbon pools by lost c-share depending on the climate region, using default
+#' factors of IPCC Guidelines 2006 table 5.5.
 #' We assume that this IPCC-corrected value is the target long-term equilibrium value for the soil stocks.
-#' Because soil decline and build-up slowly, we assume that in every year, the carbon pools move 15% towards this new equilibrium.
-#' This assumption is in line with IPCC saying that the process will take 20 years: with our assumption, 
+#' Because soil decline and build-up slowly, we assume that in every year, the carbon pools move 15% towards
+#' this new equilibrium.
+#' This assumption is in line with IPCC saying that the process will take 20 years: with our assumption,
 #' after 5 years 44% of the carbon pool is gone, after 10 years 80% and after 20 years 96%.
 #' We determine a carbon stock for cropland soils and non-cropland soils in every cell.
-#' If the cropland area expands, the carbon stock of noncropland is proportionally assigned to the cropland pool and vice versa.
-#' The outputs of the function are the soilc stocks for cropland and non-cropland.
-#' Relevant for the release of N by SOM loss is also the change in carbon stocks per ha, as this relases or binds N. 
+#' If the cropland area expands, the carbon stock of noncropland is proportionally assigned to the cropland pool
+#' and vice versa. The outputs of the function are the soilc stocks for cropland and non-cropland.
+#' Relevant for the release of N by SOM loss is also the change in carbon stocks per ha, as this relases or binds N.
 #' This is done in delta cropland soilc.
 #' @param climatetype Switch between different climate scenarios (default on "historical")
 #' @param subtype "stock" (default) for absoulte values, "density" for per hectar values
+#' @param cells "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #'
-#' @return List of magpie object with results on country or cellular level, weight on cellular level, unit and description.
+#' @return List of magpie object with results on country or cellular level,
+#' weight on cellular level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @examples
-#' 
-#' \dontrun{ 
-#' calcOutput("SOM")
+#' \dontrun{
+#' calcOutput("SOM2")
 #' }
-#' 
+#'
+calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjcell") {
 
-calcSOM <- function(climatetype = "historical", subtype = "stock"){
-  
-  startyear   <- 1951
-  years       <- sort(findset("past_all"))
-  spinup      <- paste0("y",(startyear:(as.integer(substring(years[1],2))-1)))
-  years       <- c(spinup, years)
-  lengthyears <- length(years)
-  
-  soilc     <-       calcOutput("LPJmlCarbon", climatetype=climatetype, landtype="nat_veg", subtype="soilc_0-30", selectyears="past_all", aggregate=FALSE)
-  soilc     <- mbind(calcOutput("LPJmlCarbon", climatetype=climatetype, landtype="nat_veg", subtype="soilc_0-30", selectyears=spinup,     aggregate=FALSE), soilc)
-  
-  states    <- toolCoord2Isocell(readSource("LUH2v2",subtype = "states",convert="onlycorrect")[,years,])
-  
-  #states  <- calcOutput("Croparea", sectoral="kcr", physical=TRUE, cellular=TRUE, irrigation=FALSE, aggregate=FALSE) 
-  
-  
-  cshare    <- toolCell2isoCell(readSource("LPJml_rev21",subtype="cshare",convert="onlycorrect"))
-  attributes<- new.magpie("GLO",NULL,c("c","nr_available","nr_loss"))
-  attributes[,,]<-c(1,1/15,0)
-  
-  # add rice to historical dataset
-  # states<-add_columns(states,dim = 3.1,addnm = "c3rice")
-  # a<-calcOutput("FAOCrop_aggr",aggregate = F)
-  # calculate share of rice in c3 annual crops based on FAO physical area
-  
+  years      <- seq(1951, 2010, 1)
+
+  soilc      <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
+                           climatetype = "GSWP3-W5E5:historical", subtype = "soilc_layer",
+                           stage = "raw", aggregate = FALSE, years = years)
+
+  soilc      <- setNames(soilc[, , 1] + 1 / 3 * soilc[, , 2], "soilc")
+
+  states      <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")[, years, ]
+  crops       <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
+  cropArea    <- dimSums(states[, , crops], dim = 3)
+  noncropArea <- dimSums(states, dim = 3) - cropArea
+  rm(states)
+
+  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cells = "lpjcell",
+                                         cellular = TRUE, irrigation = FALSE, aggregate = FALSE), years)
+  cropshare  <- toolConditionalReplace(cropshare / dimSums(cropshare, dim = 3), "is.na()", 0)
+  carbshare  <- calcOutput("SOCLossShare", aggregate = FALSE, subsystems = TRUE,
+                           rate = "change", factor = "ipccReduced", cells = "lpjcell")
+  cshare     <- dimSums(cropshare * carbshare, dim = 3)
+  cshare[cshare == 0] <- 1 # target for cropland in cells without cropland equal to nat veg just as backup.
+
   # in principle possible to add begr/betr area based on LUH2v2
   # crpbf_c3per: C3 perennial crops grown as biofuels
   # crpbf_c4per: C4 perennial crops grown as biofuels
-  
-  crops  <- c("c3ann","c4ann","c3per","c4per","c3nfx")
-  cshare <- cshare*new.magpie("GLO",NULL,crops,fill = 1)
-  
-  # assumption that perrenial crops have constant c-content is dropped for now
-  # until we classify the MAgPIE crops between annual and perrenials. 
-  # They cover anyway only a small area.
-  # moreover, they are often characterized by low input (e.g. cotton), which leads to low-input c stock losses.
-  # cshare[,,c("c3per","c4per")]=0
-  
-  crop_area    <- dimSums(states[,,crops],dim=3)
-  noncrop_area <- dimSums(states,dim=3)-crop_area
-  
-  target_c_crop    <- dimSums(soilc * (1-cshare[,,crops])*states[,,crops],dim=3)
-  target_c_noncrop <- dimSums(soilc*states[,,crops,invert=TRUE],dim=3)
-  
-  transitions <- crop_area
-  transitions[,years[2:length(years)],] <- crop_area[,years[2:length(years)],]-setYears(crop_area[,years[1:length(years)-1],],years[2:length(years)])
-  
+
+  targetCcrop    <- soilc * cshare * cropArea
+  targetCNoncrop <- soilc * noncropArea
+
+  transitions <- cropArea
+  stopifnot(length(years) >= 2)
+  transitions[, years[2:length(years)], ] <- (cropArea[, years[2:length(years)], ]
+                                              - setYears(cropArea[, years[seq_along(years) - 1], ],
+                                                         years[2:length(years)]))
+
   abandonnedland <- newland <- transitions
-  abandonnedland[abandonnedland>0] <- 0
-  abandonnedland=abandonnedland*(-1)
-  newland[newland<0] <- 0
+  abandonnedland[abandonnedland > 0] <- 0
+  abandonnedland <- abandonnedland * (-1)
+  newland[newland < 0] <- 0
 
-  crop_c    = crop_c_ha    = delta_c_crop    = target_c_crop
-  noncrop_c = noncrop_c_ha = delta_c_noncrop = target_c_noncrop
-  
-  crop_c[,2:lengthyears,]                <-NA
-  noncrop_c[,2:lengthyears,]             <-NA
+  cropC    <- cropCha    <- deltaCcrop    <- targetCcrop
+  noncropC <- noncropCha <- deltaCnoncrop <- targetCNoncrop
 
-  crop_c_ha[,,]    <- delta_c_crop[,,]    <-NA
-  noncrop_c_ha[,,] <- delta_c_noncrop[,,] <-NA
-  
-  crop_c_ha[,1,] = crop_c[,1,] / crop_area[,1,]
-  crop_c_ha[is.nan(crop_c_ha)] =0 
-  
-  noncrop_c_ha[,1,] = noncrop_c[,1,] / noncrop_area[,1,]
-  noncrop_c_ha[is.nan(noncrop_c_ha)]=0
+  cropC[, 2:length(years), ]              <- NA
+  noncropC[, 2:length(years), ]           <- NA
 
-  for (year_x in (2:(lengthyears))) {
-    
-    crop_c[,year_x,] = (setYears(crop_c[,year_x-1,],NULL)
-                     + newland[,year_x,] * setYears(noncrop_c_ha[,year_x-1,] ,NULL)
-                     - abandonnedland[,year_x,] * setYears(crop_c_ha[,year_x-1,],NULL))
-    
-    noncrop_c[,year_x,] = (setYears(noncrop_c[,year_x-1,],NULL)
-                        - newland[,year_x,] * setYears(noncrop_c_ha[,year_x-1,],NULL) 
-                        + abandonnedland[,year_x,] * setYears(crop_c_ha[,year_x-1,],NULL))
-    
-    
-    # assumption on transition: 15% of the soil difference per year. 44% after 5 years, 20% after 10 years, 4% after 20 years
-    
-    delta_c_crop[,year_x,]=(target_c_crop[,year_x,]-crop_c[,year_x,])*0.15
-    delta_c_noncrop[,year_x,]= (target_c_noncrop[,year_x,]-noncrop_c[,year_x,])*0.15
-    
+  cropCha[, , ]    <- deltaCcrop[, , ]    <- NA
+  noncropCha[, , ] <- deltaCnoncrop[, , ] <- NA
+
+  cropCha[, 1, ] <- cropC[, 1, ] / cropArea[, 1, ]
+  cropCha[is.nan(cropCha)] <- 0
+
+  noncropCha[, 1, ] <- noncropC[, 1, ] / noncropArea[, 1, ]
+  noncropCha[is.nan(noncropCha)] <- 0
+
+  for (yearX in (2:length(years))) {
+
+    cropC[, yearX, ] <- (setYears(cropC[, yearX - 1, ], NULL)
+                         + newland[, yearX, ] * setYears(noncropCha[, yearX - 1, ], NULL)
+                         - abandonnedland[, yearX, ] * setYears(cropCha[, yearX - 1, ], NULL))
+
+    noncropC[, yearX, ] <- (setYears(noncropC[, yearX - 1, ], NULL)
+                            - newland[, yearX, ] * setYears(noncropCha[, yearX - 1, ], NULL)
+                            + abandonnedland[, yearX, ] * setYears(cropCha[, yearX - 1, ], NULL))
+
+
+    # assumption on transition: 15% of the soil difference per year.
+    # 44% after 5 years, 20% after 10 years, 4% after 20 years
+
+    deltaCcrop[, yearX, ] <- (targetCcrop[, yearX, ] - cropC[, yearX, ]) * 0.15
+    deltaCnoncrop[, yearX, ] <- (targetCNoncrop[, yearX, ] - noncropC[, yearX, ]) * 0.15
+
     # to avoid infs in division, a rounding is required
-    
-    crop_c[,year_x,] = round(crop_c[,year_x,] + delta_c_crop[,year_x,],10)
-    noncrop_c[,year_x,] = round(noncrop_c[,year_x,] + delta_c_noncrop[,year_x,],10)
-    
-    crop_c_ha[,year_x,] = setYears(crop_c[,year_x,] / crop_area[,year_x,],NULL)
-    crop_c_ha[is.nan(crop_c_ha)] = 0
-    crop_c_ha[abs(crop_c_ha)==Inf] = 0
-    
-    noncrop_c_ha[,year_x,] = setYears(noncrop_c[,year_x,] / noncrop_area[,year_x,],NULL)
-    noncrop_c_ha[is.nan(noncrop_c_ha)] = 0
-    noncrop_c_ha[abs(noncrop_c_ha)==Inf] = 0
+
+    cropC[, yearX, ] <- round(cropC[, yearX, ] + deltaCcrop[, yearX, ], 10)
+    noncropC[, yearX, ] <- round(noncropC[, yearX, ] + deltaCnoncrop[, yearX, ], 10)
+
+    cropCha[, yearX, ] <- setYears(cropC[, yearX, ] / cropArea[, yearX, ], NULL)
+    cropCha[is.nan(cropCha)] <- 0
+    cropCha[abs(cropCha) == Inf] <- 0
+
+    noncropCha[, yearX, ] <- setYears(noncropC[, yearX, ] / noncropArea[, yearX, ], NULL)
+    noncropCha[is.nan(noncropCha)] <- 0
+    noncropCha[abs(noncropCha) == Inf] <- 0
   }
-  
-  # delta_c is not equivalent to the difference in carbon_cropland_soils over time, as the area changes
-  if(subtype=="stock"){
-    out<-mbind(setNames(crop_c,"cropland.soilc"),
-               setNames(noncrop_c,"noncropland.soilc"),
-               setNames(delta_c_crop,"cropland.delta_soilc"),
-               setNames(delta_c_noncrop,"noncropland.delta_soilc"),
-               setNames(target_c_crop,"cropland.target_soilc"),
-               setNames(target_c_noncrop,"noncropland.target_soilc"))
-    
+
+  # deltaC is not equivalent to the difference in carbon_cropland_soils over time, as the area changes
+  if (subtype == "stock") {
+    out <- mbind(setNames(cropC, "cropland.soilc"),
+                 setNames(noncropC, "noncropland.soilc"),
+                 setNames(deltaCcrop, "cropland.delta_soilc"),
+                 setNames(deltaCnoncrop, "noncropland.delta_soilc"),
+                 setNames(targetCcrop, "cropland.target_soilc"),
+                 setNames(targetCNoncrop, "noncropland.target_soilc"))
+
     unit    <- "Mt C"
     weight  <- NULL
-    
-  } else if(subtype=="density"){
-    
-    delta_c_crop_ha    <- toolNAreplace(delta_c_crop    / crop_area)$x    
-    delta_c_noncrop_ha <- toolNAreplace(delta_c_noncrop / noncrop_area)$x 
-    
-    target_c_crop_ha    <- toolNAreplace(target_c_crop    / crop_area)$x    
-    target_c_noncrop_ha <- toolNAreplace(target_c_noncrop / noncrop_area)$x 
-    
-    
-    out<-mbind(setNames(crop_c_ha,"cropland.soilc"),
-               setNames(noncrop_c_ha,"noncropland.soilc"),
-               setNames(delta_c_crop_ha,"cropland.delta_soilc"),
-               setNames(delta_c_noncrop_ha,"noncropland.delta_soilc"),
-               setNames(target_c_crop_ha,"cropland.target_soilc"),
-               setNames(target_c_noncrop_ha,"noncropland.target_soilc"))
-    
+
+  } else if (subtype == "density") {
+
+    deltaCCropHa    <- toolNAreplace(deltaCcrop    / cropArea)$x
+    deltaCNoncropHa <- toolNAreplace(deltaCnoncrop / noncropArea)$x
+
+    targetCCropHa    <- toolNAreplace(targetCcrop    / cropArea)$x
+    targetCNoncropHa <- toolNAreplace(targetCNoncrop / noncropArea)$x
+
+
+    out <- mbind(setNames(cropCha, "cropland.soilc"),
+                 setNames(noncropCha, "noncropland.soilc"),
+                 setNames(deltaCCropHa, "cropland.delta_soilc"),
+                 setNames(deltaCNoncropHa, "noncropland.delta_soilc"),
+                 setNames(targetCCropHa, "cropland.target_soilc"),
+                 setNames(targetCNoncropHa, "noncropland.target_soilc"))
+
     unit    <- "t C per ha"
-    weight  <- mbind(setNames(   crop_area,    "cropland"),
-                     setNames(noncrop_area, "noncropland"))[, -c(1:10) ,]
-    
-  } else {stop(paste("Subtype", subtype, "does not exist yet."))}
-  
-  #delete first 20 years of spin-up
-  
-  out<-out[,-c(1:10),]
-  
+    weight  <- mbind(setNames(cropArea,    "cropland"),
+                     setNames(noncropArea, "noncropland"))[, -c(1:10), ]
+
+  } else {
+    stop(paste("Subtype", subtype, "does not exist yet."))
+  }
+
+  # delete first 20 years of spin-up
+
+  out <- out[, -c(1:10), ]
+  if (cells == "magpiecell") out <- toolCoord2Isocell(out)
+
   return(list(
     x            = out,
     weight       = weight,
     unit         = unit,
-    description  = "Carbon in cropland and non-cropland soils, as well as change over time due to built-up or loss. Change is not equivalen to the difference in carbon_cropland_soils over time, as the area changes. ",
+    description  = paste("Carbon in cropland and non-cropland soils, as well as change",
+                         "over time due to built-up or loss. Change is not equivalen to",
+                         "the difference in carbon_cropland_soils over time, as the area changes."),
     isocountries = FALSE))
 }

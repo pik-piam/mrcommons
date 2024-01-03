@@ -13,9 +13,8 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the calibration factors for plantation establishment globally
 }
 \examples{
-
-\dontrun{ 
-calcOutput("PlantEstablishCalib",aggregate=TRUE)
+\dontrun{
+calcOutput("PlantEstablishCalib", aggregate = TRUE)
 }
 }
 \author{

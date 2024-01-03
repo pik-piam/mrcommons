@@ -2,22 +2,22 @@
 % Please edit documentation in R/calcProdSysRatioPast.R
 \name{calcProdSysRatioPast}
 \alias{calcProdSysRatioPast}
-\title{Calculate historical distribution of livestock production across different systems based on output of MAgPIE_FEED model}
+\title{Calculate historical distribution of livestock production across
+different systems based on output of MAgPIE_FEED model}
 \usage{
 calcProdSysRatioPast()
 }
 \value{
-Historical distribution of livestock production across different systems and corresonding weights as a list of two MAgPIE
-objects
+Historical distribution of livestock production across
+different systems and corresponding weights as a list of two MAgPIE objects
 }
 \description{
-Calculate historical distribution of livestock production across different systems based on output of MAgPIE_FEED model
+Calculate historical distribution of livestock production across
+different systems based on output of MAgPIE_FEED model
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ProdSysRatioPast")
-
 }
 }
 \seealso{

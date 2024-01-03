@@ -10,7 +10,8 @@ calcGrowingStockNRF()
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates the growing stocks from FAO data for naturally regenerating forests i.e. primary forests and secondary forests.
+Calculates the growing stocks from FAO data for naturally regenerating forests
+i.e. primary forests and secondary forests.
 }
 \examples{
 \dontrun{

@@ -8,6 +8,7 @@ calcAtmosphericDeposition(
   datasource = "ACCMIP",
   glo_incl_oceans = FALSE,
   cellular = FALSE,
+  cells = "lpjcell",
   emission = FALSE,
   scenario = NULL
 )
@@ -15,11 +16,13 @@ calcAtmosphericDeposition(
 \arguments{
 \item{datasource}{deposition inventory}
 
-\item{glo_incl_oceans}{provides global values that include oceans, as ocenas are not part of the country mapping}
+\item{glo_incl_oceans}{provides global values that include oceans, as oceans are not part of the country mapping}
 
 \item{cellular}{cellular or country level emissions}
 
-\item{emission}{if TRUE, not the depositio but the cellular emissions are reported}
+\item{cells}{magpiecell (59199 cells) or lpjcell (67420 cells)}
+
+\item{emission}{if TRUE, not the deposition but the cellular emissions are reported}
 
 \item{scenario}{if dataset contains several scenarios (e.g. ACCMIP), one scenario can be selected.}
 }
@@ -27,14 +30,13 @@ calcAtmosphericDeposition(
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Conputes Atmospheric (nitrogen) deposition on different land-use types.
+Computes Atmospheric (nitrogen) deposition on different land-use types.
 It distinguishes ammonia (Nh3) and Nitrogen oxides (NOx) as well
 }
 \examples{
 \dontrun{
 calcOutput("AtmosphericDeposition")
 }
-
 }
 \seealso{
 \code{\link[=calcNitrogenBudgetCropland]{calcNitrogenBudgetCropland()}}

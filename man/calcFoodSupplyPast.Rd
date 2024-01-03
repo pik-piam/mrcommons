@@ -15,11 +15,14 @@ calcFoodSupplyPast(
 \arguments{
 \item{per_capita}{if true, calculates per capita demand per day, otherwhise total demand per year}
 
-\item{products}{a set with the products that shall be provided, e.g. kall. If NULL, the products are provided that are in the primary data}
+\item{products}{a set with the products that shall be provided, e.g. kall. If NULL, the products are provided
+that are in the primary data}
 
-\item{product_aggr}{if TRUE, all products are summed up, if "maingroups" products are summed over livestock products, staples and vegfruits.}
+\item{product_aggr}{if TRUE, all products are summed up, if "maingroups" products
+are summed over livestock products, staples and vegfruits.}
 
-\item{populationweight}{datasource of populationweight: FAO can be selected in order to better meat exact values. Normal datasource is PopulationPast}
+\item{populationweight}{datasource of populationweight: FAO can be selected in order
+to better meet exact values. Normal datasource is PopulationPast}
 
 \item{attributes}{attributes of different products,i.e., kcal,protein,wm}
 }
@@ -30,8 +33,7 @@ List of magpie objects with results on country level, weight on country level, u
 Calculates the food supply (as defined by FAO, including intake and household waste) for the past.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FoodSupplyPast")
 }
 

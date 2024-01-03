@@ -11,24 +11,19 @@
 #' }
 #'
 calcNitrogenBNF <- function(cellular = FALSE) {
-
-  past <- findset("past")
   land <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
-  bnf_rate <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
-  bnf <- land * bnf_rate
+  bnfRate <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
+  bnf <- land * bnfRate
   bnf[, , c("crop", "urban")] <- 0
 
   if (!cellular) {
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    bnf <- groupAggregate(data = bnf, query = mapping, from = "celliso", to = "iso", dim = 1)
-    bnf  <- toolCountryFill(bnf, fill = 0)
-  } else {
-    bnf <- toolCell2isoCell(bnf)
+    bnf <- dimSums(bnf, c("x", "y"))
+    bnf <- toolCountryFill(bnf, fill = 0)
   }
 
-  bnf[, , "crop"] <- dimSums(
-    calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular, fixation_types = "both", sum_plantparts = TRUE),
-dim = c(3))
+  bnf[, , "crop"] <- dimSums(calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular,
+                                        fixation_types = "both", sum_plantparts = TRUE),
+                             dim = 3)
 
   return(list(x = bnf,
               weight = NULL,

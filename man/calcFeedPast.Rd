@@ -7,6 +7,7 @@
 calcFeedPast(
   balanceflow = TRUE,
   cellular = FALSE,
+  cells = "lpjcell",
   products = "kall",
   nutrients = "all"
 )
@@ -16,10 +17,12 @@ calcFeedPast(
 
 \item{cellular}{if TRUE value is calculate on cellular level with returned datajust in dry matter}
 
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
+
 \item{products}{products in feed baskets that shall be reported}
 
-\item{nutrients}{nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P), Generalizable Energy (GE) and wet
-matter (WM).}
+\item{nutrients}{nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P),
+Generalizable Energy (GE) and wet matter (WM).}
 }
 \value{
 List of magpie objects with results on country or cellular level, unit and description.
@@ -28,8 +31,7 @@ List of magpie objects with results on country or cellular level, unit and descr
 Combines feed baskets of the past with livestock production to get total feed demand
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedPast")
 }
 }

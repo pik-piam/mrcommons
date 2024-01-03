@@ -5,7 +5,7 @@
 \title{\if{html}{\out{<div class="sourceCode">}}\preformatted{  toolExtrapolateFodder
 }\if{html}{\out{</div>}}}
 \usage{
-toolExtrapolateFodder(x, exyears = c(2004, 2009), average = 5)
+toolExtrapolateFodder(x, exyears = c(2004, 2009), average = 5, endyear = 2015)
 }
 \arguments{
 \item{x}{input data}
@@ -13,6 +13,8 @@ toolExtrapolateFodder(x, exyears = c(2004, 2009), average = 5)
 \item{exyears}{two years}
 
 \item{average}{the averaging_range in toolTimeInterpolate}
+
+\item{endyear}{year till when it should be extrapolated}
 }
 \value{
 magpie object including extrapolated years

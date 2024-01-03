@@ -7,7 +7,8 @@
 readBodirsky2018(subtype = "bmi_shr")
 }
 \arguments{
-\item{subtype}{bmi_share, demand_regression, intake_regression or bodyheight_regression for the estimated regression paramters of different regressions. scenarios for scenario projections.}
+\item{subtype}{bmi_share, demand_regression, intake_regression or bodyheight_regression
+for the estimated regression paramters of different regressions. scenarios for scenario projections.}
 }
 \value{
 magpie object

@@ -1,7 +1,8 @@
 #' @title toolAWMSScenarioCreation
-#' @description tool function to calculated the share of manure managed in different animal waste management systems in confinements.
+#' @description tool function to calculate the share of manure managed in different animal waste management systems
+#'              in confinements.
 #' @param name Name of the scenario
-#' @param start_year Year were prediction starts
+#' @param startYear Year were prediction starts
 #' @param categories share of manure managed in different animal waste management systems
 #' @param values target values
 #' @param out contains historical data
@@ -9,30 +10,44 @@
 #' @author Edna J. Molina Bacca
 #' @seealso
 #' [calcAWMSconfShr()]
-#' 
+#'
 
-toolAWMSScenarioCreation<-function(name,start_year,categories,values,out){
-  
-   lapply(lapply(values,sum), function(x) {if (x!=1) {stop("Categories do not sum one")}})
-  
-   years_list<-names(values)   
-  
-           for (i in seq_along(values)){
-    
-                          target_aim<-unlist(values[i],use.names = FALSE)
-                          names(target_aim)<-categories
-                          #These declarations account for the specific targets of each year of the scenario
-                          year_target<-out[,start_year,"constant"]*target_aim["traditional"]
-                          year_target[,,"digester"]<-year_target[,,"digester"]+target_aim["digester"]
-                          year_target[,,"daily_spread"]<-year_target[,,"daily_spread"]+target_aim["daily_spread"]
-                          
-    
-                                       if(i==1){
-                                                 scenario_x<-convergence(origin=out[,,"constant"],aim=setYears(year_target,NULL),start_year = start_year,end_year = years_list[i],direction = NULL,type = "linear")
-                                                 }else{
-                                                 scenario_x<-convergence(origin=scenario_x,aim=setYears(year_target,NULL),start_year = years_list[i-1],end_year = years_list[i],direction = NULL,type = "linear")
-                                                 }
-                                         }
-       getNames(scenario_x,dim=1)<-name
-       return(mbind(out,scenario_x))
+toolAWMSScenarioCreation <- function(name, startYear, categories, values, out) {
+
+  lapply(lapply(values, sum), function(x) {
+    if (x != 1) {
+      stop("Categories do not sum one")
+    }
+  })
+
+  yearsList <- names(values)
+
+  for (i in seq_along(values)) {
+
+    targetAim <- unlist(values[i], use.names = FALSE)
+    names(targetAim) <- categories
+    # These declarations account for the specific targets of each year of the scenario
+    yearTarget <- out[, startYear, "constant"] * targetAim["traditional"]
+    yearTarget[, , "digester"] <- yearTarget[, , "digester"] + targetAim["digester"]
+    yearTarget[, , "daily_spread"] <- yearTarget[, , "daily_spread"] + targetAim["daily_spread"]
+
+
+    if (i == 1) {
+      scenarioX <- convergence(origin = out[, , "constant"],
+                               aim = setYears(yearTarget, NULL),
+                               start_year = startYear,
+                               end_year = yearsList[i],
+                               direction = NULL,
+                               type = "linear")
+    } else {
+      scenarioX <- convergence(origin = scenarioX,
+                               aim = setYears(yearTarget, NULL),
+                               start_year = yearsList[i - 1],
+                               end_year = yearsList[i],
+                               direction = NULL,
+                               type = "linear")
+    }
+  }
+  getNames(scenarioX, dim = 1) <- name
+  return(mbind(out, scenarioX))
 }

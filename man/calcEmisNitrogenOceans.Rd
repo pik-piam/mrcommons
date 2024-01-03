@@ -16,8 +16,7 @@ List of magpie objects with results on country level, weight on country level, u
 Conputes (nitrogen) emissions of Oceans.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenOceans")
 }
 

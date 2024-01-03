@@ -7,17 +7,20 @@
 downloadSoilGrids(subtype = "cstock_0_30")
 }
 \arguments{
-\item{subtype}{Switch between different input. Use predefined ones or any FileName specified in 'SoilGrids/META_GEOTIFF_1B.csv'}
+\item{subtype}{Switch between different input. Use predefined ones or any FileName specified in
+'SoilGrids/META_GEOTIFF_1B.csv'}
 }
 \value{
 magpie object in cellular resolution
 }
 \description{
-This function download the raw SoilGrids data (available at https://files.isric.org/soilgrids/data/recent)
-or if available the preprocessed raster layers.
+This function downloads the raw SoilGrids data (available at
+https://files.isric.org/soilgrids/data/recent) or, if available, the preprocessed raster layers.
 }
 \examples{
-\dontrun{ downloadSource("SoilGrids",subtype="carbon0_30") }
+\dontrun{
+downloadSource("SoilGrids", subtype = "carbon0_30")
+}
 
 }
 \seealso{

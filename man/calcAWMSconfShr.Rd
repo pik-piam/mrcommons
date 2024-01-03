@@ -13,10 +13,10 @@ calcAWMSconfShr(rev = 0.1)
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates the share of manure managed in different animal waste management systems in confinements. Starting with IPCC 2005 values, turning into scenarios for the future.
+calculates the share of manure managed in different animal waste management systems in confinements.
+Starting with IPCC 2005 values, turning into scenarios for the future.
 }
 \examples{
-
 \dontrun{
 calcOutput("AWMSconfShr")
 }

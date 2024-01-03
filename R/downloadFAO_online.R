@@ -6,7 +6,7 @@
 #'
 #' @importFrom utils download.file unzip person
 
-downloadFAO_online <- function(subtype) {
+downloadFAO_online <- function(subtype) { # nolint: object_name_linter.
 
   if (!requireNamespace("XML", quietly = TRUE)) {
     stop("The 'XML' package is required to download data from FAO. Please install it.")
@@ -50,7 +50,6 @@ downloadFAO_online <- function(subtype) {
     Fertilizer              = "Environment_Fertilizers_E_All_Data_(Normalized).zip",
     FertilizerNutrients     = "Inputs_FertilizersNutrient_E_All_Data_(Normalized).zip",
     FertilizerProducts      = "Inputs_FertilizersProduct_E_All_Data_(Normalized).zip",
-    #Fodder                 = "",
     FoodSecurity            = "Food_Security_Data_E_All_Data_(Normalized).zip",
     ForestProdTrade         = "Forestry_E_All_Data_(Normalized).zip",
     Land                    = "Inputs_LandUse_E_All_Data_(Normalized).zip",
@@ -62,31 +61,33 @@ downloadFAO_online <- function(subtype) {
     PricesProducerAnnualLCU = "Prices_E_All_Data_(Normalized).zip",
     Trade                   = "Trade_CropsLivestock_E_All_Data_(Normalized).zip",
     TradeMatrix             = "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).zip",
-    ValueOfProd             = "Value_of_Production_E_All_Data_(Normalized).zip"
+    ValueOfProd             = "Value_of_Production_E_All_Data_(Normalized).zip",
+    ValueShares             = "Value_shares_industry_primary_factors_E_All_Data_(Normalized).zip"
   )
 
-  file <- toolSubtypeSelect(subtype,files)
+  file <- toolSubtypeSelect(subtype, files)
 
   # Download meta data (e.g. name, description, release date, file path) for all FAO data sets currently available
-  fao_meta_xmlfile <- "FAO_datasets_E.xml"
-  download.file(url = "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml", destfile = fao_meta_xmlfile)
-  fao_meta <- XML::xmlToDataFrame(fao_meta_xmlfile,stringsAsFactors = F)
-  unlink(fao_meta_xmlfile)
+  faoMetaXmlFile <- "FAO_datasets_E.xml"
+  download.file(url = "http://fenixservices.fao.org/faostat/static/bulkdownloads/datasets_E.xml",
+                destfile = faoMetaXmlFile)
+  faoMeta <- XML::xmlToDataFrame(faoMetaXmlFile, stringsAsFactors = FALSE)
+  unlink(faoMetaXmlFile)
 
   # extract the data set for the selected subtype by searching for the file name
-  fao_meta <- fao_meta[grepl(pattern = file,fao_meta$FileLocation,fixed = T),]
+  faoMeta <- faoMeta[grepl(pattern = file, faoMeta$FileLocation, fixed = TRUE), ]
 
   # download the data
-  download.file(fao_meta$FileLocation, destfile=file, mode="wb")
+  download.file(faoMeta$FileLocation, destfile = file, mode = "wb")
 
   # Compose meta data
-  return(list(url           = fao_meta$FileLocation,
+  return(list(url           = faoMeta$FileLocation,
               doi           = "not available",
-              title         = fao_meta$DatasetName,
-              author        = person(fao_meta$Contact, email=fao_meta$Email),
+              title         = faoMeta$DatasetName,
+              author        = person(faoMeta$Contact, email = faoMeta$Email),
               version       = "not available",
-              release_date  = fao_meta$DateUpdate,
-              description   = fao_meta$DatasetDescription,
+              release_date  = faoMeta$DateUpdate,
+              description   = faoMeta$DatasetDescription,
               license       = "Creative Commons Attribution-NonCommercial-ShareAlike 3.0 IGO (CC BY-NC- SA 3.0 IGO)",
               reference     = "not available")
   )

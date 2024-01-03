@@ -17,8 +17,8 @@ magpie object containing the expert guesses
 }
 }
 \examples{
-\dontrun{ 
-a <- readSource("ExperGuessSSPLivestockProduction", "ssp1")
+\dontrun{
+a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")
 }
 }
 \seealso{

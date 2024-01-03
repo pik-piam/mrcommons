@@ -59,7 +59,7 @@ readSoilGrids <- function(subtype) {
       res(tmp) <- c(0.5, 0.5)
       out <- tmp
     } else {
-      out <- aggregate(tmp, fact = 240, fun = mean)
+      out <- aggregate(tmp, fact = 240, fun = mean,  na.rm = TRUE)
       writeRaster(out, filename = paste0(subtype, ".grd"))
     }
 
@@ -68,29 +68,18 @@ readSoilGrids <- function(subtype) {
     out <- raster(paste0(subtype, ".grd"))
   }
 
-  lon <- seq(-179.75, 179.75, by = 0.5)
-  lat <- rev(seq(-89.75, 89.75, by = 0.5))
-
-  # Load celliso names for 1:59199 magpie cells
-  mapping   <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-  cellNames <- mapping$celliso
+  # Load celliso names for 1:67420 magpie cells
+  map       <- toolGetMappingCoord2Country(pretty = TRUE)
 
   # Change longitude and latitude
   r50   <- raster(res = 0.5)
-  toMag <- projectRaster(out, r50, over = TRUE)
-  toMag <- t(as.matrix(toMag))
+  mag   <- projectRaster(out, r50, over = TRUE)
+  mag   <- as.magpie(terra::extract(mag, map[c("lon", "lat")]), spatial = 1)
 
-  # Create array for 59199 isocells, 1 year and 1 data dimension
-  mag   <- array(NA, dim = c(59199, 1, 1), dimnames = list(cellNames, "y2000", subtype))
+  getNames(mag) <- subtype
+  getCells(mag) <- paste(map$coords, map$iso, sep = ".")
+  getYears(mag) <- "y2000"
+  getSets(mag)  <- c("x.y.iso", "t", "data")
 
-  # Fill array with data from raster object (note magpie_coord are loaded by default)
-  for (j in 1:59199) {
-    mag[j, , ] <- toMag[which(magpie_coord[j, 1] == lon), which(magpie_coord[j, 2] == lat)]
-  }
-
-  # Convert array to magpie object and rename set
-  x          <- clean_magpie(as.magpie(mag))
-  getSets(x) <- c("cell", "t", "data")
-
-  return(x)
+  return(mag)
 }

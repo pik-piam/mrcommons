@@ -1,0 +1,77 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+title: 'mrcommons: MadRat commons Input Data Library'
+version: 1.37.9
+date-released: '2023-12-13'
+abstract: Provides useful functions and a common structure to all the input data required
+  to run models like MAgPIE and REMIND of model input data.
+authors:
+- family-names: Bodirsky
+  given-names: Benjamin Leon
+  email: bodirsky@pik-potsdam.de
+- family-names: Karstens
+  given-names: Kristine
+- family-names: Baumstark
+  given-names: Lavinia
+- family-names: Weindl
+  given-names: Isabelle
+- family-names: Wang
+  given-names: Xiaoxi
+- family-names: Mishra
+  given-names: Abhijeet
+- family-names: Wirth
+  given-names: Stephen
+- family-names: Stevanovic
+  given-names: Mishko
+- family-names: Steinmetz
+  given-names: Nele
+- family-names: Kreidenweis
+  given-names: Ulrich
+- family-names: Rodrigues
+  given-names: Renato
+- family-names: Popov
+  given-names: Roman
+- family-names: Humpenoeder
+  given-names: Florian
+- family-names: Giannousakis
+  given-names: Anastasis
+- family-names: Levesque
+  given-names: Antoine
+- family-names: Klein
+  given-names: David
+- family-names: Araujo
+  given-names: Ewerton
+- family-names: Beier
+  given-names: Felicitas
+- family-names: Oeser
+  given-names: Julian
+- family-names: Pehl
+  given-names: Michaja
+- family-names: Leip
+  given-names: Debbora
+- family-names: Crawford
+  given-names: Michael
+- family-names: Molina Bacca
+  given-names: Edna
+- family-names: von Jeetze
+  given-names: Patrick
+- family-names: Martinelli
+  given-names: Eleonora
+- family-names: Schreyer
+  given-names: Felix
+- family-names: Soergel
+  given-names: Bjoern
+- family-names: Führlich
+  given-names: Pascal
+- family-names: Hötten
+  given-names: David
+- family-names: Hasse
+  given-names: Robin
+- family-names: Dietrich
+  given-names: Jan Philipp
+  email: dietrich@pik-potsdam.de
+license: LGPL-3.0
+repository-code: https://github.com/pik-piam/mrcommons
+doi: 10.5281/zenodo.3822009
+

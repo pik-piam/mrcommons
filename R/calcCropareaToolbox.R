@@ -10,136 +10,195 @@
 #' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param irrigation If true: cellular areas are returned separated
 #'                   into irrigated and rainfed
-#' @param selectyears extract certain years from the data, y1950 - 2017 is available
+#' @param selectyears extract certain years from the data
 #'
-#' @return Magpie object with cropareas
+#' @return MAgPIE object with cropareas
 #'
 #' @author David Hoetten, Felicitas Beier
 #'
 #' @importFrom madrat readSource toolConditionalReplace toolCountryFill toolAggregate
 #' @importFrom magclass dimSums getItems
+#' @importFrom mstools toolHoldConstant
 #'
 calcCropareaToolbox <- function(sectoral = "kcr", physical = TRUE, cellular = FALSE,
-                                cells = "magpiecell", irrigation = FALSE,
-                                selectyears = c("y1965", "y1970", "y1975",
-                                                "y1980", "y1985", "y1990",
-                                                "y1995", "y2000", "y2005",
-                                                "y2010")) {
+                                cells = "lpjcell", irrigation = FALSE, selectyears = "all") {
+
+  withr::local_options(magclass_sizeLimit = 1e+12)
+
+  ### Read in data ###
+  # total physical area from LandInG (in Mha)
+  physicalArea <- readSource("LanduseToolbox", subtype = "physicalArea")
+  # crop-specific harvested area (in Mha)
+  harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
+
+  if (physical) {
+    # read in fallow land (for check below)
+    fallow <- calcOutput("FallowLandOLD", aggregate = FALSE)
+  } else {
+    # crop-specific physical area (in Mha)
+    physicalAreaCrop <- calcOutput("CropareaToolbox",
+                                   sectoral = "kcr", physical = TRUE, cellular = TRUE,
+                                   cells = "lpjcell", irrigation = TRUE, selectyears = selectyears,
+                                   aggregate = FALSE)
+  }
+
+  # year selection
+  if (any(selectyears == "all")) {
+    selectyears <- getItems(physicalArea, dim = "year")
+  }
   if (is.numeric(selectyears)) {
     selectyears <- paste0("y", selectyears)
   }
 
-  harvestedArea <- readSource("LanduseToolbox", subtype = "harvestedArea")
-  nonCrops      <- c("pasture")
-  harvestedArea <- harvestedArea[, , nonCrops, invert = TRUE]
+  # extrapolate years
+  if (!all(selectyears %in% getItems(physicalArea, dim = "year"))) {
+    physicalArea  <- toolHoldConstant(physicalArea, selectyears)
+    harvestedArea <- toolHoldConstant(harvestedArea, selectyears)
+    if (physical) {
+      fallow <- toolHoldConstant(fallow, selectyears)
+    }
+  }
 
-  if (!physical) {
-    cropArea <- harvestedArea
+  # reduce to selected number of years
+  # and split calculation into single years for memory reasons
+  cropAreaList        <- vector(mode = "list", length = length(selectyears))
+  names(cropAreaList) <- selectyears
+  for (y in selectyears) {
 
-  } else {
-    physicalArea    <- readSource("LanduseToolbox", subtype = "physicalArea")
-    physicalAreaSum <- dimSums(physicalArea, dim = "irrigation")
+    # select year
+    physicalAreaYearly  <- physicalArea[, y, ]
+    harvestedAreaYearly <- harvestedArea[, y, ]
 
-    # for the following crops we know that no multicropping is happening, so physical area = harvested area
+    # reduce harvested area to crop area
+    nonCrops            <- c("pasture")
+    harvestedAreaYearly <- harvestedAreaYearly[, , nonCrops, invert = TRUE]
+
+    # croplists
+    crops      <- getItems(harvestedAreaYearly, dim = "crop")
     perennials <- c("sugr_cane", "oilpalm")
-    crops      <- getItems(harvestedArea, dim = "crop")
     annuals    <- crops[!crops %in% perennials]
 
-    # calculate the harvestedAreas for  different cropgroups
-    perennialHarvestedA <- dimSums(harvestedArea[, , perennials], dim = c("crop", "irrigation"))
-    annualsHarvestedA   <- dimSums(harvestedArea[, , annuals], dim = c("crop", "irrigation"))
-    totalHarvestedA     <- perennialHarvestedA + annualsHarvestedA
+    ### Crop-specific harvested area calculation: ###
+    if (!physical) {
 
-    # check how  much physical area is remaining for the annuals after substracting the perennial physical area
-    annualsPhysicalA <- physicalAreaSum - perennialHarvestedA # we can do that since for perennial physical=harvested
+      # Harvested area by crop as of LandInG data
+      cropArea <- harvestedAreaYearly
 
-    # calculate a factor by which the annuals should be scaled down so the sum does not exceed annualsPhysicalA
-    factorAnnuals <- ifelse(annualsPhysicalA > 0 & annualsHarvestedA > 0,
-                             annualsPhysicalA / annualsHarvestedA,
-                             1)
+      # Physical area by crop as calculated in this function
+      physicalAreaCropYearly <- physicalAreaCrop[, y, ]
 
-    # calculate a factor by which the all crops in mismatch cells (i.e. no annualPhyiscalA left) should be scaled down
-    factorMismatches <- ifelse(annualsPhysicalA <= 0 & totalHarvestedA > 0,
-                                physicalAreaSum / totalHarvestedA,
-                                1)
+      ### Correction of perennial harvested area ###
+      # Check whether more than 5% of harvested area would be lost
+      if (any(dimSums(cropArea[, , perennials] - physicalAreaCropYearly[, , perennials],
+                      dim = c(1, 3.2)) / dimSums(cropArea, dim = c(1, 3.2)) * 100 > 5)) {
+        stop("More than 5% of global harvested area is lost through perennial area correction")
+      }
+      # Check whether more than 10% of harvested area would be lost in any country
+      # that has more than 100 000 ha total harvested area
+      if (any(dimSums(cropArea, dim = c(1.1, 1.2, 3)) > 0.1 &
+                (dimSums(cropArea[, , perennials] - physicalAreaCropYearly[, , perennials],
+                         dim = c(1.1, 1.2, 3)) / dimSums(cropArea, dim = c(1.1, 1.2, 3)) * 100) > 10,
+              na.rm = TRUE)) {
+        stop(paste0("Some countries (with more than 100 000 ha harvested area) would loose more than 10% in year ", y))
+      }
 
-    # only scale crops down not up (i.e. keep fallow land)
-    factorAnnuals[factorAnnuals > 1]       <- 1
-    factorMismatches[factorMismatches > 1] <- 1
+      # In the allocation of perennials to physical area, some harvested area is lost and needs to be corrected
+      cropArea[, , perennials] <- physicalAreaCropYearly[, , perennials]
 
-    # apply the factors
-    physicalAreaCrop <- harvestedArea
-    physicalAreaCrop[, , annuals] <- harvestedArea[, , annuals] * factorAnnuals
-    physicalAreaCrop <- physicalAreaCrop * factorMismatches
+    } else {
+      ### Crop-specific physical area calculation: ###
+      physicalAreaSum <- dimSums(physicalAreaYearly, dim = "irrigation")
 
-    cropArea <- physicalAreaCrop
-  }
+      # calculate the total harvested areas for different cropgroups
+      # for perennial crops no multicropping is happening, so physical area = harvested area
+      perennialHarvestedA <- dimSums(harvestedAreaYearly[, , perennials], dim = c("crop", "irrigation"))
+      annualsHarvestedA   <- dimSums(harvestedAreaYearly[, , annuals], dim = c("crop", "irrigation"))
+      totalHarvestedA     <- perennialHarvestedA + annualsHarvestedA
 
-  if (cells == "magpiecell") {
-    cropArea <- toolCoord2Isocell(cropArea)
-  } else if (cells == "lpjcell") {
-    # this is already the format of cropArea
-  } else {
-    stop("This value for the cell parameter not supported, choose between \"magpiecell\" and \"lpjcell\"")
-  }
+      # check how much physical area is remaining for the annuals after subtracting the perennial physical area
+      annualsPhysicalA <- physicalAreaSum - perennialHarvestedA
 
-  if (sectoral == "kcr") {
-    # this is already the format of cropArea
-  } else if (sectoral == "lpj") {
-    mapMagToLpj <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv")
-    mapMagToLpj <- mapMagToLpj[!(mapMagToLpj$MAgPIE %in% nonCrops), ]
-    cropArea    <- toolAggregate(cropArea, rel = mapMagToLpj,
-                                 from = "MAgPIE", to = "LPJmL", dim = "crop")
-  } else {
-    stop("This sectoral aggregation is not availiable in calcCropareaToolbox")
-  }
+      # calculate a factor by which the annuals should be scaled down so the sum does not exceed annualsPhysicalA
+      factorAnnuals <- ifelse(annualsPhysicalA > 0 & annualsHarvestedA > 0,
+                              annualsPhysicalA / annualsHarvestedA,
+                              1)
 
-  if (irrigation == TRUE) {
-    # this is already the format of cropArea
-  } else {
-    years        <- getItems(cropArea, dim = "year")
-    cropAreaList <- vector(mode = "list", length = length(years))
-    for (y in seq(1, length(years))) {
-      cropAreaList[[y]] <- dimSums(cropArea[, years[y], ], dim = "irrigation")
+      # calculate a factor by which all crops in mismatch cells (i.e. no annualPhyiscalA left) should be scaled down
+      factorMismatches <- ifelse(annualsPhysicalA <= 0 & totalHarvestedA > 0,
+                                 physicalAreaSum[, , ] / totalHarvestedA,
+                                 1)
+
+      # only scale crops down not up (i.e. keep fallow land)
+      factorAnnuals[factorAnnuals > 1]       <- 1
+      factorMismatches[factorMismatches > 1] <- 1
+
+      # apply the factors
+      physicalAreaCrop <- harvestedAreaYearly
+      physicalAreaCrop[, , annuals] <- harvestedAreaYearly[, , annuals] * factorAnnuals
+      physicalAreaCrop <- physicalAreaCrop * factorMismatches
+
+      cropArea <- physicalAreaCrop
+      rm(factorMismatches, factorAnnuals, physicalAreaCrop)
     }
-    cropArea <- mbind(cropAreaList)
-    rm("cropAreaList")
-  }
 
-  # check consitency with calcFallowLand
-  if (physical == TRUE) {
-    fallow <- calcOutput("FallowLand", aggregate = FALSE)
+    if (sectoral == "kcr") {
+      # this is already the format of cropArea
+    } else if (sectoral == "lpj") {
+      # crop mapping
+      mapMagToLpj <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv",
+                                    where = "mappingfolder")
+      mapMagToLpj <- mapMagToLpj[!(mapMagToLpj$MAgPIE %in% nonCrops), ]
+
+      cropArea <- toolAggregate(cropArea, rel = mapMagToLpj,
+                                from = "MAgPIE", to = "LPJmL", dim = "crop")
+    } else {
+      stop("This sectoral aggregation is not available in calcCropareaToolbox")
+    }
 
     if (irrigation == TRUE) {
-      physicalCropSum <- dimSums(cropArea, dim = c("crop", "irrigation"))
+      # this is already the format of cropArea
     } else {
-      physicalCropSum <- dimSums(cropArea, dim = c("crop"))
+      cropArea <- dimSums(cropArea, dim = "irrigation")
     }
 
-    if (any(abs(physicalCropSum + fallow - physicalAreaSum) > 10^-16)) {
-      stop("Sum of crops + fallow land doesn't match with total physical cropland.")
+    # check consistency with calcFallowLand
+    if (physical == TRUE) {
+      if (irrigation == TRUE) {
+        physicalCropSum <- dimSums(cropArea, dim = c("crop", "irrigation"))
+      } else {
+        physicalCropSum <- dimSums(cropArea, dim = c("crop"))
+      }
+
+      if (any(abs(physicalCropSum + fallow[, y, ] - physicalAreaSum) > 10^-16)) {
+        stop("Sum of crops + fallow land doesn't match with total physical cropland.")
+      }
     }
-  }
 
-  if (all(selectyears %in% getItems(cropArea, dim = "year"))) {
-    cropArea <- cropArea[, selectyears, ]
-  } else {
-    stop("The selected years are not supported (0nly 1950 - 2017).")
+    # Aggregation to iso-level
+    if (!cellular) {
+      # aggregate to countries
+      cropArea <- dimSums(cropArea, dim = c("x", "y"))
+      # fill missing countries with 0
+      cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
+                                         conditions = "is.na()", replaceby = 0)
+    } else {
+      if (cells == "magpiecell") {
+        cropArea <- toolCoord2Isocell(cropArea)
+      } else if (cells == "lpjcell") {
+        # this is already the format of cropArea
+      } else {
+        stop("This value for the cell parameter is not supported,
+          choose between \"magpiecell\" and \"lpjcell\"")
+      }
+    }
+    cropAreaList[[y]] <- cropArea
   }
+  # bind years together
+  out <- mbind(cropAreaList)
 
-  # Aggregation to iso-level
-  if (!cellular) {
-    cropArea <- calcOutput("CropareaToolbox", sectoral = sectoral, physical = physical,
-                           irrigation = irrigation, selectyears = selectyears,
-                           cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-    cropArea <- dimSums(cropArea, dim = c("x", "y"))
-    cropArea <- toolConditionalReplace(x = toolCountryFill(cropArea),
-                                       conditions = "is.na()", replaceby = 0)
-  }
-
-  return(list(x = cropArea,
+  return(list(x = out,
               weight = NULL,
               description = "Croparea for different croptypes",
-              unit = "mha",
+              unit = "Mha",
               isocountries = FALSE))
 }

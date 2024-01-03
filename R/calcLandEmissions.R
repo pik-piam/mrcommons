@@ -2,7 +2,9 @@
 #' @description Land emission data. This function was originally called calcValidEmissions and located in
 #' mrvalidation.
 #'
-#' @param datasource The Emission Inventory that shall be used. For futher information, best see function calcEmissionInventory. Options are e.g.  CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)
+#' @param datasource The Emission Inventory that shall be used. For futher information, best see function
+#' calcEmissionInventory. Options are e.g.  CEDS, combined_CEDS_IPCC (including own estimates where available),
+#' IPCC(own estimates), Nsurplus (own estimates)
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Michael S. Crawford
@@ -15,7 +17,6 @@
 #' @importFrom  luscale groupAggregate
 #'
 calcLandEmissions <- function(datasource = "CEDS") {
-
   if (datasource %in% c("CEDS", "combined_CEDS_IPCC", "combined_CEDS_Nsurplus2")) {
 
     ceds <- calcOutput("EmissionInventory",
@@ -27,30 +28,24 @@ calcLandEmissions <- function(datasource = "CEDS") {
 
     # add CO2-C, N2O-N, NH3-N and NO2-N (better standard units)
     ceds2 <- ceds[, , c("nh3_n", "no2_n", "no3_n")]
-    # ceds2[,,"n2o_n"]=ceds2[,,"n2o_n"]*44/28
     ceds2[, , "nh3_n"] <- ceds2[, , "nh3_n"] * 17 / 14
     ceds2[, , "no2_n"] <- ceds2[, , "no2_n"] * 46 / 14
     ceds2[, , "no3_n"] <- ceds2[, , "no3_n"] * 62 / 14
-    # ceds2[,,"co2_c"]=ceds2[,,"co2_c"]*44/12
-    map <- c( # co2_c="co2",
-             # n2o_n="n2o",
-             nh3_n = "nh3", no2_n = "no2", no3_n = "no3")
+    map <- c(nh3_n = "nh3", no2_n = "no2", no3_n = "no3")
     getNames(ceds2, dim = 2) <- map[getNames(ceds2, dim = 2)]
     ceds <- mbind(ceds, ceds2)
-
 
     # rename emissions according to map
     getNames(ceds, dim = 2) <- reportingnames(getNames(ceds, dim = 2))
 
     # add sum over sector for each species
-    sector_sum <- dimSums(ceds, dim = 3.1)
-    agri_sum <- dimSums(ceds[, , "Agriculture", pmatch = TRUE], dim = 3.1)
-    burn_sum <- dimSums(ceds[, , "Biomass Burning", pmatch = TRUE], dim = 3.1)
-    # getNames(sector_sum) <- paste0(".",getNames(sector_sum))
-    sector_sum <- add_dimension(sector_sum, dim = 3.1, add = "sector", nm = "")
-    getNames(agri_sum) <- paste0("+|Agriculture.", getNames(agri_sum))
-    getNames(burn_sum) <- paste0("+|Biomass Burning.", getNames(burn_sum))
-    ceds <- mbind(ceds, agri_sum, burn_sum, sector_sum)
+    sectorSum <- dimSums(ceds, dim = 3.1)
+    agriSum <- dimSums(ceds[, , "Agriculture", pmatch = TRUE], dim = 3.1)
+    burnSum <- dimSums(ceds[, , "Biomass Burning", pmatch = TRUE], dim = 3.1)
+    sectorSum <- add_dimension(sectorSum, dim = 3.1, add = "sector", nm = "")
+    getNames(agriSum) <- paste0("+|Agriculture.", getNames(agriSum))
+    getNames(burnSum) <- paste0("+|Biomass Burning.", getNames(burnSum))
+    ceds <- mbind(ceds, agriSum, burnSum, sectorSum)
 
     # change order, add "Emissions|": Waste.SO2.harm -> Emissions|SO2|Waste|harm
     tmp <- gsub("^([^\\.]*)\\.(.*$)", "historical.ceds.Emissions|\\2|Land|\\1 (Mt \\2/yr)", getNames(ceds))
@@ -71,7 +66,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- add_columns(out, addnm = c("soils", "agri"))
     out[, , "soils"] <- dimSums(out[, , c("cropland_soils", "pasture_soils")], dim = 3.1)
     out[, , "agri"] <- dimSums(out[, , c("soils", "awms")], dim = 3.1)
-    map  <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv")
+    map  <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv", where = "mappingfolder")
     out <- out[, , getNames(out, dim = 1)[getNames(out, dim = 1) %in% map[, 1]]]
     out <- groupAggregate(data = out, dim = 3.1, query = map, from = "IPCC", to = "MAgPIE")
     out <- out[, , sort(getNames(out, dim = 1))]
@@ -96,36 +91,22 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- add_dimension(out, dim = 3.1, add = "scenario", nm = "historical")
     out <- add_dimension(out, dim = 3.2, add = "model", nm = datasource)
 
-  } else if (datasource %in% c("combined_CEDS_PRIMAPhist")) {
-
-    # WORK IN PROGRESS!!!
-    inventory <- calcOutput("EmissionInventory",
-                     datasource = datasource,
-                     targetResolution = NULL,
-                     to = "PRIMAPhist",
-                     aggregate = FALSE)
-
+  } else if (datasource == "combined_CEDS_PRIMAPhist") {
     # add CO2-C, N2O-N, NH3-N and NO2-N (better standard units)
-    inventory <- ceds[, , c("nh3_n", "no2_n", "no3_n")]
-    # ceds2[,,"n2o_n"]=ceds2[,,"n2o_n"]*44/28
     ceds2[, , "nh3_n"] <- ceds2[, , "nh3_n"] * 17 / 14
     ceds2[, , "no2_n"] <- ceds2[, , "no2_n"] * 46 / 14
     ceds2[, , "no3_n"] <- ceds2[, , "no3_n"] * 62 / 14
-    # ceds2[,,"co2_c"]=ceds2[,,"co2_c"]*44/12
-    map <- c( # co2_c="co2",
-      # n2o_n="n2o",
-      nh3_n = "nh3", no2_n = "no2", no3_n = "no3")
+    map <- c(nh3_n = "nh3", no2_n = "no2", no3_n = "no3")
     getNames(ceds2, dim = 2) <- map[getNames(ceds2, dim = 2)]
     ceds <- mbind(ceds, ceds2)
-
 
     # rename emissions according to map
     getNames(ceds, dim = 2) <- reportingnames(getNames(ceds, dim = 2))
 
     # add sum over sector for each species
-    sector_sum <- dimSums(ceds, dim = 3.1)
-    getNames(sector_sum) <- paste0("Agriculture.", getNames(sector_sum))
-    ceds <- mbind(ceds, sector_sum)
+    sectorSum <- dimSums(ceds, dim = 3.1)
+    getNames(sectorSum) <- paste0("Agriculture.", getNames(sectorSum))
+    ceds <- mbind(ceds, sectorSum)
 
     # change order, add "Emissions|": Waste.SO2.harm -> Emissions|SO2|Waste|harm
     tmp <- gsub("^([^\\.]*)\\.(.*$)", "historical.ceds.Emissions|\\2|\\1 (Mt \\2/yr)", getNames(ceds))
@@ -142,9 +123,10 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- add_columns(out, addnm = "n2o_n", dim = 3.2)
     out[, , "n2o_n"] <- dimSums(out[, , c("n2o_n_direct", "n2o_n_indirect")], dim = 3.2)
     out <- add_columns(out, addnm = c("soils", "agri"))
-    out[, , "soils"] <- dimSums(out[, , c("inorg_fert", "man_crop", "resid", "som", "rice", "pasture_soils")], dim = 3.1)
+    out[, , "soils"] <- dimSums(out[, , c("inorg_fert", "man_crop", "resid", "som", "rice", "pasture_soils")],
+                                dim = 3.1)
     out[, , "agri"]  <- dimSums(out[, , c("soils", "awms")], dim = 3.1)
-    map <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv")
+    map <- toolGetMapping(type = "sectoral", name = "mappingIPCCtoMAgPIE.csv", where = "mappingfolder")
     out <- out[, , getNames(out, dim = 1)[getNames(out, dim = 1) %in% map[, 1]]]
     out <- groupAggregate(data = out, dim = 3.1, query = map, from = datasource, to = "MAgPIE")
     out <- out[, , sort(getNames(out, dim = 1))]
@@ -202,7 +184,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
     edgar <- .formatToReporting(edgar, "co2_c", "co2", (44 / 12))
 
     # Rename emissions according to their MAgPIE reporting names
-    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv")
+    sectorMap <- toolGetMapping(type = "sectoral", name = "mappingEDGAR6toMAgPIE.csv", where = "mappingfolder")
     edgar     <- toolAggregate(x = edgar, rel = sectorMap,
                                from = "EDGAR6", to = "MAgPIE_reporting",
                                dim = 3, partrel = FALSE)
@@ -217,7 +199,8 @@ calcLandEmissions <- function(datasource = "CEDS") {
   } else if (datasource == "FAO_EmisLUC") {
 
     co2 <- readSource("FAO", subtype = "EmisLuTotal")
-    co2 <- co2[, , "1707|Land Use total + (Total).Net_emissions_removal_(CO2)_(Gigagrams)"] / 1000 # convert from Gigagrams to Mt
+    # / 1000 to convert from Gigagrams to Mt
+    co2 <- co2[, , "1707|Land Use total + (Total).Net_emissions_removal_(CO2)_(Gigagrams)"] / 1000
     getNames(co2) <- "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr)"
     out <- co2
     out <- add_dimension(out, dim = 3.1, add = "scenario", nm = "historical")
@@ -227,11 +210,11 @@ calcLandEmissions <- function(datasource = "CEDS") {
   } else if (datasource == "FAO_EmisAg") {
 
     total   <- readSource("FAO_online", subtype = "EmisAgTotal")
-    mapping <- toolGetMapping(type = "sectoral", name = "FAO_online_emissionsMapping.csv")
+    mapping <- toolGetMapping(type = "sectoral", name = "FAO_online_emissionsMapping.csv", where = "mappingfolder")
 
-    .calculateEmissions <- function(FAO_name, magpie_name) {
-      emission <- toolAggregate(total[, , FAO_name],
-                                rel = mapping, from = "fao", to = magpie_name,
+    .calculateEmissions <- function(faoName, magpieName) {
+      emission <- toolAggregate(total[, , faoName],
+                                rel = mapping, from = "fao", to = magpieName,
                                 dim = 3.1, partrel = TRUE)
       emission <- emission[, , "", invert = TRUE]
       emission <- emission / 1000 # Gg to Mt X
@@ -240,9 +223,9 @@ calcLandEmissions <- function(datasource = "CEDS") {
       return(emission)
     }
 
-    N2O <- .calculateEmissions("N2O_emissions_(gigagrams)", "magpie_n2o")
-    CH4 <- .calculateEmissions("CH4_emissions_(gigagrams)", "magpie_ch4")
-    out <- mbind(N2O, CH4)
+    n2o <- .calculateEmissions("N2O_emissions_(gigagrams)", "magpie_n2o")
+    ch4 <- .calculateEmissions("CH4_emissions_(gigagrams)", "magpie_ch4")
+    out <- mbind(n2o, ch4)
 
     out <- mbind(add_dimension(out, dim = 3.1, add = "scenario", nm = "historical"),
                  add_dimension(out, dim = 3.1, add = "scenario", nm = "projection"))
@@ -256,27 +239,27 @@ calcLandEmissions <- function(datasource = "CEDS") {
 
   } else if (datasource == "GFED") {
 
-    GFED_emissions <- readSource("GFED")
+    gfedEmissions <- readSource("GFED")
 
-    CountryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    countryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
 
-    CH4 <- GFED_emissions[, , "AGRI.ch4"]
-    CH4 <- toolAggregate(CH4, rel = CountryToCell, from = "celliso", to = "iso")
-    getNames(CH4) <- "Emissions|CH4|Land|Biomass Burning|+|Burning of Crop Residues (Mt CH4/yr)"
+    ch4 <- gfedEmissions[, , "AGRI.ch4"]
+    ch4 <- toolAggregate(ch4, rel = countryToCell, from = "celliso", to = "iso")
+    getNames(ch4) <- "Emissions|CH4|Land|Biomass Burning|+|Burning of Crop Residues (Mt CH4/yr)"
 
-    NO2 <- GFED_emissions[, , "AGRI.no2"]
-    NO2 <- toolAggregate(NO2, rel = CountryToCell, from = "celliso", to = "iso")
-    getNames(NO2) <- "Emissions|NO2|Land|Biomass Burning|+|Burning of Crop Residues (Mt NO2/yr)"
+    no2 <- gfedEmissions[, , "AGRI.no2"]
+    no2 <- toolAggregate(no2, rel = countryToCell, from = "celliso", to = "iso")
+    getNames(no2) <- "Emissions|NO2|Land|Biomass Burning|+|Burning of Crop Residues (Mt NO2/yr)"
 
-    N2O <- GFED_emissions[, , "AGRI.n2o"]
-    N2O <- toolAggregate(N2O, rel = CountryToCell, from = "celliso", to = "iso")
-    getNames(N2O) <- "Emissions|N2O|Land|Biomass Burning|+|Burning of Crop Residues (Mt N2O/yr)"
+    n2o <- gfedEmissions[, , "AGRI.n2o"]
+    n2o <- toolAggregate(n2o, rel = countryToCell, from = "celliso", to = "iso")
+    getNames(n2o) <- "Emissions|N2O|Land|Biomass Burning|+|Burning of Crop Residues (Mt N2O/yr)"
 
-    NH3 <- GFED_emissions[, , "AGRI.nh3"]
-    NH3 <- toolAggregate(NH3, rel = CountryToCell, from = "celliso", to = "iso")
-    getNames(NH3) <- "Emissions|NH3|Land|Biomass Burning|+|Burning of Crop Residues (Mt NH3/yr)"
+    nh3 <- gfedEmissions[, , "AGRI.nh3"]
+    nh3 <- toolAggregate(nh3, rel = countryToCell, from = "celliso", to = "iso")
+    getNames(nh3) <- "Emissions|NH3|Land|Biomass Burning|+|Burning of Crop Residues (Mt NH3/yr)"
 
-    out <- mbind(CH4, NO2, N2O, NH3)
+    out <- mbind(ch4, no2, n2o, nh3)
 
     out <- add_dimension(out, dim = 3.1, add = "scenario", nm = "historical")
     out <- add_dimension(out, dim = 3.2, add = "model", nm = "GFED")
@@ -285,7 +268,6 @@ calcLandEmissions <- function(datasource = "CEDS") {
     out <- toolCountryFill(out, fill = 0)
 
   } else if (datasource == "PRIMAPhist") {
-
     # The PRIMAP-hist national historical emissions time series (1850-2014)
     primap <- readSource("PRIMAPhist", "hist")
     n2o <- primap[, , "n2o_n"][, , "CAT4"] / 28 * 44
@@ -305,14 +287,14 @@ calcLandEmissions <- function(datasource = "CEDS") {
     luluc <- mbind(n2o, ch4, co2)
     out <- mbind(ag, luluc)
 
-    names_x <- getNames(out)
-    names(names_x) <- NULL
-    getNames(out) <- paste0("historical.PRIMAPhist.", names_x)
+    namesX <- getNames(out)
+    names(namesX) <- NULL
+    getNames(out) <- paste0("historical.PRIMAPhist.", namesX)
     getSets(out) <- c("region", "year", "scenario", "model", "variable")
 
   } else {
-stop("datasource unknown")
-}
+    stop("datasource unknown")
+  }
 
   return(list(x = out,
               weight = NULL,

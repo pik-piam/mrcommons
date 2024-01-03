@@ -13,7 +13,8 @@ calcAtmosphericRedepositionShare(
 \arguments{
 \item{cellular}{cellular or country level}
 
-\item{maxshare}{the maximum amount of emissions deposited within the same cell or country. The remainder will be handled as global emission}
+\item{maxshare}{the maximum amount of emissions deposited within the same cell or country.
+The remainder will be handled as global emission}
 
 \item{scenario}{scenario}
 }
@@ -24,8 +25,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates share of volatilised nitrogen emissions that is redeposited on different land types.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("AtmosphericRedepositionShare")
 }
 

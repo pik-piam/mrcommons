@@ -10,11 +10,13 @@ readZhang2015()
 MAgPIE object
 }
 \description{
-Publication: Zhang, Xin, Eric A. Davidson, Denise L. Mauzerall, Timothy D. Searchinger, Patrice Dumas, and Ye Shen. 2015. "Managing Nitrogen for Sustainable Development". Nature 528 (7580): 51–59. https://doi.org/10.1038/nature15743.
+Publication: Zhang, Xin, Eric A. Davidson, Denise L. Mauzerall, Timothy D. Searchinger, Patrice Dumas, and Ye Shen.
+2015. "Managing Nitrogen for Sustainable Development". Nature 528 (7580): 51–59. https://doi.org/10.1038/nature15743.
 }
 \examples{
-
-\dontrun{ a <- readSource("Zhang2015",convert=FALSE) }
+\dontrun{
+a <- readSource("Zhang2015", convert = FALSE)
+}
 
 }
 \seealso{

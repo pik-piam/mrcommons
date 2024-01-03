@@ -7,7 +7,8 @@
 calcEmisNitrogenNonaglandPast(method = "Nsurplus")
 }
 \arguments{
-\item{method}{Method for calculating Atmospheric deposition: Nsurplus2 and Nsurplus are based on deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
+\item{method}{Method for calculating Atmospheric deposition: Nsurplus2 and Nsurplus
+are based on deposition rates based on own emission calculations after 2 or after 1 iteration, respectively.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.
@@ -16,8 +17,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates nitrogenous emissions from non-agricultural land for the historical period
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPasturePast")
 }
 

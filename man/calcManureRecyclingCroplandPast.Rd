@@ -4,22 +4,28 @@
 \alias{calcManureRecyclingCroplandPast}
 \title{calcManureRecyclingCroplandPast}
 \usage{
-calcManureRecyclingCroplandPast(products = "sum", cellular = FALSE)
+calcManureRecyclingCroplandPast(
+  products = "sum",
+  cellular = FALSE,
+  cells = "lpjcell"
+)
 }
 \arguments{
 \item{products}{"sum" (default) or "kli"}
 
 \item{cellular}{if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level}
+
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates manure recycling to cropland based on excretions, animal waste management types (and their shares per country) and emission factors for nitrogenous emissions in livestock confinements
+calculates manure recycling to cropland based on excretions, animal waste management types
+(and their shares per country) and emission factors for nitrogenous emissions in livestock confinements
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("calcManureRecyclingCroplandPast")
 }
 }

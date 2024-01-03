@@ -7,7 +7,8 @@
 calcResFor2ndBioengery(products = "all", product_aggr = TRUE, add_off = FALSE)
 }
 \arguments{
-\item{products}{categorie (set) that should be reported, switch between "kres", "res_crop" (sum over all "kres"), "res_wood" and "all"}
+\item{products}{categorie (set) that should be reported, switch between "kres",
+"res_crop" (sum over all "kres"), "res_wood" and "all"}
 
 \item{product_aggr}{boolean, if product set should be summed up}
 
@@ -21,10 +22,10 @@ Calculates the supply potential of Crop Residues for 2nd generation bioenergy
 for future and different ssp scenarios
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ResFor2ndBioengery")
 }
+
 }
 \seealso{
 \code{\link[=calcResFor2ndBioengery]{calcResFor2ndBioengery()}}

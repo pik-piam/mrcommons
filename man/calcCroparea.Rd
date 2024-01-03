@@ -8,7 +8,7 @@ calcCroparea(
   sectoral = "kcr",
   physical = TRUE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   irrigation = FALSE
 )
 }

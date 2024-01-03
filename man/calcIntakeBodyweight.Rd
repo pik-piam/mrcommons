@@ -17,11 +17,12 @@ calcIntakeBodyweight(
 
 \item{bodyheight}{for mehthod FAO_WHO_UNU1985}
 
-\item{inactivity}{the activity level and the bodyweight computed by the readHic2015 function}
+\item{inactivity}{Share of population inactive, provided as magpie object with different age groups}
 
 \item{tmean}{mean annual temperature}
 
-\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
+\item{method}{method for calculating intake: either FAO_WHO_UNU1985 for estimates based on
+height and bodyweight, schofield for just bodyweight, or HHS_USDA for recommended values for US-americans}
 }
 \description{
 it computes the food intake pro capita through the bodyweight

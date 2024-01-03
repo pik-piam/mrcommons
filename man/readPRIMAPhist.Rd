@@ -20,9 +20,8 @@ magpie object of the PRIMAP-hist data.
 Read in an PRIMAP-hist data csv file as magclass object.
 }
 \examples{
-
-\dontrun{ 
-a <- readPRIMAPhist("PRIMAPhist","hist")
+\dontrun{
+a <- readPRIMAPhist("PRIMAPhist", "hist")
 }
 }
 \seealso{

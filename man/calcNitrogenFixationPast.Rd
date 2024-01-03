@@ -14,7 +14,7 @@ calcNitrogenFixationPast(
 \arguments{
 \item{fixation_types}{either "fixation_crops", "fixation_freeliving", or "both"}
 
-\item{sum_plantparts}{if false, crop residues, belowground residues and harvested organ are reported seperately}
+\item{sum_plantparts}{if false, crop residues, belowground residues and harvested organ are reported separately}
 
 \item{cellular}{cellular estimates optional}
 
@@ -27,8 +27,7 @@ List of magpie objects with results on country level, weight on country level, u
 calculates fixation from freeliving bacteria and from nitrogen-fixing crops
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("calcNitrogenFixationPast")
 }
 }

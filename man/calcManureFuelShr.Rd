@@ -13,11 +13,11 @@ calcManureFuelShr(products = "magpie")
 List of magpie object with results on country level, weight on country level, unit and description.
 }
 \description{
-calculates the share of Manure excreted during grazing which is collected for fuel. For the future, we assume that with the development, the fuel share reaches 0.
+calculates the share of Manure excreted during grazing which is collected for fuel.
+For the future, we assume that with the development, the fuel share reaches 0.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ManureFuelShr")
 }
 

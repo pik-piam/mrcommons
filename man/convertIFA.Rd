@@ -16,8 +16,8 @@ MAgPIE object of the IFA data disaggregated to country level
 Convert IFADavies (2013) data to ISO country level.
 }
 \examples{
-
-\dontrun{ a <- convertIFA(x)
+\dontrun{
+a <- convertIFA(x)
 }
 
 }

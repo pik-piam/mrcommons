@@ -16,9 +16,8 @@ central feed shares and livestock productivity and using Koeppen-
 Geiger climate zones
 }
 \examples{
-\dontrun{ 
+\dontrun{
 calcOutput("FeedEfficiencyFuture")
-
 }
 }
 \author{

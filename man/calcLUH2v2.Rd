@@ -8,7 +8,7 @@ calcLUH2v2(
   landuse_types = "magpie",
   irrigation = FALSE,
   cellular = FALSE,
-  cells = "magpiecell",
+  cells = "lpjcell",
   selectyears = "past"
 )
 }
@@ -22,7 +22,8 @@ if false: total areas}
 
 \item{cellular}{if true: dataset is returned on 0.5 degree resolution}
 
-\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
+\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)
+NOTE: This setting also affects the sums on country level!}
 
 \item{selectyears}{years to be returned (default: "past")}
 }

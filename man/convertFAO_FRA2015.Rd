@@ -20,8 +20,9 @@ Convert FRA 2015 data
 Update dd-Jmm-jjjj - Please add comment if changes made here (Abhi)
 }
 \examples{
-
-\dontrun{ a <- readSource("FRA2015","production",convert=TRUE)}
+\dontrun{
+a <- readSource("FRA2015", "production", convert = TRUE)
+}
 }
 \seealso{
 \code{\link[=readSource]{readSource()}},

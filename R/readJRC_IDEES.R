@@ -1,6 +1,6 @@
 #' Read JRC IDEES
-#' 
-#' Read the [IDEES data base from JRC](https://data.jrc.ec.europa.eu/dataset/jrc-10110-10001/resource/f590b6f1-60e5-49a6-a972-60bc2b2e34b3)
+#'
+#' Read the [IDEES data base from JRC](https://data.jrc.ec.europa.eu/dataset/jrc-10110-10001/resource/f590b6f1-60e5-49a6-a972-60bc2b2e34b3) #nolint
 #'
 #' @md
 #' @param subtype one of
@@ -13,21 +13,23 @@
 #'   - `'Tertiary'`: read worksheets from the Tertiary (Services and Agriculture) files
 #'
 #' @return A [`magpie`][magclass::magclass] object.
-#' 
+#'
 #' @author Michaja Pehl, Falk Benke
-#' 
+#'
 #' @seealso [`readSource()`]
-#' 
+#'
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows bind_cols select mutate
 #' @importFrom readxl read_xlsx
-#' @importFrom tidyr drop_na pivot_longer extract
+#' @importFrom tidyr drop_na pivot_longer
 #' @importFrom rlang sym is_empty
 #' @importFrom magclass as.magpie
 
 #' @export
-readJRC_IDEES <- function(subtype) {
+readJRC_IDEES <- function(subtype) { #nolint
   # ---- subtype column information ----
+
+  # nolint start
   subtypes <- list(
     # Each subtype contains:
     #   - a pattern to match file names against
@@ -35,7 +37,7 @@ readJRC_IDEES <- function(subtype) {
     #     names
     #   - the row names in the format "variable (unit)", either globally for the
     #     subtype (Emission and Energy) or locally per worksheet (Industry)
-    # Use code folding in RStudio to collapse elements as needed to gain an 
+    # Use code folding in RStudio to collapse elements as needed to gain an
     # overview.
     Emission = { list(
       pattern = '^JRC-IDEES-2015_EmissionBalance_.*\\.xlsx$',
@@ -118,19 +120,19 @@ readJRC_IDEES <- function(subtype) {
             'Other liquid biofuels (kt of CO2)'
           )
         }
-      ) %>% 
-        extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+      ) %>%
+        tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
     )
     },
     Energy = { list(
       pattern = '^JRC-IDEES-2015_EnergyBalance_.*\\.xlsx$',
       sheets = list(
         'cagr'  = list(prefix = 'Energy|Agriculture+Forestry+Fishing|'),
-        'cenbf' = list(prefix = 'Energy|Consumption in Blast Furnaces|'), 
-        'cenck' = list(prefix = 'Energy|Consumption in Coke Ovens|'), 
-        'tibf'  = list(prefix = 'Energy|Transformation input - Blast Furnaces|'), 
-        'tick'  = list(prefix = 'Energy|Transformation input - Coke Ovens|'), 
-        'tobf'  = list(prefix = 'Energy|Transformation output - Blast Furnaces|'), 
+        'cenbf' = list(prefix = 'Energy|Consumption in Blast Furnaces|'),
+        'cenck' = list(prefix = 'Energy|Consumption in Coke Ovens|'),
+        'tibf'  = list(prefix = 'Energy|Transformation input - Blast Furnaces|'),
+        'tick'  = list(prefix = 'Energy|Transformation input - Coke Ovens|'),
+        'tobf'  = list(prefix = 'Energy|Transformation output - Blast Furnaces|'),
         'tock'  = list(prefix = 'Energy|Transformation output - Coke Ovens|')),
       rows = tibble(
         name = {
@@ -219,7 +221,7 @@ readJRC_IDEES <- function(subtype) {
           )
         }
       ) %>%
-        extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
     )
     },
     Industry = { list(
@@ -235,12 +237,12 @@ readJRC_IDEES <- function(subtype) {
                 'Value added|Chemicals and chemical products|Basic chemicals (M\u20ac2010)',
                 'Value added|Chemicals and chemical products|Other chemicals (M\u20ac2010)',
                 'Value added|Pharmaceutical products etc. (M\u20ac2010)',
-                
+
                 NA,
                 'Physical output|Basic chemicals (kt ethylene eq.)',
                 'Physical output|Other chemicals (kt ethylene eq.)',
                 'Physical output|Pharmaceutical products etc. (kt ethylene eq.)',
-                
+
                 NA,
                 'Installed capacity|Basic chemicals (kt ethylene eq. production)',
                 'Installed capacity|Other chemicals (kt ethylene eq. production)',
@@ -257,7 +259,7 @@ readJRC_IDEES <- function(subtype) {
                 'Idle capacity|Basic chemicals (kt ethylene eq. production)',
                 'Idle capacity|Other chemicals (kt ethylene eq. production)',
                 'Idle capacity|Pharmaceutical products etc. (kt ethylene eq. production)',
-                
+
                 NA,
                 'Energy consumption (ktoe)',
                 'Energy consumption|Solids (ktoe)',
@@ -282,7 +284,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy consumption|Basic chemicals (ktoe)',
                 'Energy consumption|Other chemicals (ktoe)',
                 'Energy consumption|Pharmaceutical products etc. (ktoe)',
-                
+
                 'Non-energy use in the Chemical industry (ktoe)',
                 NA,
                 'Non-energy use|Solids (ktoe)',
@@ -301,7 +303,7 @@ readJRC_IDEES <- function(subtype) {
                 'Non-energy use|Basic chemicals (ktoe)',
                 'Non-energy use|Other chemicals (ktoe)',
                 'Non-energy use|Pharmaceutical products etc. (ktoe)',
-                
+
                 'CO2 emissions (kt of CO2)',
                 'CO2 emissions|energy use related (kt of CO2)',
                 'CO2 emissions|process emissions (kt of CO2)',
@@ -309,7 +311,7 @@ readJRC_IDEES <- function(subtype) {
                 'CO2 emissions|Basic chemicals (kt of CO2)',
                 'CO2 emissions|Other chemicals (kt of CO2)',
                 'CO2 emissions|Pharmaceutical products etc. (kt of CO2)',
-                
+
                 NA,
                 'Value added intensity|Basic chemicals (VA in \u20ac2010/t of output)',
                 'Value added intensity|Other chemicals (VA in \u20ac2010/t of output)',
@@ -333,7 +335,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'CHI_emi' = { list(
           prefix = 'Chemicals Industry|CO2 Emissions|',
@@ -341,7 +343,7 @@ readJRC_IDEES <- function(subtype) {
             name = {
               c(
                 NA,
-                
+
                 'Basic chemicals (kt of CO2)',
                 'Basic chemicals|Lighting (kt of CO2)',
                 'Basic chemicals|Air compressors (kt of CO2)',
@@ -396,7 +398,7 @@ readJRC_IDEES <- function(subtype) {
                 'Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (kt of CO2)',
                 'Basic chemicals|Chemicals: Generic electric process (kt of CO2)',
                 'Basic chemicals|Process emissions (kt of CO2)',
-                
+
                 'Other chemicals (kt of CO2)',
                 'Other chemicals|Lighting (kt of CO2)',
                 'Other chemicals|Air compressors (kt of CO2)',
@@ -444,7 +446,7 @@ readJRC_IDEES <- function(subtype) {
                 'Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (kt of CO2)',
                 'Other chemicals|Chemicals: Generic electric process (kt of CO2)',
                 'Other chemicals|Chemicals: Process emissions (kt of CO2)',
-                
+
                 'Pharmaceutical products etc. (kt of CO2)',
                 'Pharmaceutical products etc.|Lighting (kt of CO2)',
                 'Pharmaceutical products etc.|Air compressors (kt of CO2)',
@@ -491,9 +493,9 @@ readJRC_IDEES <- function(subtype) {
                 'Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Steam|Steam distributed (kt of CO2)',
                 'Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Electric (kt of CO2)',
                 'Pharmaceutical products etc.|Chemicals: Generic electric process (kt of CO2)',
-                
+
                 NA,
-                
+
                 'Market shares of energy uses by subsector|Basic chemicals (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Lighting (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Air compressors (%)',
@@ -511,7 +513,7 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Chemicals: Generic electric process (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Process emissions (%)',
-                
+
                 'Market shares of energy uses by subsector|Other chemicals (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Lighting (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Air compressors (%)',
@@ -530,7 +532,7 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Chemicals: Generic electric process (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Process emissions (%)',
-                
+
                 'Market shares of energy uses by subsector|Pharmaceutical products etc. (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Lighting (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Air compressors (%)',
@@ -548,9 +550,9 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Steam (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Generic electric process (%)',
-                
+
                 NA,
-                
+
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions) (kt of CO2 per ktoe)',
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions)|Lighting (kt of CO2 per ktoe)',
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -562,7 +564,7 @@ readJRC_IDEES <- function(subtype) {
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions)|Chemicals: Furnaces (kt of CO2 per ktoe)',
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions)|Chemicals: Process cooling (kt of CO2 per ktoe)',
                 'Emission Intensity|Basic chemicals (over energy consumption, without process emissions)|Chemicals: Generic electric process (kt of CO2 per ktoe)',
-                
+
                 'Emission Intensity|Other chemicals (without process emissions) (kt of CO2 per ktoe)',
                 'Emission Intensity|Other chemicals (without process emissions)|Lighting (kt of CO2 per ktoe)',
                 'Emission Intensity|Other chemicals (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -573,7 +575,7 @@ readJRC_IDEES <- function(subtype) {
                 'Emission Intensity|Other chemicals (without process emissions)|Chemicals: Furnaces (kt of CO2 per ktoe)',
                 'Emission Intensity|Other chemicals (without process emissions)|Chemicals: Process cooling (kt of CO2 per ktoe)',
                 'Emission Intensity|Other chemicals (without process emissions)|Chemicals: Generic electric process (kt of CO2 per ktoe)',
-                
+
                 'Emission Intensity|Pharmaceutical products etc. (kt of CO2 per ktoe)',
                 'Emission Intensity|Pharmaceutical products etc.|Lighting (kt of CO2 per ktoe)',
                 'Emission Intensity|Pharmaceutical products etc.|Air compressors (kt of CO2 per ktoe)',
@@ -587,7 +589,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'CHI_fec' = { list(
           prefix = 'Chemicals Industry|Final Energy Consumption|',
@@ -595,7 +597,7 @@ readJRC_IDEES <- function(subtype) {
             name = {
               c(
                 NA,
-                
+
                 'Basic chemicals (ktoe)',
                 'Basic chemicals|Lighting (ktoe)',
                 'Basic chemicals|Air compressors (ktoe)',
@@ -649,8 +651,8 @@ readJRC_IDEES <- function(subtype) {
                 'Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Steam|Steam distributed (ktoe)',
                 'Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (ktoe)',
                 'Basic chemicals|Chemicals: Generic electric process (ktoe)',
-                
-                
+
+
                 'Other chemicals (ktoe)',
                 'Other chemicals|Lighting (ktoe)',
                 'Other chemicals|Air compressors (ktoe)',
@@ -697,8 +699,8 @@ readJRC_IDEES <- function(subtype) {
                 'Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Steam|Steam distributed (ktoe)',
                 'Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (ktoe)',
                 'Other chemicals|Chemicals: Generic electric process (ktoe)',
-                
-                
+
+
                 'Pharmaceutical products etc. (ktoe)',
                 'Pharmaceutical products etc.|Lighting (ktoe)',
                 'Pharmaceutical products etc.|Air compressors (ktoe)',
@@ -745,9 +747,9 @@ readJRC_IDEES <- function(subtype) {
                 'Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Steam|Steam distributed (ktoe)',
                 'Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Electric (ktoe)',
                 'Pharmaceutical products etc.|Chemicals: Generic electric process (ktoe)',
-                
+
                 NA,
-                
+
                 'Market shares of energy uses by subsector|Basic chemicals (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Lighting (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Air compressors (%)',
@@ -764,8 +766,8 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Steam (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Basic chemicals|Chemicals: Generic electric process (%)',
-                
-                
+
+
                 'Market shares of energy uses by subsector|Other chemicals (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Lighting (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Air compressors (%)',
@@ -783,8 +785,8 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Steam (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Other chemicals|Chemicals: Generic electric process (%)',
-                
-                
+
+
                 'Market shares of energy uses by subsector|Pharmaceutical products etc. (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Lighting (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Air compressors (%)',
@@ -802,9 +804,9 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Steam (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Process cooling|Chemicals: Process cooling - Electric (%)',
                 'Market shares of energy uses by subsector|Pharmaceutical products etc.|Chemicals: Generic electric process (%)',
-                
+
                 NA,
-                
+
                 'Energy intensity|Basic chemicals (kgoe per t of output)',
                 'Energy intensity|Basic chemicals|Lighting (kgoe per t of output)',
                 'Energy intensity|Basic chemicals|Air compressors (kgoe per t of output)',
@@ -816,7 +818,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy intensity|Basic chemicals|Chemicals: Furnaces (kgoe per t of output)',
                 'Energy intensity|Basic chemicals|Chemicals: Process cooling (kgoe per t of output)',
                 'Energy intensity|Basic chemicals|Chemicals: Generic electric process (kgoe per t of output)',
-                
+
                 'Energy intensity|Other chemicals (kgoe per t of output)',
                 'Energy intensity|Other chemicals|Lighting (kgoe per t of output)',
                 'Energy intensity|Other chemicals|Air compressors (kgoe per t of output)',
@@ -827,7 +829,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy intensity|Other chemicals|Chemicals: Furnaces (kgoe per t of output)',
                 'Energy intensity|Other chemicals|Chemicals: Process cooling (kgoe per t of output)',
                 'Energy intensity|Other chemicals|Chemicals: Generic electric process (kgoe per t of output)',
-                
+
                 'Energy intensity|Pharmaceutical products etc. (kgoe per t of output)',
                 'Energy intensity|Pharmaceutical products etc.|Lighting (kgoe per t of output)',
                 'Energy intensity|Pharmaceutical products etc.|Air compressors (kgoe per t of output)',
@@ -841,7 +843,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'Ind_Summary' = { list(
           prefix = 'Industry Summary|',
@@ -872,7 +874,7 @@ readJRC_IDEES <- function(subtype) {
                 'Value added|Textiles and leather (M\u20ac2010)',
                 'Value added|Wood and wood products (M\u20ac2010)',
                 'Value added|Other Industrial Sectors (M\u20ac2010)',
-                
+
                 NA,
                 'Energy consumption|by fuel (EUROSTAT DATA) (ktoe)',
                 'Energy consumption|by fuel (EUROSTAT DATA)|Solids (ktoe)',
@@ -923,7 +925,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy consumption|by sector|Textiles and leather (ktoe)',
                 'Energy consumption|by sector|Wood and wood products (ktoe)',
                 'Energy consumption|by sector|Other Industrial Sectors (ktoe)',
-                
+
                 NA,
                 'Non-energy use|by fuel (EUROSTAT DATA) (ktoe)',
                 'Non-energy use|by fuel (EUROSTAT DATA)|Solids (ktoe)',
@@ -941,7 +943,7 @@ readJRC_IDEES <- function(subtype) {
                 'Non-energy use|by sector (ktoe)',
                 'Non-energy use|by sector|Basic chemicals (ktoe)',
                 'Non-energy use|by sector|Other industrial sectors (ktoe)',
-                
+
                 'CO2 emissions (kt of CO2)',
                 'CO2 emissions|Iron and steel (kt of CO2)',
                 'CO2 emissions|Iron and steel|Integrated steelworks (kt of CO2)',
@@ -971,7 +973,7 @@ readJRC_IDEES <- function(subtype) {
                 'CO2 emissions|Wood and wood products (kt of CO2)',
                 'CO2 emissions|Other Industrial Sectors (kt of CO2)',
                 'CO2 emissions|Solvent use and other process emissions (kt of CO2)',
-                
+
                 'Value added intensity (toe / M\u20ac2010)',
                 'Value added intensity|Iron and steel(toe / M\u20ac2010)',
                 'Value added intensity|Non Ferrous Metals(toe / M\u20ac2010)',
@@ -996,7 +998,7 @@ readJRC_IDEES <- function(subtype) {
                 'Value added intensity|Textiles and leather(toe / M\u20ac2010)',
                 'Value added intensity|Wood and wood products(toe / M\u20ac2010)',
                 'Value added intensity|Other Industrial Sectors(toe / M\u20ac2010)',
-                
+
                 'Emission intensity (kt of CO2 / ktoe)',
                 'Emission intensity|Iron and steel (kt of CO2 / ktoe)',
                 'Emission intensity|Iron and steel|Integrated steelworks (kt of CO2 / ktoe)',
@@ -1028,7 +1030,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'Ind_Summary_emi' = { list(
           prefix = 'Industry Summary|CO2 Emissions|',
@@ -1036,7 +1038,7 @@ readJRC_IDEES <- function(subtype) {
             name = {
               c(
                 NA,
-                
+
                 'All Industrial Sectors (kt of CO2)',
                 'All Industrial Sectors|Lighting (kt of CO2)',
                 'All Industrial Sectors|Air compressors (kt of CO2)',
@@ -1075,9 +1077,9 @@ readJRC_IDEES <- function(subtype) {
                 'All Industrial Sectors|Process emissions|Chemical and Petrochemical (kt of CO2)',
                 'All Industrial Sectors|Process emissions|Non-Metallic Minerals (kt of CO2)',
                 'All Industrial Sectors|Process emissions|Solvent use and other process (kt of CO2)',
-                
+
                 NA,
-                
+
                 'Market shares of CO2 emissions|All Industrial Sectors (%)',
                 'Market shares of CO2 emissions|All Industrial Sectors|Lighting (%)',
                 'Market shares of CO2 emissions|All Industrial Sectors|Air compressors (%)',
@@ -1089,7 +1091,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI' = { list(
           prefix = 'Iron and Steel|',
@@ -1099,11 +1101,11 @@ readJRC_IDEES <- function(subtype) {
                 'Value added (M\u20ac2010)',
                 'Value added|Integrated steelworks (M\u20ac2010)',
                 'Value added|Electric arc (M\u20ac2010)',
-                
+
                 'Physical output (kt steel)',
                 'Physical output|Integrated steelworks (kt steel)',
                 'Physical output|Electric arc (kt steel)',
-                
+
                 'Installed capacity (kt steel production)',
                 'Installed capacity|Integrated steelworks (kt steel production)',
                 'Installed capacity|Electric arc (kt steel production)',
@@ -1116,7 +1118,7 @@ readJRC_IDEES <- function(subtype) {
                 'Idle capacity (kt steel production)',
                 'Idle capacity|Integrated steelworks (kt steel production)',
                 'Idle capacity|Electric arc (kt steel production)',
-                
+
                 NA,
                 'Energy consumption|by fuel (EUROSTAT DATA) (ktoe)',
                 'Energy consumption|by fuel (EUROSTAT DATA)|Solids (ktoe)',
@@ -1142,14 +1144,14 @@ readJRC_IDEES <- function(subtype) {
                 'Energy consumption|by subsector (calibration output) (ktoe)',
                 'Energy consumption|by subsector (calibration output)|Integrated steelworks (ktoe)',
                 'Energy consumption|by subsector (calibration output)|Electric arc (ktoe)',
-                
+
                 'CO2 emissions (kt of CO2)',
                 'CO2 emissions|energy use related (kt of CO2) (kt of CO2)',
                 'CO2 emissions|process emissions (kt of CO2)',
                 'CO2 emissions|by subsector (calibration output) (kt of CO2)',
                 'CO2 emissions|by subsector (calibration output)|Integrated steelworks (kt of CO2)',
                 'CO2 emissions|by subsector (calibration output)|Electric arc (kt of CO2)',
-                
+
                 'Value added intensity (VA in \u20ac2010/t of output)',
                 'Energy intensity (toe/t of output)',
                 'Energy intensity|Integrated steelworks (toe/t of output)',
@@ -1163,7 +1165,7 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI_emi' = { list(
           prefix = 'Iron and Steel|CO2 Emissions|',
@@ -1171,7 +1173,7 @@ readJRC_IDEES <- function(subtype) {
             name = {
               c(
                 NA,
-                
+
                 'Integrated steelworks (kt of CO2)',
                 'Integrated steelworks|Lighting (kt of CO2)',
                 'Integrated steelworks|Air compressors (kt of CO2)',
@@ -1219,7 +1221,7 @@ readJRC_IDEES <- function(subtype) {
                 'Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Steam|Steam distributed (kt of CO2)',
                 'Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Electric (kt of CO2)',
                 'Integrated steelworks|Process emissions (kt of CO2)',
-                
+
                 'Electric arc (kt of CO2)',
                 'Electric arc|Lighting (kt of CO2)',
                 'Electric arc|Air compressors (kt of CO2)',
@@ -1262,9 +1264,9 @@ readJRC_IDEES <- function(subtype) {
                 'Electric arc|Steel: Products finishing|Steel: Products finishing - Steam|Steam distributed (kt of CO2)',
                 'Electric arc|Steel: Products finishing|Steel: Products finishing - Electric (kt of CO2)',
                 'Electric arc|Process emissions (kt of CO2)',
-                
+
                 NA,
-                
+
                 'Market shares of energy uses by subsector|Integrated steelworks (%)',
                 'Market shares of energy uses by subsector|Integrated steelworks|Lighting (%)',
                 'Market shares of energy uses by subsector|Integrated steelworks|Air compressors (%)',
@@ -1281,7 +1283,7 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Steam (%)',
                 'Market shares of energy uses by subsector|Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Electric (%)',
                 'Market shares of energy uses by subsector|Integrated steelworks|Process emissions (%)',
-                
+
                 'Market shares of energy uses by subsector|Electric arc (%)',
                 'Market shares of energy uses by subsector|Electric arc|Lighting (%)',
                 'Market shares of energy uses by subsector|Electric arc|Air compressors (%)',
@@ -1298,9 +1300,9 @@ readJRC_IDEES <- function(subtype) {
                 'Market shares of energy uses by subsector|Electric arc|Steel: Products finishing|Steel: Products finishing - Steam (%)',
                 'Market shares of energy uses by subsector|Electric arc|Steel: Products finishing|Steel: Products finishing - Electric (%)',
                 'Market shares of energy uses by subsector|Electric arc|Process emissions (%)',
-                
+
                 NA,
-                
+
                 'Emission intensity|Integrated steelworks (without process emissions)(kt of CO2 per ktoe)',
                 'Emission intensity|Integrated steelworks (without process emissions)|Lighting (kt of CO2 per ktoe)',
                 'Emission intensity|Integrated steelworks (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -1311,7 +1313,7 @@ readJRC_IDEES <- function(subtype) {
                 'Emission intensity|Integrated steelworks (without process emissions)|Steel: Blast /Basic oxygen furnace (kt of CO2 per ktoe)',
                 'Emission intensity|Integrated steelworks (without process emissions)|Steel: Furnaces, Refining and Rolling (kt of CO2 per ktoe)',
                 'Emission intensity|Integrated steelworks (without process emissions)|Steel: Products finishing (kt of CO2 per ktoe)',
-                
+
                 'Emission intensity|Electric arc (without process emissions) (kt of CO2 per ktoe)',
                 'Emission intensity|Electric arc (without process emissions)|Lighting (kt of CO2 per ktoe)',
                 'Emission intensity|Electric arc (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -1325,14 +1327,14 @@ readJRC_IDEES <- function(subtype) {
               )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'ISI_fec' = { list(
           prefix = 'Iron and Steel|Final Energy Consumption|',
           rows = tibble(
             name = { c(
               NA,
-              
+
               'Integrated steelworks (ktoe)',
               'Integrated steelworks|Lighting (ktoe)',
               'Integrated steelworks|Air compressors (ktoe)',
@@ -1379,8 +1381,8 @@ readJRC_IDEES <- function(subtype) {
               'Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Steam|Biomass (ktoe)',
               'Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Steam|Steam distributed (ktoe)',
               'Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Electric (ktoe)',
-              
-              
+
+
               'Electric arc (ktoe)',
               'Electric arc|Lighting (ktoe)',
               'Electric arc|Air compressors (ktoe)',
@@ -1422,10 +1424,10 @@ readJRC_IDEES <- function(subtype) {
               'Electric arc|Steel: Products finishing|Steel: Products finishing - Steam|Biomass (ktoe)',
               'Electric arc|Steel: Products finishing|Steel: Products finishing - Steam|Steam distributed (ktoe)',
               'Electric arc|Steel: Products finishing|Steel: Products finishing - Electric (ktoe)',
-              
-              
+
+
               NA,
-              
+
               'Market shares of energy uses by subsector|Integrated steelworks (%)',
               'Market shares of energy uses by subsector|Integrated steelworks|Lighting (%)',
               'Market shares of energy uses by subsector|Integrated steelworks|Air compressors (%)',
@@ -1441,8 +1443,8 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of energy uses by subsector|Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Thermal (%)',
               'Market shares of energy uses by subsector|Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Steam (%)',
               'Market shares of energy uses by subsector|Integrated steelworks|Steel: Products finishing|Steel: Products finishing - Electric (%)',
-              
-              
+
+
               'Market shares of energy uses by subsector|Electric arc (%)',
               'Market shares of energy uses by subsector|Electric arc|Lighting (%)',
               'Market shares of energy uses by subsector|Electric arc|Air compressors (%)',
@@ -1458,10 +1460,10 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of energy uses by subsector|Electric arc|Steel: Products finishing|Steel: Products finishing - Thermal (%)',
               'Market shares of energy uses by subsector|Electric arc|Steel: Products finishing|Steel: Products finishing - Steam (%)',
               'Market shares of energy uses by subsector|Electric arc|Steel: Products finishing|Steel: Products finishing - Electric (%)',
-              
-              
+
+
               NA,
-              
+
               'Energy intensity|Integrated steelworks (kgoe per t of output)',
               'Energy intensity|Integrated steelworks|Lighting (kgoe per t of output)',
               'Energy intensity|Integrated steelworks|Air compressors (kgoe per t of output)',
@@ -1472,7 +1474,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy intensity|Integrated steelworks|Steel: Blast /Basic oxygen furnace (kgoe per t of output)',
               'Energy intensity|Integrated steelworks|Steel: Furnaces, Refining and Rolling (kgoe per t of output)',
               'Energy intensity|Integrated steelworks|Steel: Products finishing (kgoe per t of output)',
-              
+
               'Energy intensity|Electric arc (kgoe per t of output)',
               'Energy intensity|Electric arc|Lighting (kgoe per t of output)',
               'Energy intensity|Electric arc|Air compressors (kgoe per t of output)',
@@ -1486,14 +1488,14 @@ readJRC_IDEES <- function(subtype) {
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NFM_emi' = { list(
           prefix = 'Non Ferrous Metals|CO2 Emissions|',
           rows = tibble(
             name = { c(
               NA,
-              
+
               'Alumina production (kt of CO2)',
               'Alumina production|Lighting (kt of CO2)',
               'Alumina production|Air compressors (kt of CO2)',
@@ -1521,7 +1523,7 @@ readJRC_IDEES <- function(subtype) {
               'Alumina production|Alumina production: Refining|Residual fuel oil (kt of CO2)',
               'Alumina production|Alumina production: Refining|Natural gas (incl. biogas) (kt of CO2)',
               'Alumina production|Alumina production: Refining|Electricity (kt of CO2)',
-              
+
               'Aluminium - primary production (kt of CO2)',
               'Aluminium - primary production|Lighting (kt of CO2)',
               'Aluminium - primary production|Air compressors (kt of CO2)',
@@ -1558,7 +1560,7 @@ readJRC_IDEES <- function(subtype) {
               'Aluminium - primary production|Aluminium finishing|Aluminium finishing - Steam|Steam distributed (kt of CO2)',
               'Aluminium - primary production|Aluminium finishing|Aluminium finishing - Electric (kt of CO2)',
               'Aluminium - primary production|Process emissions (kt of CO2)',
-              
+
               'Aluminium - secondary production (kt of CO2)',
               'Aluminium - secondary production|Lighting (kt of CO2)',
               'Aluminium - secondary production|Air compressors (kt of CO2)',
@@ -1600,7 +1602,7 @@ readJRC_IDEES <- function(subtype) {
               'Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Steam|Biomass (kt of CO2)',
               'Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Steam|Steam distributed (kt of CO2)',
               'Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Electric (kt of CO2)',
-              
+
               'Other non-ferrous metals (kt of CO2)',
               'Other non-ferrous metals|Lighting (kt of CO2)',
               'Other non-ferrous metals|Air compressors (kt of CO2)',
@@ -1644,9 +1646,9 @@ readJRC_IDEES <- function(subtype) {
               'Other non-ferrous metals|Metal finishing|Metal finishing - Steam|Steam distributed (kt of CO2)',
               'Other non-ferrous metals|Metal finishing|Metal finishing - Electric (kt of CO2)',
               'Other non-ferrous metals|Process emissions (kt of CO2)',
-              
+
               NA,
-              
+
               'Market shares of CO2 emissions by subsector|Alumina production (%)',
               'Market shares of CO2 emissions by subsector|Alumina production|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Alumina production|Air compressors (%)',
@@ -1655,7 +1657,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Alumina production|Low enthalpy heat (%)',
               'Market shares of CO2 emissions by subsector|Alumina production|Alumina production: High enthalpy heat (%)',
               'Market shares of CO2 emissions by subsector|Alumina production|Alumina production: Refining (%)',
-              
+
               'Market shares of CO2 emissions by subsector|Aluminium - primary production (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - primary production|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - primary production|Air compressors (%)',
@@ -1671,7 +1673,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Aluminium - primary production|Aluminium finishing|Aluminium finishing - Steam (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - primary production|Aluminium finishing|Aluminium finishing - Electric (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - primary production|Process emissions (%)',
-              
+
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production|Air compressors (%)',
@@ -1688,7 +1690,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Thermal (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Steam (%)',
               'Market shares of CO2 emissions by subsector|Aluminium - secondary production|Aluminium finishing|Aluminium finishing - Electric (%)',
-              
+
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals (%)',
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals|Air compressors (%)',
@@ -1706,9 +1708,9 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals|Metal finishing|Metal finishing - Steam (%)',
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals|Metal finishing|Metal finishing - Electric (%)',
               'Market shares of CO2 emissions by subsector|Other non-ferrous metals|Process emissions (%)',
-              
+
               NA,
-              
+
               'Emission intensity|Alumina production (kt of CO2 per ktoe)',
               'Emission intensity|Alumina production|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Alumina production|Air compressors (kt of CO2 per ktoe)',
@@ -1717,7 +1719,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Alumina production|Low enthalpy heat (kt of CO2 per ktoe)',
               'Emission intensity|Alumina production|Alumina production: High enthalpy heat (kt of CO2 per ktoe)',
               'Emission intensity|Alumina production|Alumina production: Refining (kt of CO2 per ktoe)',
-              
+
               'Emission intensity|Aluminium - primary production (without process emissions) (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - primary production (without process emissions)|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - primary production (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -1727,7 +1729,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Aluminium - primary production (without process emissions)|Aluminium electrolysis (smelting) (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - primary production (without process emissions)|Aluminium processing (metallurgy e.g. cast house, reheating) (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - primary production (without process emissions)|Aluminium finishing (kt of CO2 per ktoe)',
-              
+
               'Emission intensity|Aluminium - secondary production (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - secondary production|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - secondary production|Air compressors (kt of CO2 per ktoe)',
@@ -1737,7 +1739,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Aluminium - secondary production|Secondary aluminium (incl. pre-treatment, remelting) (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - secondary production|Aluminium processing (metallurgy e.g. cast house, reheating) (kt of CO2 per ktoe)',
               'Emission intensity|Aluminium - secondary production|Aluminium finishing (kt of CO2 per ktoe)',
-              
+
               'Emission intensity|Other non-ferrous metals (without process emissions) (kt of CO2 per ktoe)',
               'Emission intensity|Other non-ferrous metals (without process emissions)|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Other non-ferrous metals (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -1750,7 +1752,7 @@ readJRC_IDEES <- function(subtype) {
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM' = { list(
           prefix = 'Non-metallic mineral products|',
@@ -1760,12 +1762,12 @@ readJRC_IDEES <- function(subtype) {
               'Value added|Cement (M\u20ac2010)',
               'Value added|Ceramics & other NMM (M\u20ac2010)',
               'Value added|Glass production (M\u20ac2010)',
-              
+
               NA,
               'Physical output|Cement (kt)',
               'Physical output|Ceramics & other NMM (kt bricks eq.)',
               'Physical output|Glass production (kt)',
-              
+
               NA,
               'Installed capacity|Cement (kt)',
               'Installed capacity|Ceramics & other NMM (kt bricks eq.)',
@@ -1782,7 +1784,7 @@ readJRC_IDEES <- function(subtype) {
               'Idle capacity|Cement (kt)',
               'Idle capacity|Ceramics & other NMM (kt bricks eq.)',
               'Idle capacity|Glass production (kt)',
-              
+
               NA,
               'Energy consumption|by fuel (EUROSTAT DATA) (ktoe)',
               'Energy consumption|by fuel (EUROSTAT DATA)|Solids (ktoe)',
@@ -1807,7 +1809,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption|by subsector (calibration output)|Cement (ktoe)',
               'Energy consumption|by subsector (calibration output)|Ceramics & other NMM (ktoe)',
               'Energy consumption|by subsector (calibration output)|Glass production (ktoe)',
-              
+
               'CO2 emissions (kt of CO2)',
               'CO2 emissions|energy use related (kt of CO2)',
               'CO2 emissions|process emissions (kt of CO2)',
@@ -1815,7 +1817,7 @@ readJRC_IDEES <- function(subtype) {
               'CO2 emissions|by subsector|Cement (kt of CO2)',
               'CO2 emissions|by subsector|Ceramics & other NMM (kt of CO2)',
               'CO2 emissions|by subsector|Glass production (kt of CO2)',
-              
+
               NA,
               'Value added intensity|Cement (VA in \u20ac2010/t of output)',
               'Value added intensity|Ceramics & other NMM (VA in \u20ac2010/t of output)',
@@ -1835,14 +1837,14 @@ readJRC_IDEES <- function(subtype) {
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM_emi' = {list(
           prefix = 'Non-metallic mineral products|CO2 Emissions|',
           rows = tibble(
             name = { c(
               NA,
-              
+
               'Cement (kt of CO2)',
               'Cement|Lighting (kt of CO2)',
               'Cement|Air compressors (kt of CO2)',
@@ -1884,7 +1886,7 @@ readJRC_IDEES <- function(subtype) {
               'Cement|Cement: Clinker production (kilns)|Biomass (kt of CO2)',
               'Cement|Cement: Grinding, packaging (kt of CO2)',
               'Cement|Process emissions (kt of CO2)',
-              
+
               'Ceramics & other NMM (kt of CO2)',
               'Ceramics & other NMM|Lighting (kt of CO2)',
               'Ceramics & other NMM|Air compressors (kt of CO2)',
@@ -1934,7 +1936,7 @@ readJRC_IDEES <- function(subtype) {
               'Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Thermal furnace|Natural gas (incl. biogas) (kt of CO2)',
               'Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Electric furnace (kt of CO2)',
               'Ceramics & other NMM|Process emissions (kt of CO2)',
-              
+
               'Glass production (kt of CO2)',
               'Glass production|Lighting (kt of CO2)',
               'Glass production|Air compressors (kt of CO2)',
@@ -1964,9 +1966,9 @@ readJRC_IDEES <- function(subtype) {
               'Glass production|Glass: Annealing|Glass: Annealing - electric (kt of CO2)',
               'Glass production|Glass: Finishing processes (kt of CO2)',
               'Glass production|Process emissions (kt of CO2)',
-              
+
               NA,
-              
+
               'Market shares of CO2 emissions by subsector|Cement (%)',
               'Market shares of CO2 emissions by subsector|Cement|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Cement|Air compressors (%)',
@@ -1980,7 +1982,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Cement|Cement: Clinker production (kilns) (%)',
               'Market shares of CO2 emissions by subsector|Cement|Cement: Grinding, packaging (%)',
               'Market shares of CO2 emissions by subsector|Cement|Process emissions (%)',
-              
+
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Air compressors (%)',
@@ -1999,7 +2001,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Thermal furnace (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Electric furnace (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Process emissions (%)',
-              
+
               'Market shares of CO2 emissions by subsector|Glass production (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Air compressors (%)',
@@ -2015,9 +2017,9 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Glass production|Glass: Annealing|Glass: Annealing - electric (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Glass: Finishing processes (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Process emissions (%)',
-              
+
               NA,
-              
+
               'Emission intensity|Cement (without process emissions) (kt of CO2 per ktoe)',
               'Emission intensity|Cement (without process emissions)|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Cement (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -2028,7 +2030,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Cement (without process emissions)|Cement: Pre-heating and pre-calcination (kt of CO2 per ktoe)',
               'Emission intensity|Cement (without process emissions)|Cement: Clinker production (kilns) (kt of CO2 per ktoe)',
               'Emission intensity|Cement (without process emissions)|Cement: Grinding, packaging (kt of CO2 per ktoe)',
-              
+
               'Emission intensity|Ceramics & other NMM (without process emissions) (kt of CO2 per ktoe)',
               'Emission intensity|Ceramics & other NMM (without process emissions)|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Ceramics & other NMM (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -2039,7 +2041,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Ceramics & other NMM (without process emissions)|Ceramics: Drying and sintering of raw material (kt of CO2 per ktoe)',
               'Emission intensity|Ceramics & other NMM (without process emissions)|Ceramics: Primary production process (kt of CO2 per ktoe)',
               'Emission intensity|Ceramics & other NMM (without process emissions)|Ceramics: Product finishing (kt of CO2 per ktoe)',
-              
+
               'Emission intensity|Glass production (without process emissions) (kt of CO2 per ktoe)',
               'Emission intensity|Glass production (without process emissions)|Lighting (kt of CO2 per ktoe)',
               'Emission intensity|Glass production (without process emissions)|Air compressors (kt of CO2 per ktoe)',
@@ -2053,14 +2055,14 @@ readJRC_IDEES <- function(subtype) {
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'NMM_fec' = { list(
           prefix = 'Non-metallic mineral products|Final Energy Consumption|',
           rows = tibble(
             name = { c(
               NA,
-              
+
               'Cement (ktoe)',
               'Cement|Lighting (ktoe)',
               'Cement|Air compressors (ktoe)',
@@ -2101,8 +2103,8 @@ readJRC_IDEES <- function(subtype) {
               'Cement|Cement: Clinker production (kilns)|Natural gas (incl. biogas) (ktoe)',
               'Cement|Cement: Clinker production (kilns)|Biomass (ktoe)',
               'Cement|Cement: Grinding, packaging (ktoe)',
-              
-              
+
+
               'Ceramics & other NMM (ktoe)',
               'Ceramics & other NMM|Lighting (ktoe)',
               'Ceramics & other NMM|Air compressors (ktoe)',
@@ -2151,8 +2153,8 @@ readJRC_IDEES <- function(subtype) {
               'Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Thermal furnace|Residual fuel oil (ktoe)',
               'Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Thermal furnace|Natural gas (incl. biogas) (ktoe)',
               'Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Electric furnace (ktoe)',
-              
-              
+
+
               'Glass production (ktoe)',
               'Glass production|Lighting (ktoe)',
               'Glass production|Air compressors (ktoe)',
@@ -2181,10 +2183,10 @@ readJRC_IDEES <- function(subtype) {
               'Glass production|Glass: Annealing|Glass: Annealing - thermal|Natural gas (incl. biogas) (ktoe)',
               'Glass production|Glass: Annealing|Glass: Annealing - electric (ktoe)',
               'Glass production|Glass: Finishing processes (ktoe)',
-              
-              
+
+
               NA,
-              
+
               'Market shares of CO2 emissions by subsector|Cement (%)',
               'Market shares of CO2 emissions by subsector|Cement|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Cement|Air compressors (%)',
@@ -2197,8 +2199,8 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Cement|Cement: Pre-heating and pre-calcination|Cement: pre-processing - Steam (%)',
               'Market shares of CO2 emissions by subsector|Cement|Cement: Clinker production (kilns) (%)',
               'Market shares of CO2 emissions by subsector|Cement|Cement: Grinding, packaging (%)',
-              
-              
+
+
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Air compressors (%)',
@@ -2216,8 +2218,8 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Ceramics: Product finishing (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Thermal furnace (%)',
               'Market shares of CO2 emissions by subsector|Ceramics & other NMM|Ceramics: Product finishing|Ceramics: Electric furnace (%)',
-              
-              
+
+
               'Market shares of CO2 emissions by subsector|Glass production (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Lighting (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Air compressors (%)',
@@ -2232,10 +2234,10 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of CO2 emissions by subsector|Glass production|Glass: Annealing|Glass: Annealing - thermal (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Glass: Annealing|Glass: Annealing - electric (%)',
               'Market shares of CO2 emissions by subsector|Glass production|Glass: Finishing processes (%)',
-              
-              
+
+
               NA,
-              
+
               'Energy intensity|Cement (kgoe per t of output)',
               'Energy intensity|Cement|Lighting (kgoe per t of output)',
               'Energy intensity|Cement|Air compressors (kgoe per t of output)',
@@ -2246,7 +2248,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy intensity|Cement|Cement: Pre-heating and pre-calcination (kgoe per t of output)',
               'Energy intensity|Cement|Cement: Clinker production (kilns) (kgoe per t of output)',
               'Energy intensity|Cement|Cement: Grinding, packaging (kgoe per t of output)',
-              
+
               'Energy intensity|Ceramics & other NMM (kgoe per t of output)',
               'Energy intensity|Ceramics & other NMM|Lighting (kgoe per t of output)',
               'Energy intensity|Ceramics & other NMM|Air compressors (kgoe per t of output)',
@@ -2257,7 +2259,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy intensity|Ceramics & other NMM|Ceramics: Drying and sintering of raw material (kgoe per t of output)',
               'Energy intensity|Ceramics & other NMM|Ceramics: Primary production process (kgoe per t of output)',
               'Energy intensity|Ceramics & other NMM|Ceramics: Product finishing (kgoe per t of output)',
-              
+
               'Energy intensity|Glass production (kgoe per t of output)',
               'Energy intensity|Glass production|Lighting (kgoe per t of output)',
               'Energy intensity|Glass production|Air compressors (kgoe per t of output)',
@@ -2271,7 +2273,7 @@ readJRC_IDEES <- function(subtype) {
             )
             }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
@@ -2307,7 +2309,7 @@ readJRC_IDEES <- function(subtype) {
               'Transport activity|Freight transport|Coastal shipping and inland waterways (mio tkm)',
               'Transport activity|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (mio tkm)',
               'Transport activity|Freight transport|Coastal shipping and inland waterways|Inland waterways (mio tkm)',
-              
+
               'Energy consumption (ktoe)',
               'Energy consumption|Passenger transport (ktoe)',
               'Energy consumption|Passenger transport|Road transport (ktoe)',
@@ -2333,7 +2335,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption|Freight transport|Coastal shipping and inland waterways (ktoe)',
               'Energy consumption|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (ktoe)',
               'Energy consumption|Freight transport|Coastal shipping and inland waterways|Inland waterways (ktoe)',
-              
+
               'CO2 emissions (kt of CO2)',
               'CO2 emissions|Passenger transport (kt of CO2)',
               'CO2 emissions|Passenger transport|Road transport (kt of CO2)',
@@ -2359,9 +2361,9 @@ readJRC_IDEES <- function(subtype) {
               'CO2 emissions|Freight transport|Coastal shipping and inland waterways (kt of CO2)',
               'CO2 emissions|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (kt of CO2)',
               'CO2 emissions|Freight transport|Coastal shipping and inland waterways|Inland waterways (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               NA,
               'Market shares|Passenger transport|Road transport (% of pkm)',
@@ -2387,7 +2389,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares|Freight transport|Coastal shipping and inland waterways (% of tkm)',
               'Market shares|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (% of tkm)',
               'Market shares|Freight transport|Coastal shipping and inland waterways|Inland waterways (% of tkm)',
-              
+
               NA,
               'Shares of total energy consumption|Passenger transport (%)',
               'Shares of total energy consumption|Passenger transport|Road transport (%)',
@@ -2413,7 +2415,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of total energy consumption|Freight transport|Coastal shipping and inland waterways (%)',
               'Shares of total energy consumption|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (%)',
               'Shares of total energy consumption|Freight transport|Coastal shipping and inland waterways|Inland waterways (%)',
-              
+
               NA,
               'Shares of CO2 emissions|Passenger transport (%)',
               'Shares of CO2 emissions|Passenger transport|Road transport (%)',
@@ -2439,7 +2441,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of CO2 emissions|Freight transport|Coastal shipping and inland waterways (%)',
               'Shares of CO2 emissions|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (%)',
               'Shares of CO2 emissions|Freight transport|Coastal shipping and inland waterways|Inland waterways (%)',
-              
+
               NA,
               'Energy consumption per activity|Passenger transport (kgoe / 000 pkm)',
               'Energy consumption per activity|Passenger transport|Road transport (kgoe / 000 pkm)',
@@ -2465,7 +2467,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption per activity|Freight transport|Coastal shipping and inland waterways (kgoe / 000 tkm)',
               'Energy consumption per activity|Freight transport|Coastal shipping and inland waterways|Domestic coastal shipping (kgoe / 000 tkm)',
               'Energy consumption per activity|Freight transport|Coastal shipping and inland waterways|Inland waterways (kgoe / 000 tkm)',
-              
+
               NA,
               'Emission intensity|Passenger transport (kg of CO2 / 000 pkm)',
               'Emission intensity|Passenger transport|Road transport (kg of CO2 / 000 pkm)',
@@ -2493,7 +2495,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Freight transport|Coastal shipping and inland waterways|Inland waterways (kg of CO2 / 000 tkm)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRail_emi' = { list(
           prefix = 'Transport|Rail|CO2 Emissions|',
@@ -2503,7 +2505,7 @@ readJRC_IDEES <- function(subtype) {
               'by fuel (kt of CO2)',
               'by fuel|Diesel (kt of CO2)',
               'by fuel|Electricity (kt of CO2)',
-              
+
               'Split of CO2 emissions (kt of CO2)',
               'Split of CO2 emissions|Passenger transport (kt of CO2)',
               'Split of CO2 emissions|Passenger transport|Metro and tram, urban light rail (kt of CO2)',
@@ -2514,14 +2516,14 @@ readJRC_IDEES <- function(subtype) {
               'Split of CO2 emissions|Freight transport (kt of CO2)',
               'Split of CO2 emissions|Freight transport|Diesel oil (kt of CO2)',
               'Split of CO2 emissions|Freight transport|Electric (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               'Emission factors|by fuel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Diesel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Electricity (kt CO2 / ktoe)',
-              
+
               'Emission intensity (kg of CO2 / 100 km)',
               'Emission intensity|Passenger transport (kg of CO2 / 100 km)',
               'Emission intensity|Passenger transport|Metro and tram, urban light rail (kg of CO2 / 100 km)',
@@ -2532,7 +2534,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Freight transport (kg of CO2 / 100 km)',
               'Emission intensity|Freight transport|Diesel oil (kg of CO2 / 100 km)',
               'Emission intensity|Freight transport|Electric (kg of CO2 / 100 km)',
-              
+
               NA,
               'Emission intensity over activity|Passenger transport (kg of CO2 / 000 pkm)',
               'Emission intensity over activity|Passenger transport|Metro and tram, urban light rail (kg of CO2 / 000 pkm)',
@@ -2543,7 +2545,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity over activity|Freight transport (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|Diesel oil (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|Electric (kg of CO2 / 000 tkm)',
-              
+
               NA,
               'CO2 emissions per vehicle annum|Passenger transport (t of CO2 / vehicle)',
               'CO2 emissions per vehicle annum|Passenger transport|Metro and tram, urban light rail (t of CO2 / vehicle)',
@@ -2554,7 +2556,7 @@ readJRC_IDEES <- function(subtype) {
               'CO2 emissions per vehicle annum|Freight transport (t of CO2 / vehicle)',
               'CO2 emissions per vehicle annum|Freight transport|Diesel oil (t of CO2 / vehicle)',
               'CO2 emissions per vehicle annum|Freight transport|Electric (t of CO2 / vehicle)',
-              
+
               NA,
               'Shares of CO2 emissions|Passenger transport (%)',
               'Shares of CO2 emissions|Passenger transport|Metro and tram, urban light rail (%)',
@@ -2567,7 +2569,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of CO2 emissions|Freight transport|Electric (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRail_ene' = { list(
           prefix = 'Transport|Rail|Energy Consumption|',
@@ -2585,7 +2587,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption|by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biodiesel (ktoe)',
               'Energy consumption|by fuel (EUROSTAT DATA)|Renewable energies and wastes|Other biofuels (ktoe)',
               'Energy consumption|by fuel (EUROSTAT DATA)|Electricity (ktoe)',
-              
+
               'Total energy consumption (ktoe)',
               'Total energy consumption|Passenger transport (ktoe)',
               'Total energy consumption|Passenger transport|Metro and tram, urban light rail (ktoe)',
@@ -2596,9 +2598,9 @@ readJRC_IDEES <- function(subtype) {
               'Total energy consumption|Freight transport (ktoe)',
               'Total energy consumption|Freight transport|Diesel oil (incl. biofuels) (ktoe)',
               'Total energy consumption|Freight transport|Electric (ktoe)',
-              
+
               NA,
-              
+
               NA,
               'Vehicle-efficiency|Passenger transport (kgoe/100 km)',
               'Vehicle-efficiency|Passenger transport|Metro and tram, urban light rail (kgoe/100 km)',
@@ -2609,7 +2611,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-efficiency|Freight transport (kgoe/100 km)',
               'Vehicle-efficiency|Freight transport|Diesel oil (kgoe/100 km)',
               'Vehicle-efficiency|Freight transport|Electric (kgoe/100 km)',
-              
+
               NA,
               'Energy intensity over activity|Passenger transport (kgoe / 000 pkm)',
               'Energy intensity over activity|Passenger transport|Metro and tram, urban light rail (kgoe / 000 pkm)',
@@ -2620,7 +2622,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy intensity over activity|Freight transport (kgoe / 000 tkm)',
               'Energy intensity over activity|Freight transport|Diesel oil (kgoe / 000 tkm)',
               'Energy intensity over activity|Freight transport|Electric (kgoe / 000 tkm)',
-              
+
               NA,
               'Energy consumption per vehicle annum|Passenger transport (kgoe/vehicle)',
               'Energy consumption per vehicle annum|Passenger transport|Metro and tram, urban light rail (kgoe/vehicle)',
@@ -2631,7 +2633,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption per vehicle annum|Freight transport (kgoe/vehicle)',
               'Energy consumption per vehicle annum|Freight transport|Diesel oil (kgoe/vehicle)',
               'Energy consumption per vehicle annum|Freight transport|Electric (kgoe/vehicle)',
-              
+
               NA,
               'Shares of total energy consumption|Passenger transport (%)',
               'Shares of total energy consumption|Passenger transport|Metro and tram, urban light rail (%)',
@@ -2644,7 +2646,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of total energy consumption|Freight transport|Electric (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_act' = { list(
           prefix = 'Transport|Road|Activity|',
@@ -2676,7 +2678,7 @@ readJRC_IDEES <- function(subtype) {
               'Freight transport|Heavy duty vehicles (mio tkm)',
               'Freight transport|Heavy duty vehicles|Domestic (mio tkm)',
               'Freight transport|Heavy duty vehicles|International (mio tkm)',
-              
+
               'Vehicle-km driven (mio km)',
               'Vehicle-km driven|Passenger transport (mio km)',
               'Vehicle-km driven|Passenger transport|Powered 2-wheelers (mio km)',
@@ -2703,7 +2705,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-km driven|Freight transport|Heavy duty vehicles (mio km)',
               'Vehicle-km driven|Freight transport|Heavy duty vehicles|Domestic (mio km)',
               'Vehicle-km driven|Freight transport|Heavy duty vehicles|International (mio km)',
-              
+
               'Stock of vehicles - total (vehicles)',
               'Stock of vehicles - total|Passenger transport (vehicles)',
               'Stock of vehicles - total|Passenger transport|Powered 2-wheelers (vehicles)',
@@ -2730,7 +2732,7 @@ readJRC_IDEES <- function(subtype) {
               'Stock of vehicles - total|Freight transport|Heavy duty vehicles (vehicles)',
               'Stock of vehicles - total|Freight transport|Heavy duty vehicles|Domestic (vehicles)',
               'Stock of vehicles - total|Freight transport|Heavy duty vehicles|International (vehicles)',
-              
+
               'Stock of vehicles - in use (vehicles)',
               'Stock of vehicles - in use|Passenger transport (vehicles)',
               'Stock of vehicles - in use|Passenger transport|Powered 2-wheelers (vehicles)',
@@ -2757,7 +2759,7 @@ readJRC_IDEES <- function(subtype) {
               'Stock of vehicles - in use|Freight transport|Heavy duty vehicles (vehicles)',
               'Stock of vehicles - in use|Freight transport|Heavy duty vehicles|Domestic (vehicles)',
               'Stock of vehicles - in use|Freight transport|Heavy duty vehicles|International (vehicles)',
-              
+
               'New vehicle-registrations (vehicles)',
               'New vehicle-registrations|Passenger transport (vehicles)',
               'New vehicle-registrations|Passenger transport|Powered 2-wheelers (vehicles)',
@@ -2784,9 +2786,9 @@ readJRC_IDEES <- function(subtype) {
               'New vehicle-registrations|Freight transport|Heavy duty vehicles (vehicles)',
               'New vehicle-registrations|Freight transport|Heavy duty vehicles|Domestic (vehicles)',
               'New vehicle-registrations|Freight transport|Heavy duty vehicles|International (vehicles)',
-              
+
               NA,
-              
+
               NA,
               'Load factor of vehicles|Passenger transport (p/movement)',
               'Load factor of vehicles|Passenger transport|Powered 2-wheelers (p/movement)',
@@ -2813,7 +2815,7 @@ readJRC_IDEES <- function(subtype) {
               'Load factor of vehicles|Freight transport|Heavy duty vehicles (t/movement)',
               'Load factor of vehicles|Freight transport|Heavy duty vehicles|Domestic (t/movement)',
               'Load factor of vehicles|Freight transport|Heavy duty vehicles|International (t/movement)',
-              
+
               'Vehicle-km driven per vehicle annum (km/vehicle)',
               'Vehicle-km driven per vehicle annum|Passenger transport (km/vehicle)',
               'Vehicle-km driven per vehicle annum|Passenger transport|Powered 2-wheelers (km/vehicle)',
@@ -2840,7 +2842,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-km driven per vehicle annum|Freight transport|Heavy duty vehicles (km/vehicle)',
               'Vehicle-km driven per vehicle annum|Freight transport|Heavy duty vehicles|Domestic (km/vehicle)',
               'Vehicle-km driven per vehicle annum|Freight transport|Heavy duty vehicles|International (km/vehicle)',
-              
+
               NA,
               'Passenger-km and tonne-km driven per vehicle annum|Passenger transport (pkm/vehicle)',
               'Passenger-km and tonne-km driven per vehicle annum|Passenger transport|Powered 2-wheelers (pkm/vehicle)',
@@ -2867,7 +2869,7 @@ readJRC_IDEES <- function(subtype) {
               'Passenger-km and tonne-km driven per vehicle annum|Freight transport|Heavy duty vehicles (tkm/vehicle)',
               'Passenger-km and tonne-km driven per vehicle annum|Freight transport|Heavy duty vehicles|Domestic (tkm/vehicle)',
               'Passenger-km and tonne-km driven per vehicle annum|Freight transport|Heavy duty vehicles|International (tkm/vehicle)',
-              
+
               NA,
               NA,
               'Market shares of activity|Passenger transport|Passenger cars (% of pkm)',
@@ -2894,7 +2896,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of activity|Freight transport|Heavy duty vehicles (% of tkm)',
               'Market shares of activity|Freight transport|Heavy duty vehicles|Domestic (% of tkm)',
               'Market shares of activity|Freight transport|Heavy duty vehicles|International (% of tkm)',
-              
+
               NA,
               NA,
               'Market shares of vehicle km|Passenger transport|Powered 2-wheelers (% of km)',
@@ -2923,7 +2925,7 @@ readJRC_IDEES <- function(subtype) {
               'Market shares of vehicle km|Freight transport|Heavy duty vehicles|International (% of km)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_emi' = { list(
           prefix = 'Transport|Road|CO2 Emissions|',
@@ -2942,7 +2944,7 @@ readJRC_IDEES <- function(subtype) {
               'by fuel|Renewable energies and wastes|Biodiesel (kt of CO2)',
               'by fuel|Renewable energies and wastes|Other biofuels (kt of CO2)',
               'by fuel|Electricity (kt of CO2)',
-              
+
               'Split of CO2 emissions (kt of CO2)',
               'Split of CO2 emissions|Passenger transport (kt of CO2)',
               'Split of CO2 emissions|Passenger transport|Powered 2-wheelers (kt of CO2)',
@@ -2969,9 +2971,9 @@ readJRC_IDEES <- function(subtype) {
               'Split of CO2 emissions|Freight transport|Heavy duty vehicles (kt of CO2)',
               'Split of CO2 emissions|Freight transport|Heavy duty vehicles|Domestic (kt of CO2)',
               'Split of CO2 emissions|Freight transport|Heavy duty vehicles|International (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               'Emission factors|by fuel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Gasoline (incl. biofuels) (kt CO2 / ktoe)',
@@ -2979,7 +2981,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission factors|by fuel|LPG (kt CO2 / ktoe)',
               'Emission factors|by fuel|Natural gas (incl. biogas) (kt CO2 / ktoe)',
               'Emission factors|by fuel|Electricity (kt CO2 / ktoe)',
-              
+
               'Emission intensity (g of CO2 / km)',
               'Emission intensity|Passenger transport (g of CO2 / km)',
               'Emission intensity|Passenger transport|Powered 2-wheelers (g of CO2 / km)',
@@ -3006,7 +3008,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Freight transport|Heavy duty vehicles (g of CO2 / km)',
               'Emission intensity|Freight transport|Heavy duty vehicles|Domestic (g of CO2 / km)',
               'Emission intensity|Freight transport|Heavy duty vehicles|International (g of CO2 / km)',
-              
+
               NA,
               'Emission intensity over activity|Passenger transport (kg of CO2 / 000 pkm)',
               'Emission intensity over activity|Passenger transport|Powered 2-wheelers (kg of CO2 / 000 pkm)',
@@ -3033,7 +3035,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity over activity|Freight transport|Heavy duty vehicles (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|Heavy duty vehicles|Domestic (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|Heavy duty vehicles|International (kg of CO2 / 000 tkm)',
-              
+
               NA,
               NA,
               'CO2 emissions per vehicle annum|Passenger transport|Powered 2-wheelers (kg of CO2 / vehicle)',
@@ -3060,7 +3062,7 @@ readJRC_IDEES <- function(subtype) {
               'CO2 emissions per vehicle annum|Freight transport|Heavy duty vehicles (kg of CO2 / vehicle)',
               'CO2 emissions per vehicle annum|Freight transport|Heavy duty vehicles|Domestic (kg of CO2 / vehicle)',
               'CO2 emissions per vehicle annum|Freight transport|Heavy duty vehicles|International (kg of CO2 / vehicle)',
-              
+
               NA,
               'Shares of CO2 emissions|Passenger transport (%)',
               'Shares of CO2 emissions|Passenger transport|Powered 2-wheelers (%)',
@@ -3089,7 +3091,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of CO2 emissions|Freight transport|Heavy duty vehicles|International (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrRoad_ene' = { list(
             prefix = 'Transport|Road|Energy Consumption|',
@@ -3108,7 +3110,7 @@ readJRC_IDEES <- function(subtype) {
                 'by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biodiesel (ktoe)',
                 'by fuel (EUROSTAT DATA)|Renewable energies and wastes|Other biofuels (ktoe)',
                 'by fuel (EUROSTAT DATA)|Electricity (ktoe)',
-                
+
                 'Total energy consumption (ktoe)',
                 'Total energy consumption|Passenger transport (ktoe)',
                 'Total energy consumption|Passenger transport|Powered 2-wheelers (Gasoline) (ktoe)',
@@ -3149,9 +3151,9 @@ readJRC_IDEES <- function(subtype) {
                 'Total energy consumption|Freight transport|Heavy duty vehicles (Diesel oil incl. biofuels)|Domestic|of which biofuels (ktoe)',
                 'Total energy consumption|Freight transport|Heavy duty vehicles (Diesel oil incl. biofuels)|International (ktoe)',
                 'Total energy consumption|Freight transport|Heavy duty vehicles (Diesel oil incl. biofuels)|International|of which biofuels (ktoe)',
-                
+
                 NA,
-                
+
                 'Vehicle-efficiency - effective (kgoe/100 km)',
                 'Vehicle-efficiency - effective|Passenger transport (kgoe/100 km)',
                 'Vehicle-efficiency - effective|Passenger transport|Powered 2-wheelers (kgoe/100 km)',
@@ -3178,7 +3180,7 @@ readJRC_IDEES <- function(subtype) {
                 'Vehicle-efficiency - effective|Freight transport|Heavy duty vehicles (kgoe/100 km)',
                 'Vehicle-efficiency - effective|Freight transport|Heavy duty vehicles|Domestic (kgoe/100 km)',
                 'Vehicle-efficiency - effective|Freight transport|Heavy duty vehicles|International (kgoe/100 km)',
-                
+
                 NA,
                 'Energy intensity over activity|Passenger transport (kgoe / 000 pkm)',
                 'Energy intensity over activity|Passenger transport|Powered 2-wheelers (kgoe / 000 pkm)',
@@ -3205,7 +3207,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy intensity over activity|Freight transport|Heavy duty vehicles (kgoe / 000 tkm)',
                 'Energy intensity over activity|Freight transport|Heavy duty vehicles|Domestic (kgoe / 000 tkm)',
                 'Energy intensity over activity|Freight transport|Heavy duty vehicles|International (kgoe / 000 tkm)',
-                
+
                 NA,
                 NA,
                 'Energy consumption per vehicle annum|Passenger transport|Powered 2-wheelers (kgoe/vehicle)',
@@ -3232,7 +3234,7 @@ readJRC_IDEES <- function(subtype) {
                 'Energy consumption per vehicle annum|Freight transport|Heavy duty vehicles (kgoe/vehicle)',
                 'Energy consumption per vehicle annum|Freight transport|Heavy duty vehicles|Domestic (kgoe/vehicle)',
                 'Energy consumption per vehicle annum|Freight transport|Heavy duty vehicles|International (kgoe/vehicle)',
-                
+
                 NA,
                 'Shares of total energy consumption|Passenger transport (%)',
                 'Shares of total energy consumption|Passenger transport|Powered 2-wheelers (%)',
@@ -3261,7 +3263,7 @@ readJRC_IDEES <- function(subtype) {
                 'Shares of total energy consumption|Freight transport|Heavy duty vehicles|International (%)'
               ) }
             ) %>%
-              extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+              tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
           ) },
         'TrAvia_act' = { list(
           prefix = 'Transport|Aviation|Activity|',
@@ -3275,7 +3277,7 @@ readJRC_IDEES <- function(subtype) {
               'Transport activity|Freight transport (mio tkm)',
               'Transport activity|Freight transport|Domestic and International - Intra-EU (mio tkm)',
               'Transport activity|Freight transport|International - Extra-EU (mio tkm)',
-              
+
               'Vehicle-km (mio km)',
               'Vehicle-km|Passenger transport (mio km)',
               'Vehicle-km|Passenger transport|Domestic (mio km)',
@@ -3284,7 +3286,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-km|Freight transport (mio km)',
               'Vehicle-km|Freight transport|Domestic and International - Intra-EU (mio km)',
               'Vehicle-km|Freight transport|International - Extra-EU (mio km)',
-              
+
               'Number of flights (no)',
               'Number of flights|Passenger transport (no)',
               'Number of flights|Passenger transport|Domestic (no)',
@@ -3293,7 +3295,7 @@ readJRC_IDEES <- function(subtype) {
               'Number of flights|Freight transport (no)',
               'Number of flights|Freight transport|Domestic and International - Intra-EU (no)',
               'Number of flights|Freight transport|International - Extra-EU (no)',
-              
+
               NA,
               'Volume carried|Passenger transport (passengers)',
               'Volume carried|Passenger transport|Domestic (passengers)',
@@ -3302,7 +3304,7 @@ readJRC_IDEES <- function(subtype) {
               'Volume carried|Freight transport (tonnes)',
               'Volume carried|Freight transport|Domestic and International - Intra-EU (tonnes)',
               'Volume carried|Freight transport|International - Extra-EU (tonnes)',
-              
+
               'Stock of aircrafts - total (no)',
               'Stock of aircrafts - total|Passenger transport (no)',
               'Stock of aircrafts - total|Passenger transport|Domestic (no)',
@@ -3311,7 +3313,7 @@ readJRC_IDEES <- function(subtype) {
               'Stock of aircrafts - total|Freight transport (no)',
               'Stock of aircrafts - total|Freight transport|Domestic and International - Intra-EU (no)',
               'Stock of aircrafts - total|Freight transport|International - Extra-EU (no)',
-              
+
               'Stock of aircrafts - in use (no)',
               'Stock of aircrafts - in use|Passenger transport (no)',
               'Stock of aircrafts - in use|Passenger transport|Domestic (no)',
@@ -3320,7 +3322,7 @@ readJRC_IDEES <- function(subtype) {
               'Stock of aircrafts - in use|Freight transport (no)',
               'Stock of aircrafts - in use|Freight transport|Domestic and International - Intra-EU (no)',
               'Stock of aircrafts - in use|Freight transport|International - Extra-EU (no)',
-              
+
               'New aircrafts (no)',
               'New aircrafts|Passenger transport (no)',
               'New aircrafts|Passenger transport|Domestic (no)',
@@ -3329,9 +3331,9 @@ readJRC_IDEES <- function(subtype) {
               'New aircrafts|Freight transport (no)',
               'New aircrafts|Freight transport|Domestic and International - Intra-EU (no)',
               'New aircrafts|Freight transport|International - Extra-EU (no)',
-              
+
               NA,
-              
+
               NA,
               'Load factor of flights|Passenger transport (p/flight)',
               'Load factor of flights|Passenger transport|Domestic (p/flight)',
@@ -3340,7 +3342,7 @@ readJRC_IDEES <- function(subtype) {
               'Load factor of flights|Freight transport (t/flight)',
               'Load factor of flights|Freight transport|Domestic and International - Intra-EU (t/flight)',
               'Load factor of flights|Freight transport|International - Extra-EU (t/flight)',
-              
+
               NA,
               'Distance travelled per flight|Passenger transport (km/flight)',
               'Distance travelled per flight|Passenger transport|Domestic (km/flight)',
@@ -3349,7 +3351,7 @@ readJRC_IDEES <- function(subtype) {
               'Distance travelled per flight|Freight transport (km/flight)',
               'Distance travelled per flight|Freight transport|Domestic and International - Intra-EU (km/flight)',
               'Distance travelled per flight|Freight transport|International - Extra-EU (km/flight)',
-              
+
               NA,
               'Passenger-km and tonne-km per flight|Passenger transport (pkm/flight)',
               'Passenger-km and tonne-km per flight|Passenger transport|Domestic (pkm/flight)',
@@ -3358,7 +3360,7 @@ readJRC_IDEES <- function(subtype) {
               'Passenger-km and tonne-km per flight|Freight transport (tkm/flight)',
               'Passenger-km and tonne-km per flight|Freight transport|Domestic and International - Intra-EU (tkm/flight)',
               'Passenger-km and tonne-km per flight|Freight transport|International - Extra-EU (tkm/flight)',
-              
+
               NA,
               'Flights per year by airplane|Passenger transport (no)',
               'Flights per year by airplane|Passenger transport|Domestic (no)',
@@ -3367,7 +3369,7 @@ readJRC_IDEES <- function(subtype) {
               'Flights per year by airplane|Freight transport (no)',
               'Flights per year by airplane|Freight transport|Domestic and International - Intra-EU (no)',
               'Flights per year by airplane|Freight transport|International - Extra-EU (no)',
-              
+
               NA,
               NA,
               'Market shares of activity|Passenger transport|Domestic (% of pkm)',
@@ -3376,7 +3378,7 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'Market shares of activity|Freight transport|Domestic and International - Intra-EU (% of tkm)',
               'Market shares of activity|Freight transport|International - Extra-EU (% of tkm)',
-              
+
               NA,
               NA,
               'Market shares of vehicle km|Passenger transport|Domestic (% of km)',
@@ -3385,11 +3387,11 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'Market shares of vehicle km|Freight transport|Domestic and International - Intra-EU (% of km)',
               'Market shares of vehicle km|Freight transport|International - Extra-EU (% of km)',
-              
+
               NA
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrAvia_emi' = { list(
           prefix = 'Transport|Aviation|CO2 Emissions|',
@@ -3398,7 +3400,7 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'by fuel (kt of CO2)',
               'by fuel|Liquids (kt of CO2)',
-              
+
               'Split of CO2 emissions (kt of CO2)',
               'Split of CO2 emissions|Passenger transport (kt of CO2)',
               'Split of CO2 emissions|Passenger transport|Domestic (kt of CO2)',
@@ -3407,13 +3409,13 @@ readJRC_IDEES <- function(subtype) {
               'Split of CO2 emissions|Freight transport (kt of CO2)',
               'Split of CO2 emissions|Freight transport|Domestic and International - Intra-EU (kt of CO2)',
               'Split of CO2 emissions|Freight transport|International - Extra-EU (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               'Emission factors|by fuel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Liquids (kt CO2 / ktoe)',
-              
+
               'Emission intensity (kg of CO2 / 100 km)',
               'Emission intensity|Passenger transport (kg of CO2 / 100 km)',
               'Emission intensity|Passenger transport|Domestic (kg of CO2 / 100 km)',
@@ -3422,7 +3424,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity|Freight transport (kg of CO2 / 100 km)',
               'Emission intensity|Freight transport|Domestic and International - Intra-EU (kg of CO2 / 100 km)',
               'Emission intensity|Freight transport|International - Extra-EU (kg of CO2 / 100 km)',
-              
+
               NA,
               'Emission intensity over activity|Passenger transport (kg of CO2 / 000 pkm)',
               'Emission intensity over activity|Passenger transport|Domestic (kg of CO2 / 000 pkm)',
@@ -3431,7 +3433,7 @@ readJRC_IDEES <- function(subtype) {
               'Emission intensity over activity|Freight transport (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|Domestic and International - Intra-EU (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Freight transport|International - Extra-EU (kg of CO2 / 000 tkm)',
-              
+
               NA,
               'CO2 emissions per flight|Passenger transport (kg of CO2 / flight)',
               'CO2 emissions per flight|Passenger transport|Domestic (kg of CO2 / flight)',
@@ -3440,7 +3442,7 @@ readJRC_IDEES <- function(subtype) {
               'CO2 emissions per flight|Freight transport (kg of CO2 / flight)',
               'CO2 emissions per flight|Freight transport|Domestic and International - Intra-EU (kg of CO2 / flight)',
               'CO2 emissions per flight|Freight transport|International - Extra-EU (kg of CO2 / flight)',
-              
+
               NA,
               'Shares of CO2 emissions|Passenger transport (%)',
               'Shares of CO2 emissions|Passenger transport|Domestic (%)',
@@ -3451,7 +3453,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of CO2 emissions|Freight transport|International - Extra-EU (%)'
             )}
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrAvia_ene' = { list(
           prefix = 'Transport|Aviation|Energy Consumption|',
@@ -3460,7 +3462,7 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'by fuel (EUROSTAT DATA) (ktoe)',
               'by fuel (EUROSTAT DATA)|Liquids (ktoe)',
-              
+
               'Total energy consumption (ktoe)',
               'Total energy consumption|Passenger transport (ktoe)',
               'Total energy consumption|Passenger transport|Domestic (ktoe)',
@@ -3469,9 +3471,9 @@ readJRC_IDEES <- function(subtype) {
               'Total energy consumption|Freight transport (ktoe)',
               'Total energy consumption|Freight transport|Domestic and International - Intra-EU (ktoe)',
               'Total energy consumption|Freight transport|International - Extra-EU (ktoe)',
-              
+
               NA,
-              
+
               'Vehicle-efficiency - effective (kgoe/100 km)',
               'Vehicle-efficiency - effective|Passenger transport (kgoe/100 km)',
               'Vehicle-efficiency - effective|Passenger transport|Domestic (kgoe/100 km)',
@@ -3480,7 +3482,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-efficiency - effective|Freight transport (kgoe/100 km)',
               'Vehicle-efficiency - effective|Freight transport|Domestic and International - Intra-EU (kgoe/100 km)',
               'Vehicle-efficiency - effective|Freight transport|International - Extra-EU (kgoe/100 km)',
-              
+
               NA,
               'Energy intensity over activity|Passenger transport (kgoe/000 pkm)',
               'Energy intensity over activity|Passenger transport|Domestic (kgoe/000 pkm)',
@@ -3489,7 +3491,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy intensity over activity|Freight transport (kgoe/000 tkm)',
               'Energy intensity over activity|Freight transport|Domestic and International - Intra-EU (kgoe/000 tkm)',
               'Energy intensity over activity|Freight transport|International - Extra-EU (kgoe/000 tkm)',
-              
+
               NA,
               'Energy consumption per flight|Passenger transport (kgoe/flight)',
               'Energy consumption per flight|Passenger transport|Domestic (kgoe/flight)',
@@ -3498,7 +3500,7 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption per flight|Freight transport (kgoe/flight)',
               'Energy consumption per flight|Freight transport|Domestic and International - Intra-EU (kgoe/flight)',
               'Energy consumption per flight|Freight transport|International - Extra-EU (kgoe/flight)',
-              
+
               NA,
               'Shares of total energy consumption|Passenger transport (%)',
               'Shares of total energy consumption|Passenger transport|Domestic (%)',
@@ -3507,7 +3509,7 @@ readJRC_IDEES <- function(subtype) {
               'Shares of total energy consumption|Freight transport (%)',
               'Shares of total energy consumption|Freight transport|Domestic and International - Intra-EU (%)',
               'Shares of total energy consumption|Freight transport|International - Extra-EU (%)',
-              
+
               'Vehicle-efficiency - theoretical (kgoe/100 km)',
               'Vehicle-efficiency - theoretical|Passenger transport (kgoe/100 km)',
               'Vehicle-efficiency - theoretical|Passenger transport|Domestic (kgoe/100 km)',
@@ -3516,7 +3518,7 @@ readJRC_IDEES <- function(subtype) {
               'Vehicle-efficiency - theoretical|Freight transport (kgoe/100 km)',
               'Vehicle-efficiency - theoretical|Freight transport|Domestic and International - Intra-EU (kgoe/100 km)',
               'Vehicle-efficiency - theoretical|Freight transport|International - Extra-EU (kgoe/100 km)',
-              
+
               'Discrepancy between effective and theoretical efficiencies (ratio)',
               'Discrepancy between effective and theoretical efficiencies|Passenger transport (ratio)',
               'Discrepancy between effective and theoretical efficiencies|Passenger transport|Domestic (ratio)',
@@ -3525,7 +3527,7 @@ readJRC_IDEES <- function(subtype) {
               'Discrepancy between effective and theoretical efficiencies|Freight transport (ratio)',
               'Discrepancy between effective and theoretical efficiencies|Freight transport|Domestic and International - Intra-EU (ratio)',
               'Discrepancy between effective and theoretical efficiencies|Freight transport|International - Extra-EU (ratio)',
-              
+
               NA,
               NA,
               'Discrepancy between the theoretical fuel consumption in the country to the EU28|Passenger transport|Domestic (ratio)',
@@ -3534,11 +3536,11 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'Discrepancy between the theoretical fuel consumption in the country to the EU28|Freight transport|Domestic and International - Intra-EU (ratio)',
               'Discrepancy between the theoretical fuel consumption in the country to the EU28|Freight transport|International - Extra-EU (ratio)',
-              
+
               NA
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'TrNavi_emi' = { list(
           prefix = 'Transport|Navigation|CO2 Emissions|',
@@ -3547,31 +3549,31 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'by fuel (kt of CO2)',
               'by fuel|Liquids (kt of CO2)',
-              
+
               'Split of CO2 emissions (kt of CO2)',
               'Split of CO2 emissions|Domestic coastal shipping (kt of CO2)',
               'Split of CO2 emissions|Inland waterways (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               'Emission factors|by fuel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Liquids (kt CO2 / ktoe)',
-              
+
               'Emission intensity (kg of CO2 / 100 km)',
               'Emission intensity|Domestic coastal shipping (kg of CO2 / 100 km)',
               'Emission intensity|Inland waterways (kg of CO2 / 100 km)',
-              
+
               'Emission intensity over activity (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Domestic coastal shipping (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Inland waterways (kg of CO2 / 000 tkm)',
-              
+
               'Shares of CO2 emissions (%)',
               'Shares of CO2 emissions|Domestic coastal shipping (%)',
               'Shares of CO2 emissions|Inland waterways (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         )},
         'TrNavi_ene' = { list(
           prefix = 'Transport|Navigation|Energy Consumption|',
@@ -3592,27 +3594,27 @@ readJRC_IDEES <- function(subtype) {
               'by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biogasoline (ktoe)',
               'by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biodiesel (ktoe)',
               'by fuel (EUROSTAT DATA)|Renewable energies and wastes|Other biofuels (ktoe)',
-              
+
               'Total energy consumption (ktoe)',
               'Total energy consumption|Domestic coastal shipping (ktoe)',
               'Total energy consumption|Inland waterways (ktoe)',
-              
+
               NA,
-              
+
               'Vehicle-efficiency (kgoe/100 km)',
               'Vehicle-efficiency|Domestic coastal shipping (kgoe/100 km)',
               'Vehicle-efficiency|Inland waterways (kgoe/100 km)',
-              
+
               'Energy intensity over activity (kgoe / 000 tkm)',
               'Energy intensity over activity|Domestic coastal shipping (kgoe / 000 tkm)',
               'Energy intensity over activity|Inland waterways (kgoe / 000 tkm)',
-              
+
               NA,
               'Shares of total energy consumption|Domestic coastal shipping (%)',
               'Shares of total energy consumption|Inland waterways (%)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
@@ -3626,27 +3628,27 @@ readJRC_IDEES <- function(subtype) {
               'Transport activity (mio tkm)',
               'Transport activity|Intra-EU (mio tkm)',
               'Transport activity|Extra-EU (mio tkm)',
-              
+
               'Vehicle-km (mio km)',
               'Vehicle-km|Intra-EU (mio km)',
               'Vehicle-km|Extra-EU (mio km)',
-              
+
               NA,
-              
+
               'Load factor of vehicles (t/movement)',
               'Load factor of vehicles|Intra-EU (t/movement)',
               'Load factor of vehicles|Extra-EU (t/movement)',
-              
+
               NA,
               'Market shares of activity|Intra-EU (% of tkm)',
               'Market shares of activity|Extra-EU (% of tkm)',
-              
+
               NA,
               'Market shares of vehicle km|Intra-EU (% of tkm)',
               'Market shares of vehicle km|Extra-EU (% of tkm)'
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'MBunk_emi' = { list(
           prefix = 'Maritime Bunkers|CO2 Emissions|',
@@ -3655,31 +3657,31 @@ readJRC_IDEES <- function(subtype) {
               NA,
               'CO2 emissions|by fuel (kt of CO2)',
               'CO2 emissions|by fuel|Liquids (kt of CO2)',
-              
+
               'Split of CO2 emissions (kt of CO2)',
               'Split of CO2 emissions|Intra-EU (kt of CO2)',
               'Split of CO2 emissions|Extra-EU (kt of CO2)',
-              
+
               NA,
-              
+
               NA,
               'Emission factors|by fuel (kt CO2 / ktoe)',
               'Emission factors|by fuel|Liquids (kt CO2 / ktoe)',
-              
+
               NA,
               'Emission intensity|Intra-EU (kg of CO2 / 100 km)',
               'Emission intensity|Extra-EU (kg of CO2 / 100 km)',
-              
+
               'Emission intensity over activity (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Intra-EU (kg of CO2 / 000 tkm)',
               'Emission intensity over activity|Extra-EU (kg of CO2 / 000 tkm)',
-              
+
               NA,
               'Shares of CO2 emissions|Intra-EU (%)',
               'Shares of CO2 emissions|Extra-EU (%)'
             ) }
           )  %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) },
         'MBunk_ene' = { list(
           prefix = 'Maritime Bunkers|Energy Consumption|',
@@ -3700,535 +3702,487 @@ readJRC_IDEES <- function(subtype) {
               'Energy consumption|by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biogasoline (ktoe)',
               'Energy consumption|by fuel (EUROSTAT DATA)|Renewable energies and wastes|Biodiesel (ktoe)',
               'Energy consumption|by fuel (EUROSTAT DATA)|Renewable energies and wastes|Other biofuels (ktoe)',
-              
+
               'Total energy consumption (ktoe)',
               'Total energy consumption|Intra-EU (ktoe)',
               'Total energy consumption|Extra-EU (ktoe)',
-              
+
               NA,
-              
+
               'Vehicle-efficiency (kgoe/100 km)',
               'Vehicle-efficiency|Intra-EU (kgoe/100 km)',
               'Vehicle-efficiency|Extra-EU (kgoe/100 km)',
-              
+
               'Energy intensity over activity (kgoe / 000 tkm)',
               'Energy intensity over activity|Intra-EU (kgoe / 000 tkm)',
               'Energy intensity over activity|Extra-EU (kgoe / 000 tkm)',
-              
+
               NA,
               'Shares of total energy consumption|Intra-EU (%)',
               'Shares of total energy consumption|Extra-EU (%)'
             ) }
           )  %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )
     ) },
     Residential = { list(
       pattern = '^JRC-IDEES-2015_Residential_.*\\.xlsx$',
       sheets = { list(
-        'RES_summary' = { list(
-          prefix = 'Residential|',
-          rows = tibble(
-            name = {
-              c(
-                "Household consumption expenditure (M\u20ac2010)",
-                "Population (inhabitants)",
-                "Number of households (no)",
-                "Total households useful surface area (in 000 sqm)",
-                "Number of new and renovated households (no) ",
-                "New and renovated households useful surface area (in 000 sqm)",
-                "Actual heating degree-days (no)",
-                "Mean heating degree-days over period 1980 - 2015 (no)",
-                "Relative heating degree-days (no)",
-                NA,
-                "Households size (inhabitants/household)",
-                "Households useful surface area (in sqm/capita)",
-                "Households useful surface area (in sqm/household)",
-                "New and renovated households useful surface area (in sqm/capita)",
-                "New and renovated households useful surface area (in sqm/household)",
-                "Household consumption expenditure per capita (\u20ac2010)",
-                "Household consumption expenditure per household (\u20ac2010)",
-                "Consumption expenditure per capita relative to EU28 (?)",
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                "Energy consumption by fuel - Eurostat structure (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Solids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Gases (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biogas (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Solar (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Derived heat (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Electricity (ktoe)",
-                "Energy consumption by end-uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Space heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooling (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Water heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooking (ktoe)",
-                "Energy consumption by end-uses|Specific electricity uses (appliances and lighting) (ktoe)",
-                "Shares of energy consumption in end-uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Space heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooling (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Water heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooking (%)",
-                "Shares of energy consumption in end-uses|Specific electricity uses (appliances and lighting) (%)",
-                NA,
-                "Emissions by fuel - Eurostat structure (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Solids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Gases (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biogas (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Solar (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Derived heat (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Electricity (kt of CO2)",
-                "Emissions by end-uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Space heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooling (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Water heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooking (kt of CO2)",
-                "Emissions by end-uses|Specific electricity uses (appliances and lighting) (kt of CO2)",
-                "Share of emissions in end-uses (%)",
-                "Share of emissions in end-uses|Thermal uses (%)",
-                "Share of emissions in end-uses|Thermal uses|Space heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooling (%)",
-                "Share of emissions in end-uses|Thermal uses|Water heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooking (%)",
-                "Share of emissions in end-uses|Specific electricity uses (appliances and lighting) (%)",
-                NA,
-                "Energy consumption per household (kWh / household)",
-                "Energy consumption per household|Thermal uses (kWh / household)",
-                "Energy consumption per household|Thermal uses|Space heating (kWh / household)",
-                "Energy consumption per household|Thermal uses|Cooling (kWh / household)",
-                "Energy consumption per household|Thermal uses|Water heating (kWh / household)",
-                "Energy consumption per household|Thermal uses|Cooking (kWh / household)",
-                "Energy consumption per household|Specific electricity uses (appliances and lighting) (kWh / household)",
-                "Thermal energy service per household (kWh useful / household)",
-                "Thermal energy service per household|Space heating (kWh useful / household)",
-                "Thermal energy service per household|Cooling (kWh useful / household)",
-                "Thermal energy service per household|Water heating (kWh useful / household)",
-                "Thermal energy service per household|Cooking (kWh useful / household)",
-                "Emissions per household (kg CO2 / household)",
-                "Emissions per household|Thermal uses (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Space heating (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Cooling (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Water heating (kg CO2 / household)",
-                "Emissions per household|Thermal uses|Cooking (kg CO2 / household)",
-                "Emissions per household|Specific electricity uses (appliances and lighting) (kg CO2 / household)",
-                "Ratio of energy service to energy consumption (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Space heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooling (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Water heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooking (system efficiency indicator)",
-                "Energy consumption per surface area (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Space heating (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Cooling (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Water heating (kWh / sqm)",
-                "Energy consumption per surface area|Thermal uses|Cooking (kWh / sqm)",
-                "Energy consumption per surface area|Specific electricity uses (appliances and lighting) (kWh / sqm)",
-                "Thermal energy service per surface area (kWh useful / sqm)",
-                "Thermal energy service per surface area|Space heating (kWh useful / sqm)",
-                "Thermal energy service per surface area|Cooling (kWh useful / sqm)",
-                "Thermal energy service per surface area|Water heating (kWh useful / sqm)",
-                "Thermal energy service per surface area|Cooking (kWh useful / sqm)",
-                "Emissions per surface area (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Space heating (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Cooling (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Water heating (kg CO2 / sqm)",
-                "Emissions per surface area|Thermal uses|Cooking (kg CO2 / sqm)",
-                "Emissions per surface area|Specific electricity uses (appliances and lighting) (kg CO2 / sqm)",
-                "Energy consumption per capita (kWh / capita)",
-                "Energy consumption per capita|Thermal uses (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Space heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooling (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Water heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooking (kWh / capita)",
-                "Energy consumption per capita|Specific electricity uses (appliances and lighting) (kWh / capita)",
-                "Thermal energy service per capita (kWh useful / capita)",
-                "Thermal energy service per capita|Space heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooling (kWh useful / capita)",
-                "Thermal energy service per capita|Water heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooking (kWh useful / capita)",
-                "Emissions per capita (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Space heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooling (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Water heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooking (kg CO2 / capita)",
-                "Emissions per capita|Specific electricity uses (appliances and lighting) (kg CO2 / capita)"
-              )
-            }
-          ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
-        ) },
         'RES_hh_num' = { list(
-          prefix = 'Residential|',
+          prefix = 'Residential|Stock of households',
           rows = tibble(
             name = { c(
-              "Stock of households (no)",
+              " (no)",
 
-              "Stock of households|Space heating (no)",
-              "Stock of households|Space heating|Solids (no)",
-              "Stock of households|Space heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of households|Space heating|Gases incl. biogas (no)",
-              "Stock of households|Space heating|Biomass and wastes (no)",
-              "Stock of households|Space heating|Geothermal energy (no)",
-              "Stock of households|Space heating|Derived heat (no)",
-              "Stock of households|Space heating|Advanced electric heating (no)",
-              "Stock of households|Space heating|Conventional electric heating (no)",
-              "Stock of households|Space heating|Circulation (no)",
+              "|Space heating (no)",
+              "|Space heating|Solids (no)",
+              "|Space heating|Liquified petroleum gas (LPG) (no)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Space heating|Gases incl. biogas (no)",
+              "|Space heating|Biomass and wastes (no)",
+              "|Space heating|Geothermal energy (no)",
+              "|Space heating|Derived heat (no)",
+              "|Space heating|Advanced electric heating (no)",
+              "|Space heating|Conventional electric heating (no)",
+              "|Space heating|Circulation (no)",
 
-              "Stock of households|Space cooling (no)",
-              "Stock of households|Space cooling|Air conditioning (no)",
+              "|Space cooling (no)",
+              "|Space cooling|Air conditioning (no)",
 
-              "Stock of households|Water heating (no)",
-              "Stock of households|Water heating|Solids (no)",
-              "Stock of households|Water heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Water heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of households|Water heating|Gases incl. biogas (no)",
-              "Stock of households|Water heating|Biomass and wastes (no)",
-              "Stock of households|Water heating|Geothermal energy (no)",
-              "Stock of households|Water heating|Derived heat (no)",
-              "Stock of households|Water heating|Electricity (no)",
-              "Stock of households|Water heating|Solar (no)",
+              "|Water heating (no)",
+              "|Water heating|Solids (no)",
+              "|Water heating|Liquified petroleum gas (LPG) (no)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Water heating|Gases incl. biogas (no)",
+              "|Water heating|Biomass and wastes (no)",
+              "|Water heating|Geothermal energy (no)",
+              "|Water heating|Derived heat (no)",
+              "|Water heating|Electricity (no)",
+              "|Water heating|Solar (no)",
 
-              "Stock of households|Cooking (no)",
-              "Stock of households|Cooking|Solids (no)",
-              "Stock of households|Cooking|Liquified petroleum gas (LPG) (no)",
-              "Stock of households|Cooking|Gases incl. biogas (no)",
-              "Stock of households|Cooking|Biomass and wastes (no)",
-              "Stock of households|Cooking|Electricity (no)"
+              "|Cooking (no)",
+              "|Cooking|Solids (no)",
+              "|Cooking|Liquified petroleum gas (LPG) (no)",
+              "|Cooking|Gases incl. biogas (no)",
+              "|Cooking|Biomass and wastes (no)",
+              "|Cooking|Electricity (no)"
             ) }
           ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_fec' = { list(
+          prefix = 'Residential|Final energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+
+              "|Space heating (ktoe)",
+              "|Space heating|Solids (ktoe)",
+              "|Space heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Space heating|Gases incl. biogas (ktoe)",
+              "|Space heating|Biomass and wastes (ktoe)",
+              "|Space heating|Geothermal energy (ktoe)",
+              "|Space heating|Derived heat (ktoe)",
+              "|Space heating|Advanced electric heating (ktoe)",
+              "|Space heating|Conventional electric heating (ktoe)",
+              "|Space heating|Circulation (ktoe)",
+
+              "|Space cooling (ktoe)",
+              "|Space cooling|Air conditioning (ktoe)",
+
+              "|Water heating (ktoe)",
+              "|Water heating|Solids (ktoe)",
+              "|Water heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Water heating|Gases incl. biogas (ktoe)",
+              "|Water heating|Biomass and wastes (ktoe)",
+              "|Water heating|Geothermal energy (ktoe)",
+              "|Water heating|Derived heat (ktoe)",
+              "|Water heating|Electricity (ktoe)",
+              "|Water heating|Solar (ktoe)",
+
+              "|Cooking (ktoe)",
+              "|Cooking|Solids (ktoe)",
+              "|Cooking|Liquified petroleum gas (LPG) (ktoe)",
+              "|Cooking|Gases incl. biogas (ktoe)",
+              "|Cooking|Biomass and wastes (ktoe)",
+              "|Cooking|Electricity (ktoe)"
+            ) }
+          ) %>%
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_eff' = { list(
+          prefix = 'Residential|Ratio of energy service to energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (system efficiency indicator)",
+
+              "|Space heating (system efficiency indicator)",
+              "|Space heating|Solids (system efficiency indicator)",
+              "|Space heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Space heating|Gases incl. biogas (system efficiency indicator)",
+              "|Space heating|Biomass and wastes (system efficiency indicator)",
+              "|Space heating|Geothermal energy (system efficiency indicator)",
+              "|Space heating|Derived heat (system efficiency indicator)",
+              "|Space heating|Advanced electric heating (system efficiency indicator)",
+              "|Space heating|Conventional electric heating (system efficiency indicator)",
+              "|Space heating|Circulation (system efficiency indicator)",
+
+              "|Space cooling (system efficiency indicator)",
+              "|Space cooling|Air conditioning (system efficiency indicator)",
+
+              "|Water heating (system efficiency indicator)",
+              "|Water heating|Solids (system efficiency indicator)",
+              "|Water heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Water heating|Gases incl. biogas (system efficiency indicator)",
+              "|Water heating|Biomass and wastes (system efficiency indicator)",
+              "|Water heating|Geothermal energy (system efficiency indicator)",
+              "|Water heating|Derived heat (system efficiency indicator)",
+              "|Water heating|Electricity (system efficiency indicator)",
+              "|Water heating|Solar (system efficiency indicator)",
+
+              "|Cooking (system efficiency indicator)",
+              "|Cooking|Solids (system efficiency indicator)",
+              "|Cooking|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Cooking|Gases incl. biogas (system efficiency indicator)",
+              "|Cooking|Biomass and wastes (system efficiency indicator)",
+              "|Cooking|Electricity (system efficiency indicator)"
+            ) }
+          ) %>%
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_hh_emi' = { list(
+          prefix = 'Residential|CO2 emissions',
+          rows = tibble(
+            name = { c(
+              " (kt of CO2)",
+
+              "|Space heating (kt of CO2)",
+              "|Space heating|Solids (kt of CO2)",
+              "|Space heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Space heating|Gases incl. biogas (kt of CO2)",
+              "|Space heating|Biomass and wastes (kt of CO2)",
+              "|Space heating|Geothermal energy (kt of CO2)",
+              "|Space heating|Derived heat (kt of CO2)",
+              "|Space heating|Advanced electric heating (kt of CO2)",
+              "|Space heating|Conventional electric heating (kt of CO2)",
+              "|Space heating|Circulation (kt of CO2)",
+
+              "|Space cooling (kt of CO2)",
+              "|Space cooling|Air conditioning (kt of CO2)",
+
+              "|Water heating (kt of CO2)",
+              "|Water heating|Solids (kt of CO2)",
+              "|Water heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Water heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Water heating|Gases incl. biogas (kt of CO2)",
+              "|Water heating|Biomass and wastes (kt of CO2)",
+              "|Water heating|Geothermal energy (kt of CO2)",
+              "|Water heating|Derived heat (kt of CO2)",
+              "|Water heating|Electricity (kt of CO2)",
+              "|Water heating|Solar (kt of CO2)",
+
+              "|Cooking (kt of CO2)",
+              "|Cooking|Solids (kt of CO2)",
+              "|Cooking|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Cooking|Gases incl. biogas (kt of CO2)",
+              "|Cooking|Biomass and wastes (kt of CO2)",
+              "|Cooking|Electricity (kt of CO2)"
+            ) }
+          )  %>%
+            tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'RES_se-appl' = { list(
+          prefix = 'Residential|Final energy consumption|Specific electric uses in services',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+              "|White appliances (ktoe)",
+              "|White appliances|Refrigerators and freezers (ktoe)",
+              "|White appliances|Washing machine (ktoe)",
+              "|White appliances|Clothes dryer (ktoe)",
+              "|White appliances|Dishwasher (ktoe)",
+              "|Brown appliances (ktoe)",
+              "|Brown appliances|TV and multimedia (ktoe)",
+              "|Brown appliances|ICT equipment (ktoe)",
+              "|Lighting and other electricity uses (ktoe)",
+              "|Lighting and other electricity uses|Lighting  (ktoe)",
+              "|Lighting and other electricity uses|Other appliances (vacuum cleaners, irons etc.) (ktoe)",
+              rep(NA, 120) # more data available but disregarded here
+            )
+          }
+        ) %>%
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
-      )  }
+      ) }
     ) },
     Tertiary= { list(
       pattern = '^JRC-IDEES-2015_Tertiary_.*\\.xlsx$',
       sheets = { list(
-        'SER_summary' = { list(
-          prefix = 'Tertiary|',
-          rows = tibble(
-            name = {
-              c(
-                
-                
-                "Population (inhabitants)",
-                "Gross Domestic product (M\u20ac2010)",
-                "Value added (M\u20ac2010)",
-                "Employment data (employees)",
-                
-                "Number of representative building cells (no)",
-                "Total services useful surface area (in 000 sqm)",
-                "Number of new and renovated buildings (no)",
-                "New and renovated buildings useful surface area (in 000 sqm)",
-                
-                "Actual heating degree-days ()",
-                "Mean heating degree-days over period 1980 - 2015 ()",
-                "Relative heating degree-days ()",
-                
-                NA,
-                
-                "GDP per capita (\u20ac2010)",
-                "Value added per employee (\u20ac2010)",
-                "Value added per capita (\u20ac2010)",
-                "Value added per capita relative to EU28 ()",
-                "Representative building cell size (employees/representative building cell)",
-                "Services useful surface area (in sqm/capita)",
-                "Services useful surface area (in sqm/employee)",
-                "Services useful surface area (in sqm/representative building cell)",
-                "New and renovated buildings useful surface area (in sqm/representative building cell)",
-                
-                NA,
-                
-                NA,
-                NA,
-                NA,
-                NA,
-                NA,
-                
-                NA,
-                
-                "Energy consumption by fuel - Eurostat structure (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Solids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Gases (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Biogas (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Solar (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Derived heat (ktoe)",
-                "Energy consumption by fuel - Eurostat structure|Electricity (ktoe)",
-                
-                "Energy consumption by end-uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Space heating (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Cooling (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Hot water (ktoe)",
-                "Energy consumption by end-uses|Thermal uses|Catering (ktoe)",
-                "Energy consumption by end-uses|Specific electricity uses (ktoe)",
-                
-                NA,
-                "Shares of energy consumption in end-uses|Thermal uses (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Space heating (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Cooling (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Hot water (%)",
-                "Shares of energy consumption in end-uses|Thermal uses|Catering (%)",
-                "Shares of energy consumption in end-uses|Specific electricity uses (%)",
-                
-                NA,
-                
-                "Emissions by fuel - Eurostat structure (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Solids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Liquified petroleum gas (LPG) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Liquids|Gas/Diesel oil and other liquids (without biofuels) (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Gases (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biomass and wastes (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Biogas (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Liquid biofuels (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Solar (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Renewable energies and wastes|Geothermal energy (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Derived heat (kt of CO2)",
-                "Emissions by fuel - Eurostat structure|Electricity (kt of CO2)",
-                
-                "Emissions by end-uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Space heating (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Cooling (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Hot water (kt of CO2)",
-                "Emissions by end-uses|Thermal uses|Catering (kt of CO2)",
-                "Emissions by end-uses|Specific electricity uses (kt of CO2)",
-                
-                NA,
-                "Share of emissions in end-uses|Thermal uses (%)",
-                "Share of emissions in end-uses|Thermal uses|Space heating (%)",
-                "Share of emissions in end-uses|Thermal uses|Cooling (%)",
-                "Share of emissions in end-uses|Thermal uses|Hot water (%)",
-                "Share of emissions in end-uses|Thermal uses|Catering (%)",
-                "Share of emissions in end-uses|Specific electricity uses (%)",
-                
-                NA,
-                
-                "Energy consumption per building (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Space heating (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Cooling (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Hot water (kWh / representative building cell)",
-                "Energy consumption per building|Thermal uses|Catering (kWh / representative building cell)",
-                "Energy consumption per building|Catering (kWh / representative building cell)",
-                "Energy consumption per building|Specific electricity uses (kWh / representative building cell)",
-                
-                "Thermal energy service per building (kWh useful / representative building cell)",
-                "Thermal energy service per building|Space heating (kWh useful / representative building cell)",
-                "Thermal energy service per building|Cooling (kWh useful / representative building cell)",
-                "Thermal energy service per building|Hot water (kWh useful / representative building cell)",
-                "Thermal energy service per building|Catering (kWh useful / representative building cell)",
-                
-                "Emissions per building (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Space heating (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Cooling (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Hot water (kg CO2 / representative building cell)",
-                "Emissions per building|Thermal uses|Catering (kg CO2 / representative building cell)",
-                "Emissions per building|Specific electricity uses (kg CO2 / representative building cell)",
-                
-                "Ratio of energy service to energy consumption (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Space heating (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Cooling (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Hot water (system efficiency indicator)",
-                "Ratio of energy service to energy consumption|Catering (system efficiency indicator)",
-                
-                
-                
-                "Energy consumption per useful surface area (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Space heating (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Cooling (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Hot water (kWh / sqm)",
-                "Energy consumption per useful surface area|Thermal uses|Catering (kWh / sqm)",
-                "Energy consumption per useful surface area|Specific electricity uses (kWh / sqm)",
-                
-                "Thermal energy service per useful surface area(kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Space heating (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Cooling (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Hot water (kWh useful / sqm)",
-                "Thermal energy service per useful surface area|Thermal uses|Catering (kWh useful / sqm)",
-                
-                "Emissions per useful surface area (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Space heating (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Cooling (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Hot water (kg CO2 / sqm)",
-                "Emissions per useful surface area|Thermal uses|Catering (kg CO2 / sqm)",
-                "Emissions per useful surface area|Specific electricity uses (kg CO2 / sqm)",
-                
-                
-                
-                "Energy consumption per capita (kWh / capita)",
-                "Energy consumption per capita|Thermal uses (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Space heating (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Cooling (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Hot water (kWh / capita)",
-                "Energy consumption per capita|Thermal uses|Catering (kWh / capita)",
-                "Energy consumption per capita|Specific electricity uses (kWh / capita)",
-                
-                "Thermal energy service per capita (kWh useful / capita)",
-                "Thermal energy service per capita|Space heating (kWh useful / capita)",
-                "Thermal energy service per capita|Cooling (kWh useful / capita)",
-                "Thermal energy service per capita|Hot water (kWh useful / capita)",
-                "Thermal energy service per capita|Catering (kWh useful / capita)",
-                
-                "Emissions per capita (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Space heating (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Cooling (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Hot water (kg CO2 / capita)",
-                "Emissions per capita|Thermal uses|Catering (kg CO2 / capita)",
-                "Emissions per capita|Specific electricity uses (kg CO2 / capita)"
-              )
-            }
-          ) %>%
-            extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
-        ) },
         'SER_hh_num' = { list(
-          prefix = 'Tertiary|',
+          prefix = 'Tertiary|Stock of buildings',
           rows = tibble(
             name = { c(
-              "Stock of buildings (no)",
+              " (no)",
 
-              "Stock of buildings|Space heating (no)",
-              "Stock of buildings|Space heating|Solids (no)",
-              "Stock of buildings|Space heating|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of buildings|Space heating|Gas heat pumps (no)",
-              "Stock of buildings|Space heating|Conventional gas heaters (no)",
-              "Stock of buildings|Space heating|Biomass and wastes (no)",
-              "Stock of buildings|Space heating|Geothermal energy (no)",
-              "Stock of buildings|Space heating|Derived heat (no)",
-              "Stock of buildings|Space heating|Advanced electric heating (no)",
-              "Stock of buildings|Space heating|Conventional electric heating (no)",
-              "Stock of buildings|Space heating|Circulation, other electricity (no)",
+              "|Space heating (no)",
+              "|Space heating|Solids (no)",
+              "|Space heating|Liquified petroleum gas (LPG) (no)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Space heating|Gas heat pumps (no)",
+              "|Space heating|Conventional gas heaters (no)",
+              "|Space heating|Biomass and wastes (no)",
+              "|Space heating|Geothermal energy (no)",
+              "|Space heating|Derived heat (no)",
+              "|Space heating|Advanced electric heating (no)",
+              "|Space heating|Conventional electric heating (no)",
+              "|Space heating|Circulation, other electricity (no)",
 
-              "Stock of buildings|Space cooling (no)",
-              "Stock of buildings|Space cooling|Gas heat pumps (no)",
-              "Stock of buildings|Space cooling|Electric space cooling (no)",
+              "|Space cooling (no)",
+              "|Space cooling|Gas heat pumps (no)",
+              "|Space cooling|Electric space cooling (no)",
 
-              "Stock of buildings|Hot water (no)",
-              "Stock of buildings|Hot water|Solids (no)",
-              "Stock of buildings|Hot water|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Hot water|Gas/Diesel oil incl. biofuels (GDO) (no)",
-              "Stock of buildings|Hot water|Gases incl. biogas (no)",
-              "Stock of buildings|Hot water|Biomass and wastes (no)",
-              "Stock of buildings|Hot water|Derived heat (no)",
-              "Stock of buildings|Hot water|Electricity (no)",
-              "Stock of buildings|Hot water|Solar (no)",
+              "|Hot water (no)",
+              "|Hot water|Solids (no)",
+              "|Hot water|Liquified petroleum gas (LPG) (no)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (no)",
+              "|Hot water|Gases incl. biogas (no)",
+              "|Hot water|Biomass and wastes (no)",
+              "|Hot water|Derived heat (no)",
+              "|Hot water|Electricity (no)",
+              "|Hot water|Solar (no)",
               NA,
-              "Stock of buildings|Catering (no)",
-              "Stock of buildings|Catering|Liquified petroleum gas (LPG) (no)",
-              "Stock of buildings|Catering|Gases incl. biogas (no)",
-              "Stock of buildings|Catering|Biomass and wastes (no)",
-              "Stock of buildings|Catering|Electricity (no)"
-            ) 
+              "|Catering (no)",
+              "|Catering|Liquified petroleum gas (LPG) (no)",
+              "|Catering|Gases incl. biogas (no)",
+              "|Catering|Biomass and wastes (no)",
+              "|Catering|Electricity (no)"
+            )
           }
         ) %>%
-          extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_fec' = { list(
+          prefix = 'Tertiary|Final energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+
+              "|Space heating (ktoe)",
+              "|Space heating|Solids (ktoe)",
+              "|Space heating|Liquified petroleum gas (LPG) (ktoe)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Space heating|Gas heat pumps (ktoe)",
+              "|Space heating|Conventional gas heaters (ktoe)",
+              "|Space heating|Biomass and wastes (ktoe)",
+              "|Space heating|Geothermal energy (ktoe)",
+              "|Space heating|Derived heat (ktoe)",
+              "|Space heating|Advanced electric heating (ktoe)",
+              "|Space heating|Conventional electric heating (ktoe)",
+              "|Space heating|Circulation, other electricity (ktoe)",
+
+              "|Space cooling (ktoe)",
+              "|Space cooling|Gas heat pumps (ktoe)",
+              "|Space cooling|Electric space cooling (ktoe)",
+
+              "|Hot water (ktoe)",
+              "|Hot water|Solids (ktoe)",
+              "|Hot water|Liquified petroleum gas (LPG) (ktoe)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (ktoe)",
+              "|Hot water|Gases incl. biogas (ktoe)",
+              "|Hot water|Biomass and wastes (ktoe)",
+              "|Hot water|Derived heat (ktoe)",
+              "|Hot water|Electricity (ktoe)",
+              "|Hot water|Solar (ktoe)",
+              NA,
+              "|Catering (ktoe)",
+              "|Catering|Liquified petroleum gas (LPG) (ktoe)",
+              "|Catering|Gases incl. biogas (ktoe)",
+              "|Catering|Biomass and wastes (ktoe)",
+              "|Catering|Electricity (ktoe)"
+            )
+          }
+        ) %>%
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_eff' = { list(
+          prefix = 'Tertiary|Ratio of energy service to energy consumption|Thermal uses',
+          rows = tibble(
+            name = { c(
+              " (system efficiency indicator)",
+
+              "|Space heating (system efficiency indicator)",
+              "|Space heating|Solids (system efficiency indicator)",
+              "|Space heating|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Space heating|Gas heat pumps (system efficiency indicator)",
+              "|Space heating|Conventional gas heaters (system efficiency indicator)",
+              "|Space heating|Biomass and wastes (system efficiency indicator)",
+              "|Space heating|Geothermal energy (system efficiency indicator)",
+              "|Space heating|Derived heat (system efficiency indicator)",
+              "|Space heating|Advanced electric heating (system efficiency indicator)",
+              "|Space heating|Conventional electric heating (system efficiency indicator)",
+              "|Space heating|Circulation, other electricity (system efficiency indicator)",
+
+              "|Space cooling (system efficiency indicator)",
+              "|Space cooling|Gas heat pumps (system efficiency indicator)",
+              "|Space cooling|Electric space cooling (system efficiency indicator)",
+
+              "|Hot water (system efficiency indicator)",
+              "|Hot water|Solids (system efficiency indicator)",
+              "|Hot water|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (system efficiency indicator)",
+              "|Hot water|Gases incl. biogas (system efficiency indicator)",
+              "|Hot water|Biomass and wastes (system efficiency indicator)",
+              "|Hot water|Derived heat (system efficiency indicator)",
+              "|Hot water|Electricity (system efficiency indicator)",
+              "|Hot water|Solar (system efficiency indicator)",
+              NA,
+              "|Catering (system efficiency indicator)",
+              "|Catering|Liquified petroleum gas (LPG) (system efficiency indicator)",
+              "|Catering|Gases incl. biogas (system efficiency indicator)",
+              "|Catering|Biomass and wastes (system efficiency indicator)",
+              "|Catering|Electricity (system efficiency indicator)"
+            )
+          }
+        ) %>%
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_hh_emi' = { list(
+          prefix = 'Tertiary|CO2 emissions',
+          rows = tibble(
+            name = { c(
+              " (kt of CO2)",
+
+              "|Space heating (kt of CO2)",
+              "|Space heating|Solids (kt of CO2)",
+              "|Space heating|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Space heating|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Space heating|Gas heat pumps (kt of CO2)",
+              "|Space heating|Conventional gas heaters (kt of CO2)",
+              "|Space heating|Biomass and wastes (kt of CO2)",
+              "|Space heating|Geothermal energy (kt of CO2)",
+              "|Space heating|Derived heat (kt of CO2)",
+              "|Space heating|Advanced electric heating (kt of CO2)",
+              "|Space heating|Conventional electric heating (kt of CO2)",
+              "|Space heating|Circulation, other electricity (kt of CO2)",
+
+              "|Space cooling (kt of CO2)",
+              "|Space cooling|Gas heat pumps (kt of CO2)",
+              "|Space cooling|Electric space cooling (kt of CO2)",
+
+              "|Hot water (kt of CO2)",
+              "|Hot water|Solids (kt of CO2)",
+              "|Hot water|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Hot water|Gas/Diesel oil incl. biofuels (GDO) (kt of CO2)",
+              "|Hot water|Gases incl. biogas (kt of CO2)",
+              "|Hot water|Biomass and wastes (kt of CO2)",
+              "|Hot water|Derived heat (kt of CO2)",
+              "|Hot water|Electricity (kt of CO2)",
+              "|Hot water|Solar (kt of CO2)",
+              NA,
+              "|Catering (kt of CO2)",
+              "|Catering|Liquified petroleum gas (LPG) (kt of CO2)",
+              "|Catering|Gases incl. biogas (kt of CO2)",
+              "|Catering|Biomass and wastes (kt of CO2)",
+              "|Catering|Electricity (kt of CO2)"
+            )
+          }
+        ) %>%
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
+        ) },
+        'SER_se-appl' = { list(
+          prefix = 'Tertiary|Final energy consumption|Specific electric uses in services',
+          rows = tibble(
+            name = { c(
+              " (ktoe)",
+              "|Ventilation and others (ktoe)",
+              "|Street lighting (ktoe)",
+              "|Building lighting (ktoe)",
+              "|Commercial  refrigeration (ktoe)",
+              "|Miscellaneous building technologies (ktoe)",
+              "|ICT and multimedia (ktoe)",
+              rep(NA, 56) # more data available but disregarded here
+            )
+          }
+        ) %>%
+          tidyr::extract('name', c('variable', 'unit'), '^(.*) \\((.*)\\)$')
         ) }
       )  }
     ) }
   )
-  
+
+  # nolint end
+
   # ---- guardians ----
   if (!subtype %in% names(subtypes)) {
-    stop('Invalid subtype -- supported subtypes are: ', 
-         paste(names(subtypes), collapse = ', '))
+    stop("Invalid subtype -- supported subtypes are: ",
+         paste(names(subtypes), collapse = ", "))
   }
-  
-  files <- list.files(path = '.', pattern = subtypes[[subtype]]$pattern)
-  
+
+  files <- list.files(path = ".", pattern = subtypes[[subtype]]$pattern)
+
   if (is_empty(files)) {
-    stop('Could not find any ', 
-         gsub('[\\^\\$]', '', subtypes[[subtype]]$pattern), ' files in ', 
+    stop("Could not find any ",
+         gsub("[\\^\\$]", "", subtypes[[subtype]]$pattern), " files in ",
          getwd())
   }
-  
+
   # ---- parse files ----
   tmp <- tibble()
   for (file in files) {
-    region <- sub('.*_([^_]*)\\.xlsx$', '\\1', file)
-    
+    region <- sub(".*_([^_]*)\\.xlsx$", "\\1", file)
+
     for (sheet in names(subtypes[[subtype]]$sheets)) {
       # Emission and Energy subtype have an empty column in the header, filter
       # that out
-      col_names <- as.character(
+      colNames <- as.character(
         read_xlsx(path = file, sheet = sheet, col_names = FALSE, n_max = 1,
-                  .name_repair = 'minimal'))
-      
-      if (grepl('^[0-9]{4}$', col_names[2])) {
-        col_types <- c('text', rep('numeric', length(col_names) - 1))
+                  .name_repair = "minimal"))
+
+      if (grepl("^[0-9]{4}$", colNames[2])) {
+        colTypes <- c("text", rep("numeric", length(colNames) - 1))
       } else {
-        col_types <- c('text', 'skip', rep('numeric', length(col_names) - 2))
+        colTypes <- c("text", "skip", rep("numeric", length(colNames) - 2))
       }
-      
+
       tmp <- bind_rows(
         tmp,
-        
-        read_xlsx(path = file, sheet = sheet, col_names = col_names, 
-                  col_types = col_types, skip = 1) %>%
+
+        read_xlsx(path = file, sheet = sheet, col_names = colNames,
+                  col_types = colTypes, skip = 1) %>%
           # drop empty rows
           drop_na(1) %>%
           # add variable and unit columns
           bind_cols(
-            if ('rows' %in% names(subtypes[[subtype]])) {
+            if ("rows" %in% names(subtypes[[subtype]])) {
               subtypes[[subtype]]$rows
             } else {
               subtypes[[subtype]]$sheets[[sheet]]$rows
             }
           ) %>%
           # drop unneeded rows
-          drop_na('variable', 'unit') %>%
+          drop_na("variable", "unit") %>%
           # drop rownames from worksheet
           select(-1) %>%
           # add variable prefix
           mutate(variable = paste0(subtypes[[subtype]]$sheets[[sheet]]$prefix,
-                                   !!sym('variable'))) %>% 
-          pivot_longer(cols = c(-'variable', -'unit'), names_to = 'year',
-                       names_transform = list('year' = as.integer)) %>% 
+                                   !!sym("variable"))) %>%
+          pivot_longer(cols = c(-"variable", -"unit"), names_to = "year",
+                       names_transform = list("year" = as.integer)) %>%
           mutate(region = region)
       )
     }
   }
-  
+
   # ---- return output ----
-  tmp %>% 
-    select('region', 'year', 'variable', 'unit', 'value') %>% 
-    as.magpie(tidy = TRUE) %>% 
+  tmp %>%
+    select("region", "year", "variable", "unit", "value") %>%
+    as.magpie(tidy = TRUE) %>%
     return()
 }

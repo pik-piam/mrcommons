@@ -12,7 +12,8 @@ calcEmissionInventory(
 )
 }
 \arguments{
-\item{datasource}{The Inventory that shall be used. Options are CEDS, combined_CEDS_IPCC (including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)}
+\item{datasource}{The Inventory that shall be used. Options are CEDS, combined_CEDS_IPCC
+(including own estimates where available), IPCC(own estimates), Nsurplus (own estimates)}
 
 \item{targetResolution}{Specific mapping file to be used.}
 
@@ -27,10 +28,10 @@ List of magpie object with results on country level, weight on country level, un
 providees an emission inventory for the past, either from external data or own estimates.
 }
 \examples{
-
 \dontrun{
 calcOutput("EmisNitrogenCroplandPast")
 }
+
 }
 \author{
 Benjamin Leon Bodirsky, Michael S. Crawford

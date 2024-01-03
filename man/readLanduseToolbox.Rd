@@ -17,7 +17,7 @@ readLanduseToolbox(subtype = "physicalArea")
 magpie object containing output of the toolbox
 }
 \description{
-Reads in landuse output of LPJmL input toolbox
+Reads in landuse output of LandInG data
 }
 \examples{
 \dontrun{

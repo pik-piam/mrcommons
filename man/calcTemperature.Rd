@@ -11,7 +11,8 @@ calcTemperature(landusetypes = "all", months = FALSE, convert = TRUE)
 
 \item{months}{FALSE for yearly average, TRUE for monthly values}
 
-\item{convert}{FALSE for raw values of temperature, TRUE add temperature of 15 degrees for countries without observations or land mass.}
+\item{convert}{FALSE for raw values of temperature, TRUE add temperature of 15 degrees for countries
+without observations or land mass.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.
@@ -23,9 +24,6 @@ calculates average monthly temperature on different landuse types
 \dontrun{
 calcOutput("Temperature")
 }
-}
-\seealso{
-\code{\link[=readLPJml_rev21]{readLPJml_rev21()}}
 }
 \author{
 Benjamin Leon Bodirsky

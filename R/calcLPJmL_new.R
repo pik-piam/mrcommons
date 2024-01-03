@@ -5,7 +5,9 @@
 #' @param climatetype Switch between different climate scenarios
 #' @param subtype Switch between different lpjml input as specified in readLPJmL
 #' @param subdata Switch between data dimension subitems
-#' @param stage Degree of processing: raw, smoothed, harmonized, harmonized2020
+#' @param stage Degree of processing: raw, smoothed - raw or smoothed data from 1930|1951
+#'                                    raw1901, smoothed1901 - raw or smoothed data from 1901
+#'                                    harmonized, harmonized2020 - based on toolLPJmLVersion
 #'
 #' @return List of magpie objects with results on cellular level, weight, unit and description.
 #'
@@ -21,13 +23,14 @@
 #' calcOutput("LPJmL_new", subtype = "soilc", aggregate = FALSE)
 #' }
 #'
-calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = "MRI-ESM2-0:ssp370",
+calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", # nolint
+                          climatetype = "MRI-ESM2-0:ssp370",
                           subtype = "soilc", subdata = NULL, stage = "harmonized2020") {
 
   # Create settings for LPJmL from version and climatetype argument
   cfg <- toolLPJmLVersion(version = version, climatetype = climatetype)
 
-  if (stage %in% c("raw", "smoothed")) {
+  if (grepl("raw|smoothed", stage)) {
 
     if (subtype %in% c("discharge", "runoff", "lake_evap", "input_lake")) {
       # calcLPJmL subtypes (returned by calcLPJmL) that are calculated based on different original LPJmL subtypes
@@ -42,22 +45,20 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       subtypeIn <- subtype
     }
 
-    readinName <- paste0(cfg$lpjml_version, ":", cfg$climatetype, cfg$addon_scen, ":", subtypeIn)
+    if (grepl("\\+scen", cfg$readin_version)) {
+      scen <- gsub("(.+)\\+scen:([^\\+]*)(.*)", "_\\2", cfg$readin_version)
+      cfg$readin_version <- gsub("\\+scen:([^\\+]*)", "", cfg$readin_version)
+      cfg$climatetype    <- paste0(cfg$climatetype, scen)
+    }
+    readinName <- paste(cfg$readin_version, cfg$climatetype, subtypeIn, sep = ":")
+    readinHist <- gsub("ssp[0-9]{3}", "historical", readinName)
 
     ########## PLUG HIST + FUTURE ##########
 
-    if (!grepl("historical", climatetype)) {
-
-      # For climate scenarios historical data has to be read in from a different file
-      readinHist <- toolSplitSubtype(readinName, list(version = NULL, climatemodel = NULL,
-                                                      scenario = NULL, variable = NULL))
-
-      # replace scenario name with 'historical' (including optional addon setting) to load historical baseline
-      readinHist <- paste(gsub(readinHist$scenario, paste0("historical", cfg$addon_scen), readinHist), collapse = ":")
+    if (!grepl("historical", cfg$climatetype)) {
 
       x     <- mbind(readSource("LPJmL_new", subtype = readinHist, convert = FALSE),
                      readSource("LPJmL_new", subtype = readinName, convert = FALSE))
-
       years <- getYears(x, as.integer = TRUE)
       x     <- x[, years[years >= 1951], ]
 
@@ -65,7 +66,8 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       x     <- readSource("LPJmL_new", subtype = readinName, convert = FALSE)
       years <- getYears(x, as.integer = TRUE)
-      x     <- x[, years[years >= 1930], ]
+      if (!grepl("1901", stage)) x <- x[, years[years >= 1930], ]
+
     }
     ########## PLUG HIST + FUTURE ##########
 
@@ -90,11 +92,11 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- "day of the year"
 
-    } else if (grepl("aet|discharge|runoff|lake_evap|input_lake", subtype)) {
-
+    } else if (grepl("aet|cft_transp_pft|discharge|runoff|lake_evap|input_lake", subtype)) {
       # unit transformation
-      if (grepl("aet", subtype)) {
+      if (grepl("aet|cft_transp_pft", subtype)) {
         # Annual evapotranspiration (evaporation + transpiration + interception) given in liter/m^2
+        # Plant transpiration in liter/m^2 per season
         # Transform units: liter/m^2 -> m^3/ha
         unitTransform <- 10
         x             <- x * unitTransform
@@ -148,13 +150,14 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
         }
       }
 
-      units <- c(aet                 = "m^3/ha",
-                 discharge           = "mio. m^3",
-                 mdischarge          = "mio. m^3",
-                 lake_evap           = "mio. m^3",
-                 input_lake          = "mio. m^3",
-                 runoff              = "mio. m^3",
-                 mrunoff             = "mio. m^3")
+      units <- c(aet            = "m^3/ha",
+                 cft_transp_pft = "m^3/ha",
+                 discharge      = "mio. m^3",
+                 mdischarge     = "mio. m^3",
+                 lake_evap      = "mio. m^3",
+                 input_lake     = "mio. m^3",
+                 runoff         = "mio. m^3",
+                 mrunoff        = "mio. m^3")
 
       unit <- toolSubtypeSelect(subtype, units)
 
@@ -165,7 +168,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit <- "tDM/ha"
 
     } else if (grepl("irrig|cwater_b", subtype)) {
-
       # Transform units: liter/m^2 (= mm) -> m^3/ha
       irrigTransform  <- 10
       # select only irrigated
@@ -173,7 +175,6 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
       unit             <- "m^3/ha"
 
     } else if (grepl("et_grass", subtype)) {
-
       # Transform units: liter/m^2 (= mm) -> m^3/ha
       watTransform <- 10
       x            <- x * watTransform
@@ -191,55 +192,57 @@ calcLPJmL_new <- function(version = "LPJmL4_for_MAgPIE_44ac93de", climatetype = 
 
       unit <- "ha/ha"
 
+    } else if (grepl("mpet", subtype)) {
+
+      unit <- "mm/month"
+
     } else {
       stop(paste0("subtype ", subtype, " does not exist"))
     }
 
     ########## UNIT TRANSFORMATION ###############
 
-    if (stage == "smoothed") {
+    if (grepl("smoothed", stage)) {
       out <- toolSmooth(x)
     } else {
       out <- x
     }
 
   } else if (stage == "harmonized") {
-
     # read in historical data for subtype
-    baseline        <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_hist,
-                                  subtype = subtype, subdata = subdata, stage = "smoothed",
+    baseline        <- calcOutput("LPJmL_new", version = cfg$baseline_version,
+                                  climatetype = cfg$baseline_hist, subtype = subtype,
+                                  subdata = subdata, stage = "smoothed",
                                   aggregate = FALSE, supplementary = TRUE)
 
     unit            <- baseline$unit
     baseline        <- baseline$x
 
-    if (climatetype == cfg$baseline_hist) {
-      out <- baseline
-
-    } else {
-
-      x   <- calcOutput("LPJmL_new", version = version, climatetype = climatetype,
-                        subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
-      out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
-    }
+    x   <- calcOutput("LPJmL_new", version = cfg$readin_version,
+                      climatetype = cfg$climatetype, subtype = subtype,
+                      subdata = subdata, stage = "smoothed", aggregate = FALSE)
+    out <- toolHarmonize2Baseline(x, baseline, ref_year = cfg$ref_year_hist)
 
   } else if (stage == "harmonized2020") {
-
     # read in historical data for subtype
-    baseline2020    <- calcOutput("LPJmL_new", version = version, climatetype = cfg$baseline_gcm,
-                                  subtype = subtype, subdata = subdata, stage = "harmonized",
+    baseline2020    <- calcOutput("LPJmL_new", version = cfg$baseline_version,
+                                  climatetype = cfg$baseline_gcm, subtype = subtype,
+                                  subdata = subdata, stage = "harmonized",
                                   aggregate = FALSE, supplementary = TRUE)
 
     unit            <- baseline2020$unit
     baseline2020    <- baseline2020$x
 
-    if (climatetype == cfg$baseline_gcm) {
+    if (cfg$climatetype    == cfg$baseline_gcm &&
+        cfg$readin_version == cfg$baseline_version) {
+
       out <- baseline2020
 
     } else {
 
-      x   <- calcOutput("LPJmL_new", version = version, climatetype = climatetype,
-                        subtype = subtype, subdata = subdata, stage = "smoothed", aggregate = FALSE)
+      x   <- calcOutput("LPJmL_new", version = cfg$readin_version,
+                        climatetype = cfg$climatetype, subtype = subtype,
+                        subdata = subdata, stage = "smoothed", aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$ref_year_gcm)
     }
 

@@ -20,11 +20,13 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   subtype <- match.arg(subtype)
   switch(subtype,
          output_EDGE = {
-           mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv", returnPathOnly = TRUE)
+           mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
+                                      returnPathOnly = TRUE, where = "mappingfolder")
            target <- "EDGEitems"
          },
          output_EDGE_buildings = {
-           mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv", returnPathOnly = TRUE)
+           mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
+                                      returnPathOnly = TRUE, where = "mappingfolder")
            target <- "EDGE_buildings"
          })
 
@@ -36,7 +38,10 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # delete NAs rows
   ieamatch <- ieamatch[c("iea_product", "iea_flows", target, "Weight")] %>%
     na.omit() %>%
-    unite("target", all_of(target), sep = ".")
+    unite("target", all_of(target), sep = ".") %>%
+    unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
+    filter(!!sym("product.flow") %in% getNames(data))
+
   magpieNames <- ieamatch[["target"]] %>% unique()
 
   # in case we include IEA categories in the output, iea categories in `ieamatch` got renamed
@@ -97,5 +102,5 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
   return(list(x = reminditems, weight = NULL, unit = "EJ",
               description = paste("Historic final energy demand from buildings (and industry)",
-                                  "based on the 2017 IEA World Energy Balances")))
+                                  "based on the 2022 IEA World Energy Balances")))
 }

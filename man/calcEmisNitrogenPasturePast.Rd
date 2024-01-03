@@ -7,7 +7,9 @@
 calcEmisNitrogenPasturePast(method = "IPCC")
 }
 \arguments{
-\item{method}{IPCC: emissions are calculated according the the IPCC 2006 National Guidelines for Greenhouse Gas Inventories. Nsurplus: Emissions in 2005 are calculated according to IPCC, and the scaled with nitrogen losses from croplands.}
+\item{method}{IPCC: emissions are calculated according the the IPCC 2006 National Guidelines
+for Greenhouse Gas Inventories. Nsurplus: Emissions in 2005 are calculated according to IPCC,
+and the scaled with nitrogen losses from croplands.}
 }
 \value{
 List of magpie object with results on country level, weight on country level, unit and description.
@@ -16,8 +18,7 @@ List of magpie object with results on country level, weight on country level, un
 Calculates nitrogenous emissions from pastures for the historical period
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("EmisNitrogenPasturePast")
 }
 

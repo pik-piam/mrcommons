@@ -13,14 +13,14 @@ calcForestArea(selectyears = "past")
 List of magpie object with results on country level, weight, unit and description.
 }
 \description{
-Calculates consistent forest area and its subcategories based on FAO_FRA2015 and LanduseInitialisation data.
+Calculates consistent forest area and its subcategories based on FAO_FRA2015
+and LanduseInitialisation data.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ForestArea")
 }
 }
 \author{
-Kristine Karstens
+Kristine Karstens, Jan Philipp Dietrich
 }

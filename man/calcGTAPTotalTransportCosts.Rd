@@ -4,7 +4,12 @@
 \alias{calcGTAPTotalTransportCosts}
 \title{calcGTAPTotalTransportCosts}
 \usage{
-calcGTAPTotalTransportCosts()
+calcGTAPTotalTransportCosts(costType = "transport", version = "9")
+}
+\arguments{
+\item{costType}{transport or wholesale}
+
+\item{version}{"81" or "9"}
 }
 \value{
 List of magpie object with results on country level, unit and description.
@@ -16,6 +21,7 @@ Calculates iso-level total global transport costs from GTAP for GTAP food commod
 \dontrun{
 calcOutput("GTAPTotalTransportCosts")
 }
+
 }
 \author{
 David M Chen

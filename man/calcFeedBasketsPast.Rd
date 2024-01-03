@@ -2,27 +2,27 @@
 % Please edit documentation in R/calcFeedBasketsPast.R
 \name{calcFeedBasketsPast}
 \alias{calcFeedBasketsPast}
-\title{Calculate historical feed baskets based on output of MAgPIE_FEED model
-as DM feed biomass (different types of feed) needed per DM livestock products}
+\title{calcFeedBasketsPast}
 \usage{
 calcFeedBasketsPast(non_eaten_food = TRUE)
 }
 \arguments{
-\item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets, if not it is excluded.}
+\item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,
+if not it is excluded.}
 }
 \value{
-Historical feed baskets and corresonding weights as a list of two MAgPIE
-objects
+Historical feed baskets and corresponding weights
+as a list of two MAgPIE objects
 }
 \description{
-Calculate historical feed baskets based on output of MAgPIE_FEED model
-as DM feed biomass (different types of feed) needed per DM livestock products
+Calculate historical feed baskets
+based on output of MAgPIE_FEED model
+as DM feed biomass (different types of feed)
+needed per DM livestock products
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedBasketsPast")
-
 }
 }
 \seealso{

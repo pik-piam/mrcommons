@@ -21,5 +21,5 @@ readSource("ACCMIP", subtype = "nhx_1850")
 }
 }
 \author{
-Roman Popov
+Roman Popov, Felicitas Beier
 }

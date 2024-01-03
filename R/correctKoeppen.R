@@ -5,36 +5,33 @@
 #' @return List of magpie objects with results on cellular level
 #' @author Kristine Karstens
 #' @examples
-#'
 #' \dontrun{
-#'   readSource("Koeppen", subtype="cellular", convert="onlycorrect")
+#' readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")
 #' }
-correctKoeppen <- function(x, subtype="iso"){
+correctKoeppen <- function(x, subtype = "iso") {
 
-  if(subtype=="cellular"){
-    
-    x <- toolCell2isoCell(x)
-    
-    if(range(dimSums(x, dim=3))[1]==0){
-      
-      cat("Some cells do not have a value and fill be filled by proxies.")
-      
-      # Filling island states with the help of https://en.climate-data.org/
-      x["MUS.8219",,"Am"]   <- 1
-      x[8220:8224,,"ET"]    <- 1
-      x[31185:31186,,"BWh"] <- 1
-      x["REU.57134",,"Csb"] <- 1
-      x["USA.42108",,"Cfb"] <- 1
-      
-      # Using magpie_coord to find the nearest neighbour to fill missing values
-      x["SOM.7878",,]       <- x["SOM.7879",,]
-      x["CHL.33450",,]      <- x["CHL.33451",,]
-      x["USA.42166",,]      <- x["USA.42167",,]
-      x["CAN.46648",,]      <- x["CAN.46647",,]
-      x[c("ARG.33454","ARG.33455"),,][]              <- x["ARG.33456",,]
-      x[c("FJI.57128","FJI.57132", "FJI.57133"),,][] <- x["FJI.57129",,]
-    }  
-  } 
+  if (subtype == "cellular") {
+
+    if (any(noZone <- dimSums(x, dim = 3) == 0)) {
+
+      cat("Some cells do not have a value and will be filled by proxies.")
+
+      # Filling island states with proxys based on latitude
+      lat <- as.numeric(gsub("(.*)p(.*)", "\\1", getItems(x, dim = "y", full = TRUE)))
+      afZone  <- abs(lat) <= 25
+      cfaZone <- abs(lat) > 25 & abs(lat) <= 50
+      etZone  <- abs(lat) > 50
+
+      x[, , "Af"]  <- x[, , "Af"]  + afZone * noZone  # add 1 for all missing Af zone cells
+      x[, , "Cfa"] <- x[, , "Cfa"] + cfaZone * noZone # add 1 for all missing Cfa zone cells
+      x[, , "ET"]  <- x[, , "ET"]  + etZone * noZone  # add 1 for all missing ET zone cells
+
+    }
+
+    if (any(dimSums(x, dim = 3) == 0)) {
+      vcat(1, "Some cells do not have a value and cannot be filled by proxies.")
+    }
+  }
 
   return(x)
 }

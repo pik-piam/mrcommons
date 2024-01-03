@@ -1,7 +1,11 @@
 #' @title calcExcretion
-#' @description calculates excretion during grazing, cropland-grazing, confinement and collected for fuel. Based on MAgPIE Feed baskets, slaughter biomass and simple allocation rules.
+#' @description calculates excretion during grazing, cropland-grazing,
+#'              confinement and collected for fuel.
+#'              Based on MAgPIE Feed baskets, slaughter biomass and
+#'              simple allocation rules.
 #'
-#' @param cellular if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level
+#' @param cellular   if TRUE value is calculate and returned (set aggregate to FALSE!) on cellular level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param attributes npk (default) or npkc (inclusing carbon) can be selected
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
@@ -14,7 +18,7 @@
 #' }
 #' @importFrom magclass getNames<-
 
-calcExcretion <- function(cellular = FALSE, attributes = "npk") {
+calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk") {
 
   # read in sets
   nutrients  <- c("nr", "p", "k")
@@ -24,74 +28,83 @@ calcExcretion <- function(cellular = FALSE, attributes = "npk") {
   kli        <- findset(set = "kli")
 
   # read in inputs
+  developmentState             <- calcOutput("DevelopmentState", aggregate = FALSE)
+  croplandGrazingShare         <- collapseNames(1 - developmentState[, past, "SSP2"]) * 0.25
+  fuelShare                    <- collapseNames(calcOutput("ManureFuelShr", aggregate = FALSE)[, past, "SSP2"])
+  getNames(fuelShare, dim = 1) <- paste0("alias_", getNames(fuelShare, dim = 1))
 
-  CroplandGrazingShare       <- collapseNames(1 - calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"]) * 0.25
-  FuelShare                  <- collapseNames(calcOutput("ManureFuelShr", aggregate = FALSE)[, past, "SSP2"])
-  getNames(FuelShare, dim = 1) <- paste0("alias_", getNames(FuelShare, dim = 1))
 
-
-  Feed          <- calcOutput("FeedPast", balanceflow = TRUE, aggregate = FALSE, nutrients = nutrients)[, past, ][, , kli2]
+  feed <- calcOutput("FeedPast", balanceflow = TRUE, aggregate = FALSE, nutrients = nutrients)[, past, ][, , kli2]
 
   # calculate feeding categories
-  LeftOnPasture            <- collapseNames(Feed[, , "pasture"] * (1 - FuelShare))
-  RemovedForFuel           <- collapseNames(Feed[, , "pasture"] * (FuelShare))
-  LeftOnCropland           <- dimSums(Feed[, , kres] * CroplandGrazingShare, dim = 3.2)
-  FeedTotal                <- dimSums(Feed, dim = 3.2)
+  leftOnPasture            <- collapseNames(feed[, , "pasture"] * (1 - fuelShare))
+  removedForFuel           <- collapseNames(feed[, , "pasture"] * (fuelShare))
+  leftOnCropland           <- dimSums(feed[, , kres] * croplandGrazingShare, dim = 3.2)
+  feedTotal                <- dimSums(feed, dim = 3.2)
 
+  confinement              <- feedTotal - leftOnPasture - removedForFuel - leftOnCropland
 
-  Confinement              <- FeedTotal  - LeftOnPasture  - RemovedForFuel - LeftOnCropland
+  feedingSystems           <- mbind(add_dimension(leftOnPasture,  dim = 3.1, nm = "grazing"),
+                                    add_dimension(removedForFuel, dim = 3.1, nm = "fuel"),
+                                    add_dimension(leftOnCropland, dim = 3.1, nm = "stubble_grazing"),
+                                    add_dimension(confinement,    dim = 3.1, nm = "confinement"))
 
-  FeedingSystems      <- mbind(add_dimension(LeftOnPasture,  dim = 3.1, nm = "grazing"),
-                                add_dimension(RemovedForFuel, dim = 3.1, nm = "fuel"),
-                                add_dimension(LeftOnCropland, dim = 3.1, nm = "stubble_grazing"),
-                                add_dimension(Confinement,    dim = 3.1, nm = "confinement"))
+  slaughterFeedShare <- calcOutput("SlaughterFeedShare", aggregate = FALSE, balanceflow = TRUE)
+  slaughterFeedShare <- collapseNames(slaughterFeedShare[, past, nutrients][, , "constant"][, , kli])
+  getNames(slaughterFeedShare, dim = 1) <- paste0("alias_", getNames(slaughterFeedShare, dim = 1))
 
+  excretion <- feedingSystems * (1 - slaughterFeedShare)
 
-  SlaughterFeedShare                 <- collapseNames(calcOutput("SlaughterFeedShare", aggregate = FALSE, balanceflow = TRUE)[, past, nutrients][, , "constant"][, , kli])
-  getNames(SlaughterFeedShare, dim = 1) <- paste0("alias_", getNames(SlaughterFeedShare, dim = 1))
-
-  Excretion                          <- FeedingSystems  *  (1 - SlaughterFeedShare)
-
-  Excretion[is.na(Excretion)]        <- 0
-  getNames(Excretion, dim = 2)         <- substring(getNames(Excretion, dim = 2), 7)
-
+  excretion[is.na(excretion)]  <- 0
+  getNames(excretion, dim = 2) <- substring(getNames(excretion, dim = 2), 7)
 
   if (cellular) {
-    LivestockProduction <- collapseNames(calcOutput("LivestockGridded", details = TRUE, aggregate = FALSE)[, , "dm"])
+    livestockProduction <- collapseNames(calcOutput("LivestockGridded", details = TRUE, aggregate = FALSE)[, , "dm"])
 
-    ProductionWeights   <- new.magpie(getItems(LivestockProduction, dim = 1),
-                                      getItems(LivestockProduction, dim = 2),
-                                      outer(getNames(Excretion, dim = 1), getNames(Excretion, dim = 2), paste, sep = "."),
-                                      fill = 0)
+    productionWeights   <- new.magpie(cells_and_regions = getItems(livestockProduction, dim = 1),
+                                      years = getItems(livestockProduction, dim = 2),
+                                      names = outer(getNames(excretion, dim = 1),
+                                                    getNames(excretion, dim = 2), paste, sep = "."),
+                                      fill = 0,
+                                      sets = c(getSets(livestockProduction, fulldim = FALSE)[1:2],
+                                               "source.kli"))
 
-    ProductionWeights[, , "grazing"][, , c("livst_rum", "livst_milk")]          <- LivestockProduction[, , "ext"][, , c("livst_rum", "livst_milk")]
-    ProductionWeights[, , "fuel"][, , c("livst_rum", "livst_milk")]             <- LivestockProduction[, , "ext"][, , c("livst_rum", "livst_milk")]
-    ProductionWeights[, , "stubble_grazing"][, , c("livst_rum", "livst_milk")]  <- LivestockProduction[, , "int"][, , c("livst_rum", "livst_milk")]
-    ProductionWeights[, , "confinement"][, , c("livst_rum", "livst_milk")]      <- LivestockProduction[, , "int"][, , c("livst_rum", "livst_milk")]
-    ProductionWeights[, , c("livst_chick", "livst_egg", "livst_pig")]          <- dimSums(LivestockProduction[, , c("livst_chick", "livst_egg", "livst_pig")], dim = 3.1)
+    livstRumMilk <- c("livst_rum", "livst_milk")
+    productionWeights[, , "grazing"][, , livstRumMilk]          <- livestockProduction[, , "ext"][, , livstRumMilk]
+    productionWeights[, , "fuel"][, , livstRumMilk]             <- livestockProduction[, , "ext"][, , livstRumMilk]
+    productionWeights[, , "stubble_grazing"][, , livstRumMilk]  <- livestockProduction[, , "int"][, , livstRumMilk]
+    productionWeights[, , "confinement"][, , livstRumMilk]      <- livestockProduction[, , "int"][, , livstRumMilk]
+    livstChickEggPig <- c("livst_chick", "livst_egg", "livst_pig")
+    productionWeights[, , livstChickEggPig] <- dimSums(livestockProduction[, , livstChickEggPig], dim = 3.1)
 
 
-
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
-    mapping <- mapping[which(mapping$iso %in% getRegions(LivestockProduction)), ]
-    Excretion <- toolAggregate(Excretion[getRegions(LivestockProduction), , ], rel = mapping, weight = ProductionWeights, from = "iso", to = "celliso", dim = 1)
+    mapping <- toolGetMappingCoord2Country()
+    mapping$coordiso <- paste(mapping$coords, mapping$iso, sep = ".")
+    excretion <- toolAggregate(excretion[getItems(livestockProduction, dim = 1.3), , ],
+                               rel = mapping, weight = productionWeights,
+                               from = "iso", to = "coordiso", dim = 1)
   }
-  Excretion                          <- round(Excretion, 8)
+  excretion <- round(excretion, digits = 8)
 
   if (attributes == "npkc") {
-    CNratio            <- collapseNames(readSource("IPCC", subtype = "manure_table5p5c", convert = FALSE)[, , "cn_ratio"])
-    Excretion          <- add_columns(Excretion, addnm = "c", dim = 3.3)
-    Excretion[, , "c"]   <- Excretion[, , "nr"] * CNratio
+    cnRatio   <- collapseNames(readSource("IPCC", subtype = "manure_table5p5c", convert = FALSE)[, , "cn_ratio"])
+    excretion <- add_columns(excretion, addnm = "c", dim = 3.3)
+    excretion[, , "c"] <- excretion[, , "nr"] * cnRatio
     unit <- "Mt Nr, P, K , C"
   } else {
-unit <- "Mt Nr, P, K"
-}
+    unit <- "Mt Nr, P, K"
+  }
 
-  return(list(x = Excretion,
+  if (cellular) {
+    if (cells == "magpiecell") {
+      excretion <- toolCoord2Isocell(excretion, cells = cells)
+    }
+  }
+
+  return(list(x = excretion,
               weight = NULL,
               unit = unit,
               min = 0,
               description = "Excreted nutrients per animal type and animal waste system",
-              isocountries = !cellular)
-  )
+              isocountries = !cellular))
 }

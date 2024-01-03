@@ -33,7 +33,7 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
 
   # fill gaps in nutrients per area data by using regional averages (scaled by a multiplicative correction coefficient
   # to match first observation of each country)
-  regionMapping <- toolGetMapping("regionmappingH12.csv", type = "regional")
+  regionMapping <- toolGetMapping("regionmappingH12.csv", type = "regional", where = "mappingfolder")
   numCountries <- nutrientPerArea
   numCountries[numCountries != 0] <- 1
   numCountries <- toolAggregate(numCountries, rel = regionMapping, weight = NULL,
@@ -68,7 +68,7 @@ calcFertilizerUseFAO <- function(subtype = "N", by = "nutrient") {
 
   ## read FAO data on fertilizer by product and subset to fertilizer products of given nutrient type
   fertByProduct <- complete_magpie(readSource("FAO_online", "FertilizerProducts"), fill = 0)
-  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral")
+  mapping <- toolGetMapping("fertilizer_products.csv", type = "sectoral", where = "mappingfolder")
   products <- mapping[mapping[, subtype] != "other", "product"]
   fertByProduct <- fertByProduct[, , products]
   totalUseProducts <- setNames(dimSums(fertByProduct[, , "Agricultural_Use_(tonnes)"], dim = 3.1),

@@ -7,18 +7,22 @@
 calcFAOTradePrices(aggregation = "k")
 }
 \arguments{
-\item{aggregation}{"none", "k", "fbs" or "springmann" the last uses Marco Springmann's custom product mapping}
+\item{aggregation}{"none", "k", "fbs" or "springmann"
+for the last uses Marco Springmann's custom product mapping}
 }
 \value{
-List of magpie objects with results on country level, weight on country level, unit and description.
+List of magpie objects with results on country level,
+weight on country level, unit and description.
 }
 \description{
-calculates USD per kg of FAOSTAT Trade data for import and export prices
+calculates USD per kg of FAOSTAT Trade data
+for import and export prices
 }
 \examples{
 \dontrun{
 calcOutput("calcFAOTradePrices")
 }
+
 }
 \author{
 David M Chen

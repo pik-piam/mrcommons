@@ -18,9 +18,8 @@ List of magpie objects with results on country level
 Convert Koeppen climate zones on iso-country level
 }
 \examples{
-
 \dontrun{
-  readSource("Koeppen", subtype="iso", convert=TRUE)
+readSource("Koeppen", subtype = "iso", convert = TRUE)
 }
 }
 \author{

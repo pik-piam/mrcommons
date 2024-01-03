@@ -18,8 +18,8 @@ Read-in WHO (World health organization) data files as magpie object.
 The files contain information on physical inactivity
 }
 \examples{
-
-\dontrun{ a <- readSource(type="WHO",subtype="physical_activity_adults")
+\dontrun{
+a <- readSource(type = "WHO", subtype = "physical_activity_adults")
 }
 
 }

@@ -8,9 +8,8 @@
 #' \dontrun{
 #' calcOutput("BioplasticToBiomass")
 #' }
-
+#'
 calcBioplasticToBiomass <- function() {
-
   ## overall biomass demand for bioplastics
   # conversion from bioplastic demand to overall biomass demand
   # Source: Bio-based Building Blocks and Polymers – Global Capacities, Production and Trends 2020 – 2025 (short
@@ -74,9 +73,12 @@ calcBioplasticToBiomass <- function() {
   starchContentMaiz  <- 0.7    # maize kernel
   starchContentWheat <- 0.46   # wheat grains
   wm2dm <- 1 / calcOutput("Attributes", aggregate = FALSE)[, , list("wm", c("potato", "maiz", "tece"))]
-  cropProducstDemand[, , "potato"] <- biomassDemand[, , "starch"] * 1/3 * (1 / starchContentPota) * wm2dm[, , "potato"]
-  cropProducstDemand[, , "maiz"]   <- biomassDemand[, , "starch"] * 1/3 * (1 / starchContentMaiz) * wm2dm[, , "maiz"]
-  cropProducstDemand[, , "tece"]   <- biomassDemand[, , "starch"] * 1/3 * (1 / starchContentWheat) * wm2dm[, , "tece"]
+  cropProducstDemand[, , "potato"] <- biomassDemand[, , "starch"] * 1 / 3 *
+    (1 / starchContentPota) * wm2dm[, , "potato"]
+  cropProducstDemand[, , "maiz"]   <- biomassDemand[, , "starch"] * 1 / 3 *
+    (1 / starchContentMaiz) * wm2dm[, , "maiz"]
+  cropProducstDemand[, , "tece"]   <- biomassDemand[, , "starch"] * 1 / 3 *
+    (1 / starchContentWheat) * wm2dm[, , "tece"]
 
   return(list(x = cropProducstDemand,
               weight = NULL,

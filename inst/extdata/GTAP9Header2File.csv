@@ -1,0 +1,205 @@
+header,file
+LICN,BaseData
+DPSM,BaseData
+DREL,BaseData
+DVER,BaseData
+ADRV,BaseData
+EVFA,BaseData
+EVOA,BaseData
+FBEP,BaseData
+FTRV,BaseData
+ISEP,BaseData
+MFRV,BaseData
+OSEP,BaseData
+POP ,BaseData
+PURV,BaseData
+SAVE,BaseData
+TFRV,BaseData
+TVOM,BaseData
+VDEP,BaseData
+VDFA,BaseData
+VDFM,BaseData
+VDGA,BaseData
+VDGM,BaseData
+VDPA,BaseData
+VDPM,BaseData
+VFM ,BaseData
+VIFA,BaseData
+VIFM,BaseData
+VIGA,BaseData
+VIGM,BaseData
+VIMS,BaseData
+VIPA,BaseData
+VIPM,BaseData
+VIWS,BaseData
+VKB ,BaseData
+VRRV,BaseData
+VST ,BaseData
+VTSS,BaseData
+VTWR,BaseData
+VXMD,BaseData
+VXWD,BaseData
+XTRV,BaseData
+RTO ,BaseRate
+RTF ,BaseRate
+RTPD,BaseRate
+RTPI,BaseRate
+RTGD,BaseRate
+RTGI,BaseRate
+RTFD,BaseRate
+RTFI,BaseRate
+RTXS,BaseRate
+RTMS,BaseRate
+RTQS,BaseRate
+AG01,BaseView
+AG02,BaseView
+AG03,BaseView
+AG04,BaseView
+AG05,BaseView
+AG06,BaseView
+BI01,BaseView
+BI02,BaseView
+BI03,BaseView
+CM01,BaseView
+CM02,BaseView
+CM03,BaseView
+CM04,BaseView
+CM05,BaseView
+SF01,BaseView
+SF02,BaseView
+SF03,BaseView
+0IMB,BaseView
+1TNS,BaseView
+1TND,BaseView
+1SRP,BaseView
+1IMP,BaseView
+2TNS,BaseView
+2TND,BaseView
+2SRP,BaseView
+2IMP,BaseView
+SVOA,BaseView
+SVFA,BaseView
+SIFA,BaseView
+SDFA,BaseView
+SIPA,BaseView
+SDPA,BaseView
+SIGA,BaseView
+SDGA,BaseView
+SKB ,BaseView
+SDEP,BaseView
+SXMD,BaseView
+SST ,BaseView
+STWR,BaseView
+SFM ,BaseView
+SIFM,BaseView
+SDFM,BaseView
+SIPM,BaseView
+SDPM,BaseView
+SIGM,BaseView
+SDGM,BaseView
+SIMS,BaseView
+SXWD,BaseView
+SIWS,BaseView
+SMRY,BaseView
+SBAL,BaseView
+MSUM,BaseView
+LICN,BaseView
+H1L ,BaseView
+H2L ,BaseView
+DREL,co2
+DVER,co2
+FC  ,co2
+MDF ,co2
+MDG ,co2
+MDP ,co2
+MIF ,co2
+MIG ,co2
+MIP ,co2
+DVER,default.prm
+DREL,default.prm
+SUBP,default.prm
+INCP,default.prm
+ESBT,default.prm
+SLUG,default.prm
+ETRE,default.prm
+ESBV,default.prm
+ESBD,default.prm
+ESBM,default.prm
+SBTR,default.prm
+SBVR,default.prm
+SBDR,default.prm
+SBMR,default.prm
+RDLT,default.prm
+RFLX,default.prm
+DREL,gsdvole
+DVER,gsdvole
+EC  ,gsdvole
+EDF ,gsdvole
+EDG ,gsdvole
+EDP ,gsdvole
+EIF ,gsdvole
+EIG ,gsdvole
+EIP ,gsdvole
+EXI ,gsdvole
+ASAM,gtapsam
+SAM ,gtapsam
+SSET,gtapsam
+ASET,gtapsam
+LAB ,gtapsam
+LABL,gtapsam
+ACT ,gtapsam
+AMRG,gtapsam
+ATEE,gtapsam
+ATMM,gtapsam
+AWW ,gtapsam
+TEE ,gtapsam
+TFF ,gtapsam
+TMM ,gtapsam
+TRMM,gtapsam
+TRXM,gtapsam
+TSSD,gtapsam
+TSSM,gtapsam
+WW  ,gtapsam
+DVER,gtapsam
+DREL,gtapsam
+H1  ,gtapsam
+H2  ,gtapsam
+H6  ,gtapsam
+H9  ,gtapsam
+MARG,gtapsam
+DH1 ,gtapsam
+DH2 ,gtapsam
+DH6 ,gtapsam
+DMAR,gtapsam
+TARS,gtapsam
+MCOM,gtapsam
+MREG,gtapsam
+MEND,gtapsam
+MMAR,gtapsam
+LICN,gtapsam
+H1L ,gtapsam
+H2L ,gtapsam
+INFO,metadata
+VAR ,metadata
+IO  ,metadata
+IOCO,metadata
+DVER,Sets
+DREL,Sets
+H1  ,Sets
+H2  ,Sets
+H6  ,Sets
+H9  ,Sets
+MARG,Sets
+DH1 ,Sets
+DH2 ,Sets
+DH6 ,Sets
+DMAR,Sets
+TARS,Sets
+MCOM,Sets
+MREG,Sets
+MEND,Sets
+MMAR,Sets
+LICN,Sets
+H1L ,Sets
+H2L ,Sets
+VTTS,Tstrade

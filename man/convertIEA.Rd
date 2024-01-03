@@ -10,7 +10,7 @@ convertIEA(x, subtype)
 \item{x}{MAgPIE object containing IEA values at IEA mixed country-region
 resolution}
 
-\item{subtype}{data subtype. Either "EnergyBalances" or "CHPreport"}
+\item{subtype}{data subtype. Either "EnergyBalances" or "Emissions"}
 }
 \value{
 IEA data as MAgPIE object aggregated to country level

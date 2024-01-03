@@ -7,7 +7,7 @@
 readIEA(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "EnergyBalances", "CHPreport" or "Emissions")}
+\item{subtype}{data subtype. Either "EnergyBalances" or "Emissions"}
 }
 \value{
 magpie object of the IEA

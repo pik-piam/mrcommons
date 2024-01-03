@@ -7,21 +7,23 @@
 calcFeedBaskets(non_eaten_food = FALSE, fadeout = FALSE, method = "new")
 }
 \arguments{
-\item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets, if not it is excluded.}
+\item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,
+if not it is excluded.}
 
 \item{fadeout}{if TRUE, feed basket calibration fades out till 2050.}
 
-\item{method}{"new" for additive calibration at end, "old" for multiplikative calibration of cal_shr and end values.}
+\item{method}{"new" for additive calibration at end,
+"old" for multiplikative calibration of calShr and end values.}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Combines feed baskets of the past with scenario-dependent future feed baskets.
+Combines feed baskets of the past
+with scenario-dependent future feed baskets.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("FeedBaskets")
 }
 }

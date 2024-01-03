@@ -6,7 +6,6 @@
 #' @return magpie object with emission adjustement factors weighted by country C removals 2000 to 2015.
 #' @author Michael Windisch, Florian Humpenoeder
 #' @examples
-#'
 #' \dontrun{
 #' calcOutput("AdjustGrassi2021")
 #' }
@@ -14,23 +13,23 @@
 #' @importFrom madrat toolGetMapping
 #' @export
 
-calcAdjustGrassi2021 <- function(){
-  df <- readSource("AdjustGrassi2021",subtype="data")
+calcAdjustGrassi2021 <- function() {
+  df <- readSource("AdjustGrassi2021", subtype = "data")
 
-  wf <- readSource("AdjustGrassi2021",subtype="weight")
-  wf <- dimSums(wf,dim=2)/dim(wf)[2]
-  wf <- toolCountryFill(wf,fill=0)
+  wf <- readSource("AdjustGrassi2021", subtype = "weight")
+  wf <- dimSums(wf, dim = 2) / dim(wf)[2]
+  wf <- toolCountryFill(wf, fill = 0)
   wf <- abs(wf)
 
-  mf <- toolGetMapping(type = "regional", name = "IPCC_AR6_10region.csv")
-
+  mf <- toolGetMapping(type = "regional", name = "IPCC_AR6_10region.csv",
+                      where = "mappingfolder")
   # downscale from 10 IPCC regions to country level using country removals as weight
-  x <- toolAggregate(df, rel = mf, weight = wf, dim = 1, partrel = F, from = "RegionCode", to = "CountryCode")
+  x <- toolAggregate(df, rel = mf, weight = wf, dim = 1, partrel = FALSE, from = "RegionCode", to = "CountryCode")
 
 
-  return(list(x=x,
-              weight=NULL,
-              unit="GtCO2 yr-1",
-              description="Emission adjustement factors")
+  return(list(x = x,
+              weight = NULL,
+              unit = "GtCO2 yr-1",
+              description = "Emission adjustement factors")
   )
 }

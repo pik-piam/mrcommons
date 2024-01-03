@@ -21,13 +21,9 @@
 #' @importFrom magclass magpiesort getItems dimExists
 #'
 
-
-
 ## check why LivePrim has such strange Units such as (0_1Gr/An) and "Yield_(Hg)"
 
-
-convertFAO <- function(x, subtype) {
-
+convertFAO <- function(x, subtype) { # nolint: cyclocomp_linter.
   ## datasets that have only absolute values
   absolute <- c("CBCrop", "CBLive", "CropProc", "Fertilizer", "Land", "LiveHead",
                 "LiveProc", "Pop", "ValueOfProd", "ForestProdTrade", "Fbs")
@@ -37,14 +33,14 @@ convertFAO <- function(x, subtype) {
   ## datasets that contain relative values that can be deleted because they can
   ## be calculated again at a later point in time
   ## and the dimensions that can be deleted
-  relative_delete <- list()
-  relative_delete[["Crop"]] <- "Yield_(Hg/Ha)"
-  relative_delete[["Fodder"]] <- "Yield_(Hg/Ha)"
-  relative_delete[["LivePrim"]] <- c("Yield_Carcass_Weight_(Hg/An)",
-                                     "Yield_(100Mg/An)",
-                                     "Yield_Carcass_Weight_(0_1Gr/An)",
-                                     "Yield_(Hg/An)",
-                                     "Yield_(Hg)")
+  relativeDelete <- list()
+  relativeDelete[["Crop"]] <- "Yield_(Hg/Ha)"
+  relativeDelete[["Fodder"]] <- "Yield_(Hg/Ha)"
+  relativeDelete[["LivePrim"]] <- c("Yield_Carcass_Weight_(Hg/An)",
+                                    "Yield_(100Mg/An)",
+                                    "Yield_Carcass_Weight_(0_1Gr/An)",
+                                    "Yield_(Hg/An)",
+                                    "Yield_(Hg)")
 
   ## datasets that contain relative values: and define these dimensions
   relative <- list()
@@ -73,24 +69,24 @@ convertFAO <- function(x, subtype) {
   }
 
   ## add additional mappings
-  additional_mapping <- list()
+  additionalMapping <- list()
 
   # Eritrea ERI and Ethiopia ETH
   if (all(c("XET", "ETH", "ERI") %in% getItems(x, dim = 1))) {
-    additional_mapping <- append(additional_mapping, list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
+    additionalMapping <- append(additionalMapping, list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
   }
 
   # Belgium-Luxemburg
   if (all(c("XBL", "BEL", "LUX") %in% getItems(x, dim = 1))) {
-    additional_mapping <- append(additional_mapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
-  } else if (("XBL" %in% getItems(x, dim = 1)) & !("BEL" %in% getItems(x, dim = 1))) {
+    additionalMapping <- append(additionalMapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
+  } else if (("XBL" %in% getItems(x, dim = 1)) && !("BEL" %in% getItems(x, dim = 1))) {
     getItems(x, dim = 1)[getItems(x, dim = 1) == "XBL"] <- "BEL"
   }
 
   # Sudan (former) to Sudan and Southern Sudan. If non of the latter two is in the data make Sudan (former) to Sudan
   if (all(c("XSD", "SSD", "SDN") %in% getItems(x, dim = 1))) {
-    additional_mapping <- append(additional_mapping, list(c("XSD", "SSD", "y2010"), c("XSD", "SDN", "y2010")))
-  } else if ("XSD" %in% getItems(x, dim = 1) & !any(c("SDD", "SDN") %in% getItems(x, dim = 1))) {
+    additionalMapping <- append(additionalMapping, list(c("XSD", "SSD", "y2010"), c("XSD", "SDN", "y2010")))
+  } else if ("XSD" %in% getItems(x, dim = 1) && !any(c("SDD", "SDN") %in% getItems(x, dim = 1))) {
     getItems(x, dim = 1)[getItems(x, dim = 1) == "XSD"] <- "SDN"
   }
 
@@ -98,9 +94,9 @@ convertFAO <- function(x, subtype) {
   ## HKG: China, Hong Kong SAR, TWN: China, Taiwan Province of, MAC: China, Macao SAR
   ## then replace CHN information by XCN, otherwise discard XCN
   if (all(c("CHN", "XCN") %in% getItems(x, dim = 1)) && any(getItems(x, dim = 1) %in% c("HKG", "TWN", "MAC"))) {
-    China_mainland <- x["XCN", , ]
-    getItems(China_mainland, dim = 1) <- "CHN"
-    x["CHN", , ] <- China_mainland
+    chinaMainland <- x["XCN", , ]
+    getItems(chinaMainland, dim = 1) <- "CHN"
+    x["CHN", , ] <- chinaMainland
     x <- x["XCN", , , invert = TRUE]
   } else if (any(getItems(x, dim = 1) == "XCN")) {
     x <- x["XCN", , , invert = TRUE]
@@ -119,7 +115,8 @@ convertFAO <- function(x, subtype) {
   # Northern Mariana Islands (MP, MNP, 580)
   # Palau (PW, PLW, 585)
   if (all(c("PCI", "MHL", "FSM", "MNP", "PLW") %in% getItems(x, dim = 1))) {
-    additional_mapping <- append(additional_mapping, list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"), c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
+    additionalMapping <- append(additionalMapping, list(c("PCI", "MHL", "y1991"), c("PCI", "FSM", "y1991"),
+                                                        c("PCI", "MNP", "y1991"), c("PCI", "PLW", "y1991")))
   } else if ("PCI" %in% getItems(x, dim = 1)) {
     x <- x["PCI", , invert = TRUE]
   }
@@ -127,8 +124,9 @@ convertFAO <- function(x, subtype) {
 
   ### in the dataset EmisAgRiceCult certain follow up states of the Soviet Union are missing. Add them with values of 0
   if (subtype == "EmisAgRiceCult") {
-    ISOhistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
-    former <- ISOhistorical[ISOhistorical$fromISO %in% c("SUN", "YUG", "SCG"), "toISO"]
+    isoHistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"),
+                               stringsAsFactors = FALSE)
+    former <- isoHistorical[isoHistorical$fromISO %in% c("SUN", "YUG", "SCG"), "toISO"]
     missing <- former[!former %in% getItems(x, dim = 1)]
     x2 <- new.magpie(cells_and_regions = missing, years = getYears(x), names = getNames(x))
     x2[, getYears(x2)[getYears(x2, as.integer = TRUE) >= 1992], ] <- 0
@@ -140,17 +138,24 @@ convertFAO <- function(x, subtype) {
 
   if (any(subtype == absolute)) {
     x[is.na(x)] <- 0
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "), "\n", "and would need a different treatment of NAs in convertFAO")
+    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
+      warning("The following elements could be relative: \n",
+              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
+              "\n", "and would need a different treatment of NAs in convertFAO")
+    }
 
-  } else if (any(subtype == names(relative_delete))) {
+  } else if (any(subtype == names(relativeDelete))) {
     x[is.na(x)] <- 0
-    x <- x[, , relative_delete[[subtype]], invert = TRUE]
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    x <- x[, , relativeDelete[[subtype]], invert = TRUE]
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "), "\n", "and would need a different treatment of NAs in convertFAO")
-
+    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
+      warning("The following elements could be relative: \n",
+              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
+              "\n", "and would need a different treatment of NAs in convertFAO")
+    }
   } else if (any(subtype == c("FSCrop", "FSLive"))) {
 
 
@@ -161,32 +166,32 @@ convertFAO <- function(x, subtype) {
     # handling of relative values
     # replaced toolISOhistorical by the following approach for disaggregation
     mapping <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE)
-    for (elem in additional_mapping) {
-    mapping <- rbind(mapping, elem)
-  }
+    for (elem in additionalMapping) {
+      mapping <- rbind(mapping, elem)
+    }
 
-    adopt_aggregated_average <- function(country, data, mapping) {
+    adoptAggregatedAverage <- function(country, data, mapping) {
       if (length(country) > 1) {
-stop("only one transition per function call")
-}
+        stop("only one transition per function call")
+      }
       toISO <- mapping$toISO[mapping$fromISO == country]
       lastyear <- unique(mapping$lastYear[mapping$fromISO == country])
       if (length(lastyear) > 1) {
-stop("strange transition mapping")
-}
+        stop("strange transition mapping")
+      }
       allyears <- getYears(data, as.integer = TRUE)
       years <- allyears[allyears <= as.integer(substring(lastyear, 2, 5))]
       data[toISO, years, ] <- magclass::colSums(data[country, years])
       data <- data[country, , , invert = TRUE]
       return(data)
     }
-    xrel <- adopt_aggregated_average(country = "SUN", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "YUG", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "CSK", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "XET", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "XBL", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "SCG", data = xrel, mapping = mapping)
-    xrel <- adopt_aggregated_average(country = "XSD", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "SUN", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "YUG", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "CSK", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "XET", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "XBL", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "SCG", data = xrel, mapping = mapping)
+    xrel <- adoptAggregatedAverage(country = "XSD", data = xrel, mapping = mapping)
 
     # transforming relative values into absolute values
     pop <- calcOutput("PopulationPast", aggregate = FALSE)
@@ -200,28 +205,31 @@ stop("strange transition mapping")
     # absolute values
     xabs[is.na(xabs)] <- 0
     xabs[xabs < 0] <- 0
-    xabs <- toolISOhistorical(xabs, overwrite = TRUE, additional_mapping = additional_mapping)
+    xabs <- toolISOhistorical(xabs, overwrite = TRUE, additional_mapping = additionalMapping)
     xabs <- toolCountryFill(xabs, fill = 0, verbosity = 2)
 
     x <- mbind(xabs, xrelpop)
     x <- complete_magpie(x)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
-    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) warning("The following elements could be relative: \n", paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "), "\n", "and would need a different treatment of NAs in convertFAO")
-
+    if (any(grepl(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]]))) {
+      warning("The following elements could be relative: \n",
+              paste(grep(pattern = "yield|Yield|/", getNames(x, fulldim = TRUE)[[2]], value = TRUE), collapse = " "),
+              "\n", "and would need a different treatment of NAs in convertFAO")
+    }
   # automatically delete the "Implied emissions factor XXX" dimension for Emission datasets
-  } else if (substring(subtype, 1, 6) == "EmisAg" | substring(subtype, 1, 6) == "EmisLu") {
+  } else if (substring(subtype, 1, 6) == "EmisAg" || substring(subtype, 1, 6) == "EmisLu") {
     if (any(grepl("Implied_emission_factor", getItems(x, dim = 3.2)))) {
       x <- x[, , "Implied_emission_factor", pmatch = TRUE, invert = TRUE]
     }
      x[is.na(x)] <- 0
-     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
      x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
   # Producer Prices Annual
   } else if (subtype == "PricesProducerAnnual") {
     x <- collapseNames(x[, , "Producer_Price_(US_$_tonne)_(USD)"])
     ## Serbia and Montenegro split
-    if (all(c("SCG", "SRB") %in% getItems(x, dim = 1)) & !("MNE" %in% getItems(x, dim = 1))) {
+    if (all(c("SCG", "SRB") %in% getItems(x, dim = 1)) && !("MNE" %in% getItems(x, dim = 1))) {
       mne <- x["SRB", , ]
       dimnames(mne)[[1]] <- "MNE"
       x <- mbind(x, mne)
@@ -235,12 +243,12 @@ stop("strange transition mapping")
       x[countries, , item] <- x[countries, , litem] / mapping$Price_factor[grep(item, mapping$FAO_carcass)]
     }
     x[is.na(x)] <- 0
-    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+    x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
     x <- toolCountryFill(x, fill = 0, verbosity = 2)
   } else if (subtype == "PricesProducerAnnualLCU") {
   x <- collapseNames(x[, , "Producer_Price_(Standard_local_Currency_tonne)_(SLC)"])
   ## Serbia and Montenegro split
-  if (all(c("SCG", "SRB") %in% getItems(x, dim = 1)) & !"MNE" %in% getItems(x, dim = 1)) {
+  if (all(c("SCG", "SRB") %in% getItems(x, dim = 1)) && !"MNE" %in% getItems(x, dim = 1)) {
     mne <- x["SRB", , ]
     dimnames(mne)[[1]] <- "MNE"
     x <- mbind(x, mne)
@@ -254,7 +262,7 @@ stop("strange transition mapping")
     x[countries, , item] <- x[countries, , litem] / mapping$Price_factor[grep(item, mapping$FAO_carcass)]
   }
   x[is.na(x)] <- 0
-  x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additional_mapping)
+  x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
   x <- toolCountryFill(x, fill = 0, verbosity = 2)
   } else {
     cat("Specify whether dataset contains absolute or relative values in convertFAO")
@@ -284,10 +292,6 @@ stop("strange transition mapping")
     getNames(x, dim = 2)[8] <- "Export_Quantity_(Mio_tonnes)"
 
     getNames(x) <- gsub("^\\|", "", getNames(x))
-
-
-    return(x)
-  } else {
-return(x)
-}
+  }
+  return(x)
 }

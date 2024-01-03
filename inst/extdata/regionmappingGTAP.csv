@@ -1,0 +1,250 @@
+X,CountryCode,GTAPCode81,GTAPCode9,GTAPDescription
+Albania,ALB,ALB,ALB,Albania
+United Arab Emirates,ARE,ARE,ARE,United Arab Emirates
+Argentina,ARG,ARG,ARG,Argentina
+Armenia,ARM,ARM,ARM,Armenia
+Australia,AUS,AUS,AUS,Australia
+Cocos (Keeling) Islands,CCK,AUS,AUS,Australia
+Christmas Island,CXR,AUS,AUS,Australia
+Heard Island and McDonald Islands,HMD,AUS,AUS,Australia
+Norfolk Island,NFK,AUS,AUS,Australia
+Austria,AUT,AUT,AUT,Austria
+Azerbaijan,AZE,AZE,AZE,Azerbaijan
+Belgium,BEL,BEL,BEL,Belgium
+Benin,BEN,BEN,BEN,Rest of Western Africa
+Burkina Faso,BFA,BFA,BFA,Rest of Western Africa
+Bangladesh,BGD,BGD,BGD,Bangladesh
+Bulgaria,BGR,BGR,BGR,Bulgaria
+Bahrain,BHR,BHR,BHR,Bahrain
+Belarus,BLR,BLR,BLR,Belarus
+"Bolivia, Plurinational Republic of",BOL,BOL,BOL,"Bolivia, Plurinational Republic of"
+Brazil,BRA,BRA,BRA,Brazil
+Botswana,BWA,BWA,BWA,Botswana
+Canada,CAN,CAN,CAN,Canada
+Switzerland,CHE,CHE,CHE,Switzerland
+Chile,CHL,CHL,CHL,Chile
+China,CHN,CHN,CHN,China
+Cote d'Ivoire,CIV,CIV,CIV,Cote d'Ivoire
+Cameroon,CMR,CMR,CMR,Cameroon
+Colombia,COL,COL,COL,Colombia
+Costa Rica,CRI,CRI,CRI,Costa Rica
+Cyprus,CYP,CYP,CYP,Cyprus
+Czech Republic,CZE,CZE,CZE,Czech Republic
+Germany,DEU,DEU,DEU,Germany
+Denmark,DNK,DNK,DNK,Denmark
+Ecuador,ECU,ECU,ECU,Ecuador
+Egypt,EGY,EGY,EGY,Egypt
+Spain,ESP,ESP,ESP,Spain
+Estonia,EST,EST,EST,Estonia
+Ethiopia,ETH,ETH,ETH,Ethiopia
+Finland,FIN,FIN,FIN,Finland
+Aland Islands,ALA,FIN,FIN,Finland
+France,FRA,FRA,FRA,France
+Guadeloupe,GLP,FRA,FRA,France
+Martinique,MTQ,FRA,FRA,France
+Reunion,REU,FRA,FRA,France
+United Kingdom,GBR,GBR,GBR,United Kingdom
+Georgia,GEO,GEO,GEO,Georgia
+Ghana,GHA,GHA,GHA,Ghana
+Guinea,GIN,GIN,GIN,Rest of Western Africa
+Greece,GRC,GRC,GRC,Greece
+Guatemala,GTM,GTM,GTM,Guatemala
+Hong Kong,HKG,HKG,HKG,Hong Kong
+Honduras,HND,HND,HND,Honduras
+Croatia,HRV,HRV,HRV,Croatia
+Hungary,HUN,HUN,HUN,Hungary
+Indonesia,IDN,IDN,IDN,Indonesia
+India,IND,IND,IND,India
+Ireland,IRL,IRL,IRL,Ireland
+Iran Islamic Republic of,IRN,IRN,IRN,Iran Islamic Republic of
+Israel,ISR,ISR,ISR,Israel
+Italy,ITA,ITA,ITA,Italy
+Japan,JPN,JPN,JPN,Japan
+Kazakhstan,KAZ,KAZ,KAZ,Kazakhstan
+Kenya,KEN,KEN,KEN,Kenya
+Kyrgyzstan,KGZ,KGZ,KGZ,Kyrgyzstan
+Cambodia,KHM,KHM,KHM,Cambodia
+Korea Republic of,KOR,KOR,KOR,Korea Republic of
+Kuwait,KWT,KWT,KWT,Kuwait
+Lao People's Democratic Republic,LAO,LAO,LAO,Lao People's Democratic Republic
+Sri Lanka,LKA,LKA,LKA,Sri Lanka
+Lithuania,LTU,LTU,LTU,Lithuania
+Luxembourg,LUX,LUX,LUX,Luxembourg
+Latvia,LVA,LVA,LVA,Latvia
+Morocco,MAR,MAR,MAR,Morocco
+Madagascar,MDG,MDG,MDG,Madagascar
+Mexico,MEX,MEX,MEX,Mexico
+Malta,MLT,MLT,MLT,Malta
+Mongolia,MNG,MNG,MNG,Mongolia
+Mozambique,MOZ,MOZ,MOZ,Mozambique
+Mauritius,MUS,MUS,MUS,Mauritius
+Malawi,MWI,MWI,MWI,Malawi
+Malaysia,MYS,MYS,MYS,Malaysia
+Namibia,NAM,NAM,NAM,Namibia
+Nigeria,NGA,NGA,NGA,Nigeria
+Nicaragua,NIC,NIC,NIC,Nicaragua
+Netherlands,NLD,NLD,NLD,Netherlands
+Norway,NOR,NOR,NOR,Norway
+Svalbard and Jan Mayen,SJM,NOR,NOR,Norway
+Nepal,NPL,NPL,NPL,Nepal
+New Zealand,NZL,NZL,NZL,New Zealand
+Oman,OMN,OMN,OMN,Oman
+Pakistan,PAK,PAK,PAK,Pakistan
+Panama,PAN,PAN,PAN,Panama
+Peru,PER,PER,PER,Peru
+Philippines,PHL,PHL,PHL,Philippines
+Poland,POL,POL,POL,Poland
+Portugal,PRT,PRT,PRT,Portugal
+Paraguay,PRY,PRY,PRY,Paraguay
+Qatar,QAT,QAT,QAT,Qatar
+Romania,ROU,ROU,ROU,Romania
+Russian Federation,RUS,RUS,RUS,Russian Federation
+Rwanda,RWA,RWA,RWA,Rest of Eastern Africa
+Saudi Arabia,SAU,SAU,SAU,Saudi Arabia
+Senegal,SEN,SEN,SEN,Senegal
+Singapore,SGP,SGP,SGP,Singapore
+El Salvador,SLV,SLV,SLV,El Salvador
+Slovakia,SVK,SVK,SVK,Slovakia
+Slovenia,SVN,SVN,SVN,Slovenia
+Sweden,SWE,SWE,SWE,Sweden
+Togo,TGO,TGO,TGO,Rest of Western Africa
+Thailand,THA,THA,THA,Thailand
+Tunisia,TUN,TUN,TUN,Tunisia
+Turkey,TUR,TUR,TUR,Turkey
+Taiwan,TWN,TWN,TWN,Taiwan
+Tanzania United Republic of,TZA,TZA,TZA,Tanzania United Republic of
+Uganda,UGA,UGA,UGA,Uganda
+Ukraine,UKR,UKR,UKR,Ukraine
+Uruguay,URY,URY,URY,Uruguay
+United States of America,USA,USA,USA,United States of America
+Venezuela,VEN,VEN,VEN,Venezuela
+Viet Nam,VNM,VNM,VNM,Viet Nam
+South Africa,ZAF,ZAF,ZAF,South Africa
+Zambia,ZMB,ZMB,ZMB,Zambia
+Zimbabwe,ZWE,ZWE,ZWE,Zimbabwe
+Angola,AGO,XAC,XAC,South Central Africa
+Congo the Democratic Republic of the,COD,XAC,XAC,South Central Africa
+Belize,BLZ,XCA,XCA,Rest of Central America
+Aruba,ABW,XCB,XCB,Caribbean
+Anguilla,AIA,XCB,XCB,Caribbean
+"Bonaire, Sint Eustatius and Saba",BES,XCB,XCB,Caribbean
+Saint Barthelemy,BLM,XCB,XCB,Caribbean
+Curacao,CUW,XCB,XCB,Caribbean
+Saint Martin (French part),MAF,XCB,XCB,Caribbean
+Sint Maarten (Dutch part),SXM,XCB,XCB,Caribbean
+Antigua & Barbuda,ATG,XCB,XCB,Caribbean
+Bahamas,BHS,XCB,XCB,Caribbean
+Barbados,BRB,XCB,XCB,Caribbean
+Cuba,CUB,XCB,XCB,Caribbean
+Cayman Islands,CYM,XCB,XCB,Caribbean
+Dominica,DMA,XCB,XCB,Caribbean
+Dominican Republic,DOM,XCB,DOM,Caribbean
+Grenada,GRD,XCB,XCB,Caribbean
+Haiti,HTI,XCB,XCB,Caribbean
+Jamaica,JAM,XCB,JAM,Caribbean
+Saint Kitts and Nevis,KNA,XCB,XCB,Caribbean
+Saint Lucia,LCA,XCB,XCB,Caribbean
+Montserrat,MSR,XCB,XCB,Caribbean
+Puerto Rico,PRI,XCB,PRI,Caribbean
+Turks and Caicos Islands,TCA,XCB,XCB,Caribbean
+Trinidad and Tobago,TTO,XCB,TTO,Caribbean
+Saint Vincent and the Grenadines,VCT,XCB,XCB,Caribbean
+Virgin Islands British,VGB,XCB,XCB,Caribbean
+Virgin Islands U.S.,VIR,XCB,XCB,Caribbean
+Central African Republic,CAF,XCF,XCF,Central Africa
+Congo,COG,XCF,XCF,Central Africa
+Gabon,GAB,XCF,XCF,Central Africa
+Equatorial Guinea,GNQ,XCF,XCF,Central Africa
+Sao Tome and Principe,STP,XCF,XCF,Central Africa
+Chad,TCD,XCF,XCF,Central Africa
+Macao,MAC,XEA,XEA,Rest of East Asia
+Korea Democratic Peoples Republic of,PRK,XEA,XEA,Rest of East Asia
+Burundi,BDI,XEC,XEC,Rest of Eastern Africa
+Comoros,COM,XEC,XEC,Rest of Eastern Africa
+Djibouti,DJI,XEC,XEC,Rest of Eastern Africa
+Eritrea,ERI,XEC,XEC,Rest of Eastern Africa
+Mayotte,MYT,XEC,XEC,Rest of Eastern Africa
+Sudan,SDN,XEC,XEC,Rest of Eastern Africa
+South Sudan,SSD,XEC,XEC,Rest of Eastern Africa
+Somalia,SOM,XEC,XEC,Rest of Eastern Africa
+Seychelles,SYC,XEC,XEC,Rest of Eastern Africa
+Moldova Republic of,MDA,XEE,XEE,Rest of Eastern Europe
+Iceland,ISL,XEF,XEF,Rest of EFTA
+Liechtenstein,LIE,XEF,XEF,Rest of EFTA
+Andorra,AND,XER,XER,Rest of Europe
+Bosnia and Herzegovina,BIH,XER,XER,Rest of Europe
+Faroe Islands,FRO,XER,XER,Rest of Europe
+Gibraltar,GIB,XER,XER,Rest of Europe
+Monaco,MCO,XER,XER,Rest of Europe
+Macedonia the former Yugoslav Republic of,MKD,XER,XER,Rest of Europe
+San Marino,SMR,XER,XER,Rest of Europe
+Serbia,SRB,XER,XER,Rest of Europe
+Guernsey,GGY,XER,XER,Rest of Europe
+Isle of Man,IMN,XER,XER,Rest of Europe
+Jersey,JEY,XER,XER,Rest of Europe
+Montenegro,MNE,XER,XER,Rest of Europe
+Holy See (Vatican City State),VAT,XER,XER,Rest of Europe
+Bermuda,BMU,XNA,XNA,Rest of North America
+Greenland,GRL,XNA,XNA,Rest of North America
+Saint Pierre and Miquelon,SPM,XNA,XNA,Rest of North America
+Algeria,DZA,XNF,XNF,Rest of North Africa
+Libyan Arab Jamahiriya,LBY,XNF,XNF,Rest of North Africa
+Western Sahara,ESH,XNF,XNF,Rest of North Africa
+American Samoa,ASM,XOC,XOC,Rest of Oceania
+Cook Islands,COK,XOC,XOC,Rest of Oceania
+Fiji,FJI,XOC,XOC,Rest of Oceania
+Micronesia Federated States of,FSM,XOC,XOC,Rest of Oceania
+Guam,GUM,XOC,XOC,Rest of Oceania
+Kiribati,KIR,XOC,XOC,Rest of Oceania
+Marshall Islands,MHL,XOC,XOC,Rest of Oceania
+Northern Mariana Islands,MNP,XOC,XOC,Rest of Oceania
+New Caledonia,NCL,XOC,XOC,Rest of Oceania
+Niue,NIU,XOC,XOC,Rest of Oceania
+Nauru,NRU,XOC,XOC,Rest of Oceania
+Palau,PLW,XOC,XOC,Rest of Oceania
+Papua New Guinea,PNG,XOC,XOC,Rest of Oceania
+French Polynesia,PYF,XOC,XOC,Rest of Oceania
+Solomon Islands,SLB,XOC,XOC,Rest of Oceania
+Tokelau,TKL,XOC,XOC,Rest of Oceania
+Tonga,TON,XOC,XOC,Rest of Oceania
+Tuvalu,TUV,XOC,XOC,Rest of Oceania
+Vanuatu,VUT,XOC,XOC,Rest of Oceania
+Wallis and Futuna,WLF,XOC,XOC,Rest of Oceania
+Samoa,WSM,XOC,XOC,Rest of Oceania
+Pitcairn,PCN,XOC,XOC,Rest of Oceania
+United States Minor Outlying Islands,UMI,XOC,XOC,Rest of Oceania
+Afghanistan,AFG,XSA,XSA,Rest of South Asia
+Bhutan,BTN,XSA,XSA,Rest of South Asia
+Maldives,MDV,XSA,XSA,Rest of South Asia
+Lesotho,LSO,XSC,XSC,Rest of South African Customs Union
+Swaziland,SWZ,XSC,XSC,Rest of South African Customs Union
+Brunei Darussalam,BRN,XSE,BRN,Rest of Southeast Asia
+Myanmar,MMR,XSE,XSE,Rest of Southeast Asia
+Timor Leste,TLS,XSE,XSE,Rest of Southeast Asia
+Falkland Islands (Malvinas),FLK,XSM,XSM,Rest of South America
+French Guiana,GUF,XSM,XSM,Rest of South America
+Guyana,GUY,XSM,XSM,Rest of South America
+Suriname,SUR,XSM,XSM,Rest of South America
+South Georgia and the South Sandwich Islands,SGS,XSM,XSM,Rest of South America
+Tajikistan,TJK,XSU,XSU,Rest of Former Soviet Union
+Turkmenistan,TKM,XSU,XSU,Rest of Former Soviet Union
+Uzbekistan,UZB,XSU,XSU,Rest of Former Soviet Union
+Antarctica,ATA,XTW,XTW,Rest of the World
+French Southern Territories,ATF,XTW,XTW,Rest of the World
+Bouvet Island,BVT,XTW,XTW,Rest of the World
+British Indian Ocean Territory,IOT,XTW,XTW,Rest of the World
+Cape Verde,CPV,XWF,XWF,Rest of Western Africa
+Gambia,GMB,XWF,XWF,Rest of Western Africa
+Guinea-Bissau,GNB,XWF,XWF,Rest of Western Africa
+Liberia,LBR,XWF,XWF,Rest of Western Africa
+Mali,MLI,XWF,XWF,Rest of Western Africa
+Mauritania,MRT,XWF,XWF,Rest of Western Africa
+Niger,NER,XWF,XWF,Rest of Western Africa
+"Saint Helena, ASCENSION AND TRISTAN DA CUNHA",SHN,XWF,XWF,Rest of Western Africa
+Sierra Leone,SLE,XWF,XWF,Rest of Western Africa
+Iraq,IRQ,XWS,XWS,Rest of Western Asia
+Jordan,JOR,XWS,JOR,Rest of Western Asia
+Lebanon,LBN,XWS,XWS,Rest of Western Asia
+Palestinian Territory Occupied,PSE,XWS,XWS,Rest of Western Asia
+Syrian Arab Republic,SYR,XWS,XWS,Rest of Western Asia
+Yemen,YEM,XWS,XWS,Rest of Western Asia

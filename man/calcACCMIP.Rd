@@ -7,7 +7,8 @@
 calcACCMIP(glo_incl_oceans = FALSE)
 }
 \arguments{
-\item{glo_incl_oceans}{if true, a global value will be returned that also includes deposition on oceans and should be equivalent to total emissions.}
+\item{glo_incl_oceans}{if true, a global value will be returned that also includes deposition on oceans
+and should be equivalent to total emissions.}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -16,11 +17,9 @@ List of magpie objects with results on country level, weight on country level, u
 reads in the ACCMIP atmospheric deposition database. Speeds up caching
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("ACCMIP")
 }
-
 }
 \seealso{
 \code{\link[=calcAtmosphericDeposition]{calcAtmosphericDeposition()}}

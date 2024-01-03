@@ -15,11 +15,13 @@ calcDevelopmentState(upper = 12746, lower = 1045)
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Provides development state of a country or region. We use worldbank definitions by default: above 12746 USD per capita, its a high-income country, below 1045 its a low-income country, in between its a medium-income country.
+Provides development state of a country or region.
+We use worldbank definitions by default: above 12746 USD per capita, its a
+high-income country, below 1045 its a low-income country, in between its a
+medium-income country.
 }
 \examples{
-
-\dontrun{ 
+\dontrun{
 calcOutput("DevelopmentState")
 }
 
