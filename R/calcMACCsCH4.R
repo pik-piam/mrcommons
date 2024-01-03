@@ -132,8 +132,40 @@ calcMACCsCH4 <- function(sector = "all", source = "ImageMacc") {
       }
     }
 
+
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_2019", "baseline_sources")
+    w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
+    w[,,] <-setYears(w[,2010,],NULL)
+
+
+  }
+
+   else if (source == "PBL_MACC_SSP2_2022") {
+
+    unit <- "Tax level 200 steps each 20$/tC"
+    description <- "CH4 PBL_MACC_SSP2_2022"
+
+    wantedYears <- seq(2010, 2100, by = 5)
+
+    ch4 <- NULL
+    for (subtype in c("ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst")) {
+      for (scentype in c("Default","Opt","Pess")) {
+        x <- readSource("PBL_MACC_SSP2_2022",subtype,scentype)
+        existingYears <- getYears(x, as.integer = T)
+        tmp <- setdiff(wantedYears, existingYears)
+        missingYears <- tmp[tmp < existingYears[1]]
+        x <- x[, intersect(wantedYears, existingYears), ]
+        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = T)))
+        y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
+        names(dimnames(y)) <- names(dimnames(x))
+        ch4 <- mbind(ch4, y)
+
+      }
+    }
+
+    # weight for the aggregation
+    baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]
     w[,,] <-setYears(w[,2010,],NULL)
 
