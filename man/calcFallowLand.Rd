@@ -4,7 +4,10 @@
 \alias{calcFallowLand}
 \title{calcFallowLand}
 \usage{
-calcFallowLand()
+calcFallowLand(cellular = TRUE)
+}
+\arguments{
+\item{cellular}{TRUE for cellular outputs.}
 }
 \value{
 MAgPIE object containing fallow land in Mha

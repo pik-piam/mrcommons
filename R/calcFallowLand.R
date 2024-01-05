@@ -9,7 +9,7 @@
 #' Due to multiple cropping, harvested cropland area can be greater than non-fallow land area
 #' and even greater than physical cropland area.
 #' Thus, the results can only be considered a rough estimate of fallow land area.
-#'
+#' @param cellular TRUE for cellular outputs.
 #' @return MAgPIE object containing fallow land in Mha
 #' @author David Hoetten, Felicitas Beier
 #' @seealso
@@ -21,7 +21,7 @@
 #' @importFrom magclass dimSums mbind
 #' @importFrom madrat toolConditionalReplace
 #'
-calcFallowLand <- function() {
+calcFallowLand <- function(cellular = TRUE) {
 
   harvestedArea <- readSource("LandInG", subtype = "harvestedArea")
 
@@ -34,9 +34,18 @@ calcFallowLand <- function() {
 
   fallowLand <- toolConditionalReplace(fallowLand, conditions = c("<0"), replaceby = 0)
 
+  # Aggregation to iso-level
+  if (!cellular) {
+    # aggregate to countries
+    fallowLand <- dimSums(fallowLand, dim = c("x", "y"))
+    # fill missing countries with 0
+    fallowLand <- toolConditionalReplace(x = toolCountryFill(fallowLand),
+                                         conditions = "is.na()", replaceby = 0)
+  }
+
   return(list(x = fallowLand,
               weight = NULL,
-              description = "Fallow land at grid cell level",
+              description = "Fallow land",
               unit = "Mha",
               isocountries = FALSE))
 
