@@ -28,18 +28,18 @@ calcFAOmassbalance <- function() {
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")
   mb1[, , "bioenergy"] <- 0
   mb1 <- mb1[, ,
-    c("production", "production_estimated",
-    "export", "import", "stock_variation",
-    "domestic_supply",
-    "food", "feed", "seed", "waste", "other_util", "bioenergy",
-    "milling", "brans1", "branoil1", "flour1",
-    "refining", "sugar1", "molasses1",
-    "extracting", "oil1", "oil2", "oilcakes1",
-    "fermentation", "alcohol1",
-    "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
-    "distilling", "ethanol1", "distillers_grain1",
-    "distillingloss",
-    "households")]
+             c("production", "production_estimated",
+               "export", "import", "stock_variation",
+               "domestic_supply",
+               "food", "feed", "seed", "waste", "other_util", "bioenergy",
+               "milling", "brans1", "branoil1", "flour1",
+               "refining", "sugar1", "molasses1",
+               "extracting", "oil1", "oil2", "oilcakes1",
+               "fermentation", "alcohol1",
+               "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
+               "distilling", "ethanol1", "distillers_grain1",
+               "distillingloss",
+               "households")]
   newitems <- setdiff(findset("kall"), getNames(mb1, dim = 1))
   mb2 <- add_columns(mb1, dim = 3.1, addnm = newitems)
   mb2[, , newitems] <- 0
@@ -60,9 +60,9 @@ calcFAOmassbalance <- function() {
 
   # test to check whether distribution of feed was ok
   if (any(round(
-      mb2[, , "feed"][, , getNames(mb, dim = 1)]
-      - dimSums(feed[, , getNames(mb, dim = 1)], dim = 3.2),
-7) != 0)) {
+                mb2[, , "feed"][, , getNames(mb, dim = 1)]
+                - dimSums(feed[, , getNames(mb, dim = 1)], dim = 3.2),
+                7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
   mb3 <- mbind(mb2, feed)
@@ -71,13 +71,13 @@ calcFAOmassbalance <- function() {
   mb3[, , getNames(mb3[, , paste0("wood.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
-                                                                 getYears(forest)),
-                                                      getNames(forest[, , "Industrial roundwood"])]
+                                                                  getYears(forest)),
+                                                      getNames(forest[, , "Industrial roundwood"])] * 0.6
   mb3[, , getNames(mb3[, , paste0("woodfuel.",
-                                   getNames(forest, dim = 2),
-                                   ".dm")])] <- forest[, intersect(getYears(mb3),
-                                                                   getYears(forest)),
-                                                         getNames(forest[, , "Wood fuel"])]
+                                  getNames(forest, dim = 2),
+                                  ".dm")])] <- forest[, intersect(getYears(mb3),
+                                                                  getYears(forest)),
+                                                      getNames(forest[, , "Wood fuel"])] * 0.3
 
   # Adding Pasture as feed item
   mb3[, , "pasture"][, ,
@@ -95,23 +95,24 @@ calcFAOmassbalance <- function() {
   att <- calcOutput("Attributes", aggregate = FALSE)
   ethanolOilFactor <- (att / (collapseNames(att[, , "ge"])))[, , c("ethanol", "oils")]
   mb3[, , c("ethanol", "oils")][, , "bioenergy"] <- bioenergy[, getYears(mb3), c("ethanol", "oils")] *
-                                                    ethanolOilFactor
+    ethanolOilFactor
 
   # in some cases bioenergy demand from EEA exceeds ethanol production.
   # We limit it to the availabiltiy in FAOmassbalance_pre
   exceeded <- mb3[, , c("ethanol", "oils")][, , "bioenergy"] > mb3[, , c("ethanol", "oils")][, , "other_util"]
   mb3[, , c("ethanol",
             "oils")][, , "bioenergy"][exceeded] <- mb3[, , c("ethanol",
-                                                              "oils")][, , "other_util"][exceeded]
+                                                             "oils")][, , "other_util"][exceeded]
 
   mb3[, , c("ethanol",
             "oils")][, , "other_util"] <- mb3[, , c("ethanol",
-                                                     "oils")][, , "other_util"] - mb3[, , c("ethanol",
-                                                                                            "oils")][, , "bioenergy"]
+                                                    "oils")][, , "other_util"] - mb3[, , c("ethanol",
+                                                                                           "oils")][, , "bioenergy"]
 
   return(list(
-    x = mb3,
-    weight = NULL,
-    unit = "Mt DM, Mt WM, PJ, Mt Nr, Mt P, Mt K",
-    description = "FAO massbalance calculates all conversion processes within the FAO CBS/FBS and makes them explict."))
+              x = mb3,
+              weight = NULL,
+              unit = "Mt DM, Mt WM, PJ, Mt Nr, Mt P, Mt K",
+              description = "FAO massbalance calculates all conversion processes
+              within the FAO CBS/FBS and makes them explict."))
 }
