@@ -140,9 +140,7 @@ calcMACCsCH4 <- function(
     w[, , ] <- setYears(w[, 2010, ], NULL)
 
 
-  }
-
-   else if (source == "PBL_MACC_SSP2_2022") {
+  } else if (source == "PBL_MACC_SSP2_2022") {
 
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_SSP2_2022"
@@ -164,6 +162,10 @@ calcMACCsCH4 <- function(
 
       }
     }
+
+    # Rename types to match other versions 
+    getItems(ch4,3.2)[getItems(ch4,3.2) == "Pess"] <- "Pessimistic"
+    getItems(ch4,3.2)[getItems(ch4,3.2) == "Opt"] <- "Optimistic"
 
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
