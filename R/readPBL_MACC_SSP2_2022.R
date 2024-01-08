@@ -110,7 +110,12 @@ readPBL_MACC_SSP2_2022 <- function(subtype,subset) {
   }
 
   if(subtype=="n2onitac") {
-    x <- readMMC1("N2O_nitric acid",subset)
+    # Try different names used in the Excel sheet
+    possiblenames <- c("N2O_nitric acid", "N2O_nitr acid")
+    for (tryname  in possiblenames) {
+      x <- tryCatch({readMMC1(tryname,subset)}, error = function(e){return(e)})
+      if(!"error" %in% class(x)) {break}
+    }
     getNames(x,dim="type") <- subtype
     getNames(x,dim="scen") <- subset
   }
@@ -122,7 +127,7 @@ readPBL_MACC_SSP2_2022 <- function(subtype,subset) {
   }
 
   if(subtype=="n2oanwst") {
-    x <- readMMC1("N2O_manu",subset)
+    x <- readMMC1("N2O_manure",subset)
     getNames(x,dim="type") <- subtype
     getNames(x,dim="scen") <- subset
   }
