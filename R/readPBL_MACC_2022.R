@@ -12,6 +12,8 @@
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
+#' @importFrom methods new
+
 readPBL_MACC_2022 <- function(subtype, subset) { # nolint
 
   readMMC1 <- function(sub, scen) {
