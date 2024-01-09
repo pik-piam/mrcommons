@@ -12,6 +12,8 @@
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
+#' @importFrom methods new
+
 readPBL_MACC_2022 <- function(subtype, subset) { # nolint
 
   readMMC1 <- function(sub, scen) {
@@ -28,6 +30,16 @@ readPBL_MACC_2022 <- function(subtype, subset) { # nolint
     x <- as.magpie(x, spatial = 1, temporal = 2, tidy = TRUE)
     names(dimnames(x))[3] <- "type.scen.steps"
     return(x)
+  }
+
+  readIMAGEGlobalEmissionFactors <- function() {
+    inimage <- read_xlsx("Data_MAC_CH4N2O_Harmsen et al_PBL.xlsx", sheet = "Global_mean_EFs_2015_IMAGE", range = "C6:C20")[[1]]
+    gefsimage <- new("magpie", .Data = structure(inimage, 
+    .Dim = c(1L, 1L, 14L), .Dimnames = list(region = NULL, year = NULL, 
+    type = c(
+        "ch4coal","ch4oil","ch4gas","ch4wstl","ch4wsts","ch4rice","ch4animals","ch4anmlwst","n2otrans","n2oadac","n2onitac","n2ofert","n2oanwst","n2owaste"
+    ))))
+    return(gefsimage)
   }
 
 
@@ -115,6 +127,9 @@ readPBL_MACC_2022 <- function(subtype, subset) { # nolint
     getNames(x, dim = "scen") <- subset
   }
 
+  if(subtype=="IMAGEGlobalEmissionFactors") {
+    x <- readIMAGEGlobalEmissionFactors()
+  }
 
   return(x)
 }
