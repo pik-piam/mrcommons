@@ -10,6 +10,7 @@
 #' and even greater than physical cropland area.
 #' Thus, the results can only be considered a rough estimate of fallow land area.
 #' @param cellular TRUE for cellular outputs.
+#' @param years "all" or NULL for all years available
 #' @return MAgPIE object containing fallow land in Mha
 #' @author David Hoetten, Felicitas Beier
 #' @seealso
@@ -20,14 +21,21 @@
 #' }
 #' @importFrom magclass dimSums mbind
 #' @importFrom madrat toolConditionalReplace
+#' @importFrom magpiesets findset
 #'
-calcFallowLand <- function(cellular = TRUE) {
+calcFallowLand <- function(cellular = TRUE, years = "past") {
 
-  harvestedArea <- readSource("LandInG", subtype = "harvestedArea")
+  if (years == "past") {
+    years <- findset("past")
+  } else if (years == "all") {
+    years <- NULL
+  }
+
+  harvestedArea <- readSource("LandInG", subtype = "harvestedArea") [, years, ]
 
   harvestedAreaCrops <- harvestedArea[, , c("pasture"), invert = TRUE]
 
-  physicalArea <- readSource("LandInG", subtype = "physicalArea")
+  physicalArea <- readSource("LandInG", subtype = "physicalArea") [, years, ]
 
   fallowLand <- dimSums(physicalArea, "irrigation") -
     dimSums(harvestedAreaCrops, c("irrigation", "crop"))

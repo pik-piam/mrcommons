@@ -4,10 +4,12 @@
 \alias{calcFallowLand}
 \title{calcFallowLand}
 \usage{
-calcFallowLand(cellular = TRUE)
+calcFallowLand(cellular = TRUE, years = "past")
 }
 \arguments{
 \item{cellular}{TRUE for cellular outputs.}
+
+\item{years}{"all" or NULL for all years available}
 }
 \value{
 MAgPIE object containing fallow land in Mha

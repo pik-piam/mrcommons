@@ -26,8 +26,8 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
     irrigation2 <- irrigation
     irrigation <- TRUE
   } else {
-irrigation2 <- FALSE
-}
+    irrigation2 <- FALSE
+  }
 
   harvest <- collapseNames(calcOutput("Production", products = "kcr", cellular = cellular,
                                       attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
@@ -37,8 +37,8 @@ irrigation2 <- FALSE
                                  irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
   seed <- collapseNames(calcOutput("Seed", cellular = cellular, products = "kcr",
                                    attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
-  fixation <- calcOutput("NitrogenFixationPast", cellular = cellular, irrigation = irrigation,
-                         fixation_types = "fixation_crops", aggregate = FALSE)
+  fixation <- calcOutput("NitrogenFixationBNF", cellular = cellular, irrigation = irrigation,
+                         aggregate = FALSE)
 
   if (irrigation2 != "FALSE") { # again, for size reasons
     harvest <- harvest[, , irrigation2]
@@ -89,13 +89,13 @@ irrigation2 <- FALSE
     out[is.nan(out)] <- 0
     unit <- "Mt Nr"
   } else {
-stop("unknown indicator")
-}
+    stop("unknown indicator")
+  }
 
   return(list(x = out,
-              weight = weight,
-              unit = unit,
-              description = "Nitrogen inputs by crop type",
-              isocountries = !cellular
-              ))
+    weight = weight,
+    unit = unit,
+    description = "Nitrogen inputs by crop type",
+    isocountries = !cellular
+  ))
 }

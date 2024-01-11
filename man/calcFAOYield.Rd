@@ -10,12 +10,11 @@ calcFAOYield(
   irrigation = FALSE,
   cellular = FALSE,
   cut = FALSE,
-  average = 5,
-  areaSource = "FAO"
+  average = 5
 )
 }
 \arguments{
-\item{physical}{physical area or havested area}
+\item{physical}{physical area or harvested area}
 
 \item{attributes}{in dm, wm, ge, nr, p, k}
 
@@ -27,8 +26,6 @@ calcFAOYield(
 number between 0 and 1 to define percentile value for cut off}
 
 \item{average}{averaging period in years (if NULL no averaging is used)}
-
-\item{areaSource}{data source for croparea used in calculation: FAO or Toolbox}
 }
 \value{
 MAgPIE object of yields

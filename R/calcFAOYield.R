@@ -1,10 +1,9 @@
 #' @title calcFAOYield
 #'
 #' @description calculates the yield based on FAO data
-#' @param physical   physical area or havested area
+#' @param physical   physical area or harvested area
 #' @param attributes in dm, wm, ge, nr, p, k
 #' @param cellular   if TRUE value is calculate on cellular level
-#' @param areaSource data source for croparea used in calculation: FAO or Toolbox
 #' @param irrigation distinguish irrigation or not
 #' @param cut        FALSE (default) - do not cut off yields,
 #'                   number between 0 and 1 to define percentile value for cut off
@@ -14,29 +13,15 @@
 #' @importFrom stats quantile
 
 calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
-                         cellular = FALSE, cut = FALSE, average = 5, areaSource = "FAO") {
+                         cellular = FALSE, cut = FALSE, average = 5) {
 
   production <- calcOutput("Production", products = "kcr", attributes = attributes,
                            irrigation = irrigation, cellular = cellular,
                            cells = "lpjcell", aggregate = FALSE)
-  selectyears <- getItems(production, dim = "year")
 
-  if (areaSource == "FAO") {
-
-    area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                       cellular = cellular, cells = "lpjcell",
-                       irrigation = irrigation, aggregate = FALSE,
-                       datasource = "LandInG")
-  } else if (areaSource == "LandInG") {
-
-    area <- calcOutput("CropareaLandInG", sectoral = "kcr", physical = physical,
-                       irrigation = irrigation, selectyears = selectyears,
-                       cellular = cellular, cells = "lpjcell", aggregate = FALSE,
-                       datasource = "FAOLUH")
-  } else {
-    stop("Please specify which area should be used for calculation.
-         Note: LandInG should be FAO-consistent.")
-  }
+  area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
+                     cellular = cellular, cells = "lpjcell",
+                     irrigation = irrigation, aggregate = FALSE)
 
   faoyears   <- intersect(getYears(production), getYears(area))
 
