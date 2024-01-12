@@ -22,7 +22,6 @@ calcOutput("NitrogenFixationRateNatural")
 
 }
 \seealso{
-\code{\link[=NitrogenFixationRateNatural]{NitrogenFixationRateNatural()}}
 \code{\link[=readHerridge]{readHerridge()}}
 }
 \author{

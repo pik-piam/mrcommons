@@ -29,7 +29,7 @@ calcOutput("calcNitrogenFixationBNF")
 }
 }
 \seealso{
-\code{\link[=calcNitrogenFixationPast]{calcNitrogenFixationPast()}}
+\code{\link[=calcNitrogenFixationFreeliving]{calcNitrogenFixationFreeliving()}}
 }
 \author{
 Benjamin Leon Bodirsky

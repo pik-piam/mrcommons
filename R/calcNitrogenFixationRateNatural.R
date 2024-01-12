@@ -4,7 +4,6 @@
 #' @return List of magpie objects with results on global level, empty weight, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' [NitrogenFixationRateNatural()]
 #' [readHerridge()]
 #' @examples
 #' \dontrun{
@@ -21,8 +20,8 @@ calcNitrogenFixationRateNatural <- function(cells = "lpjcell") {
 
   # evapotranspiration (in m^3 per ha)
   etRate    <- collapseNames(calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
-                                         climatetype = "GSWP3-W5E5:historical", subtype = "aet",
-                                         stage = "smoothed", aggregate = FALSE)[, years, ])
+                                        climatetype = "GSWP3-W5E5:historical", subtype = "aet",
+                                        stage = "smoothed", aggregate = FALSE)[, years, ])
 
   startYear <- "y1965"
 
