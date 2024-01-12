@@ -22,7 +22,7 @@ calcOutput("NitrogenBNF")
 
 }
 \seealso{
-\code{\link[=calcNitrogenFixationPast]{calcNitrogenFixationPast()}}
+\code{\link[=calcNitrogenFixationBNF]{calcNitrogenFixationBNF()}}
 }
 \author{
 Benjamin Leon Bodirsky

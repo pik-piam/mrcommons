@@ -7,7 +7,7 @@
 #' [calcNitrogenFixationPast()]
 #' @examples
 #' \dontrun{
-#' calcOutput("calcNitrogenFixationPast")
+#' calcOutput("calcNitrogenFixationFreeliving")
 #' }
 #' @importFrom magpiesets findset
 #'
