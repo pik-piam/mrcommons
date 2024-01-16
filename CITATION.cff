@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'mrcommons: MadRat commons Input Data Library'
-version: 1.37.11
-date-released: '2024-01-05'
+version: 1.37.12
+date-released: '2024-01-16'
 abstract: Provides useful functions and a common structure to all the input data required
   to run models like MAgPIE and REMIND of model input data.
 authors:
@@ -62,12 +62,14 @@ authors:
   given-names: Felix
 - family-names: Soergel
   given-names: Bjoern
-- family-names: Führlich
+- family-names: Sauer
   given-names: Pascal
 - family-names: Hötten
   given-names: David
 - family-names: Hasse
   given-names: Robin
+- family-names: Abrahão
+  given-names: Gabriel
 - family-names: Dietrich
   given-names: Jan Philipp
   email: dietrich@pik-potsdam.de

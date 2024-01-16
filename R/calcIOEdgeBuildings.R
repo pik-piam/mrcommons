@@ -7,7 +7,7 @@
 #' @param subtype Data subtype. See default argument for possible values.
 #' @return IEA data as MAgPIE object aggregated to country level
 #'
-#' @author Pascal Führlich, Anastasis Giannousakis
+#' @author Pascal Sauer, Anastasis Giannousakis
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
@@ -21,12 +21,12 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   switch(subtype,
          output_EDGE = {
            mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
-                                      returnPathOnly = TRUE, where = "mappingfolder")
+                                     returnPathOnly = TRUE, where = "mappingfolder")
            target <- "EDGEitems"
          },
          output_EDGE_buildings = {
            mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
-                                      returnPathOnly = TRUE, where = "mappingfolder")
+                                     returnPathOnly = TRUE, where = "mappingfolder")
            target <- "EDGE_buildings"
          })
 
