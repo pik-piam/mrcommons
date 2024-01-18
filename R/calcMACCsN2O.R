@@ -135,7 +135,7 @@ calcMACCsN2O <- function(
 
     n2o <- NULL
     for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
-      for (scentype in c("Default","Opt","Pess")) {
+      for (scentype in c("Default", "Opt", "Pess")) {
         x <- readSource("PBL_MACC_SSP2_2022", subtype, scentype)
         existingYears <- getYears(x, as.integer = TRUE)
         tmp <- setdiff(wantedYears, existingYears)
@@ -148,9 +148,13 @@ calcMACCsN2O <- function(
       }
     }
 
-    # Rename types to match other versions 
-    getItems(n2o,3.2)[getItems(n2o,3.2) == "Pess"] <- "Pessimistic"
-    getItems(n2o,3.2)[getItems(n2o,3.2) == "Opt"] <- "Optimistic"
+    # Rename types to match other versions
+    getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Pess"] <- "Pessimistic"
+    getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Opt"] <- "Optimistic"
+
+    # Some of the original data actually contains abatement levels >1. That shouldnt happen here
+    n2o[n2o > 1] <- 1
+    n2o[n2o < 0] <- 0
 
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
