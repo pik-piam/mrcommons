@@ -167,6 +167,10 @@ calcMACCsCH4 <- function(
     getItems(ch4, 3.2)[getItems(ch4, 3.2) == "Pess"] <- "Pessimistic"
     getItems(ch4, 3.2)[getItems(ch4, 3.2) == "Opt"] <- "Optimistic"
 
+    # Some of the original data actually contains abatement levels >1. That shouldnt happen here
+    ch4[ch4 > 1] <- 1
+    ch4[ch4 < 0] <- 0
+
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
     w <- baseline[, getYears(ch4), getNames(ch4, dim = 1)]

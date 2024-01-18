@@ -152,6 +152,10 @@ calcMACCsN2O <- function(
     getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Pess"] <- "Pessimistic"
     getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Opt"] <- "Optimistic"
 
+    # Some of the original data actually contains abatement levels >1. That shouldnt happen here
+    n2o[n2o > 1] <- 1
+    n2o[n2o < 0] <- 0
+
     # weight for the aggregation
     baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
