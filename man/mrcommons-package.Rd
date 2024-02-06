@@ -53,6 +53,7 @@ Authors:
   \item David Hötten
   \item Robin Hasse
   \item Gabriel Abrahão
+  \item Pascal Weigmann
 }
 
 }

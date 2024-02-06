@@ -1,5 +1,4 @@
-convertEDGAR8 <- function() {
-  x <- readSource("EDGAR8", convert =F)
+convertEDGAR8 <- function(x) {
 
   # rename regions
   getItems(x, dim = 1) <- sub(pattern = "ANT", replacement = "SXM",
