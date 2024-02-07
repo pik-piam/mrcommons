@@ -2,9 +2,13 @@
 #'
 #' Read-in an IEA csv file as magpie object
 #'
-#' @param subtype data subtype. Either "EnergyBalances" or "Emissions"
+#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-2023", or "Emissions".
+#' - "EnergyBalances": IEA energy balances until 2020 (incomplete 2021), data updated in Aug 2022,
+#' the current default for REMIND input data
+#' - "EnergyBalances-latest": IEA energy balances until 2021 (incomplete 2022), data updated in Aug 2023,
+#' currently used for comparisons only
 #' @return magpie object of the IEA
-#' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
+#' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke
 #' @seealso [readSource()]
 #' @examples
 #' \dontrun{
@@ -17,9 +21,19 @@
 #'
 readIEA <- function(subtype) {
 
-  if (subtype == "EnergyBalances") { # IEA energy balances until 2020 (incomplete 2021) (data updated in August, 2022)
+  if (grepl("EnergyBalances", subtype)) {
 
-    energyBalancesFile <- "IEA-Energy-Balances-2022/worldbig.csv"
+    if (subtype == "EnergyBalances") {
+      # the current default :
+      energyBalancesFile <- "IEA-Energy-Balances-2022/worldbig.csv"
+      incomplete <- 2021
+    } else if (subtype == "EnergyBalances-latest") {
+      energyBalancesFile <- "IEA-Energy-Balances-2023/worldbig.csv"
+      incomplete <- 2022
+    } else {
+      stop("Invalid subtype!")
+    }
+
     data <- fread(
       file = energyBalancesFile,
       col.names = c("COUNTRY", "PRODUCT", "FLOW", "TIME", "ktoe"),
@@ -32,7 +46,7 @@ readIEA <- function(subtype) {
     data <- data %>%
       filter(!is.na(!!sym("ktoe")),
              !is.na(!!sym("COUNTRY")),
-             !!sym("TIME") !=  2021) %>% # exclude 2021, as data is incomplete
+             !!sym("TIME") !=  incomplete) %>% # exclude latest year with incomplete data
       mutate(!!sym("ktoe") := as.numeric(!!sym("ktoe")))
 
     mdata <- as.magpie(data, datacol = dim(data)[2], spatial = which(colnames(data) == "COUNTRY"),
@@ -48,7 +62,7 @@ readIEA <- function(subtype) {
     mdata <- as.magpie(data, datacol = dim(data)[2])
 
   } else {
-    stop("Not a valid subtype!")
+    stop("Invalid subtype!")
   }
   return(mdata)
 }
