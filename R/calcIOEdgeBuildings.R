@@ -5,6 +5,8 @@
 #' buildings and industry together.
 #'
 #' @param subtype Data subtype. See default argument for possible values.
+#' @param ieaVersion Release version of IEA data, either 'default'
+#' (vetted and used in REMIND) or 'latest'.
 #' @return IEA data as MAgPIE object aggregated to country level
 #'
 #' @author Pascal Sauer, Anastasis Giannousakis
@@ -16,7 +18,7 @@
 #' @seealso \code{\link{calcOutput}}
 #' @importFrom dplyr %>% all_of
 #' @importFrom tidyr unite
-calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings")) {
+calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings"), ieaVersion = "default") {
   subtype <- match.arg(subtype)
   switch(subtype,
          output_EDGE = {
@@ -32,8 +34,14 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
            target <- "EDGE_buildings"
          })
 
+  if (!(ieaVersion %in% c("default", "latest"))) {
+    stop("Invalid parameter `ieaVersion`. Must be either 'default' or 'latest'")
+  }
+
+  ieaSubtype <- if (ieaVersion == "default") "EnergyBalances" else "EnergyBalances-latest"
+
   # read in data and convert from ktoe to EJ
-  data <- readSource("IEA", subtype = "EnergyBalances") * 0.0000418680000
+  data <- readSource("IEA", subtype = ieaSubtype) * 4.1868e-5
 
   ieamatch <- read.csv2(mapping, stringsAsFactors = FALSE, na.strings = "")
 
