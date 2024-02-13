@@ -5,14 +5,15 @@
 #'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
-#' @param subtype data subtype. Either "EnergyBalances" or "Emissions"
+#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest", or
+#' "Emissions"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
 #' @importFrom dplyr %>% filter
 #' @importFrom tidyr unite
 #'
 convertIEA <- function(x, subtype) {
-  if (subtype == "EnergyBalances") {
+  if (grepl("EnergyBalances", subtype)) {
 
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
@@ -22,7 +23,7 @@ convertIEA <- function(x, subtype) {
 
     # convert electricity outputs (unit conversion between ktoe and GWh)
     x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- 0.0859845 *
-                                                        x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
+      x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
 
     # calculate weight to be used for regional disaggregations
     wp <- calcOutput("Population", aggregate = FALSE)[, 2010, "pop_SSP2"]
@@ -67,13 +68,16 @@ convertIEA <- function(x, subtype) {
     # for each product: check if the flow "HEMAINC" > 0, if yes, do nothing;
     # if no, add the value of the flow "ELMAINC" to "ELMAINE" and afterwards set ELMAINC to zero.
 
-    missing.flows <- setdiff(expand.grid(iea_product = getItems(x[, , "ELMAINE"], dim = 3.1) %>% # nolint
-      union(getItems(x[, , "ELMAINC"], dim = 3.1)) %>%
-      union(getItems(x[, , "HEMAINC"], dim = 3.1)), iea_flows = c("ELMAINE", "ELMAINC", "HEMAINC")) %>%
-      unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
-      pull("product.flow"), getItems(x, dim = 3))
+    missingFlows <- setdiff(
+      expand.grid(
+        iea_product = getItems(x[, , "ELMAINE"], dim = 3.1) %>% # nolint
+                    union(getItems(x[, , "ELMAINC"], dim = 3.1)) %>%
+                    union(getItems(x[, , "HEMAINC"], dim = 3.1)), iea_flows = c("ELMAINE", "ELMAINC", "HEMAINC")) %>%
+        unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
+        pull("product.flow"), getItems(x, dim = 3)
+    )
 
-    x <- add_columns(x, addnm = missing.flows, dim = 3, fill = 0)
+    x <- add_columns(x, addnm = missingFlows, dim = 3, fill = 0)
 
     d <- x[, , c("ELMAINE", "ELMAINC", "HEMAINC")]
     tmp <- mcalc(d, ELMAINE ~ ifelse(HEMAINC > 0, ELMAINE, ELMAINC + ELMAINE), append = FALSE)
@@ -84,13 +88,17 @@ convertIEA <- function(x, subtype) {
     # for each product: check if the flow "HEAUTOC" > 0, if yes, do nothing;
     # if no, add the value of the flow "ELAUTOC" to "ELAUTOE" and afterwards set ELAUTOC to zero.
 
-    missing.flows <- setdiff(expand.grid(iea_product = getItems(x[, , "ELAUTOE"], dim = 3.1) %>% # nolint
-      union(getItems(x[, , "ELAUTOC"], dim = 3.1)) %>%
-      union(getItems(x[, , "HEAUTOC"], dim = 3.1)), iea_flows = c("ELAUTOE", "HEAUTOC", "ELAUTOC")) %>%
-      unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
-      pull("product.flow"), getItems(x, dim = 3))
+    missingFlows <- setdiff(
+      expand.grid(
+        iea_product = getItems(x[, , "ELAUTOE"], dim = 3.1) %>% # nolint
+          union(getItems(x[, , "ELAUTOC"], dim = 3.1)) %>%
+          union(getItems(x[, , "HEAUTOC"], dim = 3.1)), iea_flows = c("ELAUTOE", "HEAUTOC", "ELAUTOC")
+      ) %>%
+        unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
+        pull("product.flow"), getItems(x, dim = 3)
+    )
 
-    x <- add_columns(x, addnm = missing.flows, dim = 3, fill = 0)
+    x <- add_columns(x, addnm = missingFlows, dim = 3, fill = 0)
 
     d <- x[, , c("ELAUTOE", "HEAUTOC", "ELAUTOC")]
     tmp <- mcalc(d, ELAUTOE ~ ifelse(HEAUTOC > 0, ELAUTOE, ELAUTOC + ELAUTOE), append = FALSE)
