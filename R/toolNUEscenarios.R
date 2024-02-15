@@ -34,10 +34,10 @@ toolNUEscenarios <- function(x, weight, rev = 0.1, zhang = NULL) {
   x <- scenariosetting(x, 0.75, 0.85, "y2010")
   x <- scenariosetting(x, 0.80, 0.85, "y2010")
 
-  if (rev >= 4.33) {
+  if (rev >= numeric_version("4.33")) {
     x <- scenariosetting(x, 0.85, 0.85, "y2010")
   }
-  if (rev >= 4.47) {
+  if (rev >= numeric_version("4.47")) {
     scenarioname <- "neff_ZhangBy2030_start2010"
     x <- add_columns(x, addnm = scenarioname, dim = 3.1)
     x[, , scenarioname] <- convergence(
