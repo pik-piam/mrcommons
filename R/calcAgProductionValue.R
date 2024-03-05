@@ -18,7 +18,7 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   if (datasource == "FAO") {
     data <- readSource("FAO_online", "ValueOfProd")
-    data <- data[, , "Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"]
+    data <- data[, ,  "Gross_Production_Value_(USDMER05)_(1000_US$)"]
     data <- collapseNames(data)
 
     aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
