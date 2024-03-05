@@ -339,14 +339,16 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                       replace_NAs = "no_conversion")
     }
 
-  } else if (subtype == "ValueOfProd") {
+  } else {
+    cat("Specify in convertFAO whether dataset contains absolute or relative values!")
+  }
+
+  if (subtype == "ValueOfProd") {
     x <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"]
     x <- convertGDP(x, unit_in = "current US$MER",
                     unit_out = "constant 2005 US$MER",
                     replace_NAs = "no_conversion")
     getNames(x, dim = 2) <- "Gross_Production_Value_(USDMER05)_(1000_US$)"
-  } else {
-    cat("Specify in convertFAO whether dataset contains absolute or relative values!")
   }
 
   if (subtype == "FertilizerProducts") {

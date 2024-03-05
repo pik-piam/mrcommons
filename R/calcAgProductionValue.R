@@ -18,7 +18,7 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   if (datasource == "FAO") {
     data <- readSource("FAO_online", "ValueOfProd")
-    data <- data[, ,  "Gross_Production_Value_(USDMER05)_(1000_US$)"]
+    data <- data[, , "Gross_Production_Value_(USDMER05)_(1000_US$)"] / 1000
     data <- collapseNames(data)
 
     aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
@@ -43,6 +43,6 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   return(list(x = out,
               weight = NULL,
-              unit = "million_US$15/yr",
+              unit = "million_USDMER05/yr",
               description = description))
 }
