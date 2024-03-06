@@ -28,7 +28,9 @@ calcAgProductionValue <- function(datasource = "FAO") {
     # remove data that contains the aggregate categories
     data <- data[, , -grep("Total", getNames(data), fixed = TRUE)]
     # remove live weight data
-    data <- data[, , -grep("PIN", getNames(data), fixed = TRUE)]
+    if (length(grep("PIN", getNames(data), fixed = TRUE)) > 0) {
+      data <- data[, , -grep("PIN", getNames(data), fixed = TRUE)]
+    }
 
     out <- toolAggregate(data, rel = aggregation, from = "ProductionItem", to = "k",
                          dim = 3.1, partrel = TRUE, verbosity = 2)
