@@ -12,7 +12,7 @@
 #' @param x MAgPIE object containing original values
 #' @param subtype The FAO file type, e.g.: CBCrop
 #' @return Data as MAgPIE object with common country list
-#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
+#' @author Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Daivd Chen, Edna Molina Bacca
 #' @seealso [readFAO()], [readSource()],
 #' @examples
 #' \dontrun{
@@ -120,8 +120,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   ## data for Eritrea ERI and South Sudan SSD added with 0 if not existing after the split
   ## to make toolISOhistorical work
   if (any(getItems(x, dim = 1.1) == "XET") &&
-      any(getItems(x, dim = 1.1) == "ETH") &&
-      !any(getItems(x, dim = 1.1) == "ERI")) {
+        any(getItems(x, dim = 1.1) == "ETH") &&
+        !any(getItems(x, dim = 1.1) == "ERI")) {
     xERI <- x["ETH", , ]
     xERI[, , ] <- 0
     getItems(xERI, dim = 1) <- "ERI"
@@ -129,8 +129,8 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
   }
 
   if (any(getItems(x, dim = 1.1) == "XSD") &&
-      any(getItems(x, dim = 1.1) == "SDN") &&
-      !any(getItems(x, dim = 1.1) == "SSD")) {
+        any(getItems(x, dim = 1.1) == "SDN") &&
+        !any(getItems(x, dim = 1.1) == "SSD")) {
     xSSD <- x["SDN", , ]
     xSSD[, , ] <- 0
     getItems(xSSD, dim = 1) <- "SSD"
@@ -322,7 +322,7 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
       countries <- unique(rownames(which(!is.na(x[, , itemn, pmatch = TRUE]), arr.ind = TRUE)))
       countries <- setdiff(getItems(x, dim = 1.1), countries)
       x[countries, , itemn, pmatch = TRUE] <- x[countries, , litemn, pmatch = TRUE] /
-                                               mapping$Price_factor[grep(item, mapping$FAO_carcass)]
+        mapping$Price_factor[grep(item, mapping$FAO_carcass)]
     }
     x[is.na(x)] <- 0
     x <- toolISOhistorical(x, overwrite = TRUE, additional_mapping = additionalMapping)
@@ -339,12 +339,17 @@ convertFAO_online <- function(x, subtype) { # nolint: cyclocomp_linter, object_n
                       replace_NAs = "no_conversion")
     }
 
-  } else if (subtype == "ValueOfProd") {
-    x <- convertGDP(x, unit_in = "current US$MER",
-                    unit_out = "constant 2005 US$MER",
-                    replace_NAs = "no_conversion")
   } else {
     cat("Specify in convertFAO whether dataset contains absolute or relative values!")
+  }
+
+  if (subtype == "ValueOfProd") {
+    x2 <- x[, , "Gross_Production_Value_(current_thousand_US$)_(1000_US$)"]
+    x2 <- convertGDP(x2, unit_in = "current US$MER",
+                     unit_out = "constant 2005 US$MER",
+                     replace_NAs = "no_conversion")
+    getNames(x2, dim = 2) <- "Gross_Production_Value_(USDMER05)_(1000_US$)"
+    x <- mbind(x, x2)
   }
 
   if (subtype == "FertilizerProducts") {
