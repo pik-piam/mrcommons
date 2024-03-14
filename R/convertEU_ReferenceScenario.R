@@ -24,9 +24,8 @@ convertEU_ReferenceScenario <- function(x, subtype) { # nolint: object_name_lint
     "IMN", "ITA", "JEY", "LVA", "LTU", "LUX", "MLT", "NLD", "POL",
     "PRT", "ROU", "SVK", "SVN", "ESP", "SWE"
   )
+
   eu28 <- c(eu27, "GBR")
-
-
 
   # Technology assumptions -----------------------------------------------------
 
@@ -66,6 +65,7 @@ convertEU_ReferenceScenario <- function(x, subtype) { # nolint: object_name_lint
 
     # results ------------------------------------------------------------------
 
+    x <- x["EL", , , invert = TRUE]
     getItems(x, dim = 1) <- toolCountry2isocode(getItems(x, dim = 1))
 
   }

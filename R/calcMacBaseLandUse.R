@@ -144,7 +144,7 @@ calcMacBaseLandUse <- function(subtype) {
     y <- y[, , emiMacMagpie]
 
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
-    xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE)
+    xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE, warnNA = FALSE)
     xCO2[, 1995, ] <- 0 # replace NA with 0 (only CO2 has NA in 1995)
     xCO2 <- add_dimension(xCO2, dim = 3.3, nm = "co2luc")
     getSets(xCO2) <- c("region", "year", "scenario", "variable", "data")

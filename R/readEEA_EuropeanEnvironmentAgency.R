@@ -26,7 +26,7 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
     # v44: 2020 data, v38: 2019 data
     data <- read.csv("ETS_Database_v44.csv", sep = "\t")
     data <- data[, -c(2, 5)]
-    data$year <- as.numeric(as.character(data$year))
+    data$year <- suppressWarnings(as.numeric(as.character(data$year)))
     data <- data[(!(is.na(data$year))), ]
     colnames(data) <- c("region", "ETS_info", "sector", "value", "period")
     data$region <- toolCountry2isocode(data$region, warn = FALSE)
@@ -49,7 +49,7 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
     x <- as.magpie(data, spatial = 1, temporal = 2, datacol = 4)
 
   } else if (subtype == "total") {
-    data <- read_excel(path = "GHG_Total_historical.xlsx", trim_ws = TRUE)
+    data <- read_excel(path = "GHG_Total_historical.xlsx", trim_ws = TRUE, .name_repair = "unique_quiet")
     data$...1 <- NULL
     eur <- c(
       "AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL",
@@ -73,7 +73,7 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
       tmp <- suppressMessages(read_excel(path = "GHG_ETS_ES_Projections_by_sector.xlsx",
                                          sheet = s, skip = 1, trim_ws = TRUE)) %>%
         melt(id.vars = 1) %>%
-        mutate(value = replace_na(as.numeric(.data[["value"]]), 0))
+        mutate(value = replace_na(suppressWarnings(as.numeric(.data[["value"]])), 0))
       colnames(tmp) <- c("label", "period", "value")
       tmp <- cbind(tmp[!is.na(tmp$value) & tmp$period %in% timeframe, ], region = s)
       historical <- rbind(historical, tmp)
