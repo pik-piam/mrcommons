@@ -23,6 +23,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            gamstransfer=?ignore
             any::lucode2
             any::covr
             any::madrat
@@ -48,6 +49,11 @@ jobs:
         shell: Rscript {0}
         run: lucode2:::validkey(stopIfInvalid = TRUE)
 
+      - name: Verify that lucode2::buildLibrary was successful
+        if: github.event_name == 'pull_request'
+        shell: Rscript {0}
+        run: lucode2:::isVersionUpdated()
+
       - name: Checks
         shell: Rscript {0}
         run: |
@@ -56,6 +62,8 @@ jobs:
 
       - name: Test coverage
         shell: Rscript {0}
-        run: covr::codecov(quiet = FALSE)
+        run: |
+          nonDummyTests <- setdiff(list.files("./tests/testthat/"), c("test-dummy.R", "_snaps"))
+          if(length(nonDummyTests) > 0) covr::codecov(quiet = FALSE)
         env:
           NOT_CRAN: "true"
