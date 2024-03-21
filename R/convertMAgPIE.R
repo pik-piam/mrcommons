@@ -85,15 +85,16 @@ convertMAgPIE <- function(x, subtype) {
     agrLandShare <- as.quitte(agrLandIso) %>%
       select(.data$region, .data$value) %>%
       rename(CountryCode = .data$region) %>%
-      left_join(mapping) %>%
+      left_join(mapping, by = "CountryCode") %>%
       left_join((as.quitte(agrLandReg) %>%
                    select(.data$region, .data$value) %>%
-                   rename(RegionCode = .data$region, Total = .data$value))) %>%
+                   rename(RegionCode = .data$region, Total = .data$value)), by = "RegionCode") %>%
       mutate(value = .data$value / .data$Total) %>%
       # if no agricultural area at all -> assume very low share of 1e-5
       mutate(value = ifelse(.data$value == 0, 1e-5, .data$value)) %>%
-      select(.data$CountryCode, .data$value) %>%
+      select("CountryCode", "value") %>%
       as.magpie(spatial = 1, datacol = 2) %>%
+      suppressWarnings() %>%
       dimReduce()
 
     # divide slope parameter b by agricultural land share

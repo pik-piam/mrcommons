@@ -45,8 +45,8 @@ calcMacBaseLandUse <- function(subtype) {
     # make SDP scenario using SSP1 data
     xSDP <- x[, , "SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
-       x <- mbind(x, xSDP)
+      getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
+      x <- mbind(x, xSDP)
     }
     # make SSP2EU scenario using SSP2 data
     xSSP2EU <- x[, , "SSP2"]
@@ -58,15 +58,15 @@ calcMacBaseLandUse <- function(subtype) {
 
     # emission types that are updated with new MAgPIE 4 data
     emiMag <- c("co2luc",
-                 "n2oanwstm",
-                 "n2ofertin",
-                 "n2oanwstc",
-                 "n2ofertcr",
-                 "n2ofertsom",
-                 "n2oanwstp",
-                 "ch4rice",
-                 "ch4anmlwst",
-                 "ch4animals")
+                "n2oanwstm",
+                "n2ofertin",
+                "n2oanwstc",
+                "n2ofertcr",
+                "n2ofertsom",
+                "n2oanwstp",
+                "ch4rice",
+                "ch4anmlwst",
+                "ch4animals")
 
     x <- x[, , emiMag]
 
@@ -144,7 +144,7 @@ calcMacBaseLandUse <- function(subtype) {
     y <- y[, , emiMacMagpie]
 
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
-    xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE)
+    xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE, warnNA = FALSE)
     xCO2[, 1995, ] <- 0 # replace NA with 0 (only CO2 has NA in 1995)
     xCO2 <- add_dimension(xCO2, dim = 3.3, nm = "co2luc")
     getSets(xCO2) <- c("region", "year", "scenario", "variable", "data")
@@ -182,8 +182,8 @@ calcMacBaseLandUse <- function(subtype) {
     # make SDP scenario using SSP1 data
     xSDP <- x[, , "SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
-       x <- mbind(x, xSDP)
+      getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
+      x <- mbind(x, xSDP)
     }
     # make SSP2riadne scenario using SSP2 data
     xSSP2EU <- x[, , "SSP2"]
@@ -195,11 +195,11 @@ calcMacBaseLandUse <- function(subtype) {
 
     # emission subtype that are not updated with new MAgPIE data
     emiExo <- c("n2oforest",
-                 "n2osavan",
-                 "n2oagwaste",
-                 "ch4forest",
-                 "ch4savan",
-                 "ch4agwaste")
+                "n2osavan",
+                "n2oagwaste",
+                "ch4forest",
+                "ch4savan",
+                "ch4agwaste")
 
     # select Baseline (all other RCPs are only copies of Baseline anyway, see above)
     x <- collapseNames(x[, , emiExo][, , "none"], collapsedim = 3.3)
