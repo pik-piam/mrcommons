@@ -171,22 +171,25 @@ calcCropareaLandInG <- function(sectoral = "kcr", physical = TRUE, cellular = FA
       stop("Please check calcCropareaLandInG. The following calculations area based on the
             assumption that there is no harvested area where no physical area exists.")
     }
-
     # Crop- and irrigation-specific cropping intensity
-    ci <- ifelse(physicalAreaYearly > 0 + 1e-6, harvestedAreaYearly / physicalAreaYearly, 1)
-    # Boolean: is there multiple cropping or not?
-    mcCurr         <- ci
-    mcCurr[, , ]   <- 0
-    mcCurr[ci > (1 + 1e-3)] <- 1
-    # Multiple cropping where non-suitable for multiple cropping
-    violation <- mcCurr == 1 & mcSuit == 0
-    # This case should only occur for areas declared as rainfed
-    if (any(violation[, , "irrigated"])) {
-      stop(paste0("Check calcCropareaLandInG. There is a violation for year ",
-                  y, ". This should not be the case.
-                  LandInG may distribute rainfed harvested areas on irrigated
-                  physical land, but no irrigated harvested area on rainfed land."))
+    fctMCwhereNonSuit <- function(physicalAreaYearly = physicalAreaYearly,
+                                  harvestedAreaYearly = harvestedAreaYearly,
+                                  mcSuit = mcSuit) {
+      ci <- ifelse(physicalAreaYearly > 0, harvestedAreaYearly / physicalAreaYearly, 1)
+      # Boolean: is there multiple cropping or not?
+      mcCurr <- ci
+      mcCurr[, , ] <- 0
+      mcCurr[ci > (1 + 1e-3)] <- 1
+      # Multiple cropping where non-suitable for multiple cropping
+      violation <- mcCurr == 1 & mcSuit == 0
+
+      return(violation)
     }
+
+    # Multiple cropping where non-suitable for multiple cropping
+    violation <- fctMCwhereNonSuit(physicalAreaYearly = physicalAreaYearly,
+                                   harvestedAreaYearly = harvestedAreaYearly,
+                                   mcSuit = mcSuit)
     rfViolation <- collapseNames(violation[, , "rainfed"])
 
     # Temporary objects with correct dimensionality
@@ -218,6 +221,15 @@ calcCropareaLandInG <- function(sectoral = "kcr", physical = TRUE, cellular = FA
     physicalAreaYearly[, , "rainfed"]    <- physRF
 
     rm(harvIR, harvRF, physIR, physRF)
+
+    # Check whether multiple cropping has been corrected
+    violation <- fctMCwhereNonSuit(physicalAreaYearly = physicalAreaYearly,
+                                   harvestedAreaYearly = harvestedAreaYearly,
+                                   mcSuit = mcSuit)
+    if (any(violation)) {
+      stop("Not all cases where multiple cropping happens
+      despite not being suitable for multiple cropping have been corrected.")
+    }
 
     ###################
     ## Select output ##
