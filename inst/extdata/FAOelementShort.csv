@@ -32,11 +32,11 @@ ElementCode;Element;ElementShort;Unit;Unit_original
 5521;Feed;feed;tonnes;1000 tonnes
 5525;Seed;seed;tonnes;tonnes
 5527;Seed;seed;tonnes;1000 tonnes
-5610;Import Quantity;import;tonnes;tonnes
-5611;Import Quantity;import;tonnes;1000 tonnes
+5610;Import Quantity;import;t;tonnes
+5611;Import Quantity;import;t;1000 tonnes
 5616;Import Quantity;import_m3;m3;m3
 5622;Import Value;import_kUS$;1000 US$;1000 US$
-5910;Export Quantity;export;tonnes;tonnes
-5911;Export Quantity;export;tonnes;1000 tonnes
+5910;Export Quantity;export;t;tonnes
+5911;Export Quantity;export;t;1000 tonnes
 5916;Export Quantity;export_m3;m3;m3
 5922;Export Value;export_kUS$;1000 US$;1000 US$
