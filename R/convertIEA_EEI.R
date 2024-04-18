@@ -3,7 +3,8 @@
 #' @author Falk Benke
 #' @param x MAgPIE object to be converted
 #' @importFrom madrat toolCountry2isocode toolCountryFill
-convertIEA_EnergyEfficiencyIndicators <- function(x) { #nolint object_name_linter
+#' @importFrom magclass getItems getItems<-
+convertIEA_EEI <- function(x) { #nolint object_name_linter
   x <- x["IEATOT", , , invert = TRUE]
 
   getItems(x, dim = 1) <- toolCountry2isocode(getItems(x, dim = 1), warn = TRUE)
