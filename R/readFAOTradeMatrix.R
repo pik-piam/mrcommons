@@ -23,7 +23,6 @@
 #' @importFrom magpiesets findset
 
 readFAOTradeMatrix <- function(subtype) { # nolint
-
   file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 
   # ---- Select columns to be read from file and read file ----
@@ -87,6 +86,11 @@ readFAOTradeMatrix <- function(subtype) { # nolint
   tmpUnit    <- gsub("[\\.,;\\+& \\-]", "_",    fao$Unit, perl = TRUE)
   tmpElementShort <- paste0(tmpElement, "_(", tmpUnit, ")")
   fao$ElementShort <- gsub("_{1,}", "_", tmpElementShort, perl = TRUE) # nolint
+
+  #replace Units if tonnes exist with "t" in updated mapping
+  if ("tonnes" %in% elementShort$Unit) {
+    elementShort$Unit[(elementShort$Unit == "tonnes")] <- "t"
+  }
 
   ### replace ElementShort with the entries from ElementShort if the Unit is the same
   if (length(elementShort) > 0) {
