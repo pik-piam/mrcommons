@@ -1,7 +1,7 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.40.7
+Version: 1.40.7.9001
 Date: 2024-04-19
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
@@ -43,6 +43,8 @@ Depends:
     magclass (>= 3.17),
     madrat (>= 2.20.9),
     mrdrivers (>= 1.0.0),
+    mrfaocore,
+    mrlandcore,
     mstools
 Imports:
     data.table,
