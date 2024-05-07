@@ -17,15 +17,6 @@ Useful links:
 }
 
 }
-\seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/pik-piam/mrcommons}
-  \item \doi{10.5281/zenodo.3822009}
-  \item Report bugs at \url{https://github.com/pik-piam/mrcommons/issues}
-}
-
-}
 \author{
 \strong{Maintainer}: Jan Philipp Dietrich \email{dietrich@pik-potsdam.de}
 
