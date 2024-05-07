@@ -4,10 +4,12 @@
 \alias{calcGTAPTotalTransportCosts}
 \title{calcGTAPTotalTransportCosts}
 \usage{
-calcGTAPTotalTransportCosts(costType = "transport")
+calcGTAPTotalTransportCosts(costType = "transport", version = "9")
 }
 \arguments{
 \item{costType}{transport or wholesale}
+
+\item{version}{"81" or "9"}
 }
 \value{
 List of magpie object with results on country level, unit and description.

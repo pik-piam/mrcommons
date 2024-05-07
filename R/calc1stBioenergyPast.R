@@ -14,18 +14,26 @@
 calc1stBioenergyPast <- function() {
   df <- toolCalcIEAfromStructureMappingPEFE(
     readSource("IEA", subtype = "EnergyBalances"),
-    toolGetMapping(type = "sectoral", name = "structuremappingPE.csv", returnPathOnly = TRUE, where = "mappingfolder"),
-    subtype = "magpie")
+    toolGetMapping(
+      type = "sectoral",
+      name = "structuremappingPE.csv",
+      where = "mrcommons",
+      returnPathOnly = TRUE
+    ),
+    subtype = "magpie"
+  )
 
   # Unit conversion from ktoe to PJ
-  df <- df[, , c("biogas", "ethanol", "oils", "woodfuel")] * 0.041868
+  df <-
+    df[, , c("biogas", "ethanol", "oils", "woodfuel")] * 0.041868
 
   # not yet implemented, but could be used to derive biogas yields:
   # https://www.ieabioenergy.com/wp-content/uploads/2011/10/Update_Energy_crop_2011.pdf
 
-  return(list(x = df,
-              weight = NULL,
-              unit = "PJ",
-              description = "1st generation bionegy demand")
-  )
+  return(list(
+    x = df,
+    weight = NULL,
+    unit = "PJ",
+    description = "1st generation bionegy demand"
+  ))
 }

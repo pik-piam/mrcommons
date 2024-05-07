@@ -4,21 +4,24 @@
 \alias{calcFallowLand}
 \title{calcFallowLand}
 \usage{
-calcFallowLand()
+calcFallowLand(cellular = TRUE)
+}
+\arguments{
+\item{cellular}{TRUE for cellular outputs.}
 }
 \value{
-Magpie object with fallow land in ha
+MAgPIE object containing fallow land in Mha
 }
 \description{
 Calculates fallow land on grid cell level,
 based on physical cropland extend and harvested area output
-of LPJML io toolbox.
+of LandInG data.
 The formula
 "fallow land are = max( physical cropland area - harvested cropland area, 0)"
 is used.
 Due to multiple cropping, harvested cropland area can be greater than non-fallow land area
 and even greater than physical cropland area.
-Thus the results can only be considered a rough estimate of fallow land area.
+Thus, the results can only be considered a rough estimate of fallow land area.
 }
 \examples{
 \dontrun{
@@ -26,8 +29,8 @@ calcOutput("FallowLand")
 }
 }
 \seealso{
-\code{\link{readLanduseToolbox}}
+\code{\link{readLandInG}}
 }
 \author{
-David Hoetten
+David Hoetten, Felicitas Beier
 }

@@ -4,10 +4,16 @@
 \alias{calcIOEdgeBuildings}
 \title{calcIOEdgeBuildings}
 \usage{
-calcIOEdgeBuildings(subtype = c("output_EDGE", "output_EDGE_buildings"))
+calcIOEdgeBuildings(
+  subtype = c("output_EDGE", "output_EDGE_buildings"),
+  ieaVersion = "default"
+)
 }
 \arguments{
 \item{subtype}{Data subtype. See default argument for possible values.}
+
+\item{ieaVersion}{Release version of IEA data, either 'default'
+(vetted and used in REMIND) or 'latest'.}
 }
 \value{
 IEA data as MAgPIE object aggregated to country level
@@ -27,5 +33,5 @@ a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 \code{\link{calcOutput}}
 }
 \author{
-Pascal Führlich, Anastasis Giannousakis
+Pascal Sauer, Anastasis Giannousakis
 }

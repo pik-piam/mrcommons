@@ -7,7 +7,13 @@
 readIEA(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "EnergyBalances" or "Emissions"}
+\item{subtype}{data subtype. Either "EnergyBalances", "EnergyBalances-2023", or "Emissions".
+\itemize{
+\item "EnergyBalances": IEA energy balances until 2020 (incomplete 2021), data updated in Aug 2022,
+the current default for REMIND input data
+\item "EnergyBalances-latest": IEA energy balances until 2021 (incomplete 2022), data updated in Aug 2023,
+currently used for comparisons only
+}}
 }
 \value{
 magpie object of the IEA
@@ -25,5 +31,5 @@ a <- readSource(type = "IEA", subtype = "EnergyBalances")
 \code{\link[=readSource]{readSource()}}
 }
 \author{
-Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues
+Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke
 }

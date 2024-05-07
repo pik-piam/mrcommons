@@ -2,12 +2,20 @@
 % Please edit documentation in R/mrcommons-package.R
 \docType{package}
 \name{mrcommons-package}
-\alias{mrcommons-package}
 \alias{mrcommons}
-\title{MadRat commons Input Data Library}
+\alias{mrcommons-package}
+\title{mrcommons: MadRat commons Input Data Library}
 \description{
-Provides useful functions and a common structure to all the input data required to run models like MAgPIE
-and REMIND.
+Provides useful functions and a common structure to all the input data required to run models like MAgPIE and REMIND of model input data.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/pik-piam/mrcommons}
+  \item \doi{10.5281/zenodo.3822009}
+  \item Report bugs at \url{https://github.com/pik-piam/mrcommons/issues}
+}
+
 }
 \seealso{
 Useful links:
@@ -19,5 +27,43 @@ Useful links:
 
 }
 \author{
-Maintainer: Jan Philipp Dietrich \href{mailto:dietrich@pik-potsdam.de}{dietrich@pik-potsdam.de}
+\strong{Maintainer}: Jan Philipp Dietrich \email{dietrich@pik-potsdam.de}
+
+Authors:
+\itemize{
+  \item Benjamin Leon Bodirsky \email{bodirsky@pik-potsdam.de}
+  \item Kristine Karstens
+  \item Lavinia Baumstark
+  \item Isabelle Weindl
+  \item Xiaoxi Wang
+  \item Abhijeet Mishra
+  \item Stephen Wirth
+  \item Mishko Stevanovic
+  \item Nele Steinmetz
+  \item Ulrich Kreidenweis
+  \item Renato Rodrigues
+  \item Roman Popov
+  \item Florian Humpenoeder
+  \item Anastasis Giannousakis
+  \item Antoine Levesque
+  \item David Klein
+  \item Ewerton Araujo
+  \item Felicitas Beier
+  \item Julian Oeser
+  \item Michaja Pehl
+  \item Debbora Leip
+  \item Michael Crawford
+  \item Edna Molina Bacca
+  \item Patrick von Jeetze
+  \item Eleonora Martinelli
+  \item Felix Schreyer
+  \item Bjoern Soergel
+  \item Pascal Sauer
+  \item David Hötten
+  \item Robin Hasse
+  \item Gabriel Abrahão
+  \item Pascal Weigmann
 }
+
+}
+\keyword{internal}

@@ -48,8 +48,17 @@ readLUH2v2 <- function(subtype) {
 
     x  <- NULL
     for (item in data) {
+      # read in share of land type
       shr <- suppressWarnings(subset(rast(fStates, subds = item), timeSel - offset))
-      mag <- aggregate(shr * carea, fact = 2, fun = sum)
+      checkSum <- terra::global(shr * carea, sum, na.rm = TRUE)
+      # aggregate from 0.25 degree to 0.5 degree
+      mag <- terra::aggregate(shr * carea, fact = 2, fun = sum, na.rm = TRUE)
+      # Check whether sum before and after aggregation is the same.
+      # Note: unit is km^2, so only rounded to first digit
+      if (any(round(checkSum - terra::global(mag, sum, na.rm = TRUE), digits = 1) != 0)) {
+        stop("There is an issue with the aggregation. Please check mrcommons::readLUH2v2")
+      }
+      # transform to MAgPIE object and clean up
       mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -80,7 +89,7 @@ readLUH2v2 <- function(subtype) {
 
     zeroTrans <- grepl(paste(paste(names(lu), names(lu), sep = "_to_"),
                              collapse = "|"), luTransReduced)
-   # Land area
+    # Land area
     carea      <- suppressWarnings(rast("staticData_quarterdeg.nc", subds = "carea"))
     ext(carea) <- c(-180, 180, -90, 90)
 
@@ -92,7 +101,15 @@ readLUH2v2 <- function(subtype) {
       print(luTrans[item])
       if (!zeroTrans[item]) {
         shr <- suppressWarnings(subset(rast(fTrans, subds = luTrans[item]), timeSel - offset - 1))
-        mag <- aggregate(shr * carea, fact = 2, fun = sum)
+        checkSum <- terra::global(shr * carea, sum, na.rm = TRUE)
+        # aggregate from 0.25 degree to 0.5 degree
+        mag <- terra::aggregate(shr * carea, fact = 2, fun = sum, na.rm = TRUE)
+        # Check whether sum before and after aggregation is the same.
+        # Note: unit is km^2, so only rounded to first digit
+        if (any(round(checkSum - terra::global(mag, sum, na.rm = TRUE), digits = 1) != 0)) {
+          stop("There is an issue with the aggregation. Please check mrcommons::readLUH2v2")
+        }
+        # Transform to MAgPIE object
         mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
         getNames(mag) <- luTransReduced[item]
         getCells(mag) <- paste(map$coords, map$iso, sep = ".")
@@ -105,13 +122,14 @@ readLUH2v2 <- function(subtype) {
     getCells(x)  <- getCells(mag)
     getSets(x)   <- getSets(mag)
 
+    # Convert from km^2 to Mha
     x <- x / 10000
 
   } else if (grepl("irrigation", subtype)) {
 
     # Mapping between states and management_irrigation
     dataMan    <- c("irrig_c3ann", "irrig_c3per", "irrig_c4ann", "irrig_c4per", "irrig_c3nfx", "flood")
-    dataStates <- c("c3ann", "c3per", "c4ann", "c4per", "c3nfx", "c3ann")
+    dataStates <- c("c3ann",       "c3per",       "c4ann",       "c4per",       "c3nfx",       "c3ann")
     data       <- matrix(data = c(dataMan, dataStates), ncol = 2)
 
     # Land area
@@ -124,8 +142,18 @@ readLUH2v2 <- function(subtype) {
       irShr <- suppressWarnings(subset(rast(fMan,    subds = item), timeSel - offset))
       # grid cell fraction of crop area x grid cell area x irrigated fraction of crop area
       tmp <- shr
-      for (i in seq_len(dim(tmp)[3])) tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
-      mag <- aggregate(tmp, fact = 2, fun = sum)
+      for (i in seq_len(dim(tmp)[3])) {
+        tmp[[i]] <- shr[[i]] * carea * irShr[[i]]
+      }
+      checkSum <- terra::global(tmp, sum, na.rm = TRUE)
+      # aggregate from 0.25 degree to 0.5 degree
+      mag <- terra::aggregate(tmp, fact = 2, fun = sum, na.rm = TRUE)
+      # Check whether sum before and after aggregation is the same.
+      # Note: unit is km^2, so only rounded to first digit
+      if (any(round(checkSum - terra::global(mag, sum, na.rm = TRUE), digits = 1) != 0)) {
+        stop("There is an issue with the aggregation. Please check mrcommons::readLUH2v2")
+      }
+      # Transform to MAgPIE object
       mag <- as.magpie(terra::extract(mag, map[c("lon", "lat")])[, -1], spatial = 1, temporal = 2)
       getNames(mag) <- item
       getYears(mag) <- timeSel

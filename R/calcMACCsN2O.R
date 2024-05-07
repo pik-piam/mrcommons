@@ -127,6 +127,40 @@ calcMACCsN2O <- function(
     w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
     w[, , ] <- setYears(w[, 2010, ], NULL)
 
+  } else if (source == "PBL_MACC_SSP2_2022") { # nolint
+    unit <- "Tax level 200 steps each 20$/tC"
+    description <- "N2O PBL_MACC_SSP2_2022"
+
+    wantedYears <- seq(2010, 2100, by = 5)
+
+    n2o <- NULL
+    for (subtype in c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")) {
+      for (scentype in c("Default", "Opt", "Pess")) {
+        x <- readSource("PBL_MACC_SSP2_2022", subtype, scentype)
+        existingYears <- getYears(x, as.integer = TRUE)
+        tmp <- setdiff(wantedYears, existingYears)
+        missingYears <- tmp[tmp < existingYears[1]]
+        x <- x[, intersect(wantedYears, existingYears), ]
+        x <- toolFillYears(x, c(missingYears, getYears(x, as.integer = TRUE)))
+        y <- time_interpolate(x, wantedYears, integrate_interpolated_years = TRUE, extrapolation_type = "linear")
+        names(dimnames(y)) <- names(dimnames(x))
+        n2o <- mbind(n2o, y)
+      }
+    }
+
+    # Rename types to match other versions
+    getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Pess"] <- "Pessimistic"
+    getItems(n2o, 3.2)[getItems(n2o, 3.2) == "Opt"] <- "Optimistic"
+
+    # Some of the original data actually contains abatement levels >1. That shouldnt happen here
+    n2o[n2o > 1] <- 1
+    n2o[n2o < 0] <- 0
+
+    # weight for the aggregation
+    baseline <- readSource("PBL_MACC_SSP2_2022", "IMAGESSP2Baseline")
+    w <- baseline[, getYears(n2o), getNames(n2o, dim = 1)]
+    w[, , ] <- setYears(w[, 2010, ], NULL)
+
   }
 
   # asigning a very small number to countries with zero emissions so if regions that are resulting from

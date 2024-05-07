@@ -24,17 +24,17 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
   if (areaSource == "FAO") {
 
     area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                        cellular = cellular, cells = "lpjcell",
-                        irrigation = irrigation, aggregate = FALSE)
+                       cellular = cellular, cells = "lpjcell",
+                       irrigation = irrigation, aggregate = FALSE)
 
-  } else if (areaSource == "Toolbox") {
+  } else if (areaSource == "LandInG") {
 
-    area <- calcOutput("CropareaToolbox", sectoral = "kcr", physical = physical,
-                        irrigation = irrigation, selectyears = selectyears,
-                        cellular = cellular, cells = "lpjcell", aggregate = FALSE)
+    area <- calcOutput("CropareaLandInG", sectoral = "kcr", physical = physical,
+                       irrigation = irrigation, selectyears = selectyears,
+                       cellular = cellular, cells = "lpjcell", aggregate = FALSE)
   } else {
     stop("Please specify which area should be used for calculation.
-         Note: Toolbox should be FAO-consistent.")
+         Note: LandInG should be FAO-consistent.")
   }
 
   faoyears   <- intersect(getYears(production), getYears(area))
