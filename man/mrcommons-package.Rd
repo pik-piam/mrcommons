@@ -9,6 +9,15 @@
 Provides useful functions and a common structure to all the input data required to run models like MAgPIE
 and REMIND.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/pik-piam/mrcommons}
+  \item \doi{10.5281/zenodo.3822009}
+  \item Report bugs at \url{https://github.com/pik-piam/mrcommons/issues}
+}
+
+}
 \author{
 Maintainer: Jan Philipp Dietrich \href{mailto:dietrich@pik-potsdam.de}{dietrich@pik-potsdam.de}
 }

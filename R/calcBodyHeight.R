@@ -8,8 +8,6 @@
 #' Also,the year 1965 is extrapolatedusing the worldbank population
 #' data and sex, age, and education structure of 1970.
 #' @export
-#' @importFrom luscale speed_aggregate
-
 calcBodyHeight <- function(convert = TRUE) {
 
   demo <- calcOutput("Demography", education = FALSE, aggregate = FALSE)
