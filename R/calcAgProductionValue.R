@@ -18,7 +18,7 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   if (datasource == "FAO") {
     data <- readSource("FAO_online", "ValueOfProd")
-    data <- data[, , "Gross_Production_Value_(constant_2014_2016_million_US$)_(USD)"]
+    data <- data[, , "Gross_Production_Value_(USDMER05)_(1000_US$)"] / 1000
     data <- collapseNames(data)
 
     aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
@@ -28,7 +28,9 @@ calcAgProductionValue <- function(datasource = "FAO") {
     # remove data that contains the aggregate categories
     data <- data[, , -grep("Total", getNames(data), fixed = TRUE)]
     # remove live weight data
-    data <- data[, , -grep("PIN", getNames(data), fixed = TRUE)]
+    if (length(grep("PIN", getNames(data), fixed = TRUE)) > 0) {
+      data <- data[, , -grep("PIN", getNames(data), fixed = TRUE)]
+    }
 
     out <- toolAggregate(data, rel = aggregation, from = "ProductionItem", to = "k",
                          dim = 3.1, partrel = TRUE, verbosity = 2)
@@ -43,6 +45,6 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   return(list(x = out,
               weight = NULL,
-              unit = "million_US$15/yr",
+              unit = "million_USDMER05/yr",
               description = description))
 }

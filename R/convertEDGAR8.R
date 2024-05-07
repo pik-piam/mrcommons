@@ -19,11 +19,13 @@ convertEDGAR8 <- function(x) {
     add_dimension(dim = 3.2, add = "variable", nm = "Shipping")
   getItems(sea, dim = 1) <- "GLO"
 
+  x <- x[c("AIR", "SEA"), , invert = TRUE]
+
   # combine bunker data
   bunkers <- mbind(air, sea)
 
   # fills missing ISO countries and remove unknown ISO countries and bunkers
-  x <- toolCountryFill(x, fill = 0)
+  x <- toolCountryFill(x, fill = 0, verbosity = 2)
 
   # create weight 1 for bunkers
   w <- new.magpie(getItems(x, dim = 1),

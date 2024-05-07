@@ -23,8 +23,7 @@
 #' @importFrom magpiesets findset
 
 readFAOTradeMatrix <- function(subtype) { # nolint
-
-file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
+  file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 
   # ---- Select columns to be read from file and read file ----
 
@@ -39,17 +38,17 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   factorCols <- c("Reporter.Country.Code", "Partner.Country.Code", "Item.Code", "Element.Code", "Element")
   readcolClass[csvcolnames %in% factorCols] <- "factor"
   readcolClass[csvcolnames %in% c("Area", "Country", "Element", "Item", "Unit",
-                                   "Months", "Reporter.Countries", "Partner.Countries")] <- "character"
+                                  "Months", "Reporter.Countries", "Partner.Countries")] <- "character"
   readcolClass[csvcolnames %in% c("Value", "Year")] <- NA
   if (!long) readcolClass[grepl("Y[0-9]{4}$", csvcolnames)] <- NA
 
   fao <- suppressWarnings(
-               fread(input = file, header = FALSE, skip = 1, sep = ",",
-               colClasses = readcolClass,
-               col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
-               quote = "\"",
-               encoding = "Latin-1", showProgress = FALSE,
-              ))
+                          fread(input = file, header = FALSE, skip = 1, sep = ",",
+                            colClasses = readcolClass,
+                            col.names = csvcolnames[is.na(readcolClass) | readcolClass != "NULL"],
+                            quote = "\"",
+                            encoding = "Latin-1", showProgress = FALSE
+                          ))
   fao <- as.data.frame(fao)
   # from wide to long (move years from individual columns into one column)
   if (!long) {
@@ -88,6 +87,11 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
   tmpElementShort <- paste0(tmpElement, "_(", tmpUnit, ")")
   fao$ElementShort <- gsub("_{1,}", "_", tmpElementShort, perl = TRUE) # nolint
 
+  #replace Units if tonnes exist with "t" in updated mapping
+  if ("tonnes" %in% elementShort$Unit) {
+    elementShort$Unit[(elementShort$Unit == "tonnes")] <- "t"
+  }
+
   ### replace ElementShort with the entries from ElementShort if the Unit is the same
   if (length(elementShort) > 0) {
     for (i in seq_len(nrow(elementShort))) {
@@ -103,24 +107,24 @@ file <- "Trade_DetailedTradeMatrix_E_All_Data_(Normalized).csv"
 
   # some small islands correspond to the same ISO3code, just remove them for now
   fao <- filter(fao, !.data$ReporterCountries %in% c("Johnston Island", "Midway Island",
-                                                      "Canton and Enderbury Islands", "Wake Island"),
-                       !.data$PartnerCountries %in% c("Johnston Island", "Midway Island",
-                                                     "Canton and Enderbury Islands", "Wake Island"))
+                                                     "Canton and Enderbury Islands", "Wake Island"),
+                !.data$PartnerCountries %in% c("Johnston Island", "Midway Island",
+                                               "Canton and Enderbury Islands", "Wake Island"))
 
-fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
+  fao <- unite(fao, col = "ISO", c(.data$ReporterISO, .data$PartnerISO), sep = ".", remove = FALSE)
 
-# subset by both trade column and product column
-mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrcommons")
-mapping <- mapping[, c("new_FAOoriginalItem_fromWebsite", "k")]
-colnames(mapping)[1] <- "ItemCodeItem"
-mapping <- distinct(mapping)
+  # subset by both trade column and product column
+  mapping <- toolGetMapping("newFAOitems_online_DRAFT.csv", type = "sectoral", where = "mrcommons")
+  mapping <- mapping[, c("new_FAOoriginalItem_fromWebsite", "k")]
+  colnames(mapping)[1] <- "ItemCodeItem"
+  mapping <- distinct(mapping)
 
 
-fao <- inner_join(fao, mapping)
+  fao <- inner_join(fao, mapping)
 
-kcr <- findset("kcr")
-kli <- findset("kli")
-kothers <- setdiff(findset("kall"), c(kcr, kli))
+  kcr <- findset("kcr")
+  kli <- findset("kli")
+  kothers <- setdiff(findset("kall"), c(kcr, kli))
 
   elements <- list(
     import_value_kcr = list(trade = "import_kUS$", product = kcr),
@@ -128,38 +132,38 @@ kothers <- setdiff(findset("kall"), c(kcr, kli))
     import_value_kothers = list(trade = "import_kUS$", product = kothers),
     import_qty_kcr = list(trade = c("import", "Import_Quantity_(1000_Head)",
                                     "Import_Quantity_(Head)", "Import_Quantity_(no)"),
-                           product = kcr),
+                          product = kcr),
     import_qty_kli = list(trade = c("import", "Import_Quantity_(1000_Head)",
                                     "Import_Quantity_(Head)", "Import_Quantity_(no)"),
                           product = kli),
     import_qty_kothers = list(trade = c("import", "Import_Quantity_(1000_Head)",
-                                         "Import_Quantity_(Head)", "Import_Quantity_(no)"),
-                               product = kothers),
+                                        "Import_Quantity_(Head)", "Import_Quantity_(no)"),
+                              product = kothers),
     export_value_kcr = list(trade = "export_kUS$", product = kcr),
     export_value_kli = list(trade = "export_kUS$", product = kli),
     export_value_kothers = list(trade = "export_kUS$", product = kothers),
     export_qty_kcr = list(trade = c("export", "Export_Quantity_(1000_Head)",
                                     "Export_Quantity_(Head)", "Export_Quantity_(no)"),
-                           product = kcr),
+                          product = kcr),
     export_qty_kli = list(trade = c("export", "Export_Quantity_(1000_Head)",
                                     "Export_Quantity_(Head)", "Export_Quantity_(no)"),
                           product = kli),
     export_qty_kothers = list(trade = c("export", "Export_Quantity_(1000_Head)",
                                         "Export_Quantity_(Head)", "Export_Quantity_(no)"),
-                               product = kothers)
-    )
+                              product = kothers)
+  )
 
-element <- toolSubtypeSelect(subtype, elements)
+  element <- toolSubtypeSelect(subtype, elements)
 
-out <- filter(fao, .data$ElementShort %in% element$trade, .data$k %in% element$product)
+  out <- filter(fao, .data$ElementShort %in% element$trade, .data$k %in% element$product)
 
-out <- as.magpie(out[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
+  out <- as.magpie(out[, c("Year", "ISO", "ItemCodeItem", "ElementShort", "Value")],
                    temporal = 1, spatial = 2, datacol = 5)   # import/export unit is in tonnes
-getItems(out, dim = 1, raw = TRUE) <- gsub("_", ".", getItems(out, dim = 1))
-gc()
+  getItems(out, dim = 1, raw = TRUE) <- gsub("_", ".", getItems(out, dim = 1))
+  gc()
 
 
-out <- magpiesort(out)
+  out <- magpiesort(out)
 
   return(out)
 }

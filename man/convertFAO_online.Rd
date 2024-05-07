@@ -34,5 +34,5 @@ a <- readSource("FAO_online", "Crop", convert = TRUE)
 \code{\link[=readFAO]{readFAO()}}, \code{\link[=readSource]{readSource()}},
 }
 \author{
-Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Edna Molina Bacca
+Ulrich Kreidenweis, Abhijeet Mishra, Mishko Stevanovic, David Klein, Daivd Chen, Edna Molina Bacca
 }

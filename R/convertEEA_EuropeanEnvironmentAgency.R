@@ -19,13 +19,13 @@
 convertEEA_EuropeanEnvironmentAgency <- function(x, subtype) { # nolint: object_name_linter.
   if (subtype %in% c("ETS", "ESR")) {
     # fill up zero countries
-    x <- toolCountryFill(x)
+    x <- toolCountryFill(x, verbosity = 2)
     # remove NAs
     x[is.na(x)] <- 0
   } else if (subtype == "total") {
-    x <- toolCountryFill(x)
+    x <- toolCountryFill(x, verbosity = 2)
   } else if (subtype == "sectoral") {
-    x <- toolCountryFill(x, no_remove_warning = "EUR")
+    x <- toolCountryFill(x, verbosity = 2, no_remove_warning = "EUR")
   } else if (subtype %in% c("projections", "projections-detailed", "ghgEmissionIntensityElec")) {
     getItems(x, 1) <- toolCountry2isocode(getItems(x, 1), warn = FALSE)
     x <- toolCountryFill(x, verbosity = 2, no_remove_warning = NA)

@@ -4,7 +4,11 @@
 \alias{calcPhysicalInactivity}
 \title{calcPhysicalInactivity}
 \usage{
-calcPhysicalInactivity()
+calcPhysicalInactivity(update = TRUE)
+}
+\arguments{
+\item{update}{WHO estimates from http://apps.who.int/gho/data/view.main.2487?lang=en seem to have updated.
+TRUE provides the results as they were online on 27.2.2024}
 }
 \description{
 physical inactivity level estimate based on
