@@ -16,8 +16,8 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
   lutz <- readSource("Lutz2014", convert = convert)
 
   mapping2 <- toolGetMapping(type = "sectoral", name = "lutz2hic2.csv",
-                              where = "mappingfolder")
-  demo <- luscale::speed_aggregate(x = lutz, rel = mapping2, from = "lutz", to = "hic", dim = 3.2)
+                             where = "mappingfolder")
+  demo <- toolAggregate(x = lutz, rel = mapping2, from = "lutz", to = "hic", dim = 3.2)
 
   demo <- demo[, , "B", invert = TRUE]
   demo <- demo[, , "All", invert = TRUE]
@@ -39,8 +39,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
                              naming = "scenario",
                              years = magpiesets::findset("time"),
                              aggregate = FALSE)
-    diff <- dimSums(demo, dim = c("sex", "age", "education")) - population[,  getYears(demo),
-                                                                              getNames(demo, dim = 1)]
+    diff <- dimSums(demo, dim = c("sex", "age", "education")) - population[, getYears(demo), getNames(demo, dim = 1)]
     diff[] <- abs(diff)
     if (sum(diff) > 100) {
       vcat(2, paste0(
@@ -59,13 +58,13 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
     }
 
     # recalibration to SSP population scenarios
-     # create SSP2EU and SDP scenarios columns based on SSP2 and SSP1
-      if (any(c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU") %in% getNames(population))) {
-         demo <- add_columns(demo, addnm = c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU"),
-                             dim = 3.1, fill = NA)
-         demo[, , "SSP2EU"] <- demo[, , "SSP2"]
-         demo[, , "SDP", pmatch = TRUE] <- demo[, , "SSP1"]
-      }
+    # create SSP2EU and SDP scenarios columns based on SSP2 and SSP1
+    if (any(c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU") %in% getNames(population))) {
+      demo <- add_columns(demo, addnm = c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU"),
+                          dim = 3.1, fill = NA)
+      demo[, , "SSP2EU"] <- demo[, , "SSP2"]
+      demo[, , "SDP", pmatch = TRUE] <- demo[, , "SSP1"]
+    }
 
     demoShr <- demo / dimSums(demo, dim = c("sex", "age", "education"))
     vcat(verbosity = 2, paste0("Year 1965 in demography data missing. Used values of 1970 instead"))
