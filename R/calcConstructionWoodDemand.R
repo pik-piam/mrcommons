@@ -15,60 +15,13 @@
 #' @export
 
 calcConstructionWoodDemand <- function() {
-  ## Read SSP data
-  sspData <- readSource(type = "SSP", subtype = "all")[, , c("Population", "Population|Urban|Share")]
-
-  ## All years multiples of 5 (not 10) have no values coming in from SSP database.
-  ## Also, 2000 has no values and 1995 is missing
-  ## Use linear interpolation
-
-  ## Generate missing years
-  missingYears <- c("y1995", "y2000", paste0("y", seq(2005, 2095, 10)))
-
-  ## Remove missing years
-  sspData <- sspData[, missingYears, , invert = TRUE]
-
-  ## Add back missing years
-  sspData <- time_interpolate(dataset = sspData, interpolated_year = missingYears,
-                              integrate_interpolated_years = TRUE, extrapolation_type = "linear")
-
-
-  ## Extract Urban share
-  urbanShare <- sspData[, , "Population|Urban|Share"]
-  pattern <- "_v9_130115"
-  getNames(urbanShare, dim = 2) <- gsub(pattern = pattern, replacement = "", x = getNames(urbanShare, dim = 2))
-
-  ## Collapse names to remove names which are not needed
-  urbanShare <- collapseNames(urbanShare)
-
-
-  ## use population data
-  population <- sspData[, , "Population"]
-
-  ## Extract data using pattern (the same as we used in urban share) - For consistency
-  population <- collapseNames(population[, , grep(pattern = "_v9_130115",
-                                                  x = getNames(population, dim = 2), value = TRUE)])
-
-  ## Remove pattern (the same as we used in urban share) - for consistency
-  getNames(population, dim = 2) <- gsub(pattern = pattern, replacement = "",
-                                        x = getNames(population, dim = 2))
-
-  ## Use NCAR data as this is the only source of urban share - for consistency
-  population <- collapseNames(population[, , "NCAR"])
-
-  ## Attach a fatal error in case names don't macth due to changes in parent functions
-  if (length(setdiff(getNames(population), getNames(urbanShare))) != 0)
-    stop(paste("Unable to find matching names for population and urban share data.,
-         Stopping here to avoid incorrect calculations"))
-
-  ## Absolute Urban population living in cities
-  urbanPopulation <- population * urbanShare / 100
-
-  ## harmonize till 2020
-  urbanPopulation[, paste0("y", seq(1995, 2020, 5)), ] <- urbanPopulation[, paste0("y", seq(1995, 2020, 5)), "SSP2"]
-
-  ## Correct SSP sequence
-  urbanPopulation <- urbanPopulation[, , paste0("SSP", 1:5)]
+  ## Get Urban population SSP scenarios
+  urbanPopulation <- calcOutput("Urban",
+                                scenario = "SSPs",
+                                asShare = FALSE,
+                                naming = "scenario",
+                                years = seq(1995, 2100, 5),
+                                aggregate = FALSE)
 
   ## Calculate additional wood demand based on Churkina et al 2020
   ## https://doi.org/10.1038/s41893-019-0462-4
