@@ -14,7 +14,7 @@
 #' @importFrom magclass read.magpie
 readFeedModel <- function(subtype = "FeedBaskets") {
 
-  folder <- "Version_2019_01_22/"
+  folder <- "Version_2024_04_22/" # "Version_2019_01_22/"
 
   files <- c(ProdSysRatio = "prod_sys_ratio.csv",
              FeedBaskets = "feed_bask_sys.csv",

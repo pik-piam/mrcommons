@@ -35,12 +35,27 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
                                     start_year = 2010, end_year = 2050, type = "s")
 
     if (fadeout) {
-      out <- calibDECLINE2050
+      calibChosen <- calibDECLINE2050
     } else {
-      out <- calibCONST
+      calibChosen <- calibCONST
     }
 
-    out <- out + feedBasketsUNCALIB
+    out <- calibChosen + feedBasketsUNCALIB
+
+    # do not allow the calibration to introduce the inconsistency of
+    # more livestock products in feed basket than produced
+    # apply a reduction factor for calibration to avoid this
+    milkInpDairy <- list(sys = "sys_dairy", kall = "livst_milk") # item showing milk input for dairy production
+    if (any(feedBasketsUNCALIB[, , milkInpDairy] >= 1)) {
+      stop("more livestock products in feed basket than being produced already for uncalibrated feed baskets")
+    }
+    redFactForConsitency <- (1 - feedBasketsUNCALIB[, , milkInpDairy]) / calibChosen[, , milkInpDairy]
+    redFactForConsitency[(redFactForConsitency >= 1) | (redFactForConsitency <= 0)] <- 1
+    # note that redFactForConsitency can only be smaller than 1, if the positive difference
+    # "feedBasketsUNCALIB[,,milkInpDairy] - 1" is smaller than the positive "calibChosen[,,milkInpDairy]"
+    out[, , milkInpDairy] <-
+      calibChosen[, , milkInpDairy] * redFactForConsitency + feedBasketsUNCALIB[, , milkInpDairy]
+
     out[out < 0] <- 0
 
     # change from sys to kli
@@ -59,7 +74,7 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
                                           aggregate = FALSE)[, past, findset("kli")][, , "dm"][, , "production"])
     weightKLI <- toolHoldConstantBeyondEnd(weightKLI)
 
-    if (any(out[, , list(data1 = "livst_milk", kall = "livst_milk")] >= 1)) {
+    if (any(out[, , list(data1 = "livst_milk", kall = "livst_milk")] > 1 + .Machine$double.eps)) {
       stop("more livestock products in feed basket than being produced")
     }
 
