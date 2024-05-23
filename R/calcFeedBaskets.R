@@ -190,10 +190,8 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       # convergence to regression values:
       outm <- convergence(outm, outShr, start_year = start_year, end_year = end_year, type = type)
       # set limit of 10% main share or the share in the last historical year in case it is lower than the limit
-      outm[, future, ] <- outm[, future, ] * (outm[, future, ] > 0.1) +
-                            outm[, year, ] * (outm[, future, ] < 0.1 &
-                                              outm[, year, ] < 0.1) + 0.1 * (outm[, future, ] < 0.1 &
-                                              outm[, year, ] > 0.1)
+      outm[, future, ] <- outm[, future, ] * (outm[, future, ] > 0.1) + outm[, year, ] *
+        (outm[, future, ] < 0.1 & outm[, year, ] < 0.1) + 0.1 * (outm[, future, ] < 0.1 & outm[, year, ] > 0.1)
 
       # add missing systems
       missing <- setdiff(getNames(fbaskShr, dim = 1), getNames(outm, dim = 1))
@@ -214,8 +212,8 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       return(out)
     }
     calShr <- .calcCalibShr(fbaskShr, outShr,
-                             start_year = year,
-                             end_year = 2050, type = "linear")
+                            start_year = year,
+                            end_year = 2050, type = "linear")
 
 
     # Read in efficiencies and calibrate them
@@ -254,18 +252,18 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       fbaskSysRef <- setYears(fbaskSys[, year, ], NULL)
 
       mainWeight  <- .calcConvergeWeight(years = getYears(calShr),
-                                          start = year,
-                                          x = fbaskSysRef * ctype[, , "main"],
-                                          converge = FALSE)
+                                         start = year,
+                                         x = fbaskSysRef * ctype[, , "main"],
+                                         converge = FALSE)
       antiWeight  <- .calcConvergeWeight(years = getYears(calShr),
-                                          start = year,
-                                          x = fbaskSysRef * ctype[, , "anti"],
-                                          converge = TRUE)
+                                         start = year,
+                                         x = fbaskSysRef * ctype[, , "anti"],
+                                         converge = TRUE)
       # no convergence to global targets for systems
       # where the main feed share stays constant over time: "sys_chicken","sys_hen"
       tmp <- .calcConvergeWeight(start = year, years = getYears(calShr),
                                  x = (fbaskSysRef[, , c("sys_chicken", "sys_hen")]
-                                     * ctype[, , c("sys_chicken", "sys_hen")][, , "anti"]),
+                                      * ctype[, , c("sys_chicken", "sys_hen")][, , "anti"]),
                                  converge = FALSE)
       antiWeight[, , c("sys_chicken", "sys_hen")] <- tmp
 
