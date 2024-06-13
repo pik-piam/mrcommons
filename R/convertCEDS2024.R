@@ -21,17 +21,17 @@ convertCEDS2024 <- function(x) {
   getItems(x, dim = 1) <- gsub("global", "glo", getItems(x, dim = 1))
   getItems(x, dim = 1) <- toupper(getItems(x, dim = 1))
 
-  map2 <- c(BC_ktC = "bc_c",
-            CO_ktCO = "co",
-            CH4_ktCH4 = "ch4",
-            N2O_ktN2O = "n2o_n",
-            NH3_ktNH3 = "nh3_n",
-            NOx_ktNO2 = "no2_n",
-            NMVOC_ktNMVOC = "nmvoc",
-            OC_ktC = "oc_c",
-            SO2_ktSO2 = "so2",
-            CO2_ktCO2 = "co2_c"
-            )
+  map2 <-
+    c(BC_ktC = "bc_c",
+      CO_ktCO = "co",
+      CH4_ktCH4 = "ch4",
+      N2O_ktN2O = "n2o_n",
+      NH3_ktNH3 = "nh3_n",
+      NOx_ktNO2 = "no2_n",
+      NMVOC_ktNMVOC = "nmvoc",
+      OC_ktC = "oc_c",
+      SO2_ktSO2 = "so2",
+      CO2_ktCO2 = "co2_c")
   getNames(x, dim = 2) <- map2[getNames(x, dim = 2)]
 
   x[, , "n2o_n"] <- x[, , "n2o_n"] / 44 * 28
