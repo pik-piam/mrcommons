@@ -44,17 +44,8 @@ calcConstructionWoodDemand <- function() {
 
   ## use population data
   population <- sspData[, , "Population"]
-
-  ## Extract data using pattern (the same as we used in urban share) - For consistency
-  population <- collapseNames(population[, , grep(pattern = "_v9_130115",
-                                                  x = getNames(population, dim = 2), value = TRUE)])
-
-  ## Remove pattern (the same as we used in urban share) - for consistency
-  getNames(population, dim = 2) <- gsub(pattern = pattern, replacement = "",
-                                        x = getNames(population, dim = 2))
-
-  ## Use NCAR data as this is the only source of urban share - for consistency
-  population <- collapseNames(population[, , "NCAR"])
+  population <- collapseNames(population)
+  population <- population[, , getNames(urbanShare)]
 
   ## Attach a fatal error in case names don't macth due to changes in parent functions
   if (length(setdiff(getNames(population), getNames(urbanShare))) != 0)
