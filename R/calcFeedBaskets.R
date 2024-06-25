@@ -35,12 +35,28 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
                                     start_year = 2010, end_year = 2050, type = "s")
 
     if (fadeout) {
-      out <- calibDECLINE2050
+      calibChosen <- calibDECLINE2050
     } else {
-      out <- calibCONST
+      calibChosen <- calibCONST
     }
 
-    out <- out + feedBasketsUNCALIB
+    out <- calibChosen + feedBasketsUNCALIB
+
+    # do not allow the calibration to introduce the inconsistency of
+    # more livestock products in feed basket than produced;
+    # apply a reduction factor for calibration to avoid this
+    milkInpDairy <- list(sys = "sys_dairy", kall = "livst_milk") # item showing milk input for dairy production
+    if (any(feedBasketsUNCALIB[, , milkInpDairy] >= 1)) {
+      stop("more livestock products in feed basket than being produced already for uncalibrated feed baskets")
+    }
+    calibReductionFact <- (1 - feedBasketsUNCALIB[, , milkInpDairy]) /
+      calibChosen[, , milkInpDairy] - .Machine$double.eps
+    calibReductionFact[(calibReductionFact >= 1) | (calibReductionFact <= 0)] <- 1
+    # note that calibReductionFact can only be smaller than 1, if the positive difference
+    # "feedBasketsUNCALIB[,,milkInpDairy] - 1" is smaller than the positive "calibChosen[,,milkInpDairy]"
+    out[, , milkInpDairy] <-
+      calibChosen[, , milkInpDairy] * calibReductionFact + feedBasketsUNCALIB[, , milkInpDairy]
+
     out[out < 0] <- 0
 
     # change from sys to kli
@@ -174,10 +190,8 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       # convergence to regression values:
       outm <- convergence(outm, outShr, start_year = start_year, end_year = end_year, type = type)
       # set limit of 10% main share or the share in the last historical year in case it is lower than the limit
-      outm[, future, ] <- outm[, future, ] * (outm[, future, ] > 0.1) +
-                            outm[, year, ] * (outm[, future, ] < 0.1 &
-                                              outm[, year, ] < 0.1) + 0.1 * (outm[, future, ] < 0.1 &
-                                              outm[, year, ] > 0.1)
+      outm[, future, ] <- outm[, future, ] * (outm[, future, ] > 0.1) + outm[, year, ] *
+        (outm[, future, ] < 0.1 & outm[, year, ] < 0.1) + 0.1 * (outm[, future, ] < 0.1 & outm[, year, ] > 0.1)
 
       # add missing systems
       missing <- setdiff(getNames(fbaskShr, dim = 1), getNames(outm, dim = 1))
@@ -198,8 +212,8 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       return(out)
     }
     calShr <- .calcCalibShr(fbaskShr, outShr,
-                             start_year = year,
-                             end_year = 2050, type = "linear")
+                            start_year = year,
+                            end_year = 2050, type = "linear")
 
 
     # Read in efficiencies and calibrate them
@@ -238,18 +252,18 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
       fbaskSysRef <- setYears(fbaskSys[, year, ], NULL)
 
       mainWeight  <- .calcConvergeWeight(years = getYears(calShr),
-                                          start = year,
-                                          x = fbaskSysRef * ctype[, , "main"],
-                                          converge = FALSE)
+                                         start = year,
+                                         x = fbaskSysRef * ctype[, , "main"],
+                                         converge = FALSE)
       antiWeight  <- .calcConvergeWeight(years = getYears(calShr),
-                                          start = year,
-                                          x = fbaskSysRef * ctype[, , "anti"],
-                                          converge = TRUE)
+                                         start = year,
+                                         x = fbaskSysRef * ctype[, , "anti"],
+                                         converge = TRUE)
       # no convergence to global targets for systems
       # where the main feed share stays constant over time: "sys_chicken","sys_hen"
       tmp <- .calcConvergeWeight(start = year, years = getYears(calShr),
                                  x = (fbaskSysRef[, , c("sys_chicken", "sys_hen")]
-                                     * ctype[, , c("sys_chicken", "sys_hen")][, , "anti"]),
+                                      * ctype[, , c("sys_chicken", "sys_hen")][, , "anti"]),
                                  converge = FALSE)
       antiWeight[, , c("sys_chicken", "sys_hen")] <- tmp
 
