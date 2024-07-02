@@ -22,7 +22,7 @@ calcGrowingStockpha <- function() {
   getNames(area) <- FRAnames(getNames(area))
   vars <- intersect(getNames(area), getNames(x))
   x <- x[, , vars]
-  weight <- area[, , vars]
+  weight <- area[, , vars] + 10^-10
 
   x <- setYears(collapseNames(x[, "y2000", "Plantations"]), NULL)
   weight <- setYears(collapseNames(weight[, "y2000", "Plantations"]), NULL)
