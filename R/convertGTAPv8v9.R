@@ -45,11 +45,11 @@ convertGTAPv8v9 <- function(x, subtype) {
                            dim = 3, partrel = TRUE)
 
     if (split$header %in% c("VIWS", "VIMS")) {
-      w1 <- faoI
-      w2 <- faoX
+      w1 <- faoI + 10^-10
+      w2 <- faoX  + 10^-10
     } else {
-      w1 <- faoX
-      w2 <- faoI
+      w1 <- faoX + 10^-10
+      w2 <- faoI + 10^-10
     }
 
 
