@@ -149,9 +149,9 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
       mutate(Year = as.numeric(.data$Year),
              Value = as.numeric(.data$Value)) %>%
       # remove duplicates
-      group_by(Category, Scenario, Year, Gas, CountryCode) %>%
+      dplyr::group_by(.data$Category, .data$Scenario, .data$Year, .data$Gas, .data$CountryCode) %>%
       mutate("dup" = n()) %>%
-      ungroup() %>%
+      dplyr::ungroup() %>%
       filter(.data$dup == 1 | .data$RY == 1) %>%
       select(7, 4, 2, 1, 5, 6) %>%
       distinct()
