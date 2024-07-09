@@ -21,8 +21,8 @@ calcNitrogenFixationRateNatural <- function(cells = "lpjcell") {
 
   # evapotranspiration (in m^3 per ha)
   etRate    <- collapseNames(calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
-                                         climatetype = "GSWP3-W5E5:historical", subtype = "aet",
-                                         stage = "smoothed", aggregate = FALSE)[, years, ])
+                                        climatetype = "GSWP3-W5E5:historical", subtype = "aet",
+                                        stage = "smoothed", aggregate = FALSE)[, years, ])
 
   startYear <- "y1965"
 
@@ -48,7 +48,7 @@ calcNitrogenFixationRateNatural <- function(cells = "lpjcell") {
   }
 
   return(list(x = bnfRate,
-              weight = dimSums(land, dim = 3),
+              weight = dimSums(land, dim = 3) + 10^-10,
               unit = "Mt Nr / Mha",
               description = "Nitrogen fixation freeliving bacteria",
               isocountries = FALSE))

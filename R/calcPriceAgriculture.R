@@ -62,9 +62,9 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     names(dimnames(out))[3] <- "scenario.model.variable"
 
     description  <- paste0("Prices from the IMPACT model projections. There are ",
-                          length(ktradeSet) - length(commodities),
-                          " missing MAgPIE commodities: ",
-                          paste(ktradeSet[!ktradeSet %in% commodities], collapse = " "))
+                           length(ktradeSet) - length(commodities),
+                           " missing MAgPIE commodities: ",
+                           paste(ktradeSet[!ktradeSet %in% commodities], collapse = " "))
     weight       <- NULL
     isocountries <- FALSE
 
@@ -165,7 +165,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     qprod[out == 0] <- 0
 
     # weighted aggregation of fao prices to magpie commodities
-    out <- toolAggregate(out, rel = aggregation, weight = qprod, from = "ProductionItem",
+    out <- toolAggregate(out, rel = aggregation, weight = qprod + 10^-10, from = "ProductionItem",
                          to = "k", dim = 3, partrel = TRUE, verbosity = 2)
     out <- out[, , -which(getNames(out) %in% c("remaining", "not_clear"), arr.ind = TRUE)]
 
@@ -193,7 +193,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
   }
 
   return(list(x = out,
-              weight = weight,
+              weight = weight + 10^-10,
               unit = unit,
               description = description,
               isocountries = isocountries))

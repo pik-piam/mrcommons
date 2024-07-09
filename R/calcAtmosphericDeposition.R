@@ -71,16 +71,16 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
       out <- dimOrder(out, perm = c(2, 1))
       if (cellular) {
         weight <- collapseNames(calcOutput("AtmosphericDeposition", datasource = "ACCMIP", glo = FALSE, cellular = TRUE,
-                             cells = "lpjcell", emission = FALSE, scenario = NULL, aggregate = FALSE))
+                                           cells = "lpjcell", emission = FALSE, scenario = NULL, aggregate = FALSE))
         commonCtries <- intersect(getItems(weight, dim = "iso"), getItems(out, dim = 1))
         out <- out[commonCtries, , ]
         getSets(out) <- c("iso", "year", "landuse", "data1")
         weight <- weight[, getItems(out, dim = 2), ]
         weight <- weight[, , getItems(out, dim = 3)]
         coordMapping <- toolGetMappingCoord2Country()
-        out <- toolAggregate(out, weight = weight,
-                            rel = coordMapping, from = "iso", to = "coords",
-                            partrel = FALSE)
+        out <- toolAggregate(out, weight = weight + 10^-10,
+                             rel = coordMapping, from = "iso", to = "coords",
+                             partrel = FALSE)
         out <- toolCoord2Isocoord(out)
       }
     }
@@ -106,5 +106,5 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
               min = 0,
               max = 200,
               description = paste0("Atmospheric deposition, natural (1870 levels) and anthropogenic in the ",
-                                  "year 1995 (actually 1993) for different landuse classes.")))
+                                   "year 1995 (actually 1993) for different landuse classes.")))
 }

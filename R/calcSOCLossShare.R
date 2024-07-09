@@ -20,7 +20,7 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipcc
                              cells = "lpjcell") {
 
   ipccClimate        <- calcOutput("ClimateClass", aggregate = FALSE,
-                                      datasource = factor, cells = cells)
+                                   datasource = factor, cells = cells)
 
   factor2SCF         <- c(ipccReduced     = "SCF_sub",
                           ipccReduced2019 = "SCF_sub2019")
@@ -52,12 +52,11 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipcc
   }
 
   weight <- dimSums(calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE,
-                               cells = cells, years = "y1995", round = 6), dim = 3)
+                               cells = cells, years = "y1995", round = 6), dim = 3) + 10^-10
 
-  return(list(
-    x            = socLossShare,
-    weight       = weight,
-    unit         = "tC/tC",
-    description  = "Soil organic carbon loss share per crop type",
-    isocountries = FALSE))
+  return(list(x            = socLossShare,
+              weight       = weight,
+              unit         = "tC/tC",
+              description  = "Soil organic carbon loss share per crop type",
+              isocountries = FALSE))
 }
