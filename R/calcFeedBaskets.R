@@ -52,8 +52,10 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
     calibReductionFact <- (1 - feedBasketsUNCALIB[, , milkInpDairy]) /
       calibChosen[, , milkInpDairy] - .Machine$double.eps
     calibReductionFact[(calibReductionFact >= 1) | (calibReductionFact <= 0)] <- 1
-    # note that calibReductionFact can only be smaller than 1, if the positive difference
-    # "feedBasketsUNCALIB[,,milkInpDairy] - 1" is smaller than the positive "calibChosen[,,milkInpDairy]"
+    # Note that calibReductionFact can only be different from 1 (i.e. between 0 and 1), if the positive difference
+    # "1 - feedBasketsUNCALIB[,,milkInpDairy]" is smaller than the then positive "calibChosen[,,milkInpDairy]";
+    # so adding "calibChosen" to "feedBasketsUNCALIB" would cause the inconsistency of out[, , milkInpDairy] > 1.
+    # Then the reduction gives "out[, , milkInpDairy] = 1" so its the smallest possible change giving consistency.
     out[, , milkInpDairy] <-
       calibChosen[, , milkInpDairy] * calibReductionFact + feedBasketsUNCALIB[, , milkInpDairy]
 
