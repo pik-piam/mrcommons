@@ -49,6 +49,7 @@ A BibTeX entry for LaTeX users is
   author = {Benjamin Leon Bodirsky and Kristine Karstens and Lavinia Baumstark and Isabelle Weindl and Xiaoxi Wang and Abhijeet Mishra and Stephen Wirth and Mishko Stevanovic and Nele Steinmetz and Ulrich Kreidenweis and Renato Rodrigues and Roman Popov and Florian Humpenoeder and Anastasis Giannousakis and Antoine Levesque and David Klein and Ewerton Araujo and Felicitas Beier and Julian Oeser and Michaja Pehl and Debbora Leip and Michael Crawford and Edna {Molina Bacca} and Patrick {von Jeetze} and Eleonora Martinelli and Felix Schreyer and Bjoern Soergel and Pascal Sauer and David Hötten and Robin Hasse and Gabriel Abrahão and Pascal Weigmann and Jan Philipp Dietrich},
   year = {2024},
   note = {R package version 1.42.1},
+  doi = {10.5281/zenodo.3822009},
   url = {https://github.com/pik-piam/mrcommons},
   doi = {10.5281/zenodo.3822009},
 }
