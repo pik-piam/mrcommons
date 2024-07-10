@@ -22,7 +22,7 @@ convertLutz2014 <- function(x) {
 
   x <- toolCountryFill(x, fill = NA, no_remove_warning = "ANT")
 
-  # BB: use of speed_aggregate with an external mapping could replace the following function and speed it up
+  # BB: use of toolAggregate with an external mapping could replace the following function and speed it up
   fillCountryByAverageOfRegion <- function(x, country, region) {
     vcat(2, paste0("interpolating country: ", country))
     values <- x[region, , ]

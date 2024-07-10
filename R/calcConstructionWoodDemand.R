@@ -15,6 +15,7 @@
 #' @export
 
 calcConstructionWoodDemand <- function() {
+
   ## Get Urban population SSP scenarios
   urbanPopulation <- calcOutput("Urban",
                                 scenario = "SSPs",

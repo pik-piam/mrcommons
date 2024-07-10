@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 1.40.7
-Date: 2024-04-19
+Version: 1.42.1
+Date: 2024-07-09
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -43,18 +43,17 @@ Depends:
     magclass (>= 3.17),
     madrat (>= 2.20.9),
     mrdrivers (>= 1.0.0),
-    mstools
+    mrfaocore (>= 1.0.0),
+    mrlandcore (>= 1.0.0),
+    mstools (>= 0.6.0)
 Imports:
     data.table,
     dplyr,
     hdf5r,
     GDPuc,
-    lpjclass,
-    lpjmlkit,
     luscale,
     magpiesets (>= 0.44.2),
     ncdf4,
-    nleqslv,
     openxlsx,
     purrr,
     quitte,
@@ -63,7 +62,6 @@ Imports:
     readxl,
     reshape2,
     rlang,
-    SPEI,
     stringr,
     tidyr,
     tibble,
@@ -86,6 +84,6 @@ URL:
 BugReports: https://github.com/pik-piam/mrcommons/issues
 LazyData: no
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

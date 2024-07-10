@@ -13,15 +13,15 @@
 #' \dontrun{
 #' calcOutput("Temperature")
 #' }
-#' @importFrom magpiesets findset
+#' @importFrom magpiesets findset addLocation
 
 
 calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE) {
 
   temp <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
-                       climatetype = "GSWP3-W5E5:historical",
-                       variable    = "temperature:monthlyMean",
-                       stage       = "smoothed", aggregate = FALSE)
+                     climatetype = "GSWP3-W5E5:historical",
+                     variable    = "temperature:monthlyMean",
+                     stage       = "smoothed", aggregate = FALSE)
 
   if (!months) {
     temp <- dimSums(temp, dim = 3.1) / 12

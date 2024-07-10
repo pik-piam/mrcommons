@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 title: 'mrcommons: MadRat commons Input Data Library'
-version: 1.40.7
-date-released: '2024-04-19'
+version: 1.42.1
+date-released: '2024-07-09'
 abstract: Provides useful functions and a common structure to all the input data required
   to run models like MAgPIE and REMIND of model input data.
 authors:
