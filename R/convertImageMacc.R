@@ -37,10 +37,10 @@ convertImageMacc <- function(x, subtype) {
     "PFC_tot"
   )) {
 
-    # units in the MACCs are 2010$/tonne C (MER-based), convert to US$2017
+    # convert from US$2005 to US$2017
     x <- GDPuc::convertGDP(
       gdp = x,
-      unit_in = "constant 2010 US$MER",
+      unit_in = "constant 2005 US$MER",
       unit_out = "constant 2017 Int$PPP",
       replace_NAs = "with_USA"
     )

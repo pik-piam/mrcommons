@@ -1,7 +1,8 @@
 #' Read in ImageMacc Costcurves for different subtypes
 #'
-#' Read in ImageMacc Costcurves for different subtypes. Rows are removed, the
-#' dataframe is reshaped and numbers are replaced by descriptions.
+#' Read in ImageMacc Costcurves for different subtypes, which are based on a Paper
+#' fro Lucas et al 2007 (http://linkinghub.elsevier.com/retrieve/pii/S1462901106001316)
+#' Rows are removed, the dataframe is reshaped and numbers are replaced by descriptions.
 #'
 #'
 #' @param subtype data subtype.
