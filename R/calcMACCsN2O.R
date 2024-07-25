@@ -24,7 +24,7 @@ calcMACCsN2O <- function(
   # readSource N2O and baseline Emissions
   if (source == "ImageMacc") { # nolint
 
-    unit <- "Tax level 200 steps each 5$/tC"
+    unit <- "Tax level 200 steps each 5 US$2017/tC"
     description <- "N2O ImageMacc"
 
     energyInd <- readSource("ImageMacc", "N2O_Energy_Industry")
@@ -164,7 +164,7 @@ calcMACCsN2O <- function(
   }
 
   # asigning a very small number to countries with zero emissions so if regions that are resulting from
-  # zero emission country aggergations still have a value associated
+  # zero emission country aggregations still have a value associated
   w[w == 0] <- 1e-10
 
   if (sector == "all") {
