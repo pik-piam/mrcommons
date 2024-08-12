@@ -36,7 +36,7 @@ calcMAgPIEReport <- function(subtype) {
     getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
 
     d <- "MAC Costs for LU emissions from MAgPIE"
-    u <- "T$2017/yr"
+    u <- "trillion US$2017/yr"
   } else if (subtype == "ProductionBiomass") {
     x <- x[, , "Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
