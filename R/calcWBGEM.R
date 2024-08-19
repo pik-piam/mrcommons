@@ -45,8 +45,14 @@ calcWBGEM <- function() {
   out <- out * adjustFactor2005
   out[is.na(out)] <- 0
 
+  out <- GDPuc::convertGDP(out,
+                            unit_in = "constant 2005 US$MER",
+                            unit_out = "constant 2017 US$MER",
+                            replace_NAs = "no_conversion")
+
+
   return(list(x = out,
-              unit = "real2005 USD per ton",
+              unit = "real2017 USD per ton",
               weight = NULL,
               description = "WBGEM global price of commodity"))
 }

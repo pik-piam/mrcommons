@@ -37,7 +37,7 @@
 #' @importFrom reshape2 melt acast
 #'
 
-calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "US$05/tDM") {
+calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "US$17/tDM") {
 
   if (datasource == "IMPACT3.2.2World_Price") {
 
@@ -70,7 +70,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
 
   } else if (datasource == "WBGEM") {
 
-    # Prices in US$05/tDM
+    # Prices in US$17/tDM
     x <- calcOutput("WBGEM", aggregate = FALSE)
 
     # sectoral mappings
@@ -138,7 +138,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
 
   } else if (datasource == "FAO") {
 
-    # Annual producer prices in US$05/tDM
+    # Annual producer prices in US$17/tDM
     out         <- readSource("FAO_online", subtype = "PricesProducerAnnual", convert = TRUE)
     aggregation <- toolGetMapping("FAOitems_online.csv",
                                   type = "sectoral", where = "mappingfolder")
@@ -184,10 +184,10 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     isocountries <- TRUE
   }
 
-  if (unit != "US$05/tDM") {
+  if (unit != "US$17/tDM") {
     # Transform to selected currency unit
     out <- GDPuc::convertGDP(out,
-                             unit_in = "constant 2005 US$MER",
+                             unit_in = "constant 2017 US$MER",
                              unit_out =  unit,
                              replace_NAs = "no_conversion")
   }
