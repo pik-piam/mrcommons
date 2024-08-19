@@ -192,8 +192,12 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
                              replace_NAs = "no_conversion")
   }
 
+  if (!is.null(weight)) {
+    weight <- weight + 10^-10
+  }
+
   return(list(x = out,
-              weight = weight + 10^-10,
+              weight = weight,
               unit = unit,
               description = description,
               isocountries = isocountries))
