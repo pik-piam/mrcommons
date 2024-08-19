@@ -96,6 +96,7 @@ convertSSPResults <- function(x) {
   data <- convertGDP(data, unit_in = "constant 2005 US$MER",
                      unit_out = "constant 2017 US$MER",
                      replace_NAs = "no_conversion")
+  getNames(data, dim = 3) <- "Price|Carbon (US$2017/t CO2)"
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
@@ -109,6 +110,7 @@ convertSSPResults <- function(x) {
   data <- convertGDP(data, unit_in = "constant 2005 US$MER",
                      unit_out = "constant 2017 US$MER",
                      replace_NAs = "no_conversion")
+  getNames(data, dim = 3) <- "Price|Primary Energy|Biomass (US$2017/GJ)"                
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
