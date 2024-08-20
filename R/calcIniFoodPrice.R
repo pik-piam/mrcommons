@@ -9,7 +9,7 @@
 #' @param year Specifies the year for the initialization of prices in MAgPIE. Default is `y2005`.
 #' @param products subselection of products to be returned
 #'
-#' @return List with a magpie object with commodity prices on global level in $05/tDM.
+#' @return List with a magpie object with commodity prices on global level in $17/tDM.
 #' @author Mishko Stevanovic, Benjamin Leon Bodirsky
 #' @seealso
 #' [readIMPACT3.2.2World_Price()]
@@ -143,7 +143,7 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
 
   return(list(x = out,
               weight = NULL,
-              unit = "US$17/tDM",
+              unit = "US$2017/tDM",
               description = description,
               isocountries = FALSE))
 }
