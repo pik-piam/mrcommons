@@ -41,14 +41,14 @@ convertSSPResults <- function(x) {
 
   # ---- Land ----
 
-  #nolint start
+  # nolint start
   selection <- c("Land Cover (million ha)", "Land Cover|Built-up Area (million ha)",
                  "Land Cover|Cropland (million ha)", "Land Cover|Cropland|Energy Crops (million ha)",
                  "Land Cover|Forest (million ha)", "Land Cover|Forest|Forestry (million ha)",
                  "Land Cover|Forest|Forestry|Harvested Area (million ha)", "Land Cover|Forest|Natural Forest (million ha)",
                  "Land Cover|Other Arable Land (million ha)", "Land Cover|Other Land (million ha)",
                  "Land Cover|Other Natural Land (million ha)", "Land Cover|Pasture (million ha)")
-  #nolint end
+  # nolint end
 
   # use land area as weight
   weight <- setYears(dimSums(calcOutput("LanduseInitialisation", aggregate = FALSE), dim = 3)[, 2010, ], NULL)
@@ -69,13 +69,13 @@ convertSSPResults <- function(x) {
   # ---- Bioenergy ----
 
   selection <- c("Primary Energy|Biomass|1st Generation (EJ/yr)",
-               "Primary Energy|Biomass|Energy Crops (EJ/yr)",
-               "Agricultural Demand|Bioenergy|1st generation (million t DM/yr)",
-               "Agricultural Demand|Bioenergy|2nd generation (million t DM/yr)")
+                 "Primary Energy|Biomass|Energy Crops (EJ/yr)",
+                 "Agricultural Demand|Bioenergy|1st generation (million t DM/yr)",
+                 "Agricultural Demand|Bioenergy|2nd generation (million t DM/yr)")
 
   # use harvested area as weight
   weightBio <- setYears(dimSums(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, aggregate = FALSE),
-                                 dim = 3)[, 2010, ], NULL)
+                                dim = 3)[, 2010, ], NULL)
 
   for (sel in selection) {
     print(sel)
@@ -93,6 +93,10 @@ convertSSPResults <- function(x) {
 
   data <- x[, , selection]
   data[is.na(data)] <- 0
+  data <- convertGDP(data, unit_in = "constant 2005 US$MER",
+                     unit_out = "constant 2017 US$MER",
+                     replace_NAs = "no_conversion")
+  getNames(data, dim = 3) <- "Price|Carbon (US$2017/t CO2)"
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
@@ -103,6 +107,10 @@ convertSSPResults <- function(x) {
   selection <- c("Price|Primary Energy|Biomass (US$2005/GJ)")
 
   data <- x[, , selection]
+  data <- convertGDP(data, unit_in = "constant 2005 US$MER",
+                     unit_out = "constant 2017 US$MER",
+                     replace_NAs = "no_conversion")
+  getNames(data, dim = 3) <- "Price|Primary Energy|Biomass (US$2017/GJ)"                
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")
   aggregatedREG <- toolCountryFill(aggregatedREG, 000)
@@ -110,57 +118,57 @@ convertSSPResults <- function(x) {
 
   ### check for NA's
   if (any(is.na(out))) {
-vcat(verbosity = 1, "SSP3 results of MESSAGE-GLOBIOM contains NAs which where substituted by 0")
-}
+    vcat(verbosity = 1, "SSP3 results of MESSAGE-GLOBIOM contains NAs which where substituted by 0")
+  }
   out[, c("y2005", "y2010"), "MESSAGE-GLOBIOM.Land Cover|Cropland|Energy Crops (million ha)"] <- 0
   if (any(is.na(out))) {
-vcat(verbosity = 1, "NAs in dataset")
-}
+    vcat(verbosity = 1, "NAs in dataset")
+  }
 
   # ---- Select scenarios ----
 
   subset <- c("SSP1-19-SPA1-V16.IMAGE",
-            "SSP1-26-SPA1-V15.IMAGE",
-            "SSP1-34-SPA1-V15.IMAGE",
-            "SSP1-45-SPA1-V15.IMAGE",
-            "SSP1-Ref-SPA0-V15.IMAGE",
+              "SSP1-26-SPA1-V15.IMAGE",
+              "SSP1-34-SPA1-V15.IMAGE",
+              "SSP1-45-SPA1-V15.IMAGE",
+              "SSP1-Ref-SPA0-V15.IMAGE",
 
-            "SSP1-19-SPA1-V16.REMIND-MAGPIE",
-            "SSP1-26-SPA1-V15.REMIND-MAGPIE",
-            "SSP1-34-SPA1-V15.REMIND-MAGPIE",
-            "SSP1-45-SPA1-V15.REMIND-MAGPIE",
-            "SSP1-Ref-SPA0-V15.REMIND-MAGPIE",
+              "SSP1-19-SPA1-V16.REMIND-MAGPIE",
+              "SSP1-26-SPA1-V15.REMIND-MAGPIE",
+              "SSP1-34-SPA1-V15.REMIND-MAGPIE",
+              "SSP1-45-SPA1-V15.REMIND-MAGPIE",
+              "SSP1-Ref-SPA0-V15.REMIND-MAGPIE",
 
-            "SSP2-19-SPA2-V16.MESSAGE-GLOBIOM",
-            "SSP2-26-SPA2-V16.MESSAGE-GLOBIOM",
-            "SSP2-34-SPA2-V16.MESSAGE-GLOBIOM",
-            "SSP2-45-SPA2-V16.MESSAGE-GLOBIOM",
-            "SSP2-60-SPA2-V16.MESSAGE-GLOBIOM",
-            "SSP2-Ref-SPA0-V16.MESSAGE-GLOBIOM",
+              "SSP2-19-SPA2-V16.MESSAGE-GLOBIOM",
+              "SSP2-26-SPA2-V16.MESSAGE-GLOBIOM",
+              "SSP2-34-SPA2-V16.MESSAGE-GLOBIOM",
+              "SSP2-45-SPA2-V16.MESSAGE-GLOBIOM",
+              "SSP2-60-SPA2-V16.MESSAGE-GLOBIOM",
+              "SSP2-Ref-SPA0-V16.MESSAGE-GLOBIOM",
 
-            "SSP2-19-SPA2-V16.REMIND-MAGPIE",
-            "SSP2-26-SPA2-V15.REMIND-MAGPIE",
-            "SSP2-34-SPA2-V15.REMIND-MAGPIE",
-            "SSP2-45-SPA2-V15.REMIND-MAGPIE",
-            "SSP2-60-SPA2-V15.REMIND-MAGPIE",
-            "SSP2-Ref-SPA0-V15.REMIND-MAGPIE",
+              "SSP2-19-SPA2-V16.REMIND-MAGPIE",
+              "SSP2-26-SPA2-V15.REMIND-MAGPIE",
+              "SSP2-34-SPA2-V15.REMIND-MAGPIE",
+              "SSP2-45-SPA2-V15.REMIND-MAGPIE",
+              "SSP2-60-SPA2-V15.REMIND-MAGPIE",
+              "SSP2-Ref-SPA0-V15.REMIND-MAGPIE",
 
-            "SSP3-34-SPA3-V15.AIM/CGE",
-            "SSP3-45-SPA3-V15.AIM/CGE",
-            "SSP3-60-SPA3-V15.AIM/CGE",
+              "SSP3-34-SPA3-V15.AIM/CGE",
+              "SSP3-45-SPA3-V15.AIM/CGE",
+              "SSP3-60-SPA3-V15.AIM/CGE",
 
-            "SSP4-26-SPA4-V16.GCAM4",
-            "SSP4-34-SPA4-V16.GCAM4",
-            "SSP4-45-SPA4-V16.GCAM4",
-            "SSP4-60-SPA4-V16.GCAM4",
-            "SSP4-Ref-SPA0-V16.GCAM4",
+              "SSP4-26-SPA4-V16.GCAM4",
+              "SSP4-34-SPA4-V16.GCAM4",
+              "SSP4-45-SPA4-V16.GCAM4",
+              "SSP4-60-SPA4-V16.GCAM4",
+              "SSP4-Ref-SPA0-V16.GCAM4",
 
-            "SSP5-19-SPA5-V16.REMIND-MAGPIE",
-            "SSP5-26-SPA5-V15.REMIND-MAGPIE",
-            "SSP5-34-SPA5-V15.REMIND-MAGPIE",
-            "SSP5-45-SPA5-V15.REMIND-MAGPIE",
-            "SSP5-60-SPA5-V15.REMIND-MAGPIE",
-            "SSP5-Ref-SPA0-V15.REMIND-MAGPIE")
+              "SSP5-19-SPA5-V16.REMIND-MAGPIE",
+              "SSP5-26-SPA5-V15.REMIND-MAGPIE",
+              "SSP5-34-SPA5-V15.REMIND-MAGPIE",
+              "SSP5-45-SPA5-V15.REMIND-MAGPIE",
+              "SSP5-60-SPA5-V15.REMIND-MAGPIE",
+              "SSP5-Ref-SPA0-V15.REMIND-MAGPIE")
 
   out <- out[, , subset]
 
