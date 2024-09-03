@@ -28,7 +28,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y,
                      dim = 3.2,
                      add = "c_LU_emi_scen",
-                     nm = c("SSP1", "SSP2", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
+                     nm = c("SSP1", "SSP2", "SSP3", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
   y <- add_dimension(y,
                      dim = 3.3,
                      add = "rcp",
