@@ -78,6 +78,11 @@ calcMacBaseLandUse <- function(subtype) {
     # write co2 baseline to all RCPs
     x[, , "co2luc.SSP2"] <- xCO2
 
+    # add values for SSP3 copying the values from SSP2
+    tmp <- x[,,"SSP2"]
+    getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+    x <- mbind(x, tmp)
+
     # Replace CH4 and N2O LUC baseline for SSP2 and SSP1, since there is newer data from a
     # coupled REMIND-MAgPIE 4.0 Baseline run
     # Read ch4 and n2o emissions from MAgpIE Base scenario
