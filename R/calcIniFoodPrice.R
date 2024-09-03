@@ -9,7 +9,7 @@
 #' @param year Specifies the year for the initialization of prices in MAgPIE. Default is `y2005`.
 #' @param products subselection of products to be returned
 #'
-#' @return List with a magpie object with commodity prices on global level in $05/tDM.
+#' @return List with a magpie object with commodity prices on global level in $17/tDM.
 #' @author Mishko Stevanovic, Benjamin Leon Bodirsky
 #' @seealso
 #' [readIMPACT3.2.2World_Price()]
@@ -27,7 +27,7 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
   dm <- collapseNames(dm)
 
   if (datasource == "IMPACT3.2.2World_Price") {
-    out <- readSource("IMPACT3.2.2World_Price")
+    out <- readSource("IMPACT3.2.2World_Price") # in 2017 prices now
     # select scenario and initial year
     out <- collapseNames(out[, year, "SSP2-NoCC-NoCC-379"])
     out <- setYears(out, NULL)
@@ -69,6 +69,17 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
     out[, , "pasture"]          <- 50 # quick google search
     out[, , "scp"]              <- 1500 # using upper end prices similar to fishmeal
 
+    # [DC] At some point probably better to do another 'quick google search',
+    # for now convert these to 2017 values using US inflation, also for consistency
+    conv <- c("sugr_cane", "sugr_beet", "alcohol", "fish", "oilpalm", "oilcakes", "cottn_pro", "foddr",
+              "brans", "distillers_grain", "ethanol", "fibres", "molasses", "wood", "woodfuel", "begr",
+              "betr", "res_cereals", "res_fibrous", "pasture", "scp")
+    getItems(out, dim = 1) <- "USA"
+    out[, , conv] <- GDPuc::convertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
+                                       unit_out = "constant 2017 US$MER",
+                                       replace_NAs = "no_conversion")
+    getItems(out, dim = 1) <- "GLO"
+
     # correct the prices for dry matter values
     out <- out[, , ] / dm[, , ]
 
@@ -106,6 +117,16 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
     out[, , "foddr"]            <- 50 # quick google search
     out[, , "sugar"]            <- 250 # quick google search
 
+    conv <- c("fish", "oilcakes", "brans", "distillers_grain", "ethanol", "alcohol",
+              "molasses", "wood", "woodfuel", "begr",
+              "betr", "res_cereals", "res_fibrous", "pasture", "scp",
+              "foddr", "sugar")
+    getItems(out, dim = 1) <- "USA"
+    out[, , conv] <- GDPuc::convertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
+                                       unit_out = "constant 2017 US$MER",
+                                       replace_NAs = "no_conversion")
+    getItems(out, dim = 1) <- "GLO"
+
     # correct the prices from online sources for dry matter values
     out[, , missingCommodities] <- out[, , missingCommodities] / dm[, , missingCommodities]
 
@@ -120,7 +141,7 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
 
   return(list(x = out,
               weight = NULL,
-              unit = "US$05/tDM",
+              unit = "US$2017/tDM",
               description = description,
               isocountries = FALSE))
 }
