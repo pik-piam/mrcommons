@@ -19,14 +19,5 @@ readIMPACT3.2.2World_Price <- function() { # nolint: object_name_linter.
   data <- data[!is.na(data[[1]]), ]
   data$scenario <- sub(".", "p", data$scenario, fixed = TRUE)
   data <- as.magpie(data)
-
-  #inflate to 2017 using US inflation for global value
-  getItems(data, dim = 1) <- "USA"
-  data <- GDPuc::convertGDP(data,
-                            unit_in = "constant 2005 US$MER",
-                            unit_out = "constant 2017 US$MER",
-                            replace_NAs = "no_conversion")
-  getItems(data, dim = 1) <- "GLO"
-
   return(data)
 }
