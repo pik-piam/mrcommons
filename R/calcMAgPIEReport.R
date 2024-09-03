@@ -102,6 +102,11 @@ calcMAgPIEReport <- function(subtype) {
       "SDP_MC"            = "SDP"
     ))
 
+  # add values for SSP3 copying the values from SSP2
+  tmp <- x[,,"SSP2"]
+  getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+  x <- mbind(x, tmp)
+
   return(list(
     x = x,
     weight = NULL,

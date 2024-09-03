@@ -47,11 +47,11 @@ calcGTAPTotalTransportCosts <- function(costType = "transport", version = "9") {
   totalTcosts <- (tcostInputs + tcostToSecondary) / 2
 
   totalTcosts <-  GDPuc::convertGDP(totalTcosts, unit_in = "current US$MER",
-                                    unit_out = "constant 2017 US$MER",
+                                    unit_out = "constant 2005 US$MER",
                                     replace_NAs = "no_conversion")
 
   return(list(x = totalTcosts,
               weight = NULL,
-              unit = "million constant 2017 US$MER/yr",
+              unit = "million constant 2005 US$MER/yr",
               description = "Costs for GTAP commodities (half of input to market and market to value"))
 }
