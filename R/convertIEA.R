@@ -55,7 +55,7 @@ convertIEA <- function(x, subtype) {
     x[is.na(x)] <- 0
 
     # filling missing country data
-    x <- toolCountryFill(x, 0)
+    x <- toolCountryFill(x, 0, verbosity = 2)
 
     # These changes may reduce the amount of CHP plants to below what is actually
     # deployed in a region, because heat reporting is obscure. In some statistics,
