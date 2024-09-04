@@ -5,7 +5,7 @@
 #' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-2023", or "Emissions".
 #' - "EnergyBalances": IEA energy balances until 2020 (incomplete 2021), data updated in Aug 2022,
 #' the current default for REMIND input data
-#' - "EnergyBalances-latest": IEA energy balances until 2021 (incomplete 2022), data updated in Aug 2023,
+#' - "EnergyBalances-latest": IEA energy balances until 2022, data updated in Sep 2024,
 #' currently used for comparisons only
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke
@@ -28,8 +28,8 @@ readIEA <- function(subtype) {
       energyBalancesFile <- "IEA-Energy-Balances-2022/worldbig.csv"
       incomplete <- 2021
     } else if (subtype == "EnergyBalances-latest") {
-      energyBalancesFile <- "IEA-Energy-Balances-2023/worldbig.csv"
-      incomplete <- 2022
+      energyBalancesFile <- "IEA-Energy-Balances-2024/worldbig.csv"
+      incomplete <- 2023
     } else {
       stop("Invalid subtype!")
     }
