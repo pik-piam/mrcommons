@@ -38,21 +38,12 @@ convertImageMacc <- function(x, subtype) {
   )) {
 
     # convert from US$2005 to US$2017
-
-    # a hack: we must reformat the subdimension 'class' so that its values are not
-    # integers, which causes the internal conversion back to maglass to wrongly guess
-    # the year dimension
-    getNames(x, dim = 2) <- paste0(getNames(x, dim = 2), "-class")
-
     x <- GDPuc::convertGDP(
       gdp = x,
       unit_in = "constant 2005 US$MER",
       unit_out = mrdrivers::toolGetUnitDollar(),
       replace_NAs = "with_USA"
     )
-
-    # undo the unit hack after conversion
-    getNames(x, dim = 2) <- gsub("-class", "", getNames(x, dim = 2))
 
     return(toolAggregate(x, map))
 

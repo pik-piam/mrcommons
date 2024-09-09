@@ -50,7 +50,7 @@ Imports:
     data.table,
     dplyr,
     hdf5r,
-    GDPuc,
+    GDPuc (>= 1.0.5),
     luscale,
     magpiesets (>= 0.44.2),
     ncdf4,
