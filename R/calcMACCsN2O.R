@@ -24,7 +24,7 @@ calcMACCsN2O <- function(
   # readSource N2O and baseline Emissions
   if (source == "ImageMacc") { # nolint
 
-    unit <- "Tax level 200 steps each 5 US$2017/tC"
+    unit <- "Abatement fraction. Cost dimension is in tax steps of 5 2005USD/t each"
     description <- "N2O ImageMacc"
 
     energyInd <- readSource("ImageMacc", "N2O_Energy_Industry")

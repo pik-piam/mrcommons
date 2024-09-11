@@ -1,7 +1,6 @@
 #' Convert subtypes of the ImageMacc data
 #'
 #' Convert subtypes from ImageMacc to data on ISO country level.
-#' Convert MACCs to 2017 US$ per tonne C.
 #' Correct values for N2O of the subtype "baseline_sources" from N to N2O (factor: 44/28).
 #'
 #' @param x MAgPIE object containing ImageMacc data mixed on region level
@@ -36,14 +35,6 @@ convertImageMacc <- function(x, subtype) {
     "SF6_tot",
     "PFC_tot"
   )) {
-
-    # convert from US$2005 to US$2017
-    x <- GDPuc::convertGDP(
-      gdp = x,
-      unit_in = "constant 2005 US$MER",
-      unit_out = mrdrivers::toolGetUnitDollar(),
-      replace_NAs = "with_USA"
-    )
 
     return(toolAggregate(x, map))
 
