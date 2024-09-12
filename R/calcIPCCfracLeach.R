@@ -31,7 +31,7 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     pet    <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
                          climatetype = "GSWP3-W5E5:historical", subtype = "mpet",
                          stage = "smoothed", aggregate = FALSE)[, past, ]
-    prec   <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+    prec   <- calcOutput("LPJmLClimateInput_new", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
                          climatetype  = "GSWP3-W5E5:historical",
                          variable = "precipitation:monthlySum",
                          stage = "smoothed", aggregate = FALSE)[, past, ]
