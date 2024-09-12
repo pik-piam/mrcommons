@@ -73,7 +73,6 @@ Suggests:
     covr,
     HARr,
     knitr,
-    lifecycle,
     rmarkdown,
     testthat,
     XML
