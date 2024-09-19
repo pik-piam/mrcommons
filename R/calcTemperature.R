@@ -18,7 +18,7 @@
 
 calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE) {
 
-  temp <- calcOutput("LPJmLClimateInput", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+  temp <- calcOutput("LPJmLClimateInput_new", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
                      climatetype = "GSWP3-W5E5:historical",
                      variable    = "temperature:monthlyMean",
                      stage       = "smoothed", aggregate = FALSE)
