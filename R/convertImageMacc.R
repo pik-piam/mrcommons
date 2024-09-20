@@ -1,8 +1,7 @@
 #' Convert subtypes of the ImageMacc data
 #'
-#' Convert subtypes from ImageMacc to data on ISO country level. Correct values
-#' for N2O of the subtype "baseline_sources" from N to N2O (factor: 44/28).
-#'
+#' Convert subtypes from ImageMacc to data on ISO country level.
+#' Correct values for N2O of the subtype "baseline_sources" from N to N2O (factor: 44/28).
 #'
 #' @param x MAgPIE object containing ImageMacc data mixed on region level
 #' @param subtype data subtype. Either CH4_Energy_Industry", "CH4_Landuse",
@@ -36,7 +35,9 @@ convertImageMacc <- function(x, subtype) {
     "SF6_tot",
     "PFC_tot"
   )) {
+
     return(toolAggregate(x, map))
+
   } else if (subtype == "baseline_sources") {
     # values for N2O have to be corrected by the factor 44/28 (N -> N2O)
     x[, , "N2O Transport"] <- x[, , "N2O Transport"] * (44 / 28)

@@ -18,8 +18,8 @@ ImageMacc data as MAgPIE object for all subtypes aggregated to
 country level
 }
 \description{
-Convert subtypes from ImageMacc to data on ISO country level. Correct values
-for N2O of the subtype "baseline_sources" from N to N2O (factor: 44/28).
+Convert subtypes from ImageMacc to data on ISO country level.
+Correct values for N2O of the subtype "baseline_sources" from N to N2O (factor: 44/28).
 }
 \examples{
 \dontrun{

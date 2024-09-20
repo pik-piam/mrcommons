@@ -7,9 +7,9 @@
 calcDevelopmentState(upper = 12746, lower = 1045)
 }
 \arguments{
-\item{upper}{Change upper limit (default: 12746)}
+\item{upper}{Change upper limit (default: 12746, i.e. the upper threshold for 2013 in current US$)}
 
-\item{lower}{Change lower limit (default: 1045)}
+\item{lower}{Change lower limit (default: 1045, i.e. the lower threshold for 2013 in current US$)}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

@@ -4,8 +4,8 @@
 #' high-income country, below 1045 its a low-income country, in between its a
 #' medium-income country.
 #'
-#' @param upper Change upper limit (default: 12746)
-#' @param lower Change lower limit (default: 1045)
+#' @param upper Change upper limit (default: 12746, i.e. the upper threshold for 2013 in current US$)
+#' @param lower Change lower limit (default: 1045, i.e. the lower threshold for 2013 in current US$)
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @seealso

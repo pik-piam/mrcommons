@@ -6,13 +6,38 @@ calcMAgPIEReport <- function(subtype) {
   if (subtype == "CostTotal") {
     # with transformation factor from 10E6 US$2005 to 10E12 US$2005
     x <- x[, , "Costs Without Incentives (million US$05/yr)"] / 1000 / 1000
+
+    # convert from US$2005 -> US$2017
+    x <- GDPuc::convertGDP(
+      gdp = x,
+      unit_in = "constant 2005 US$MER",
+      unit_out = mrdrivers::toolGetUnitDollar(),
+      replace_NAs = "with_USA"
+    )
+
+    getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
+
     d <- "Total Landuse Costs from MAgPIE excluding emission costs"
-    u <- "T$2005/yr"
+    u <- "trillion US$2017/yr"
+
   } else if (subtype == "CostMAC") {
+
     # with transformation factor from 10E6 US$2005 to 10E12 US$2005
     x <- x[, , "Costs Accounting|+|MACCS (million US$05/yr)"] / 1000 / 1000
+
+    # convert from US$2005 -> US$2017
+    x <- GDPuc::convertGDP(
+      gdp = x,
+      unit_in = "constant 2005 US$MER",
+      unit_out = mrdrivers::toolGetUnitDollar(),
+      replace_NAs = "with_USA"
+    )
+
+    getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
+
     d <- "MAC Costs for LU emissions from MAgPIE"
-    u <- "T$2005/yr"
+    u <- "trillion US$2017/yr"
+
   } else if (subtype == "ProductionBiomass") {
     x <- x[, , "Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
