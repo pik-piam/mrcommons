@@ -67,7 +67,7 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     fracLeachAverage[, , "crop"] <- fracLeachAverage[, , "crop"] * (1 - irrigShr) + 0.3 * irrigShr
 
     weight  <- lu
-    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = weight, dim = 1, to = "iso")
+    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = weight, dim = 1, to = "iso", zeroWeight = "allow")
     fracLeachAverage[is.na(fracLeachAverage)] <- 0.05 # mostly forest in desert countries
     fracLeachAverage  <- toolCountryFill(fracLeachAverage, fill = 0.3)
     budget  <- calcOutput("NitrogenBudgetCropland",  aggregate = FALSE)[, , "surplus"]
