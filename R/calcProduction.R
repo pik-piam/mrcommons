@@ -98,7 +98,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           productionMAG[, , "rainfed"] <- productionMAG[, , "rainfed"] * (1 - noMAGCroparea[, , "rainfed"]) +
             toolAggregate(noMAGCroparea[, , "rainfed"] * (productionFAO - isoproductionMAG),
                           rel = mappingCountryCell,
-                          weight = dimSums(cropareaMAG[, , "rainfed"], dim = 3),
+                          weight = dimSums(cropareaMAG[, , "rainfed"], dim = 3) + 10^(-10),
                           from = "iso", to = "coordiso")
 
           isoproductionMAG  <- dimSums(productionMAG, dim = c(1.1, 1.2, 3.2))
@@ -107,7 +107,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           productionMAG[, , "irrigated"] <- productionMAG[, , "irrigated"] * (1 - noMAGCroparea[, , "irrigated"]) +
             toolAggregate(noMAGCroparea[, , "irrigated"] * (productionFAO - isoproductionMAG),
                           rel = mappingCountryCell,
-                          weight = dimSums(cropareaMAG[, , "irrigated"], dim = 3),
+                          weight = dimSums(cropareaMAG[, , "irrigated"], dim = 3) + 10^(-10),
                           from = "iso", to = "coordiso")
         }
 
@@ -179,7 +179,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
         }
 
         # correct items with no yields
-        isoMAGYields   <- noMAGYields <- toolAggregate(yieldsMAG, weight = cropareaMAG,
+        isoMAGYields   <- noMAGYields <- toolAggregate(yieldsMAG, weight = cropareaMAG + 10^(-10),
                                                        rel = mappingCountryCell,
                                                        from = "coordiso", to = "iso")
         noMAGYields[]  <- (isoMAGYields == 0) * isoMismatch * (1 - noMAGCroparea)
@@ -192,7 +192,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           productionMAG[, , "rainfed"]   <- productionMAG[, , "rainfed"] * (1 - noMAGYields[, , "rainfed"]) +
             noMAGYields[, , "rainfed"] * toolAggregate(productionFAO - isoproductionMAG,
                                                        rel = mappingCountryCell,
-                                                       weight = cropareaMAG[, , "rainfed"],
+                                                       weight = cropareaMAG[, , "rainfed"] + 10^(-10),
                                                        from = "iso", to = "coordiso")
 
           isoproductionMAG  <- dimSums(productionMAG, dim = c(1.1, 1.2, 3.2))
@@ -201,7 +201,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           productionMAG[, , "irrigated"]   <- productionMAG[, , "irrigated"] * (1 - noMAGYields[, , "irrigated"]) +
             noMAGYields[, , "irrigated"] * toolAggregate(productionFAO - isoproductionMAG,
                                                          rel = mappingCountryCell,
-                                                         weight = cropareaMAG[, , "irrigated"],
+                                                         weight = cropareaMAG[, , "irrigated"] + 10^(-10),
                                                          from = "iso", to = "coordiso")
         }
       }
