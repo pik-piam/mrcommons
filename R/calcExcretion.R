@@ -81,7 +81,7 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
     mapping <- toolGetMappingCoord2Country()
     mapping$coordiso <- paste(mapping$coords, mapping$iso, sep = ".")
     excretion <- toolAggregate(excretion[getItems(livestockProduction, dim = 1.3), , ],
-                               rel = mapping, weight = productionWeights,
+                               rel = mapping, weight = productionWeights + 10^(-10),
                                from = "iso", to = "coordiso", dim = 1)
   }
   excretion <- round(excretion, digits = 8)

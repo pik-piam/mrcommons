@@ -287,7 +287,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
         }
 
         # correct items with no yields
-        isoPastureYields   <- noPastureYields <- toolAggregate(yieldsPasture, weight = areaPasture,
+        isoPastureYields   <- noPastureYields <- toolAggregate(yieldsPasture, weight = areaPasture + 10^(-10),
                                                                rel = mappingCountryCell, from = "coordiso", to = "iso")
         noPastureYields[]  <- (isoPastureYields == 0) * isoMismatch * (1 - noPastureArea)
 
@@ -295,7 +295,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
           # distribute corresponding to pasture area share
           productionMAG     <- productionMAG * (1 - noPastureYields) +
             noPastureYields * toolAggregate(toolIso2CellCountries(productionFAO), rel = mappingCountryCell,
-                                            weight = areaPasture, from = "iso", to = "coordiso")
+                                            weight = areaPasture + 10^(-10), from = "iso", to = "coordiso")
         }
       }
 
