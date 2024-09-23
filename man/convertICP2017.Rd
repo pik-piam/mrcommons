@@ -17,7 +17,7 @@ magpie object of relative price levels (world = 100) or per capita expenditure (
 \description{
 converts data of World Bank ICP round, downloaded from
 here: https://databank.worldbank.org/source/icp-2017
-mainly a currency conversion to MER05. Assume that in the original dataset,
+mainly a currency conversion to MER2017. Assume that in the original dataset,
 2011 values are in 2011MER and 2017 in 2017MER, given the ICP rounds
 }
 \examples{

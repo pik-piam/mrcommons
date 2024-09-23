@@ -21,7 +21,7 @@ calcWBGEM <- function() {
                                  setNames(x[, , grep("nominal", sugar, value = TRUE)], NULL), NULL)
   adjustFactor2005 <- 1 / setYears(x[, 2005, grep("real", sugar, value = TRUE)] /
                                      setNames(x[, 2005, grep("nominal", sugar, value = TRUE)], NULL), NULL) *
-                                       adjustFactor2010
+    adjustFactor2010
   adjustFactor2005 <- setNames(adjustFactor2005, NULL)
 
   vars <- grep("nominal", getNames(x), value = TRUE)
@@ -45,8 +45,15 @@ calcWBGEM <- function() {
   out <- out * adjustFactor2005
   out[is.na(out)] <- 0
 
+  # inflate to 2017 using US inflation for global value
+  getItems(out, dim = 1) <- "USA"
+  out <- GDPuc::convertGDP(out, unit_in = "constant 2005 US$MER",
+                           unit_out = "constant 2017 US$MER",
+                           replace_NAs = "no_conversion")
+  getItems(out, dim = 1) <- "GLO"
+
   return(list(x = out,
-              unit = "real2005 USD per ton",
+              unit = "real2017 USD per ton",
               weight = NULL,
               description = "WBGEM global price of commodity"))
 }
