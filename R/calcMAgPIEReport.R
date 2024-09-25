@@ -14,6 +14,7 @@ calcMAgPIEReport <- function(subtype) {
       replace_NAs = "with_USA"
     )
     getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
+    d <- "Total Landuse Costs from MAgPIE excluding emission costs"
     u <- "trillion US$2017/yr"
   } else if (subtype == "CostMAC") {
     # with transformation factor from 10E6 US$2005 to 10E12 US$2005
