@@ -30,8 +30,8 @@ calcBiomeType <- function(cells = "lpjcell") {
   }
 
   weight <- calcOutput("LanduseInitialisation",
-                      aggregate = FALSE, cellular = TRUE, cells = cells,
-                      input_magpie = TRUE, years = "y1995", round = 6)
+                       aggregate = FALSE, cellular = TRUE, cells = cells,
+                       input_magpie = TRUE, years = "y1995", round = 6)
   weight <- dimSums(weight, dim = 3)
 
   if (length(unique(dimSums(x, dim = 3))) > 2) {
@@ -39,6 +39,9 @@ calcBiomeType <- function(cells = "lpjcell") {
   }
   # do not apply weight where sum over all biome types is zero
   weight <- weight * dimSums(x, dim = 3)
+
+  # add a small weight to deal with regions that have only zeros
+  weight <- weight + 1e-10
 
   return(list(x = x,
               weight = weight,

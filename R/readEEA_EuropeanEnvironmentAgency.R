@@ -130,24 +130,30 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
 
   } else if (subtype == "projections-detailed") {
 
-    files <- list.files(path = "GHG_projections_detailed/2022/")
+    path <- file.path("GHG_projections_detailed", "2023")
+    files <- list.files(path = path)
 
     projections <- NULL
     for (file in files) {
       reg <- gsub("-.*", "", file)
       projections <- rbind(
         projections,
-        suppressWarnings(read_xlsx(paste0("GHG_projections_detailed/2022/", file))) %>%
-          select(-"RY", -"InventorySubmissionYear", -"Notation") %>%
-          filter(!is.na(!!sym("Value")), !!sym("Value") != 0) %>%
-          mutate(CountryCode = reg)
+        suppressWarnings(read_xlsx(file.path(path, file))) %>%
+          filter(!is.na(.data$Value), .data$Value != 0) %>%
+          select(-"InventorySubmissionYear", -"Notation") %>%
+          mutate("CountryCode" = reg)
       )
     }
 
     projections <- projections %>%
-      mutate(Year = as.numeric(!!sym("Year")),
-             Value = as.numeric(!!sym("Value"))) %>%
-      select(6, 3, 2, 1, 4, 5) %>%
+      mutate(Year = as.numeric(.data$Year),
+             Value = as.numeric(.data$Value)) %>%
+      # remove duplicates
+      dplyr::group_by(.data$Category, .data$Scenario, .data$Year, .data$Gas, .data$CountryCode) %>%
+      mutate("dup" = n()) %>%
+      dplyr::ungroup() %>%
+      filter(.data$dup == 1 | .data$RY == 1) %>%
+      select(7, 4, 2, 1, 5, 6) %>%
       distinct()
 
     x <- as.magpie(projections, spatial = 1, temporal = 2, datacol = 6)

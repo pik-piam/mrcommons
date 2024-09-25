@@ -27,7 +27,7 @@ convertEEA_EuropeanEnvironmentAgency <- function(x, subtype) { # nolint: object_
   } else if (subtype == "sectoral") {
     x <- toolCountryFill(x, verbosity = 2, no_remove_warning = "EUR")
   } else if (subtype %in% c("projections", "projections-detailed", "ghgEmissionIntensityElec")) {
-    getItems(x, 1) <- toolCountry2isocode(getItems(x, 1), warn = FALSE)
+    getItems(x, 1) <- toolCountry2isocode(getItems(x, 1), warn = FALSE, mapping = c("EL" = "GRC"))
     x <- toolCountryFill(x, verbosity = 2, no_remove_warning = NA)
   }
   return(x)

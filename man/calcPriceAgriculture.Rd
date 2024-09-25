@@ -4,7 +4,7 @@
 \alias{calcPriceAgriculture}
 \title{calcPriceAgriculture}
 \usage{
-calcPriceAgriculture(datasource = "IMPACT3.2.2World_Price", unit = "US$05/tDM")
+calcPriceAgriculture(datasource = "IMPACT3.2.2World_Price", unit = "US$17/tDM")
 }
 \arguments{
 \item{datasource}{Options of the source of data:

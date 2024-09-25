@@ -44,7 +44,7 @@ calcLivestockGridded <- function(details = FALSE) {
                                                     calibrated = TRUE, aggregate = FALSE)[, selectyears, "nr"])
   countries <- getItems(pastureProduction, dim = 1.3)
   extensiveRuminantCell <- toolAggregate(extensiveRuminant[countries, , ], rel = countryToCell,
-                                         weight = pastureProduction,
+                                         weight = pastureProduction + 10^(-10),
                                          from = "iso", to = "coordiso", dim = 1)
 
   # calculate intensive ruminant production per cell from cropland share
@@ -53,7 +53,7 @@ calcLivestockGridded <- function(details = FALSE) {
   kcrProduction <- kcrProduction[, selectyears, "dm"][, , c("betr", "begr"), invert = TRUE]
   cropProduction        <- dimSums(collapseNames(kcrProduction), dim = 3)
   intensiveRuminantCell <- toolAggregate(intensiveRuminant[countries, , ], rel = countryToCell,
-                                         weight = cropProduction,
+                                         weight = cropProduction + 10^(-10),
                                          from = "iso", to = "coordiso", dim = 1)
 
   ruminantProdCell      <- extensiveRuminantCell + intensiveRuminantCell
@@ -80,13 +80,13 @@ calcLivestockGridded <- function(details = FALSE) {
                                         cells = "lpjcell", aggregate = FALSE)
   urbanarea               <- landuseInitialization[, selectyears, "urban"]
   extensivePigPoultryCell <- toolAggregate(extensivePigPoultry, rel = countryToCell,
-                                           weight = urbanarea,
+                                           weight = urbanarea + 10^(-10),
                                            from = "iso", to = "coordiso", dim = 1)
 
   # calculate intensive pig poultry production per cell from cropland share
   # more ideas to come for pig poultry disaggregation
   intensivePigPoultryCell <- toolAggregate(intensivePigPoultry, rel = countryToCell,
-                                           weight = cropProduction,
+                                           weight = cropProduction + 10^(-10),
                                            from = "iso", to = "coordiso", dim = 1)
 
   pigPoultryProdCell      <- extensivePigPoultryCell + intensivePigPoultryCell
@@ -100,9 +100,9 @@ calcLivestockGridded <- function(details = FALSE) {
   } else if (details == TRUE) {
 
     x <- mbind(add_dimension(extensiveRuminantCell, dim = 3.1, add = "intensity", nm = "ext"),
-                             add_dimension(intensiveRuminantCell, dim = 3.1, add = "intensity", nm = "int"),
-                             add_dimension(extensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
-                             add_dimension(intensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
+               add_dimension(intensiveRuminantCell, dim = 3.1, add = "intensity", nm = "int"),
+               add_dimension(extensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
+               add_dimension(intensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
     getSets(x) <- c("x", "y", "iso", "year", "intensity", "ItemCodeItem", "attributes")
   }
 

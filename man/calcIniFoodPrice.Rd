@@ -14,7 +14,7 @@ calcIniFoodPrice(datasource = "FAO", year = "y2005", products = "kfo")
 \item{products}{subselection of products to be returned}
 }
 \value{
-List with a magpie object with commodity prices on global level in $05/tDM.
+List with a magpie object with commodity prices on global level in $17/tDM.
 }
 \description{
 provides global prices from the IMPACT model projections for MAgPIE commodities

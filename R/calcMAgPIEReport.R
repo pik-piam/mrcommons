@@ -4,15 +4,15 @@ calcMAgPIEReport <- function(subtype) {
   x <- readSource("MAgPIE", subtype = "MAgPIEReport_extensive")
 
   if (subtype == "CostTotal") {
-    # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    x <- x[, , "Costs Without Incentives (million US$05/yr)"] / 1000 / 1000
+    # with transformation factor from 10E6 US$2017 to 10E12 US$2017
+    x <- x[, , "Costs Without Incentives (million US$17/yr)"] / 1000 / 1000
     d <- "Total Landuse Costs from MAgPIE excluding emission costs"
-    u <- "T$2005/yr"
+    u <- "T$2017/yr"
   } else if (subtype == "CostMAC") {
-    # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    x <- x[, , "Costs Accounting|+|MACCS (million US$05/yr)"] / 1000 / 1000
+    # with transformation factor from 10E6 US$2017 to 10E12 US$2017
+    x <- x[, , "Costs Accounting|+|MACCS (million US$17/yr)"] / 1000 / 1000
     d <- "MAC Costs for LU emissions from MAgPIE"
-    u <- "T$2005/yr"
+    u <- "T$2017/yr"
   } else if (subtype == "ProductionBiomass") {
     x <- x[, , "Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
@@ -65,17 +65,22 @@ calcMAgPIEReport <- function(subtype) {
   getNames(x) <- getNames(x) %>%
     stringr::str_replace_all(c(
       "^C_"               = "",
-      #"-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
-      #"-PkBudg500-mag-4"  = ".rcp20", # in 2023-10 still in emulator files
+      # "-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
+      # "-PkBudg500-mag-4"  = ".rcp20", # in 2023-10 still in emulator files
       "-PkBudg650-mag-4"  = ".rcp20",
-      #"-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
-      #"-PkBudg1150-mag-4" = ".rcp26", # in 2023-10 still in emulator files
+      # "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
+      # "-PkBudg1150-mag-4" = ".rcp26", # in 2023-10 still in emulator files
       "-PkBudg1050-mag-4" = ".rcp26",
       "-NDC-mag-4"        = ".rcp45",
       "-Base-mag-4"       = ".none",
       "SSP2EU"            = "SSP2",
       "SDP_MC"            = "SDP"
     ))
+
+  # add values for SSP3 copying the values from SSP2
+  tmp <- x[, , "SSP2"]
+  getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+  x <- mbind(x, tmp)
 
   return(list(
     x = x,

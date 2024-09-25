@@ -32,12 +32,12 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # Load LPJ yields and area on cell level
     yieldsLPJmL  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                               climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                               stage = "smoothed", aggregate = FALSE)[, selectyears, cropsLPJmL])
+                                             climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
+                                             stage = "smoothed", aggregate = FALSE)[, selectyears, cropsLPJmL])
 
     if (sectoral == "kcr") {
       yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
-                                  from = "LPJmL", to = "MAgPIE", dim = 3.1)
+                                     from = "LPJmL", to = "MAgPIE", dim = 3.1)
     }
 
     cropareaLPJmL   <- calcOutput("Croparea", sectoral = sectoral, physical = TRUE,
@@ -50,7 +50,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # Load FAO data and caluculate FAO yields on country level
     productionFAO   <- collapseNames(calcOutput("FAOmassbalance",
-                                                 aggregate = FALSE)[, , "production"][, , "dm"][, , cropsMAgPIE])
+                                                aggregate = FALSE)[, , "production"][, , "dm"][, , cropsMAgPIE])
 
     if (sectoral == "lpj") {
       productionFAO <- toolAggregate(productionFAO, rel = mag2lpj,
@@ -86,7 +86,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     kcr2all <- matrix(c(cropsMAgPIE, rep("all", length(cropsMAgPIE))),
                       ncol = 2,
                       dimnames = list(NULL, c("kcr", "all")))
-    tauall  <- toolAggregate(tau, rel = kcr2all, weight = cropareaCountry, from = "kcr", to = "all", dim = 3)
+    tauall  <- toolAggregate(tau, rel = kcr2all, weight = cropareaCountry + 10^(-10), from = "kcr", to = "all", dim = 3)
 
     x      <- mbind(tau, setNames(tauall, "all"))
     weight <- cropareaCountry
@@ -94,7 +94,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     out    <- toolNAreplace(x = x, weight = weight)
     x      <- toolCountryFill(out$x, fill = 0)
     weight <- toolCountryFill(out$weight, fill = 0)
- #  ?Old comment: if only one indicator is required over all crops, I suggest a weighting over area harvested
+    #  ?Old comment: if only one indicator is required over all crops, I suggest a weighting over area harvested
 
   } else if (sectoral == "pasture") {
 
