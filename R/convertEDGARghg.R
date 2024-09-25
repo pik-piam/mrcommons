@@ -1,4 +1,4 @@
-convertEDGAR8 <- function(x) {
+convertEDGARghg <- function(x) {
 
   # rename regions
   getItems(x, dim = 1) <- sub(pattern = "ANT", replacement = "SXM",
