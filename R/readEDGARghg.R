@@ -5,7 +5,7 @@
 #' @author Pascal Weigmann
 #' @importFrom readxl read_xlsx
 
-readEDGAR_GHG <- function() {
+readEDGARghg <- function() {
 
   file <- "EDGAR_2024_GHG_booklet_2024.xlsx"
   sheet <- "GHG_by_sector_and_country"
