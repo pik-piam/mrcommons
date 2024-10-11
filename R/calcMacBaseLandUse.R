@@ -209,6 +209,11 @@ calcMacBaseLandUse <- function(subtype) {
     # select Baseline (all other RCPs are only copies of Baseline anyway, see above)
     x <- collapseNames(x[, , emiExo][, , "none"], collapsedim = 3.3)
 
+    # add values for SSP3 copying the values from SSP2
+    tmp <- x[,,"SSP2"]
+    getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+    x <- mbind(x, tmp)
+
   } else {
     stop("Unkown subtype: ", subtype)
   }
