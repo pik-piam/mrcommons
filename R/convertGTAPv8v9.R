@@ -8,7 +8,7 @@
 #' \dontrun{
 #' a <- readSource("convertGTAPv8v9", "81:SF01", convert = TRUE)
 #' }
-#' @importFrom GDPuc convertGDP
+#' @importFrom GDPuc toolConvertGDP
 convertGTAPv8v9 <- function(x, subtype) {
 
   split <- toolSplitSubtype(subtype, list(version = NULL, header = NULL))
@@ -68,10 +68,10 @@ convertGTAPv8v9 <- function(x, subtype) {
     gdpMer <- calcOutput("GDPPast", GDPPast = "WDI-MI",
                          unit = "constant 2017 US$MER", aggregate = FALSE)
     gdpMer <- gdpMer[, getYears(x), , drop = TRUE]
-    w1 <- GDPuc::convertGDP(gdpMer,
-                            unit_in = "constant 2017 US$MER",
-                            unit_out = "current US$MER",
-                            replace_NAs = "no_conversion")
+    w1 <- GDPuc::toolConvertGDP(gdpMer,
+                                unit_in = "constant 2017 US$MER",
+                                unit_out = "current US$MER",
+                                replace_NAs = "no_conversion")
     getNames(w1) <- NULL
     w2 <- w1
 

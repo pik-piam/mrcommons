@@ -186,10 +186,10 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
 
   if (unit != "US$17/tDM") {
     # Transform to selected currency unit
-    out <- GDPuc::convertGDP(out,
-                             unit_in = "constant 2017 US$MER",
-                             unit_out =  unit,
-                             replace_NAs = "no_conversion")
+    out <- GDPuc::toolConvertGDP(out,
+                                 unit_in = "constant 2017 US$MER",
+                                 unit_out =  unit,
+                                 replace_NAs = "no_conversion")
   }
 
   if (!is.null(weight)) {

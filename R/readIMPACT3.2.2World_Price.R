@@ -22,10 +22,10 @@ readIMPACT3.2.2World_Price <- function() { # nolint: object_name_linter.
 
   #inflate to 2017 using US inflation for global value
   getItems(data, dim = 1) <- "USA"
-  data <- GDPuc::convertGDP(data,
-                            unit_in = "constant 2005 US$MER",
-                            unit_out = "constant 2017 US$MER",
-                            replace_NAs = "no_conversion")
+  data <- GDPuc::toolConvertGDP(data,
+                                unit_in = "constant 2005 US$MER",
+                                unit_out = "constant 2017 US$MER",
+                                replace_NAs = "no_conversion")
   getItems(data, dim = 1) <- "GLO"
 
   return(data)

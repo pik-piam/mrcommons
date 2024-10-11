@@ -75,9 +75,9 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
               "brans", "distillers_grain", "ethanol", "fibres", "molasses", "wood", "woodfuel", "begr",
               "betr", "res_cereals", "res_fibrous", "pasture", "scp")
     getItems(out, dim = 1) <- "USA"
-    out[, , conv] <- GDPuc::convertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
-                                       unit_out = "constant 2017 US$MER",
-                                       replace_NAs = "no_conversion")
+    out[, , conv] <- GDPuc::toolConvertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
+                                           unit_out = "constant 2017 US$MER",
+                                           replace_NAs = "no_conversion")
     getItems(out, dim = 1) <- "GLO"
 
     # correct the prices for dry matter values
@@ -122,9 +122,9 @@ calcIniFoodPrice <- function(datasource = "FAO", year = "y2005", products = "kfo
               "betr", "res_cereals", "res_fibrous", "pasture", "scp",
               "foddr", "sugar")
     getItems(out, dim = 1) <- "USA"
-    out[, , conv] <- GDPuc::convertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
-                                       unit_out = "constant 2017 US$MER",
-                                       replace_NAs = "no_conversion")
+    out[, , conv] <- GDPuc::toolConvertGDP(out[, , conv], unit_in = "constant 2005 US$MER",
+                                           unit_out = "constant 2017 US$MER",
+                                           replace_NAs = "no_conversion")
     getItems(out, dim = 1) <- "GLO"
 
     # correct the prices from online sources for dry matter values

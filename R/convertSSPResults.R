@@ -94,8 +94,8 @@ convertSSPResults <- function(x) {
   data <- x[, , selection]
   data[is.na(data)] <- 0
   #convert from USD05MER to USD17MER based on USA values for all countries as the CO2 price is global.
-  data <- data * round(GDPuc::convertSingle(1, "USA", unit_in = "constant 2005 US$MER",
-                                            unit_out = "constant 2017 US$MER"), 2)
+  data <- data * round(GDPuc::toolConvertSingle(1, "USA", unit_in = "constant 2005 US$MER",
+                                                unit_out = "constant 2017 US$MER"), 2)
   getNames(data, dim = 3) <- "Price|Carbon (US$2017/t CO2)"
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")
@@ -107,9 +107,9 @@ convertSSPResults <- function(x) {
   selection <- c("Price|Primary Energy|Biomass (US$2005/GJ)")
 
   data <- x[, , selection]
-  data <- convertGDP(data, unit_in = "constant 2005 US$MER",
-                     unit_out = "constant 2017 US$MER",
-                     replace_NAs = "no_conversion")
+  data <- toolConvertGDP(data, unit_in = "constant 2005 US$MER",
+                         unit_out = "constant 2017 US$MER",
+                         replace_NAs = "no_conversion")
   getNames(data, dim = 3) <- "Price|Primary Energy|Biomass (US$2017/GJ)"
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")

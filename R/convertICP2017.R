@@ -17,9 +17,9 @@ convertICP2017 <- function(x, subtype = "per_cap_expMER") {
   # currency convert for expenditures
   if (subtype == "per_cap_expMER") {
 
-    x2011 <- GDPuc::convertGDP(x[, 2011, ],
-                               unit_in = "constant 2011 US$MER",
-                               unit_out = "constant 2017 US$MER")
+    x2011 <- GDPuc::toolConvertGDP(x[, 2011, ],
+                                   unit_in = "constant 2011 US$MER",
+                                   unit_out = "constant 2017 US$MER")
     x2017 <- x[, 2017, ]
     x <- mbind(x2011, x2017)
     x[is.na(x)] <- 0
@@ -28,9 +28,9 @@ convertICP2017 <- function(x, subtype = "per_cap_expMER") {
   # currency convert for expenditures
   if (subtype == "per_cap_expPPP") {
 
-    x2011 <- GDPuc::convertGDP(x[, 2011, ],
-                               unit_in = "constant 2011 US$PPP",
-                               unit_out = "constant 2017 US$MER")
+    x2011 <- GDPuc::toolConvertGDP(x[, 2011, ],
+                                   unit_in = "constant 2011 US$PPP",
+                                   unit_out = "constant 2017 US$MER")
     x2017 <- x[, 2017, ]
     x <- mbind(x2011, x2017)
     x[is.na(x)] <- 0
