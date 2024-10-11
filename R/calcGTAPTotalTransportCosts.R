@@ -46,9 +46,9 @@ calcGTAPTotalTransportCosts <- function(costType = "transport", version = "9") {
   # half of transport of inputs to market and half of transport from market to consumer
   totalTcosts <- (tcostInputs + tcostToSecondary) / 2
 
-  totalTcosts <-  GDPuc::convertGDP(totalTcosts, unit_in = "current US$MER",
-                                    unit_out = "constant 2017 US$MER",
-                                    replace_NAs = "no_conversion")
+  totalTcosts <-  GDPuc::toolConvertGDP(totalTcosts, unit_in = "current US$MER",
+                                        unit_out = "constant 2017 US$MER",
+                                        replace_NAs = "no_conversion")
 
   return(list(x = totalTcosts,
               weight = NULL,

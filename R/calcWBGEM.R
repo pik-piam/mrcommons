@@ -47,9 +47,9 @@ calcWBGEM <- function() {
 
   # inflate to 2017 using US inflation for global value
   getItems(out, dim = 1) <- "USA"
-  out <- GDPuc::convertGDP(out, unit_in = "constant 2005 US$MER",
-                           unit_out = "constant 2017 US$MER",
-                           replace_NAs = "no_conversion")
+  out <- GDPuc::toolConvertGDP(out, unit_in = "constant 2005 US$MER",
+                               unit_out = "constant 2017 US$MER",
+                               replace_NAs = "no_conversion")
   getItems(out, dim = 1) <- "GLO"
 
   return(list(x = out,
