@@ -19,10 +19,13 @@
 convertISIMIP <- function(x, subtype) {
 
   if (grepl("^airww", subtype)) {
-    landarea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype = "states_1995to1996",
-                                                          convert = "onlycorrect")[, "y1995", ],
-                                                dim = 3)),
-                         NULL)
+    # read in LUH landarea as weight
+    landarea <- collapseNames(dimSums(readSource("LUH2v2", subtype = "states_1995to1996",
+                                                 convert = "onlycorrect")[, "y1995", ],
+                                      dim = 3))
+    # add small amount to avoid zero weight
+    landarea <- setYears(landarea, NULL) + 1e-10
+    # clean up object
     landarea <- collapseDim(landarea, dim = "iso")
     x        <- collapseDim(x, dim = "region")
 
