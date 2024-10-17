@@ -108,6 +108,8 @@ calcFAOmassbalance <- function() {
             "oils")][, , "other_util"] <- mb3[, , c("ethanol",
                                                     "oils")][, , "other_util"] - mb3[, , c("ethanol",
                                                                                            "oils")][, , "bioenergy"]
+  #round to 1 ton to avoid calculation issues
+  mb3 <- round(mb3, 6)
 
   return(list(
               x = mb3,
