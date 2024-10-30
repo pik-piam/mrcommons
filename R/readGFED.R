@@ -137,7 +137,7 @@ readGFED <- function() {
     select(.data$year, .data$partition, .data$species, .data$emission_val)
 
   # Filter to use MAgPIE's celliso format
-  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons") %>% # nolint: object_usage_linter.
+  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mstools") %>% # nolint: object_usage_linter.
     select(.data$celliso, .data$lon, .data$lat)
 
   d <- d %>%

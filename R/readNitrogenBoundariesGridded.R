@@ -28,7 +28,7 @@ readNitrogenBoundariesGridded <- function() {
   d$critNitrSurplus <- replace(d$critNitrSurplus, d$critNitrSurplus == -9999, NA)
 
   # Filter to use MAgPIE's celliso format
-  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons") %>% # nolint: object_usage_linter.
+  mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mstools") %>% # nolint: object_usage_linter.
     dplyr::select("celliso", "lon", "lat")
 
   d <- dplyr::inner_join(d, mapping, by = c("lat", "lon")) %>%

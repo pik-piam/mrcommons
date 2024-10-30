@@ -20,11 +20,11 @@ calcLandEmissions <- function(datasource = "CEDS") {
   if (datasource %in% c("CEDS", "combined_CEDS_IPCC", "combined_CEDS_Nsurplus2")) {
 
     ceds <- calcOutput("EmissionInventory",
-                     datasource = datasource,
-                     targetResolution = "magpie",
-                     from = "CEDS59",
-                     to = "MAgPIE",
-                     aggregate = FALSE)
+                       datasource = datasource,
+                       targetResolution = "magpie",
+                       from = "CEDS59",
+                       to = "MAgPIE",
+                       aggregate = FALSE)
 
     # add CO2-C, N2O-N, NH3-N and NO2-N (better standard units)
     ceds2 <- ceds[, , c("nh3_n", "no2_n", "no3_n")]
@@ -241,7 +241,7 @@ calcLandEmissions <- function(datasource = "CEDS") {
 
     gfedEmissions <- readSource("GFED")
 
-    countryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mrcommons")
+    countryToCell <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mstools")
 
     ch4 <- gfedEmissions[, , "AGRI.ch4"]
     ch4 <- toolAggregate(ch4, rel = countryToCell, from = "celliso", to = "iso")
