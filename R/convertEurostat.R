@@ -3,7 +3,7 @@
 #' @param x MAgPIE object to be converted
 #' @param subtype 'emissions' for original Eurostat emissions split,
 #' 'MACCemi' for MACC historical emissions, or 'sectorEmi' for sector specific
-#' emissions
+#' emissions, or 'latest' for most up-to-date data
 #' @return A MAgPIE object containing the Eurostat historical emissions (MtCO2)
 #' @author Renato Rodrigues
 #' @examples
@@ -16,6 +16,7 @@ convertEurostat <- function(x, subtype) {
     "emissions" = toolCountryFill(x, fill = NA, verbosity = 2),
     "sectorEmi" = convertEurostatSectorEmi(x),
     "MACCemi" = convertEurostatMACCemi(x),
+    "latest" = toolCountryFill(x, fill = NA, verbosity = 2),
     stop("Bad input for convertEurostat. Invalid 'subtype' argument.")
   )
 }

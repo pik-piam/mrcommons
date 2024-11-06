@@ -4,7 +4,7 @@
 #'
 #' @param subtype 'emissions' for original Eurostat emissions split,
 #' 'MACCemi' for MACC historical emissions, or 'sectorEmi' for sector specific
-#' emissions
+#' emissions, or 'latest' for most up-to-date data
 #' @return magpie object of Eurostat historical emissions (MtCO2)
 #' @author Renato Rodrigues
 #' @seealso \code{\link{readSource}}
@@ -22,6 +22,7 @@ readEurostat <- function(subtype = "emissions") {
     "emissions" = readEurostatEmissions(),
     "MACCemi" = readEurostatEmissions(),
     "sectorEmi" = readEurostatEmissions(),
+    "latest" = readEurstatEmissionsLatest(),
     stop("Bad input for readEurostat. Invalid 'subtype' argument.")
   )
 }
@@ -31,7 +32,7 @@ readEurostat <- function(subtype = "emissions") {
 # Functions
 ######################################################################################
 # Reading Eurostat historical emissions from 2019
-readEurostatEmissions2019 <- function() {
+readEurostatEmissions <- function() {
   type <- c("GHG", "CO2", "CH4", "CH4_native", "N2O", "N2O_native", "HFC", "PFC", "HFC_PFC_NSP", "SF6", "NF3")
   data <- NULL
   for (t in type) {
@@ -51,12 +52,17 @@ readEurostatEmissions2019 <- function() {
 }
 
 # Reading Eurostat latest historical emissions from 2024
-readEurostatEmissions <- function() {
+readEurostatEmissionsLatest <- function() {
 
-  # read in GBR values from 2019 database
-  gbr <- readEurostatEmissions2019()["GBR",,]
+  # read in GBR values from 2019 database ----
+  gbr <- readEurostatEmissions2019()["GBR", , ]
   gbr <- add_columns(gbr, addnm = c("y2020", "y2021", "y2022"), dim = "period", fill = NA)
 
+  # convert CH4 and N2O to use AR5 GWP values instead of AR4
+  gbr[, , "CH4"] <- gbr[, , "CH4"] * 28 / 25
+  gbr[, , "N2O"] <- gbr[, , "N2O"] * 265 / 298
+
+  # read in latest Eurostat data from 2024 ----
   df <- read.csv(file.path("2024", "env_air_gge_linear.csv")) %>%
     filter(.data$unit == "MIO_T", .data$geo != "EU27_2020") %>%
     select("region" = "geo", "period" = "TIME_PERIOD", "emi" = "airpol", "sector" = "src_crf", "value" = "OBS_VALUE")
@@ -64,18 +70,18 @@ readEurostatEmissions <- function() {
   df$region <- toolCountry2isocode(df$region, mapping = c("EL" = "GRC"))
 
   x <- as.magpie(df, spatial = 1, temporal = 2, datacol = 5)
+  getNames(x, dim = 1) <- c(
+    "CH4_native", "CH4", "CO2", "GHG", "HFC", "HFC_PFC_NSP",
+    "N2O_native", "N2O", "NF3", "PFC", "SF6"
+  )
 
   sectorMap <- toolGetMapping("EurostatCRFLabels.csv", type = "sectoral", where = "mrcommons")
+  sectorMap <- sectorMap[match(getNames(x, dim = 2), sectorMap$crf), ]
+  getNames(x, dim = 2) <- sectorMap[, "label"]
 
-  airpolMap <- data.frame(
-    from = c("CH4", "CH4_CO2E", "CO2", "GHG", "HFC_CO2E", "HFC_PFC_NSP_CO2E",
-             "N2O", "N2O_CO2E", "NF3_CO2E", "PFC_CO2E", "SF6_CO2E"),
-    to = c("CH4_native", "CH4", "CO2", "GHG", "HFC", "HFC_PFC_NSP",
-           "N2O_native", "N2O", "NF3", "PFC", "SF6")
-  )
-  x <- toolAggregate(x, dim = 3.1, rel = airpolMap, from = "from", to = "to")
-  x <- toolAggregate(x, dim = 3.2, rel = sectorMap, from = "crf", to = "label")
+  for (i in sectorMap$crf) {
+    getNames(x[, , i], dim = 2) <- sectorMap[sectorMap$crf == i, "label"]
+  }
 
   return(mbind(x, gbr))
-
 }
