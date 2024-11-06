@@ -65,8 +65,7 @@ convertGTAPv8v9 <- function(x, subtype) {
     }
 
   } else {
-    gdpMer <- calcOutput("GDPPast", GDPPast = "WDI-MI",
-                         unit = "constant 2017 US$MER", aggregate = FALSE)
+    gdpMer <- calcOutput("GDPPast", unit = "constant 2017 US$MER", aggregate = FALSE)
     gdpMer <- gdpMer[, getYears(x), , drop = TRUE]
     w1 <- GDPuc::toolConvertGDP(gdpMer,
                                 unit_in = "constant 2017 US$MER",
