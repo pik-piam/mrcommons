@@ -22,7 +22,7 @@ readEurostat <- function(subtype = "emissions") {
     "emissions" = readEurostatEmissions(),
     "MACCemi" = readEurostatEmissions(),
     "sectorEmi" = readEurostatEmissions(),
-    "latest" = readEurstatEmissionsLatest(),
+    "latest" = readEurostatEmissionsLatest(),
     stop("Bad input for readEurostat. Invalid 'subtype' argument.")
   )
 }
@@ -54,14 +54,6 @@ readEurostatEmissions <- function() {
 # Reading Eurostat latest historical emissions from 2024
 readEurostatEmissionsLatest <- function() {
 
-  # read in GBR values from 2019 database ----
-  gbr <- readEurostatEmissions2019()["GBR", , ]
-  gbr <- add_columns(gbr, addnm = c("y2020", "y2021", "y2022"), dim = "period", fill = NA)
-
-  # convert CH4 and N2O to use AR5 GWP values instead of AR4
-  gbr[, , "CH4"] <- gbr[, , "CH4"] * 28 / 25
-  gbr[, , "N2O"] <- gbr[, , "N2O"] * 265 / 298
-
   # read in latest Eurostat data from 2024 ----
   df <- read.csv(file.path("2024", "env_air_gge_linear.csv")) %>%
     filter(.data$unit == "MIO_T", .data$geo != "EU27_2020") %>%
@@ -79,9 +71,14 @@ readEurostatEmissionsLatest <- function() {
   sectorMap <- sectorMap[match(getNames(x, dim = 2), sectorMap$crf), ]
   getNames(x, dim = 2) <- sectorMap[, "label"]
 
-  for (i in sectorMap$crf) {
-    getNames(x[, , i], dim = 2) <- sectorMap[sectorMap$crf == i, "label"]
-  }
+  # read in GBR values from 2019 database ----
+  gbr <- readEurostatEmissions()["GBR", , ]
+  gbr <- add_columns(gbr, addnm = c("y2020", "y2021", "y2022"), dim = "period", fill = NA)
 
+  # convert CH4 and N2O to use AR5 GWP values instead of AR4
+  gbr[, , "CH4"] <- gbr[, , "CH4"] * 28 / 25
+  gbr[, , "N2O"] <- gbr[, , "N2O"] * 265 / 298
+
+  gbr <- magclass::matchDim(gbr, x, dim = 3)
   return(mbind(x, gbr))
 }
