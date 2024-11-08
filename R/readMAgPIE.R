@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2023-12"
+  ver <- "2024-11"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -76,21 +76,20 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
 
     scenarioNames <- c(
-      "f30_bioen_price_SDP-MC-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SDP-MC-NDC-nocc_hist-PkBudg650_replaced_flat",
-      "f30_bioen_price_SDP-MC-NPI-nocc_hist-Base_replaced_flat",
-      "f30_bioen_price_SSP1-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg1050_replaced_flat",
-      "f30_bioen_price_SSP1-NDC-nocc_hist-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP1-NPI-nocc_hist-Base_replaced_flat",
-      "f30_bioen_price_SSP2-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg1050_replaced_flat",
-      "f30_bioen_price_SSP2-NDC-nocc_hist-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP2-NPI-nocc_hist-Base_replaced_flat",
-      "f30_bioen_price_SSP5-NDC-nocc_hist-NDC_replaced_flat",
-      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg1050_replaced_flat",
-      "f30_bioen_price_SSP5-NDC-nocc_hist-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP5-NPI-nocc_hist-Base_replaced_flat"
+      "f30_bioen_price_SSP1-SSP1-NPi_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP1-SSP1-PkBudg650_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2_lowEn-NPi_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg1000_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg650_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2-NPi_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2-PkBudg1000_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP2-SSP2-PkBudg650_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP3-SSP2-NPi_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP3-SSP2-PkBudg1000_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP3-SSP2-PkBudg650_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP5-SSP5-NPi_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP5-SSP5-PkBudg1000_replaced_flat_62eff8f7.cs4r",
+      "f30_bioen_price_SSP5-SSP5-PkBudg650_replaced_flat_62eff8f7.cs4r"
     )
 
     fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
