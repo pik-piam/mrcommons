@@ -28,7 +28,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y,
                      dim = 3.2,
                      add = "c_LU_emi_scen",
-                     nm = c("SSP1", "SSP2", "SSP3", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU"))
+                     nm = c("SSP1", "SSP2", "SSP3", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU","SSP2_lowEn"))
   y <- add_dimension(y,
                      dim = 3.3,
                      add = "rcp",
@@ -81,6 +81,11 @@ calcMacBaseLandUse <- function(subtype) {
     # add values for SSP3 copying the values from SSP2
     tmp <- x[,,"SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+    x <- mbind(x, tmp)
+
+    # add values for SSP2_lowEn copying the values from SSP2
+    tmp <- x[,,"SSP2"]
+    getNames(tmp) <- gsub("SSP2", "SSP2_lowEn", getNames(tmp))
     x <- mbind(x, tmp)
 
     # Replace CH4 and N2O LUC baseline for SSP2 and SSP1, since there is newer data from a
@@ -212,6 +217,11 @@ calcMacBaseLandUse <- function(subtype) {
     # add values for SSP3 copying the values from SSP2
     tmp <- x[,,"SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
+    x <- mbind(x, tmp)
+
+    # add values for SSP2_lowEn copying the values from SSP2
+    tmp <- x[,,"SSP2"]
+    getNames(tmp) <- gsub("SSP2", "SSP2_lowEn", getNames(tmp))
     x <- mbind(x, tmp)
 
   } else {
