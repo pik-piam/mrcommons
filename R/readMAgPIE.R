@@ -76,20 +76,20 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
 
     scenarioNames <- c(
-      "f30_bioen_price_SSP1-SSP1-NPi_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP1-SSP1-PkBudg650_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2_lowEn-NPi_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg1000_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg650_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2-NPi_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2-PkBudg1000_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP2-SSP2-PkBudg650_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP3-SSP2-NPi_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP3-SSP2-PkBudg1000_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP3-SSP2-PkBudg650_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP5-SSP5-NPi_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP5-SSP5-PkBudg1000_replaced_flat_62eff8f7.cs4r",
-      "f30_bioen_price_SSP5-SSP5-PkBudg650_replaced_flat_62eff8f7.cs4r"
+      "f30_bioen_price_SSP1-SSP1-NPi_replaced_flat",
+      "f30_bioen_price_SSP1-SSP1-PkBudg650_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2_lowEn-NPi_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg1000_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg650_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2-NPi_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2-PkBudg1000_replaced_flat",
+      "f30_bioen_price_SSP2-SSP2-PkBudg650_replaced_flat",
+      "f30_bioen_price_SSP3-SSP2-NPi_replaced_flat",
+      "f30_bioen_price_SSP3-SSP2-PkBudg1000_replaced_flat",
+      "f30_bioen_price_SSP3-SSP2-PkBudg650_replaced_flat",
+      "f30_bioen_price_SSP5-SSP5-NPi_replaced_flat",
+      "f30_bioen_price_SSP5-SSP5-PkBudg1000_replaced_flat",
+      "f30_bioen_price_SSP5-SSP5-PkBudg650_replaced_flat"
     )
 
     fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
