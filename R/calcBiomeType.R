@@ -19,7 +19,6 @@
 #' }
 #'
 calcBiomeType <- function(cells = "lpjcell") {
-
   # get processed data from 'the nature conservancy'
   x <- readSource("TNC2019", convert = "onlycorrect")
 
@@ -29,24 +28,21 @@ calcBiomeType <- function(cells = "lpjcell") {
     stop("Please specify cells argument")
   }
 
-  weight <- calcOutput("LanduseInitialisation",
-                       aggregate = FALSE, cellular = TRUE, cells = cells,
-                       input_magpie = TRUE, years = "y1995", round = 6)
-  weight <- dimSums(weight, dim = 3)
+  landArea <- calcOutput("LanduseInitialisation",
+                         aggregate = FALSE, cellular = TRUE, cells = cells,
+                         input_magpie = TRUE, years = "y1995", round = 6)
+  landArea <- dimSums(landArea, dim = 3)
 
   if (length(unique(dimSums(x, dim = 3))) > 2) {
     stop("Sum over all biome types != 1 or 0. Check readTNC2019 for errors.")
   }
-  # do not apply weight where sum over all biome types is zero
-  weight <- weight * dimSums(x, dim = 3)
 
-  # add a small weight to deal with regions that have only zeros
-  weight <- weight + 1e-10
+  x <- x * landArea
 
   return(list(x = x,
-              weight = weight,
-              unit = "Share",
-              description = "Share of biome type of each
+              weight = NULL,
+              unit = "Mha",
+              description = "Mha of biome type of each
               biogeographic realm in each spatial unit (cell)",
               isocountries = FALSE))
 }
