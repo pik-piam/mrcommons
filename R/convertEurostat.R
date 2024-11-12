@@ -31,13 +31,13 @@ convertEurostatSectorEmi <- function(x) {
     "power" = list("energy" = c("Fuel combustion in public electricity and heat production")),
     "refining" = list("energy" = c("Fuel combustion in petroleum refining")),
     "solids" = list("energy" = c(
-      "Fuel combustion in manufacture of solid fuels and other energy industries", # nolint
+      "Fuel combustion in manufacture of solid fuels and other energy industries",
       "Other fuel combustion sectors n_e_c_"
     )),
     "extraction" = list("process" = c(
       "Solid fuels - fugitive emissions",
       "Oil, natural gas and other energy production - fugitive emissions"
-    )), # nolint
+    )),
     "build" = list("energy" = c(
       "Fuel combustion in commercial and institutional sector",
       "Fuel combustion by households"

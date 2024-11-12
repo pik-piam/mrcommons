@@ -2,21 +2,22 @@
 % Please edit documentation in R/convertEurostat.R
 \name{convertEurostat}
 \alias{convertEurostat}
-\title{Converts Eurostat historical emissions}
+\title{Read Eurostat historical emissions (env_air_gge)}
 \usage{
 convertEurostat(x, subtype)
 }
 \arguments{
 \item{x}{MAgPIE object to be converted}
 
-\item{subtype}{emissions for original eurostat emissions split, MACCemi for MACC historical emissions, or
-sectorEmi for sector specific emissions}
+\item{subtype}{'emissions' for original Eurostat emissions split,
+'MACCemi' for MACC historical emissions, or 'sectorEmi' for sector specific
+emissions, or 'latest' for most up-to-date data}
 }
 \value{
 A MAgPIE object containing the Eurostat historical emissions (MtCO2)
 }
 \description{
-Converts Eurostat historical emissions
+Read Eurostat historical emissions (env_air_gge)
 }
 \examples{
 \dontrun{
