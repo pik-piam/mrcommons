@@ -69,6 +69,8 @@ calcConstructionWoodDemand <- function() {
       ## Find the peak year
       peakYear <- as.numeric(gsub(pattern = "y", replacement = "",
                                   x = as.character(where(urbanPopulation[i, , j] == maxPop)$true$years)))
+      ## Take the first peak year in case of multiple
+      peakYear <- peakYear[1]
 
       ## Calculate the time frame between peak urban population and current time period (2020)
       distributionLength <- peakYear - 2020
