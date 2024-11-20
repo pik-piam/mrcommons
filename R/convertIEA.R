@@ -14,7 +14,6 @@
 #'
 convertIEA <- function(x, subtype) {
   if (grepl("EnergyBalances", subtype)) {
-
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
     getItems(x1, dim = 1) <- c("SRB")
@@ -37,8 +36,10 @@ convertIEA <- function(x, subtype) {
     # disaggregating Other Africa (IAF),
     # Other non-OECD Americas (ILA) and
     # Other non-OECD Asia (IAS) regions to countries
-    mappingfile <- toolGetMapping(type = "regional", name = "regionmappingIEA_Other2016.csv",
-                                  returnPathOnly = TRUE, where = "mappingfolder")
+    mappingfile <- toolGetMapping(
+      type = "regional", name = "regionmappingIeaOther2016.csv",
+      returnPathOnly = TRUE, where = "mrcommons"
+    )
     mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
       filter(!(!!sym("CountryCode") %in% getItems(x, dim = 1)))
     xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])
@@ -71,8 +72,9 @@ convertIEA <- function(x, subtype) {
     missingFlows <- setdiff(
       expand.grid(
         iea_product = getItems(x[, , "ELMAINE"], dim = 3.1) %>% # nolint
-                    union(getItems(x[, , "ELMAINC"], dim = 3.1)) %>%
-                    union(getItems(x[, , "HEMAINC"], dim = 3.1)), iea_flows = c("ELMAINE", "ELMAINC", "HEMAINC")) %>%
+          union(getItems(x[, , "ELMAINC"], dim = 3.1)) %>%
+          union(getItems(x[, , "HEMAINC"], dim = 3.1)), iea_flows = c("ELMAINE", "ELMAINC", "HEMAINC")
+      ) %>%
         unite("product.flow", c("iea_product", "iea_flows"), sep = ".") %>%
         pull("product.flow"), getItems(x, dim = 3)
     )
@@ -105,6 +107,19 @@ convertIEA <- function(x, subtype) {
     x[, , "ELAUTOE"] <- tmp
     tmp <- mcalc(d, ELAUTOC ~ ifelse(HEAUTOC > 0, ELAUTOC, 0), append = FALSE)
     x[, , "ELAUTOC"] <- tmp
+
+
+    # Correct transport reporting issue in IEA data for NONBIODIES.MARBUNK in RUS
+    # FE is reported in 1990 and 2010 but not in the years in between.
+    # This cause problems in the harmonization of EDGE-Transport and the IEA data
+    # in 2005 as there is no MARBUNK demand at all for REF regions.
+
+    x["RUS", seq(1990, 2010, 1), "NONBIODIES.MARBUNK"] <-
+      x["RUS", c(1990, 2010), "NONBIODIES.MARBUNK"] |> time_interpolate(seq(1990, 2010, 1))
+
+    # Adjust totals
+    x["RUS", seq(1991, 2009, 1), "TOTAL.MARBUNK"] <-
+      x["RUS", seq(1991, 2009, 1), "TOTAL.MARBUNK"] + x["RUS", seq(1991, 2009, 1), "NONBIODIES.MARBUNK"]
   }
 
   return(x)
