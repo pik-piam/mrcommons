@@ -84,7 +84,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   gdp <- calcOutput("GDPPast", aggregate = FALSE)
   pop <- calcOutput("PopulationPast", aggregate = FALSE)
   gdppop <- gdp[, intersect(getYears(gdp), getYears(pop)), ] / pop[, intersect(getYears(gdp), getYears(pop)), ]
-  # Create a lambda which is 1 for income per capita <= 10000, and 0 above 15000
+  # Create a lambda which is 1 for income per capita <= 1.23E4, and 0 above 1.85E4
   # the multiplication by gdppop was necessary to avoid error from vector length.
   lambda <- pmin(gdppop * 0 + 1, pmax(0 * gdppop, (15000 - gdppop) / (15000 - 10000)))
   lambda <- time_interpolate(lambda, getYears(reminditems), extrapolation_type = "constant")
