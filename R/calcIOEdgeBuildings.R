@@ -1,116 +1,89 @@
 #' calcIOEdgeBuildings
 #'
-#' Calculates buildings-related energy flows from the IEA energy balances. 'output_EDGE_buildings' is a key input
-#' to EDGE-Buildings providing the historic final energy demand from buildings. 'output_EDGE' does the same for
+#' Calculates buildings-related energy flows from the IEA energy balances.
+#' 'output_EDGE_buildings' is a key input to EDGE-Buildings providing the
+#' historic final energy demand from buildings. 'output_EDGE' does the same for
 #' buildings and industry together.
 #'
 #' @param subtype Data subtype. See default argument for possible values.
 #' @param ieaVersion Release version of IEA data, either 'default'
 #' (vetted and used in REMIND) or 'latest'.
-#' @return IEA data as MAgPIE object aggregated to country level
+#' @returns IEA data as MAgPIE object aggregated to country level
 #'
-#' @author Pascal Sauer, Anastasis Giannousakis
+#' @author Pascal Sauer, Anastasis Giannousakis, Robin Hasse
+#'
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 #' }
 #'
 #' @seealso \code{\link{calcOutput}}
-#' @importFrom dplyr %>% all_of
+#'
+#' @importFrom dplyr %>% .data all_of filter select
 #' @importFrom tidyr unite
-calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings"), ieaVersion = "default") {
+#' @importFrom madrat readSource toolGetMapping toolAggregate calcOutput
+#' @importFrom utils read.csv2
+#' @importFrom magclass as.magpie getNames mselect
+
+calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings"),
+                                ieaVersion = c("default", "latest")) {
+
   subtype <- match.arg(subtype)
-  switch(subtype,
-         output_EDGE = {
-           mapping <- toolGetMapping(type = "sectoral",
-                                     name = "structuremappingIO_outputs.csv",
-                                     where = "mrcommons", returnPathOnly = TRUE)
-           target <- "EDGEitems"
-         },
-         output_EDGE_buildings = {
-           mapping <- toolGetMapping(type = "sectoral",
-                                     name = "structuremappingIO_outputs.csv",
-                                     where = "mrcommons", returnPathOnly = TRUE)
-           target <- "EDGE_buildings"
-         })
+  ieaVersion <- match.arg(ieaVersion)
 
-  if (!(ieaVersion %in% c("default", "latest"))) {
-    stop("Invalid parameter `ieaVersion`. Must be either 'default' or 'latest'")
-  }
 
-  ieaSubtype <- if (ieaVersion == "default") "EnergyBalances" else "EnergyBalances-latest"
 
-  # read in data and convert from ktoe to EJ
-  data <- readSource("IEA", subtype = ieaSubtype) * 4.1868e-5
+  # READ -----------------------------------------------------------------------
 
-  ieamatch <- read.csv2(mapping, stringsAsFactors = FALSE, na.strings = "")
+  # convert from ktoe to EJ
+  data <- switch(ieaVersion,
+    default = readSource("IEA", subtype = "EnergyBalances"),
+    latest  = readSource("IEA", subtype = "EnergyBalances-latest")
+  ) * 4.1868e-5
 
-  # delete NAs rows
-  ieamatch <- ieamatch[c("iea_product", "iea_flows", target, "Weight")] %>%
+
+
+  # AGGREGATE ------------------------------------------------------------------
+
+  target <- switch(subtype,
+    output_EDGE = "EDGEitems",
+    output_EDGE_buildings = "EDGE_buildings"
+  )
+
+  mapping <- toolGetMapping(type = "sectoral",
+                            name = "structuremappingIO_outputs.csv",
+                            where = "mrcommons", returnPathOnly = TRUE) %>%
+    read.csv2(stringsAsFactors = FALSE, na.strings = "") %>%
+    select(all_of(c("iea_product", "iea_flows", target, "Weight"))) %>%
     na.omit() %>%
     unite("target", all_of(target), sep = ".") %>%
     unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
-    filter(!!sym("product.flow") %in% getNames(data))
+    filter(.data[["product.flow"]] %in% getNames(data),
+           .data[["Weight"]] != 0) %>%
+    mutate(Weight = as.numeric(.data[["Weight"]]))
 
-  magpieNames <- ieamatch[["target"]] %>% unique()
+  weight <- as.magpie(mapping[, c("iea_product", "iea_flows", "Weight")])
 
-  # in case we include IEA categories in the output, iea categories in `ieamatch` got renamed
-  ieapname <- "iea_product"
-  ieafname <- "iea_flows"
+  data <- toolAggregate(data[, , mapping[["product.flow"]]] * weight,
+                        rel = mapping, from = "product.flow", to = "target", dim = 3)
+  getSets(data)[3] <- "d3"
 
-  reminditems <-  do.call(mbind,
-                          lapply(magpieNames, function(item) {
-                            testdf <- ieamatch[ieamatch$target == item, c(ieapname, ieafname, "Weight")]
-                            prfl <- paste(testdf[, ieapname], testdf[, ieafname], sep = ".")
-                            vec <- as.numeric(ieamatch[rownames(testdf), "Weight"])
-                            names(vec) <- prfl
-                            tmp <- data[, , prfl] * as.magpie(vec)
-                            tmp <- dimSums(tmp, dim = 3, na.rm = TRUE)
-                            getNames(tmp) <- item
-                            return(tmp)
-                          }))
 
-  # Split residential Biomass into traditional and modern biomass depending upon the income per capita
-  if (subtype ==  "output_EDGE") {
-    nBiotrad <- "feresbiotrad"
-    nBiomod <- "feresbiomod"
-    nBioshare <- "feresbioshare"
-  } else if (subtype == "output_EDGE_buildings") {
-    nBiotrad <- "biotrad"
-    nBiomod <- "biomod"
-    nBioshare <- "bioshare"
-  }
-  # Read-in data to compute income per capita
-  gdp <- calcOutput("GDPPast", aggregate = FALSE)
-  pop <- calcOutput("PopulationPast", aggregate = FALSE)
-  gdppop <- gdp[, intersect(getYears(gdp), getYears(pop)), ] / pop[, intersect(getYears(gdp), getYears(pop)), ]
-  # Create a lambda which is 1 for income per capita <= 10000, and 0 above 15000
-  # the multiplication by gdppop was necessary to avoid error from vector length.
-  lambda <- pmin(gdppop * 0 + 1, pmax(0 * gdppop, (15000 - gdppop) / (15000 - 10000)))
-  lambda <- time_interpolate(lambda, getYears(reminditems), extrapolation_type = "constant")
 
-  # Split Bioshare (residential PRIMSBIO) between traditional and modern biomass according to lambda
-  bioshareTrad <- setNames(reminditems[, , nBioshare] * lambda, nBiotrad)
-  bioshareMod <- setNames(reminditems[, , nBioshare] - bioshareTrad, nBiomod)
+  # SPLIT BIOMASS --------------------------------------------------------------
 
-  # In case biomod and biotrad do not exist yet in the data set, create dummy items
-  if (!any(nBiomod %in% getNames(reminditems))) {
-    reminditems <- mbind(reminditems,
-                         setNames(reminditems[, , nBioshare] * 0, nBiomod))
-  }
-  if (!any(nBiotrad %in% getNames(reminditems))) {
-    reminditems <- mbind(reminditems,
-                         setNames(reminditems[, , nBioshare] * 0, nBiotrad))
-  }
+  gdppop <- calcOutput("GDPpc", average2020 = FALSE, aggregate = FALSE) %>%
+    mselect(variable = "gdppc_SSP2", collapseNames = TRUE)
 
-  # Add the values from bioshare to the other modern and traditional biomass
-  reminditems[, , nBiotrad] <- reminditems[, , nBiotrad] + bioshareTrad
-  reminditems[, , nBiomod] <- reminditems[, , nBiomod] + bioshareMod
+  data <- switch(subtype,
+    output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",
+                                   into = c("feresbiotrad", "feresbiomod")),
+    output_EDGE_buildings = toolSplitBiomass(data, gdppop, split = "bioshare")
+  )
 
-  # Remove the bioshare item
-  reminditems <- reminditems[, , nBioshare, invert = TRUE]
-
-  return(list(x = reminditems, weight = NULL, unit = "EJ",
-              description = paste("Historic final energy demand from buildings (and industry)",
-                                  "based on the 2022 IEA World Energy Balances")))
+  return(list(x = data,
+              weight = NULL,
+              unit = "EJ/yr",
+              description = paste("Historic FE demand from buildings",
+                                  "(and industry) based on IEA Energy Balances")))
 }
