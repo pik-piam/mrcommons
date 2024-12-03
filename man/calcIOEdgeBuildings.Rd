@@ -6,7 +6,7 @@
 \usage{
 calcIOEdgeBuildings(
   subtype = c("output_EDGE", "output_EDGE_buildings"),
-  ieaVersion = "default"
+  ieaVersion = c("default", "latest")
 )
 }
 \arguments{
@@ -19,8 +19,9 @@ calcIOEdgeBuildings(
 IEA data as MAgPIE object aggregated to country level
 }
 \description{
-Calculates buildings-related energy flows from the IEA energy balances. 'output_EDGE_buildings' is a key input
-to EDGE-Buildings providing the historic final energy demand from buildings. 'output_EDGE' does the same for
+Calculates buildings-related energy flows from the IEA energy balances.
+'output_EDGE_buildings' is a key input to EDGE-Buildings providing the
+historic final energy demand from buildings. 'output_EDGE' does the same for
 buildings and industry together.
 }
 \examples{
@@ -33,5 +34,5 @@ a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 \code{\link{calcOutput}}
 }
 \author{
-Pascal Sauer, Anastasis Giannousakis
+Pascal Sauer, Anastasis Giannousakis, Robin Hasse
 }

@@ -76,8 +76,8 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
 
     scenarioNames <- c(
-      "f30_bioen_price_SSP1-SSP1-NPi_replaced_flat",
-      "f30_bioen_price_SSP1-SSP1-PkBudg650_replaced_flat",
+      "f30_bioen_price_SDP-MC-SSP1-NPi_replaced_flat",
+      "f30_bioen_price_SDP-MC-SSP1-PkBudg650_replaced_flat",
       "f30_bioen_price_SSP2-SSP2_lowEn-NPi_replaced_flat",
       "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg1000_replaced_flat",
       "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg650_replaced_flat",
