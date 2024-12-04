@@ -2,13 +2,14 @@
 % Please edit documentation in R/readEurostat.R
 \name{readEurostat}
 \alias{readEurostat}
-\title{Read Eurostat historical emissions}
+\title{Read Eurostat historical emissions (env_air_gge)}
 \usage{
 readEurostat(subtype = "emissions")
 }
 \arguments{
-\item{subtype}{emissions for original eurostat emissions split, MACCemi for MACC historical emissions, or
-sectorEmi for sector specific emissions}
+\item{subtype}{'emissions' for original Eurostat emissions split,
+'MACCemi' for MACC historical emissions, or 'sectorEmi' for sector specific
+emissions, or 'latest' for most up-to-date data}
 }
 \value{
 magpie object of Eurostat historical emissions (MtCO2)
