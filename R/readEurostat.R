@@ -53,7 +53,6 @@ readEurostatEmissions <- function() {
 
 # Reading Eurostat latest historical emissions from 2024
 readEurostatEmissionsLatest <- function() {
-
   # read in latest Eurostat data from 2024 ----
   df <- read.csv(file.path("2024", "env_air_gge_linear.csv")) %>%
     filter(.data$unit == "MIO_T", .data$geo != "EU27_2020") %>%
@@ -79,6 +78,19 @@ readEurostatEmissionsLatest <- function() {
   gbr[, , "CH4"] <- gbr[, , "CH4"] * 28 / 25
   gbr[, , "N2O"] <- gbr[, , "N2O"] * 265 / 298
 
+  # read in GBR 2020 and 2021 from UNFCCC and transform values to match Eurostat ----
+  gbr2020 <- calcOutput("UNFCCCEmissions", subtype = "Eurostat",
+                        aggregate = FALSE, warnNA = FALSE)["GBR", c(2020, 2021)]
+  sectorMap <- toolGetMapping("EurostatCRFLabels.csv", type = "sectoral", where = "mrcommons")
+  gbr2020 <- gbr2020[, , intersect(getNames(gbr2020, dim = 2), sectorMap$crf)]
+  sectorMap <- sectorMap[match(getNames(gbr2020, dim = 2), sectorMap$crf), ]
+  getNames(gbr2020, dim = 2) <- sectorMap[, "label"]
+
+  # merge GBR data from Eurostat 2019 and latest UNFCCC
+  gbr["GBR", c(2020, 2021), getNames(gbr2020)] <- gbr2020
+
+  # match GBR data to x dimensions
   gbr <- magclass::matchDim(gbr, x, dim = 3)
+
   return(mbind(x, gbr))
 }
