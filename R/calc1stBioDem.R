@@ -22,40 +22,48 @@ calc1stBioDem <- function(subtype = "all") {
   x <- add_columns(x, dim = 2.1, addnm = setdiff(time, past))
   x[, setdiff(time, past), ] <- 0
 
+  # for oil and ethanol replace FAO with Lotze-Campen projection 
   bioenergyProjection <- readSource("LotzeCampenBiofuel") [, , c("oils", "ethanol")]
-
   x[, c("y2020", "y2030"), c("oils", "ethanol")] <- bioenergyProjection[, c("y2020", "y2030"), c("oils", "ethanol")]
+  
   # if values decline, keep them constant
   x <- x[, sort(getYears(x)), ]
   for (y in 2:length(getYears(x))) {
       x[, y, c("oils", "ethanol")] <- pmax(x[, y, c("oils", "ethanol")],
                                            setYears(x[, y - 1, c("oils", "ethanol")], NULL))
   }
+  
+  # interpolate years
   x[, , c("oils", "ethanol")] <-
     time_interpolate(dataset = x[, , c("oils", "ethanol")][, c("y2015", "y2025"), , invert = TRUE],
                      interpolated_year = c("y2015", "y2025"),
                      integrate_interpolated_years = TRUE)
+  
+  # if countries have no oil data in 2020 ...
   countriesWithoutValuesOils <- where(x[, "y2020", "oils"] == 0)$true$regions
+  # ... fill 2015-2030 with 2010 values
   x[countriesWithoutValuesOils, c("y2015", "y2020", "y2025", "y2030"), "oils"] <-
     setYears(x[countriesWithoutValuesOils, c("y2010"), "oils"], NULL)
   x[countriesWithoutValuesOils, c("y2015", "y2020", "y2025", "y2030"), "ethanol"] <-
     setYears(x[countriesWithoutValuesOils, c("y2010"), "ethanol"], NULL)
 
-  ### scenarios for bioenergy and bioethanol
+  ### create scenarios beyond 2030 for oil and ethanol
   x <- add_dimension(x = x, dim = 3.1, add = "scenario", nm = "const2030")
   x <- add_columns(x = x, addnm = "const2020", dim = 3.1)
   x <- add_columns(x = x, addnm = "phaseout2020", dim = 3.1)
   x[, , ] <- x[, , "const2030"]
 
+  # scenario "const2030": keep values constant after 2030
   yearstmp <- paste0("y", seq(2030, 2150, 5))
-
   x[, yearstmp, "oils"][, , "const2030"] <- setYears(x[, c("y2030"), "oils"][, , "const2030"], NULL)
   x[, yearstmp, "ethanol"][, , "const2030"]  <- setYears(x[, c("y2030"), "ethanol"][, , "const2030"], NULL)
 
+  # scenario "const2020": keep values constant after 2020
   yearstmp <- paste0("y", seq(2025, 2150, 5))
   x[, yearstmp, "oils"][, , "const2020"] <- setYears(x[, c("y2020"), "oils"][, , "const2030"], NULL)
   x[, yearstmp, "ethanol"][, , "const2020"]  <- setYears(x[, c("y2020"), "ethanol"][, , "const2030"], NULL)
 
+  # scenario "phaseout2020": phase out to zero between 2020 and 2040
   b <- convergence(origin = x[, , c("oils", "ethanol")][, , "const2020"],
                    aim = 0, start_year = "y2020", end_year = "y2040", type = "linear")
   x[, getYears(b), c("oils", "ethanol")][, , "phaseout2020"] <- b
@@ -78,6 +86,6 @@ calc1stBioDem <- function(subtype = "all") {
 
   return(list(x = x, weight = NULL,
               unit = "PJ",
-              description = "1st generation bioenergy demand for different scenarios based on data from IEA and Lotze-Campen 2014") #nolint
+              description = "1st generation bioenergy demand for different scenarios based on data from FAO and Lotze-Campen 2014") #nolint
   )
 }
