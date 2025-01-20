@@ -14,7 +14,6 @@
 #' @importFrom magclass getNames<- getYears<-
 
 calcEmiMac <- function() {
-
   # emissions for the calculation of econometric paramter p1
   co2       <- readSource("EDGAR", subtype = "co2") * 12 / 44 * 1e-6
 
