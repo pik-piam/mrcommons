@@ -52,7 +52,7 @@ calcEmiMac <- function() {
   getYears(x) <- NULL
   return(list(x = x,
               weight = NULL,
-              unit = "GtC, MtCH4, MtN2O",
+              unit = "GtC, MtCH4, MtN",
               description = "emissions in 2005",
               note = c("used to calculate econometric emission parameter p1")))
 }
