@@ -8,6 +8,7 @@
 #' Therefore, the CO2 from LUC is read from EDGAR with a 2005, a potentially
 #' different baseyear than the one chosen in the parameter
 #'
+#' @param baseyear year to take as a reference from CEDS, ignored for the EDGAR2005 LUC CO2 emissions
 #' @return REMIND data for baseline emissions for maccs and corresonding
 #' weights (NULL) as a list of two MAgPIE objects
 #' @author Gabriel Abrahao
