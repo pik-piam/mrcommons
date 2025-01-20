@@ -6,6 +6,9 @@
 \usage{
 calcEmiMacCEDS(baseyear = 2020)
 }
+\arguments{
+\item{baseyear}{year to take as a reference from CEDS, ignored for the EDGAR2005 LUC CO2 emissions}
+}
 \value{
 REMIND data for baseline emissions for maccs and corresonding
 weights (NULL) as a list of two MAgPIE objects
