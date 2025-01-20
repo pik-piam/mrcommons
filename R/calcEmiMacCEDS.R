@@ -33,23 +33,23 @@ calcEmiMacCEDS <- function(baseyear = 2020) {
   getNames(ch4wsts) <- "ch4wsts"
   ch4wstl <- dimSums(ch4[, , c(
     "5A_Solid-waste-disposal", "5C_Waste-combustion", "5E_Other-waste-handling"
-    )], dim = 3)
+  )], dim = 3)
   getNames(ch4wstl) <- "ch4wstl"
   n2owaste <- dimSums(n2o[, , c(
     "5A_Solid-waste-disposal", "5C_Waste-combustion", "5D_Wastewater-handling", "5E_Other-waste-handling"
-    )], dim = 3)
+  )], dim = 3)
   getNames(n2owaste) <- "n2owaste"
   n2otrans <- dimSums(n2o[, , c(
-       "1A3b_Road",
-       "1A3c_Rail",
-       "1A3di_Oil_Tanker_Loading",
-       "1A3dii_Domestic-navigation",
-       "1A3eii_Other-transp"
-       )], dim = 3) # CEDS only reports 1A3aii_Domestic-aviation at the global level
+    "1A3b_Road",
+    "1A3c_Rail",
+    "1A3di_Oil_Tanker_Loading",
+    "1A3dii_Domestic-navigation",
+    "1A3eii_Other-transp"
+  )], dim = 3) # CEDS only reports 1A3aii_Domestic-aviation at the global level
   getNames(n2otrans) <- "n2otrans"
   n2oacid <- dimSums(n2o[, , c(
     "2B_Chemical-industry", "2B2_Chemicals-Nitric-acid", "2B3_Chemicals-Adipic-acid"
-    )], dim = 3)
+  )], dim = 3)
   getNames(n2oacid) <- "n2oacid"
 
 
@@ -65,13 +65,14 @@ calcEmiMacCEDS <- function(baseyear = 2020) {
     "FIN", "FRA", "DEU", "GIB", "GRC", "GGY", "HUN", "IRL", "IMN", "ITA", "JEY", "LVA", "LTU",
     "LUX", "MLT", "NLD", "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE", "GBR"
   )
+
   baselineEurostat <- calcOutput("HistEmissions", subtype = "MAC", aggregate = FALSE)
   if (baseyear %in% getYears(baselineEurostat)) {
     n2owaste[euCountries, baseyear, "n2owaste"] <- baselineEurostat[euCountries, baseyear, "n2owaste"]
     n2otrans[euCountries, baseyear, "n2otrans"] <- baselineEurostat[euCountries, baseyear, "n2otrans"]
     n2oacid[euCountries, baseyear, "n2oacid"] <- dimSums(
       baselineEurostat[euCountries, baseyear, c("n2oadac", "n2onitac")]
-      )
+    )
     ch4wsts[euCountries, baseyear, "ch4wsts"] <- baselineEurostat[euCountries, baseyear, "ch4wsts"]
     ch4wstl[euCountries, baseyear, "ch4wstl"] <- baselineEurostat[euCountries, baseyear, "ch4wstl"]
   }
@@ -85,7 +86,7 @@ calcEmiMacCEDS <- function(baseyear = 2020) {
     unit = "GtC, MtCH4, MtN",
     description = paste0(
       "emissions in ", baseyear, " from CEDS, also 2005 LUC CO2 emissions from EDGAR"
-      ),
+    ),
     note = c("used to calculate econometric emission parameter p1")
   ))
 }
