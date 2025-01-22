@@ -2,11 +2,10 @@
 #'
 #' Convert IEA energy data to data on ISO country level.
 #'
-#'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
-#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest", or
-#' "Emissions"
+#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest",
+#' or "Emissions"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
 #' @importFrom dplyr %>% filter
