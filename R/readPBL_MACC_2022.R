@@ -131,5 +131,23 @@ readPBL_MACC_2022 <- function(subtype, subset) { # nolint
     x <- readIMAGEGlobalEmissionFactors()
   }
 
+  if (subtype == "IMAGEBaselineEmissions") {
+    # Baseline IMAGE emissiions come in a very specific MtCeq/yr, using AR4 GWP100
+    inimage <- read_xlsx("Data_MAC_CH4N2O_Harmsen et al_2023_PBL.xlsx", sheet = "SSP2_CH4 N2O_baseline emissions")
+    colnames(inimage) <- c("year", "region", "ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", 
+                    "ch4anmlwst", "n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")                    
+    dfimage <- melt(inimage, id.vars = c(1,2), variable.name = "SRC")
+    x <- as.magpie(dfimage, spatial = 2, temporal = 1, tidy = TRUE)
+
+    # Already convert units here, as the convertPBL_MACC_2022 function is mainly for the MACs themselves
+    ch4sectors <- c("ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst")
+    n2osectors <- c("n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste")
+
+    x[,,ch4sectors] <- x[,,ch4sectors] * 44 / 12 / 25  # MtCeq/yr to MtCH4/yr
+    x[,,n2osectors] <- x[,,n2osectors] * 44 / 12 / 298 # MtCeq/yr to MtN2O/yr
+
+    getComment(x) <- "IMAGE baseline emissions in MtCH4/yr or MtN2O/yr"
+  }
+
   return(x)
 }
