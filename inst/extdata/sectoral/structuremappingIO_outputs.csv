@@ -210,7 +210,6 @@ fetraliquid;;BITUMEN;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;BITUMEN;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;BITUMEN;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;BITUMEN;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;BITUMEN;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;1;;;
 feothliquid;;BITUMEN;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;BITUMEN;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;BITUMEN;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -354,7 +353,6 @@ fetraliquid;;COALTAR;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;COALTAR;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;COALTAR;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;COALTAR;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;COALTAR;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.75;;;
 feothliquid;;COALTAR;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;COALTAR;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;COALTAR;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -520,7 +518,6 @@ feagrliquid;;ETHANE;FISHING;seliqfos;fehoi;tdfoshoi;1;;;1
 fetraliquid;;ETHANE;MARBUNK;seliqfos;fedie;dot;0;;;1
 ;;ETHANE;NEINTREN;seliqfos;fehoi;tdfoshoi;0;;;
 fenonliquid;;ETHANE;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;ETHANE;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.8;;;
 feothliquid;;ETHANE;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 ;;ETHANE;PIPELINE;seliqfos;fedie;dot;0;;;
 fetraliquid;;ETHANE;RAIL;seliqfos;fedie;dot;0;;;1
@@ -740,7 +737,6 @@ fetraliquid;;LPG;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;LPG;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;LPG;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;LPG;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;LPG;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.8;;;
 feothliquid;;LPG;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;LPG;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;LPG;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -768,7 +764,6 @@ fetraliquid;;LUBRIC;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;LUBRIC;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;LUBRIC;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;LUBRIC;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;LUBRIC;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.5;;;
 feothliquid;;LUBRIC;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;LUBRIC;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;LUBRIC;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -846,7 +841,6 @@ fetraliquid;;NAPHTHA;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;NAPHTHA;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;NAPHTHA;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;NAPHTHA;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;NAPHTHA;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.8;;;
 feothliquid;;NAPHTHA;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;NAPHTHA;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;NAPHTHA;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -877,7 +871,6 @@ feagrgas;;NATGAS;FISHING;segafos;fegai;tdfosgai;1;;;1
 ;;NATGAS;HEMAINH;pegas;sehe;gashp;1;;;
 fetragas;;NATGAS;MARBUNK;segafos;fegat;tdfosgat;-1;;;1
 fenongas;;NATGAS;NONENUSE;segafos;fegai;tdfosgai;1;;;1
-;;NATGAS;NONENUSE;segafos;fegai_cs;tdgai_cs;0.33;;;
 feothgas;;NATGAS;ONONSPEC;segafos;fegab;tdfosgab;1;;;1
 fetragas;;NATGAS;PIPELINE;segafos;fegat;tdfosgat;0;;;1
 ;;NATGAS;PIPELINE;pegas;segafos;gastr;0;;;
@@ -935,7 +928,6 @@ fetraliquid;;NONBIODIES;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;NONBIODIES;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;NONBIODIES;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;NONBIODIES;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;NONBIODIES;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.5;;;
 feothliquid;;NONBIODIES;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;NONBIODIES;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;NONBIODIES;RAIL;seliqfos;fedie;tdfosdie;1;;;1
@@ -963,7 +955,6 @@ fetraliquid;;NONBIOGASO;MARBUNK;seliqfos;fedie;tdfosdie;-1;;;1
 ;;NONBIOGASO;NEOTHER;seliqfos;fehob;tdfoshob;0;;;
 fetraliquid;;NONBIOGASO;NETRANS;seliqfos;fedie;tdfosdie;0;;;1
 fenonliquid;;NONBIOGASO;NONENUSE;seliqfos;fehoi;tdfoshoi;1;;;1
-;;NONBIOGASO;NONENUSE;seliqfos;fehoi_cs;tdhoi_cs;0.5;;;
 feothliquid;;NONBIOGASO;ONONSPEC;seliqfos;fehob;tdfoshob;1;;;1
 fetraliquid;;NONBIOGASO;PIPELINE;seliqfos;fedie;tdfosdie;0;;;1
 fetraliquid;;NONBIOGASO;RAIL;seliqfos;fedie;tdfosdie;1;;;1
