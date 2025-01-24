@@ -24,7 +24,6 @@ readIEA <- function(subtype) {
   if (grepl("EnergyBalances", subtype)) {
 
     if (subtype == "EnergyBalances") {
-      # the current default :
       energyBalancesFile <- "IEA-Energy-Balances-2024/worldbig.csv"
       incomplete <- 2023
     } else if (subtype == "EnergyBalances-latest") {
