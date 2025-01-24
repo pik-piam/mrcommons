@@ -4,35 +4,22 @@ calcMAgPIEReport <- function(subtype) {
   x <- readSource("MAgPIE", subtype = "MAgPIEReport_extensive")
 
   if (subtype == "CostTotal") {
-    # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    x <- x[, , "Costs Without Incentives (million US$05/yr)"] / 1000 / 1000
-    # convert from US$2005 -> US$2017
-    x <- GDPuc::toolConvertGDP(
-      gdp = x,
-      unit_in = "constant 2005 US$MER",
-      unit_out = "constant 2017 Int$PPP",
-      replace_NAs = "with_USA"
-    )
-    getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
+    # with transformation factor from 10E6 US$2017 to 10E12 US$2017
+    x <- x[, , "Costs Without Incentives (million US$2017/yr)"] / 1000 / 1000
     d <- "Total Landuse Costs from MAgPIE excluding emission costs"
     u <- "trillion US$2017/yr"
+
   } else if (subtype == "CostMAC") {
-    # with transformation factor from 10E6 US$2005 to 10E12 US$2005
-    x <- x[, , "Costs Accounting|+|MACCS (million US$05/yr)"] / 1000 / 1000
-    # convert from US$2005 -> US$2017
-    x <- GDPuc::toolConvertGDP(
-      gdp = x,
-      unit_in = "constant 2005 US$MER",
-      unit_out = "constant 2017 Int$PPP",
-      replace_NAs = "with_USA"
-    )
-    getNames(x) <- gsub("US\\$05", "US\\$17", getNames(x))
+    # with transformation factor from 10E6 US$2017 to 10E12 US$2017
+    x <- x[, , "Costs Accounting|+|MACCS (million US$2017/yr)"] / 1000 / 1000
     d <- "MAC Costs for LU emissions from MAgPIE"
     u <- "trillion US$2017/yr"
+
   } else if (subtype == "ProductionBiomass") {
     x <- x[, , "Demand|Bioenergy|2nd generation|++|Bioenergy crops (EJ/yr)"] / 31.536 # EJ to TWa
     d <- "Production of ligno-cellulosic purpose grown biomass in MAgPIE"
     u <- "TWa/yr"
+
   } else if (subtype == "ch4n2o") {
     # nolint start
     mapping <- inline.data.frame(
@@ -56,6 +43,7 @@ calcMAgPIEReport <- function(subtype) {
     getNames(x, dim = 3) <- mapping$newnames
     d <- "CH4 and N2O land emissions"
     u <- "MtCH4/yr and Mt N2O/yr"
+
   } else if (subtype == "co2") {
     mapping <- inline.data.frame(
       "oldnames;newnames",
@@ -67,6 +55,7 @@ calcMAgPIEReport <- function(subtype) {
     getNames(x, dim = 3) <- mapping$newnames
     d <- "CO2 land emissions"
     u <- "Mt CO2/yr"
+
   } else {
     stop("Unknown subtype", subtype)
   }
@@ -83,24 +72,20 @@ calcMAgPIEReport <- function(subtype) {
       "^C_"               = "",
       # "-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
       # "-PkBudg500-mag-4"  = ".rcp20", # in 2023-10 still in emulator files
-      "-PkBudg650-mag-4"  = ".rcp20",
+      "-PkBudg650-mag-4"    = ".rcp20",
       # "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
       # "-PkBudg1150-mag-4" = ".rcp26", # in 2023-10 still in emulator files
-      "-PkBudg1050-mag-4" = ".rcp26",
-      "-NDC-mag-4"        = ".rcp45",
-      "-Base-mag-4"       = ".none",
-      "SSP2EU"            = "SSP2",
-      "SDP_MC"            = "SDP"
+      "-PkBudg1000-mag-4"   = ".rcp26",
+      # "-NDC-mag-4"        = ".rcp45",
+      "-NPi2025-mag-4"      = ".rcp45"
+      # "-Base-mag-4"       = ".none",
+      # "SSP2EU"            = "SSP2",
+      # "SDP_MC"            = "SDP"
     ))
 
-  # add values for SSP3 copying the values from SSP2
-  tmp <- x[, , "SSP2"]
-  getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
-  x <- mbind(x, tmp)
-
-  # add values for SSP2_lowEn copying the values from SSP2
-  tmp <- x[, , "SSP2"]
-  getNames(tmp) <- gsub("SSP2", "SSP2_lowEn", getNames(tmp))
+  # add values for SSP2_lowEn-NPi2025 (infeasible) copying the values from SSP2-NPi2025
+  tmp <- x[, , "SSP2.rcp45"]
+  getNames(tmp) <- gsub("SSP2\\.rcp45", "SSP2_lowEn.rcp45", getNames(tmp))
   x <- mbind(x, tmp)
 
   return(list(
