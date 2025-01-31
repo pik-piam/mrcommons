@@ -10,7 +10,7 @@
 #' @param education if FALSE, no education dimension will be provided
 #' @export
 #' @importFrom magpiesets findset
-
+#'
 calcDemography <- function(convert = TRUE, education = TRUE) {
 
   lutz <- readSource("Lutz2014", convert = convert)
@@ -36,6 +36,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   if (convert == TRUE) {
     population <- calcOutput("Population",
+                             scenario = "SSPs",
                              naming = "scenario",
                              years = magpiesets::findset("time"),
                              aggregate = FALSE)
