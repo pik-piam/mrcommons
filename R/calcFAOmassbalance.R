@@ -8,7 +8,7 @@
 #' function is the calcFAOmassbalance_pre.
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
-#' @author Benjamin Leon Bodirsky, Xiaoxi Wang
+#' @author Benjamin Leon Bodirsky, Xiaoxi Wang, David Chen
 #' @seealso
 #' [calcFAOmassbalance_pre()]
 #' @examples
@@ -20,9 +20,8 @@
 
 
 calcFAOmassbalance <- function() {
-  local_options(magclass_sizeLimit = 1e+12)
-  past <- findset("past")
-
+  local_options(magclass_sizeLimit = 1e+12) 
+  past <- findset("past_fao")
 
   mb <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")
@@ -33,7 +32,7 @@ calcFAOmassbalance <- function() {
                "domestic_supply",
                "food", "feed", "seed", "waste", "other_util", "bioenergy",
                "milling", "brans1", "branoil1", "flour1",
-               "refining", "sugar1", "molasses1",
+               "refining", "sugar1", "sugar2", "molasses1",
                "extracting", "oil1", "oil2", "oilcakes1",
                "fermentation", "alcohol1",
                "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
@@ -57,7 +56,6 @@ calcFAOmassbalance <- function() {
   balanceflow <- as.magpie(aperm(unwrap(balanceflow), c(1, 2, 4, 3, 5)))
 
   feed <- feed + balanceflow
-
   # test to check whether distribution of feed was ok
   if (any(round(
                 mb2[, , "feed"][, , getNames(mb, dim = 1)]
@@ -65,9 +63,15 @@ calcFAOmassbalance <- function() {
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
+  #warnings for small amounts getting past rounding for brans and livestock to feed
   mb3 <- mbind(mb2, feed)
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
+  #quick fix, make 2020 same as 2019
+  forest2020 <- forest[,2019,]
+  forest2020 <- setYears(forest2020, 2020)
+  forest <- mbind(forest, forest2020)
+
   mb3[, , getNames(mb3[, , paste0("wood.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
@@ -86,6 +90,7 @@ calcFAOmassbalance <- function() {
   # Adding Crop Residues Production and use
   kres <- findset("kres")
   res <- calcOutput("ResDemand", aggregate = FALSE)
+ 
   res <- as.magpie(aperm(unwrap(res), c(1, 2, 4, 3, 5)))
   mb3[, , kres][, , c("bioenergy", "domestic_supply", "feed", "other_util", "production")] <- res
 

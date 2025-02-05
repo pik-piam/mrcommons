@@ -23,7 +23,7 @@ calcResDemand <- function(cellular = FALSE, scenario = "dafault") {
   resNonfibrous <- mapping$kcr[mapping$kres == "res_nonfibrous"]
 
   kres           <- findset("kres")
-  past           <- findset("past")
+  past           <- findset("past_fao")
 
   devStatePast <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"])
 

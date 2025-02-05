@@ -26,10 +26,10 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
     cat("because of memory reasons, cellular datasets can often not be run with kall yet; try kfeed")
   }
 
-  past                <- findset("past")
+  past <- findset("past_fao")
   products2           <- findset(products, noset = "original")
-
-  kliProduction       <- calcOutput("Production", products = "kli",
+  
+  kliProduction       <- calcOutput("Production", products = "kli", 
                                     cellular = cellular, cells = "lpjcell", aggregate = FALSE)
   livestockProduction <- collapseNames(kliProduction[, past, "dm"])
   animalProduction    <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
@@ -38,6 +38,10 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
 
   feedBaskets         <- calcOutput("FeedBasketsPast", non_eaten_food = FALSE, aggregate = FALSE)
   feedBaskets         <- feedBaskets[, , products2]
+
+  #extend feedBaskets to 2020 constantly for now
+  feedBaskets <- toolHoldConstant(feedBaskets, years = c(2015, 2020))
+
   if (cellular) {
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
   }

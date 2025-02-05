@@ -26,8 +26,11 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
                            cells = "lpjcell", calibrated = TRUE,
                            attributes = "all", irrigation = FALSE) {
 
+  if (!cellular) {
+  selectyears <- findset("past_fao")
+  } else {
   selectyears <- findset("past")
-
+  }
   if (products == "kcr") {
 
     magCropTypes  <- findset("kcr")

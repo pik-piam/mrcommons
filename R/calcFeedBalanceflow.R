@@ -24,7 +24,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   perLivestockUnit <- per_livestock_unit # nolint
 
   products2 <- findset(products, noset = "orignal")
-  past      <- findset("past")
+  past      <- findset("past_fao")
 
   if (!perLivestockUnit) {
     prodAttributes      <- calcOutput("Attributes", aggregate = FALSE)
