@@ -19,7 +19,7 @@
 #' @importFrom dplyr %>%
 #' @importFrom magclass time_interpolate setNames getYears
 #' @export
-
+#'
 toolSplitBiomass <- function(x,
                              gdppop,
                              split = "biomass",

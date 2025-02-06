@@ -8,7 +8,7 @@
 #' \dontrun{
 #' a <- readSource("convertGTAPv8v9", "81:SF01", convert = TRUE)
 #' }
-#' @importFrom GDPuc toolConvertGDP
+#'
 convertGTAPv8v9 <- function(x, subtype) {
 
   split <- toolSplitSubtype(subtype, list(version = NULL, header = NULL))

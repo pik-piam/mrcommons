@@ -10,9 +10,6 @@
 
 
 convertLutz2014 <- function(x) {
-
-  popWdi <- calcOutput("Population", aggregate = FALSE) # at least one citizen per country
-
   # handle countries with missing education data before 2010
   # missing years
   missing <- paste0("y", 1965 + (1:9) * 5)
@@ -23,10 +20,11 @@ convertLutz2014 <- function(x) {
   x <- toolCountryFill(x, fill = NA, no_remove_warning = "ANT")
 
   # BB: use of toolAggregate with an external mapping could replace the following function and speed it up
+  popWdi <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)
   fillCountryByAverageOfRegion <- function(x, country, region) {
     vcat(2, paste0("interpolating country: ", country))
     values <- x[region, , ]
-    population <- popWdi[country, getYears(values), "pop_SSP2"]
+    population <- popWdi[country, getYears(values), ]
     average <- dimSums(values, dim = 1) / dimSums(values[, , "Total"][, , "Both"][, , "All"], dim = 1)
     x[country, , ]  <-  setCells(average, "GLO") * population
     return(x)
