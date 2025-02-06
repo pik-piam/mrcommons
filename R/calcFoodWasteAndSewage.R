@@ -1,6 +1,21 @@
+#' @title calcFoodWasteAndSewage
+#' @description Calculates food waste and sewage based on the FAO mass balance or future
+#' projections from Bodirsky et al. (2018).
+#'
+#' @param historic If set to TRUE only ho
+#' @return List of magpie objects with results on country level, weight on country level, unit and description.
+#' @author Benjamin Leon Bodirsky, Xiaoxi Wang
+#' @seealso
+#' [calcFAOmassbalance()]
+#' @examples
+#' \dontrun{
+#' calcOutput("FoodWasteAndSewage")
+#' }
+
+
 # recycling of food waste and sewage?
 calcFoodWasteAndSewage <- function(historic = TRUE) {
-  past <- findset("past")
+  past <- findset("past_til2020")
   mb <- calcOutput("FAOmassbalance", aggregate = FALSE)
   demand <- collapseNames(mb[, , "households"][, past, c("nr")])
   getSets(demand)[[3]] <- "ItemCodeItem"
