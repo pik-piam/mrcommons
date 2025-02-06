@@ -36,7 +36,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   if (convert == TRUE) {
     population <- calcOutput("Population",
-                             scenario = "SSPs",
+                             scenario = c("SSPs", "SDPs"),
                              naming = "scenario",
                              years = magpiesets::findset("time"),
                              aggregate = FALSE)
@@ -59,11 +59,10 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
     }
 
     # recalibration to SSP population scenarios
-    # create SSP2EU and SDP scenarios columns based on SSP2 and SSP1
-    if (any(c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU") %in% getNames(population))) {
-      demo <- add_columns(demo, addnm = c("SDP", "SDP_EI", "SDP_MC", "SDP_RC", "SSP2EU"),
+    # create SDP scenarios columns based on SSP2 and SSP1
+    if (any(c("SDP", "SDP_EI", "SDP_MC", "SDP_RC") %in% getNames(population))) {
+      demo <- add_columns(demo, addnm = c("SDP", "SDP_EI", "SDP_MC", "SDP_RC"),
                           dim = 3.1, fill = NA)
-      demo[, , "SSP2EU"] <- demo[, , "SSP2"]
       demo[, , "SDP", pmatch = TRUE] <- demo[, , "SSP1"]
     }
 
