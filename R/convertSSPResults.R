@@ -107,9 +107,9 @@ convertSSPResults <- function(x) {
   selection <- c("Price|Primary Energy|Biomass (US$2005/GJ)")
 
   data <- x[, , selection]
-  data <- toolConvertGDP(data, unit_in = "constant 2005 US$MER",
-                         unit_out = "constant 2017 US$MER",
-                         replace_NAs = "no_conversion")
+  data <- GDPuc::toolConvertGDP(data, unit_in = "constant 2005 US$MER",
+                                unit_out = "constant 2017 US$MER",
+                                replace_NAs = "no_conversion")
   getNames(data, dim = 3) <- "Price|Primary Energy|Biomass (US$2017/GJ)"
   aggregatedREG <- toolAggregate(data, rel = mappingFile, weight = NULL, dim = 1, partrel = TRUE,
                                  from = "RegionCode", to = "CountryCode")

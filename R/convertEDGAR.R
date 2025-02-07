@@ -5,7 +5,7 @@ convertEDGAR <- function(x, subtype) {
     # "ANT" -> "SXM", "CUW"
     # "SCG" -> "SRB", "MNE"
     m <- matrix(c(c("ANT", "ANT", "SCG", "SCG"), c("SXM", "CUW", "SRB", "MNE")), 4)
-    w <- calcOutput("Population", aggregate = FALSE)[c("SXM", "CUW", "SRB", "MNE"), 2010, "pop_SSP2"]
+    w <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[c("SXM", "CUW", "SRB", "MNE"), 2010, ]
     xSplit <- toolAggregate(x[c("ANT", "SCG"), , ], m, weight = w)
     # delete ANT and SCG from x
     x <- x[c("ANT", "SCG"), , invert = TRUE]
@@ -14,7 +14,7 @@ convertEDGAR <- function(x, subtype) {
     # split regional data
     # "SCG" -> "SRB", "MNE"
     m <- matrix(c(c("SCG", "SCG"), c("SRB", "MNE")), 2)
-    w <- calcOutput("Population", aggregate = FALSE)[c("SRB", "MNE"), 2005, "pop_SSP2"]
+    w <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[c("SRB", "MNE"), 2005, ]
     xSplit <- toolAggregate(x["SCG", , ], m, weight = w)
     # delete SCG from x
     x <- x[c("SCG"), , invert = TRUE]
@@ -25,7 +25,7 @@ convertEDGAR <- function(x, subtype) {
     # split regional data
     # "SCG" -> "SRB", "MNE"
     m <- matrix(c(c("SCG", "SCG"), c("SRB", "MNE")), 2)
-    w <- calcOutput("Population", aggregate = FALSE)[c("SRB", "MNE"), 2005, "pop_SSP2"]
+    w <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[c("SRB", "MNE"), 2005, ]
     xSplit <- toolAggregate(x["SCG", , ], m, weight = w)
     # delete SCG from x
     x <- x[c("SCG"), , invert = TRUE]
