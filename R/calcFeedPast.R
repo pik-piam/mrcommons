@@ -26,7 +26,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
     cat("because of memory reasons, cellular datasets can often not be run with kall yet; try kfeed")
   }
 
-  past <- findset("past_fao")
+  past <- findset("past_til2020")
   products2           <- findset(products, noset = "original")
   
   kliProduction       <- calcOutput("Production", products = "kli", 
