@@ -20,7 +20,7 @@ calcAWMSconfShrPast <- function(products = "magpie") {
   excretion <- excretion[, , awms]
 
   incomplete <- where(dimSums(excretion, dim = c(3.2)) == 0)$true$regions
-  pop <- calcOutput("Population", aggregate = FALSE)
+  pop <- calcOutput("Population", scenario = "SSPs", aggregate = FALSE)
   largest <- toolXlargest(pop, range = 1:30)
   if (any(incomplete %in% largest)) {
     vcat(verbosity = 1, paste("no complete excretion data for",

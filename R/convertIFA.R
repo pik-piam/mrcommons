@@ -36,7 +36,7 @@ convertIFA <- function(x) {
   # disaggregate the Others* regions of the data
   mapping <- "regionmappingIFA.csv"
   m <- read.csv2(mapping)
-  weight <- calcOutput("Population", aggregate = FALSE)[as.character(m$CountryCode), 2010, "pop_SSP2"]
+  weight <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[as.character(m$CountryCode), 2010, ]
   xOthers <- toolAggregate(x[as.character(unique(m$RegionCode)), , ], mapping, weight = weight)
   # add countries of Others*-Regions
   out <- mbind(x, xOthers)
