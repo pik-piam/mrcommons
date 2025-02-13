@@ -72,8 +72,8 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
   # SPLIT BIOMASS --------------------------------------------------------------
 
-  gdppop <- calcOutput("GDPpc", average2020 = FALSE, aggregate = FALSE) %>%
-    mselect(variable = "gdppc_SSP2", collapseNames = TRUE)
+  gdppop <- calcOutput("GDPpc", scenario = "SSP2", average2020 = FALSE, aggregate = FALSE) %>%
+    collapseNames()
 
   data <- switch(subtype,
     output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",

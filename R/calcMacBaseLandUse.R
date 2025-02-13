@@ -28,7 +28,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y,
                      dim = 3.2,
                      add = "c_LU_emi_scen",
-                     nm = c("SSP1", "SSP2", "SSP3", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2EU","SSP2_lowEn"))
+                     nm = c("SSP1", "SSP2", "SSP3", "SSP5", "SDP", "SDP_EI", "SDP_RC", "SDP_MC", "SSP2_lowEn"))
   y <- add_dimension(y,
                      dim = 3.3,
                      add = "rcp",
@@ -48,10 +48,7 @@ calcMacBaseLandUse <- function(subtype) {
       getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
       x <- mbind(x, xSDP)
     }
-    # make SSP2EU scenario using SSP2 data
-    xSSP2EU <- x[, , "SSP2"]
-    getNames(xSSP2EU) <- gsub("SSP2", "SSP2EU", getNames(xSSP2EU))
-    x <- mbind(x, xSSP2EU)
+
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
@@ -79,12 +76,12 @@ calcMacBaseLandUse <- function(subtype) {
     x[, , "co2luc.SSP2"] <- xCO2
 
     # add values for SSP3 copying the values from SSP2
-    tmp <- x[,,"SSP2"]
+    tmp <- x[, , "SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
     x <- mbind(x, tmp)
 
     # add values for SSP2_lowEn copying the values from SSP2
-    tmp <- x[,,"SSP2"]
+    tmp <- x[, , "SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP2_lowEn", getNames(tmp))
     x <- mbind(x, tmp)
 
@@ -195,10 +192,7 @@ calcMacBaseLandUse <- function(subtype) {
       getNames(xSDP) <- gsub("SSP1", i, getNames(x[, , "SSP1"]))
       x <- mbind(x, xSDP)
     }
-    # make SSP2riadne scenario using SSP2 data
-    xSSP2EU <- x[, , "SSP2"]
-    getNames(xSSP2EU) <- gsub("SSP2", "SSP2EU", getNames(xSSP2EU))
-    x <- mbind(x, xSSP2EU)
+
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
@@ -215,12 +209,12 @@ calcMacBaseLandUse <- function(subtype) {
     x <- collapseNames(x[, , emiExo][, , "none"], collapsedim = 3.3)
 
     # add values for SSP3 copying the values from SSP2
-    tmp <- x[,,"SSP2"]
+    tmp <- x[, , "SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP3", getNames(tmp))
     x <- mbind(x, tmp)
 
     # add values for SSP2_lowEn copying the values from SSP2
-    tmp <- x[,,"SSP2"]
+    tmp <- x[, , "SSP2"]
     getNames(tmp) <- gsub("SSP2", "SSP2_lowEn", getNames(tmp))
     x <- mbind(x, tmp)
 

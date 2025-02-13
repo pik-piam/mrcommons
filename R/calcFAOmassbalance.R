@@ -21,7 +21,7 @@
 
 calcFAOmassbalance <- function() {
   local_options(magclass_sizeLimit = 1e+12) 
-  past <- findset("past_fao")
+  past <- findset("past_til2020")
 
   mb <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")

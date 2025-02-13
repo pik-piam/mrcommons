@@ -19,9 +19,8 @@
 convertLotzeCampenBiofuel <- function(x) {
   x[is.na(x)] <- 0
   countries <- colnames(getAggregationMatrix("country_mapping.csv"))
-  pop       <- calcOutput("Population", aggregate = FALSE)
-  x      <- toolAggregate(x = x, rel = "country_mapping.csv", weight = pop[countries, 2010, 1])
+  pop       <- calcOutput("Population", scenario = "SSP2", years = 2010, aggregate = FALSE)
+  x      <- toolAggregate(x = x, rel = "country_mapping.csv", weight = pop[countries, , ])
   y      <- toolCountryFill(x, fill = 0, verbosity = 2)
-  y <- y * 1000
-  return(y)
+  y * 1000
 }

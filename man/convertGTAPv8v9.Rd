@@ -21,6 +21,7 @@ disaggregates country groups from GTAP according to GDP share
 \dontrun{
 a <- readSource("convertGTAPv8v9", "81:SF01", convert = TRUE)
 }
+
 }
 \author{
 Debbora Leip, David M. Chen

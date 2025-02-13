@@ -2,7 +2,6 @@
 #'
 #' Convert IEA energy data to data on ISO country level.
 #'
-#'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
 #' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest", or
@@ -25,12 +24,10 @@ convertIEA <- function(x, subtype) {
       x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
 
     # calculate weight to be used for regional disaggregations
-    wp <- calcOutput("Population", aggregate = FALSE)[, 2010, "pop_SSP2"]
-    wg <- calcOutput("GDP", aggregate = FALSE)[, 2010, "gdp_SSP2"]
+    wp <- calcOutput("Population", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
+    wg <- calcOutput("GDP", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
     wp <- wp / max(wp)
-    getNames(wp) <- "SSP2"
     wg <- wg / max(wg)
-    getNames(wg) <- "SSP2"
     w <- wp + wg
 
     # disaggregating Other Africa (IAF),

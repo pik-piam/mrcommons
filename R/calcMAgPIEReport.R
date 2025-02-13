@@ -76,11 +76,10 @@ calcMAgPIEReport <- function(subtype) {
       # "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
       # "-PkBudg1150-mag-4" = ".rcp26", # in 2023-10 still in emulator files
       "-PkBudg1000-mag-4"   = ".rcp26",
-      # "-NDC-mag-4"        = ".rcp45",
+      # "-NDC-mag-4"        = ".rcp45", # nolint
       "-NPi2025-mag-4"      = ".rcp45"
-      # "-Base-mag-4"       = ".none",
-      # "SSP2EU"            = "SSP2",
-      # "SDP_MC"            = "SDP"
+      # "-Base-mag-4"       = ".none",  # nolint
+      # "SDP_MC"            = "SDP"     # nolint
     ))
 
   # add values for SSP2_lowEn-NPi2025 (infeasible) copying the values from SSP2-NPi2025

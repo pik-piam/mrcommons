@@ -17,7 +17,11 @@
 #'
 calcDevelopmentState <- function(upper = 12746, lower = 1045) {
 
-  gdpPc <- calcOutput("GDPpc", naming = "scenario", aggregate = FALSE, supplementary = TRUE)
+  gdpPc <- calcOutput("GDPpc",
+                      scenario = c("SSPs", "SDPs"),
+                      naming = "scenario",
+                      aggregate = FALSE,
+                      supplementary = TRUE)
   weight <- collapseNames(gdpPc$weight)
   gdpPc <- collapseNames(gdpPc$x)
 
@@ -25,15 +29,14 @@ calcDevelopmentState <- function(upper = 12746, lower = 1045) {
   developed[developed < 0] <- 0
   developed[developed > 1] <- 1
 
-  return(list(x = developed,
-              weight = weight,
-              unit = "share",
-              description = paste("Development state according to worldbank",
-                                  "definitions: 0 is a low income country with less than 1000 USD",
-                                  "per capita per year, 1 is a high-income country with more than",
-                                  "10000 USD per capita per year. Intermediate values are interpolated",
-                                  "lineraly, and indicate medium income countries. Population weighted."),
-              min = 0,
-              max = 1)
-  )
+  list(x = developed,
+       weight = weight,
+       unit = "share",
+       description = paste("Development state according to worldbank",
+                           "definitions: 0 is a low income country with less than 1000 USD",
+                           "per capita per year, 1 is a high-income country with more than",
+                           "10000 USD per capita per year. Intermediate values are interpolated",
+                           "lineraly, and indicate medium income countries. Population weighted."),
+       min = 0,
+       max = 1)
 }
