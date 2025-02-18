@@ -19,7 +19,7 @@
 calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario = "default") {
 
   if (products == "kres") {
-    past              <- findset("past")
+    past              <- findset("past_til2020")
     relevantNutrients <- c("nr", "p", "k", "c")  # after burning, unclear what dm and ge may be
 
     production        <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag",

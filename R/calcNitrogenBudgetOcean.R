@@ -15,7 +15,7 @@
 
 calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus") {
   vcat(2, "strange to change leaching attribute in if statement. Is this correct?")
-  past <- findset("past")
+  past <- findset("past_til2020")
   dep <- calcOutput("AtmosphericDeposition", datasource = deposition, glo_incl_oceans = FALSE,
                     cellular = FALSE, emission = FALSE, aggregate = FALSE)
   depGlo <- calcOutput("AtmosphericDeposition", datasource = deposition, glo_incl_oceans = TRUE,
