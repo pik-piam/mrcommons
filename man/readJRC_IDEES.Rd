@@ -16,6 +16,8 @@ readJRC_IDEES(subtype)
 \item \code{'MBunkers'}: read worksheets from the Bunkers files
 \item \code{'Residential'}: read worksheets from the Residential files
 \item \code{'Tertiary'}: read worksheets from the Tertiary (Services and Agriculture) files
+append \code{'_2021'} to get the updated data from 2021 (only available for some
+sectors)
 }}
 }
 \value{
@@ -25,5 +27,5 @@ A \code{\link[magclass:magclass-package]{magpie}} object.
 Read the \href{https://data.jrc.ec.europa.eu/dataset/jrc-10110-10001/resource/f590b6f1-60e5-49a6-a972-60bc2b2e34b3}{IDEES data base from JRC} #nolint
 }
 \author{
-Michaja Pehl, Falk Benke
+Michaja Pehl, Falk Benke, Robin Hasse
 }
