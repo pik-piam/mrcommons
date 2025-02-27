@@ -23,14 +23,8 @@
 
 
 calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
-                           cells = "lpjcell", calibrated = TRUE,
-                           attributes = "all", irrigation = FALSE) {
+                           calibrated = TRUE, attributes = "all", irrigation = FALSE) {
 
-  if (!cellular) {
-  selectyears <- findset("past_fao")
-  } else {
-  selectyears <- findset("past")
-  }
   if (products == "kcr") {
 
     magCropTypes  <- findset("kcr")
@@ -52,7 +46,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       ################################
       yieldsLPJ      <- calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                    climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                   stage = "smoothed", aggregate = FALSE)[, selectyears, ]
+                                   stage = "smoothed", aggregate = FALSE)
 
       mappingCountryCell <- toolGetMappingCoord2Country()
       mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
@@ -63,17 +57,26 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       yieldsMAG      <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ, from = "LPJmL", to = "MAgPIE",
                                       dim = 3.1, partrel = TRUE)[, , magCropTypes]
 
-      cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
-                                   cellular = TRUE, cells = "lpjcell",
-                                   irrigation = TRUE, aggregate = FALSE)[, selectyears, magCropTypes]
+      cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cellular = TRUE,
+                                   irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
+
+      commonYears <- intersect(getYears(yieldsLPJ), getYears(cropareaMAG))
+      cropareaMAG <- cropareaMAG[, commonYears, ]
+      yieldsLPJ   <- yieldsLPJ[, commonYears, ]
+      yieldsMAG   <- yieldsMAG[, commonYears, ]
 
       if (calibrated) {
 
         tau       <- calcOutput("LanduseIntensity", sectoral = "kcr", rescale = FALSE,
-                                aggregate = FALSE)[, selectyears, magCropTypes]
+                                aggregate = FALSE)[, , magCropTypes]
         tauCell   <- toolAggregate(x = tau, rel = mappingCountryCell,
                                    from = "iso", to = "coordiso", partrel = TRUE)
         getSets(tauCell) <- c("x", "y", "iso", "year", "ItemCodeItem")
+
+        commonYears <- intersect(getYears(tauCell), getYears(yieldsMAG))
+        cropareaMAG <- cropareaMAG[, commonYears, ]
+        tauCell     <- tauCell[, commonYears, ]
+        yieldsMAG   <- yieldsMAG[, commonYears, ]
 
         yieldsMAG <- tauCell * yieldsMAG
       }
@@ -87,8 +90,16 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       countries         <- getItems(isoproductionMAG, dim = 1)
       prods             <- getNames(productionMAG, dim = 1)
       productionFAO     <- calcOutput("FAOmassbalance",
-                                      aggregate = FALSE)[, selectyears, "production.dm"][countries, , prods]
+                                      aggregate = FALSE)[, , "production.dm"][countries, , prods]
       productionFAO     <- collapseNames(productionFAO)
+
+      commonYears   <- intersect(getYears(productionFAO), getYears(isoproductionMAG))
+      cropareaMAG   <- cropareaMAG[, commonYears, ]
+      productionMAG <- productionMAG[, commonYears, ]
+      isoproductionMAG <- isoproductionMAG[, commonYears, ]
+      productionFAO    <- productionFAO[, commonYears, ]
+      yieldsMAG        <- yieldsMAG[, commonYears, ]
+
       isoMismatch[, , ] <- abs(round(isoproductionMAG - productionFAO, 4)) > 0
 
       if (any(isoMismatch != 0)) {
@@ -244,13 +255,16 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       ### pasture production celluluar ###
       ####################################
 
-      areaPasture    <- collapseNames(calcOutput("LanduseInitialisation",
-                                                 cellular = TRUE, cells = "lpjcell",
-                                                 aggregate = FALSE)[, selectyears, "past"])
+      areaPasture    <- collapseNames(calcOutput("LanduseInitialisation", cellular = TRUE,
+                                                 selectyears = seq(1965, 2015, 5),
+                                                 aggregate = FALSE)[, , "past"])
       yieldsPasture  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
                                                  climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                                 stage = "smoothed", aggregate = FALSE,
-                                                 years = selectyears)[, , "mgrass.rainfed"])
+                                                 stage = "smoothed", aggregate = FALSE)[, , "mgrass.rainfed"])
+
+      commonYears <- intersect(getYears(areaPasture), getYears(cropareaMAG))
+      areaPasture   <- areaPasture[, commonYears, ]
+      yieldsPasture <- yieldsPasture[, commonYears, ]
 
       mappingCountryCell <- toolGetMappingCoord2Country()
       mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
@@ -258,9 +272,14 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       if (calibrated) {
 
         tau           <- calcOutput("LanduseIntensity", sectoral = "pasture", rescale = FALSE,
-                                    aggregate = FALSE)[, selectyears, ]
+                                    aggregate = FALSE)
         tauCell       <- toolAggregate(x = tau, rel = mappingCountryCell,
                                        from = "iso", to = "coordiso", partrel = TRUE)
+
+        commonYears   <- intersect(getYears(tauCell), getYears(yieldsPasture))
+        yieldsPasture <- yieldsPasture[, commonYears, ]
+        tauCell       <- tauCell[, commonYears, ]
+        areaPasture   <- areaPasture[, commonYears, ]
 
         yieldsPasture <- tauCell * yieldsPasture
       }
@@ -273,7 +292,14 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       isoproductionMAG  <- isoMismatch <- dimSums(productionMAG, dim = c(1.1, 1.2))
       countries         <- getItems(isoproductionMAG, dim = 1)
       productionFAO     <- collapseNames(calcOutput("FAOmassbalance",
-                                                    aggregate = FALSE)[countries, selectyears, "pasture.production.dm"])
+                                                    aggregate = FALSE)[countries, , "pasture.production.dm"])
+
+      commonYears   <- intersect(getYears(productionFAO), getYears(isoproductionMAG))
+      areaPasture   <- areaPasture[, commonYears, ]
+      productionMAG <- productionMAG[, commonYears, ]
+      isoproductionMAG <- isoproductionMAG[, commonYears, ]
+      productionFAO    <- productionFAO[, commonYears, ]
+      yieldsPasture    <- yieldsPasture[, commonYears, ]
 
       isoMismatch[]     <- abs(round(isoproductionMAG - productionFAO, 4)) > 0
 
@@ -333,12 +359,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
 
   if (any(attributes != "all")) {
     x <- x[, , attributes]
-  }
-
-  if (cellular) {
-    if (cells == "magpiecell") {
-      x <- toolCoord2Isocell(x, cells = cells)
-    }
   }
 
   # Check for NAs and negatives
