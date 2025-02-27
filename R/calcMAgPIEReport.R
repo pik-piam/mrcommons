@@ -70,22 +70,11 @@ calcMAgPIEReport <- function(subtype) {
   getNames(x) <- getNames(x) %>%
     stringr::str_replace_all(c(
       "^C_"               = "",
-      # "-PkBudg900-mag-4"  = ".rcp20", # in 2022-10 still in emulator files
-      # "-PkBudg500-mag-4"  = ".rcp20", # in 2023-10 still in emulator files
       "-PkBudg650-mag-4"    = ".rcp20",
-      # "-PkBudg1300-mag-4" = ".rcp26", # in 2022-10 still in emulator files
-      # "-PkBudg1150-mag-4" = ".rcp26", # in 2023-10 still in emulator files
       "-PkBudg1000-mag-4"   = ".rcp26",
-      # "-NDC-mag-4"        = ".rcp45", # nolint
       "-NPi2025-mag-4"      = ".rcp45"
       # "-Base-mag-4"       = ".none",  # nolint
-      # "SDP_MC"            = "SDP"     # nolint
     ))
-
-  # add values for SSP2_lowEn-NPi2025 (infeasible) copying the values from SSP2-NPi2025
-  tmp <- x[, , "SSP2.rcp45"]
-  getNames(tmp) <- gsub("SSP2\\.rcp45", "SSP2_lowEn.rcp45", getNames(tmp))
-  x <- mbind(x, tmp)
 
   return(list(
     x = x,

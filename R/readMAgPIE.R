@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2025-01"
+  ver <- "2025-02"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -51,8 +51,7 @@ readMAgPIE <- function(subtype) {
     fileList <- c("C_SSP1-NPi2025-mag-4.mif",
                   "C_SSP1-PkBudg1000-mag-4.mif",
                   "C_SSP1-PkBudg650-mag-4.mif",
-                  #"C_SSP2_lowEn-NPi2025-mag-4.mif", # was infeasible -> use SSP2-NPi2025 instead.
-                  #                                    Remove copy in calcMAgPIEReport if scenario becomes available!
+                  "C_SSP2_lowEn-NPi2025-mag-4.mif",
                   "C_SSP2_lowEn-PkBudg1000-mag-4.mif",
                   "C_SSP2_lowEn-PkBudg650-mag-4.mif",
                   "C_SSP2-NPi2025-mag-4.mif",
