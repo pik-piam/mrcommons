@@ -14,9 +14,16 @@
 
 calcProdSysRatioPast <- function() {
 
-  past <- findset("past")
+  past <- findset("past_til2020")
+
   # read in data
   prodsysratio <-  readSource(type = "FeedModel", subtype = "ProdSysRatio")
+
+  #Extend historical data by filling in missing years with constant values
+  missingYears <- setdiff(past, getYears(prodsysratio))
+  if (length(missingYears) > 0) {
+    prodsysratio <- toolHoldConstant(prodsysratio, years = missingYears)
+  }
 
   # use livestock production as weight
   kli <- findset("kli")
@@ -30,15 +37,13 @@ calcProdSysRatioPast <- function() {
 
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
 
-
   # remove datasets with NAs in weight/data
   prodsysratio <- toolNAreplace(x = prodsysratio, weight = weight, replaceby = 0)
   weight <- prodsysratio$weight
   out <- prodsysratio$x
 
-
   return(list(x = out, weight = weight,
               unit = "-",
-              description = "Detailed historical system-specific feed requirements in
-              DM per DM products generated for 5 livestock commodities."))
+              description = "Historical distribution of livestock production across
+              different systems."))
 }
