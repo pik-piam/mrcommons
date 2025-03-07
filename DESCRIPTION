@@ -52,7 +52,8 @@ Depends:
     mrdrivers (>= 4.0.0),
     mrfaocore (>= 1.0.0),
     mrlandcore (>= 1.0.0),
-    mstools (>= 0.6.0)
+    mstools (>= 0.6.0),
+    R (>= 2.10.0)
 Imports:
     countrycode,
     data.table,
