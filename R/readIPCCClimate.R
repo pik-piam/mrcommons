@@ -21,7 +21,7 @@ readIPCCClimate <-  function() {
   # Load celliso names for 1:67420 magpie cells
   map   <- toolGetMappingCoord2Country(pretty = TRUE)
   # Change longitude and latitude
-  mag   <- as.magpie(terra::extract(raster1d2, map[c("lon", "lat")])[, -1], spatial = 1)
+  mag   <- as.magpie(as.numeric(terra::extract(raster1d2, map[c("lon", "lat")])[, -1]), spatial = 1)
 
   getNames(mag) <- "unknown"
   getYears(mag) <- NULL
