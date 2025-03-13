@@ -3,7 +3,6 @@
 #'
 #' @param per_livestock_unit default false
 #' @param cellular   if TRUE value is calculate on cellular level
-#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @return List of magpie objects with results on country or cellular level, unit and description.
@@ -17,7 +16,6 @@
 
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 cellular = FALSE,
-                                cells = "lpjcell",
                                 products = "kall",
                                 future = "constant") {
 
@@ -88,7 +86,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       countryToCell <- toolGetMappingCoord2Country()
       countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
       magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE,
-                                     cellular = TRUE, cells = "lpjcell",
+                                     cellular = TRUE,
                                      aggregate = FALSE, nutrients = "dm", products = products)
       magFeedCell      <- magFeedCell[, , commonproducts]
       magFeedCountry   <- toolAggregate(magFeedCell, rel = countryToCell,
@@ -129,10 +127,10 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     kli  <- findset("kli")
     past <- findset("past")
 
-    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
+    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular,
                                   products = products, future = future, aggregate = FALSE)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
-                                                    cellular = cellular, cells = "lpjcell",
+                                                    cellular = cellular,
                                                     aggregate = FALSE)[, , kli][, past, "dm"])
     livestockProduction <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
     livestockProduction[, , "fish"] <- 0
@@ -150,12 +148,6 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
   } else {
     stop("per_livestock_unit has to be boolean")
-  }
-
-  if (cellular) {
-    if (cells == "magpiecell") {
-      feedBalanceflow <- toolCoord2Isocell(feedBalanceflow, cells = cells)
-    }
   }
 
   return(list(x = feedBalanceflow,

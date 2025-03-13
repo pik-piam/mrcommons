@@ -21,7 +21,7 @@
 
 calcFeedBasketsPast <- function(non_eaten_food = TRUE) { # nolint
 
-  yearsPast   <- findset("past")
+  yearsPast   <- findset("past_til2020")
   kli         <- findset("kli")
   kap         <- findset("kap")
   massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, yearsPast, ]
