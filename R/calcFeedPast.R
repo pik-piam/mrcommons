@@ -39,7 +39,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
   feedBaskets         <- feedBaskets[, , products2]
 
   #extend feedBaskets to 2020 constantly for now
-  feedBaskets <- toolHoldConstant(feedBaskets, years = c(2015, 2020))
+#  feedBaskets <- toolHoldConstant(feedBaskets, years = c(2015, 2020))
 
   if (cellular) {
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
