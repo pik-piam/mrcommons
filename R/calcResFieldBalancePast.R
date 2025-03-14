@@ -102,11 +102,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
     ### generate output
     out <- mbind(
-      add_dimension(production, dim = 3.1, nm = "biomass"),
-      add_dimension(removal, dim = 3.1, nm = "removal"),
-      add_dimension(burn, dim = 3.1, nm = "burned"),
-      add_dimension(ash, dim = 3.1, nm = "ash"),
-      add_dimension(recycle, dim = 3.1, nm = "recycle"))
+                 add_dimension(production, dim = 3.1, nm = "biomass"),
+                 add_dimension(removal, dim = 3.1, nm = "removal"),
+                 add_dimension(burn, dim = 3.1, nm = "burned"),
+                 add_dimension(ash, dim = 3.1, nm = "ash"),
+                 add_dimension(recycle, dim = 3.1, nm = "recycle"))
 
   } else if (products == "sum") {
 

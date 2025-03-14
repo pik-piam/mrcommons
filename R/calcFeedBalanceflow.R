@@ -16,6 +16,7 @@
 
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 cellular = FALSE,
+                                cells = "lpjcell",
                                 products = "kall",
                                 future = "constant") {
 
@@ -31,7 +32,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
     faoFeed          <- add_columns(faoFeed, addnm = "pasture", dim = 3.1)
 
-    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE,
+    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE, cells = "lpjcell",
                                    aggregate = FALSE, nutrients = "all", products = products)
     magFeed          <- magFeednutrients[, , "dm"]
 
@@ -71,9 +72,9 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     if (any(round(dimSums(feedBalanceflow2, dim = 3.1) - feedBalanceflow, 5) != 0)) {
 
       vcat(verbosity = 2, paste(
-        "Difficult to distribute the balanceflow between different livestock",
-        "commodities, because it is not used at all in the feedbaskets.",
-        "Distributed to ruminants for now."))
+                                "Difficult to distribute the balanceflow between different livestock",
+                                "commodities, because it is not used at all in the feedbaskets.",
+                                "Distributed to ruminants for now."))
       overflow                                <- feedBalanceflow - dimSums(feedBalanceflow2, dim = 3.1)
       feedBalanceflow2[, , "alias_livst_rum"] <- feedBalanceflow2[, , "alias_livst_rum"] + overflow
 
@@ -86,7 +87,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       countryToCell <- toolGetMappingCoord2Country()
       countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
       magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE,
-                                     cellular = TRUE,
+                                     cellular = TRUE, cells = "lpjcell",
                                      aggregate = FALSE, nutrients = "dm", products = products)
       magFeedCell      <- magFeedCell[, , commonproducts]
       magFeedCountry   <- toolAggregate(magFeedCell, rel = countryToCell,
@@ -127,10 +128,10 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     kli  <- findset("kli")
     past <- findset("past")
 
-    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular,
+    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
                                   products = products, future = future, aggregate = FALSE)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
-                                                    cellular = cellular,
+                                                    cellular = cellular, cells = "lpjcell",
                                                     aggregate = FALSE)[, , kli][, past, "dm"])
     livestockProduction <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
     livestockProduction[, , "fish"] <- 0
@@ -149,6 +150,15 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   } else {
     stop("per_livestock_unit has to be boolean")
   }
+
+  if (cellular) {
+    if (cells == "magpiecell") {
+      feedBalanceflow <- toolCoord2Isocell(feedBalanceflow, cells = cells)
+      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
+
+    }
+  }
+
 
   return(list(x = feedBalanceflow,
               weight = weight,

@@ -145,9 +145,9 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
 
     qprod <- collapseNames(calcOutput("FAOharmonized", source = "join2010", aggregate = FALSE)[, , "production"])
 
-   # "2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake" need to be aggregated to get "oilpalm"
-   # remove the original "oilpalm" which has only area harvested
-   qprod[, , "oilpalm"] <- dimSums(qprod[, , c("2577|Palm Oil", "2576|Palmkernel Oil", "259|Cake of palm kernel")])
+    # "2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake" need to be aggregated to get "oilpalm"
+    # remove the original "oilpalm" which has only area harvested
+    qprod[, , "oilpalm"] <- dimSums(qprod[, , c("2577|Palm Oil", "2576|Palmkernel Oil", "259|Cake of palm kernel")])
 
     qprod <- toolAggregate(qprod, rel = aggregation, from = "post2010_FoodBalanceItem",
                            to = "post2010_ProductionItem", dim = 3, partrel = TRUE, verbosity = 2)

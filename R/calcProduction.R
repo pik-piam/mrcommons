@@ -22,7 +22,7 @@
 #' @importFrom magpiesets findset
 
 
-calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
+calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell", # nolint
                            calibrated = TRUE, attributes = "all", irrigation = FALSE) {
 
   if (products == "kcr") {
@@ -58,7 +58,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
                                       dim = 3.1, partrel = TRUE)[, , magCropTypes]
 
       cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cellular = TRUE,
-                                   irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
+                                   cells = "lpjcell", irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
 
       commonYears <- intersect(getYears(yieldsLPJ), getYears(cropareaMAG))
       cropareaMAG <- cropareaMAG[, commonYears, ]
@@ -256,6 +256,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
       ####################################
 
       areaPasture    <- collapseNames(calcOutput("LanduseInitialisation", cellular = TRUE,
+                                                 cells = "lpjcell",
                                                  selectyears = seq(1965, 2015, 5),
                                                  aggregate = FALSE)[, , "past"])
       yieldsPasture  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
@@ -361,6 +362,12 @@ calcProduction <- function(products = "kcr", cellular = FALSE, # nolint
     x <- x[, , attributes]
   }
 
+  if (cellular) {
+    if (cells == "magpiecell") {
+      x <- toolCoord2Isocell(x, cells = cells)
+      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
+    }
+  }
   # Check for NAs and negatives
   if (any(round(x, digits = 4) < 0)) {
     stop("calcProduction produced negative values")

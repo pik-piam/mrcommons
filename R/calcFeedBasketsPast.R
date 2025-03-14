@@ -66,8 +66,8 @@ calcFeedBasketsPast <- function(non_eaten_food = TRUE) { # nolint
   out    <- data$x
 
   return(list(x = out, weight = weight,
-          unit = "1",
-          description = "Detailed historical feed requirements
+              unit = "1",
+              description = "Detailed historical feed requirements
                          in DM per DM products
                          generated for 5 livestock commodities."))
 }

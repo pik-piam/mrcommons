@@ -15,7 +15,7 @@
 #' @importFrom magpiesets findset
 #' @importFrom magclass getNames
 
-calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
+calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell",
                          products = "kall", nutrients = "all") {
 
   if (cellular && (length(nutrients) > 1)) {
@@ -27,8 +27,8 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
 
   past <- findset("past_til2020")
   products2           <- findset(products, noset = "original")
-  
-  kliProduction       <- calcOutput("Production", products = "kli", 
+
+  kliProduction       <- calcOutput("Production", products = "kli", cells = "lpjcell",
                                     cellular = cellular, aggregate = FALSE)
   livestockProduction <- collapseNames(kliProduction[, past, "dm"])
   animalProduction    <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
@@ -38,8 +38,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
   feedBaskets         <- calcOutput("FeedBasketsPast", non_eaten_food = FALSE, aggregate = FALSE)
   feedBaskets         <- feedBaskets[, , products2]
 
-  #extend feedBaskets to 2020 constantly for now
-#  feedBaskets <- toolHoldConstant(feedBaskets, years = c(2015, 2020))
+  # extend feedBaskets to 2020 constantly for now
 
   if (cellular) {
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
@@ -69,7 +68,13 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
   unit                <- "Mt DM/Nr/P/K/WM or PJ energy"
   description         <- paste("Feed: dry matter: Mt (dm), gross energy: PJ (ge), reactive nitrogen: Mt (nr),",
                                "phosphor: Mt (p), potash: Mt (k), wet matter: Mt (wm).")
+  if (cellular) {
+    if (cells == "magpiecell") {
+      feedConsumption <- toolCoord2Isocell(feedConsumption, cells = cells)
+      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
 
+    }
+  }
   return(list(x = feedConsumption,
               weight = NULL,
               unit = unit,

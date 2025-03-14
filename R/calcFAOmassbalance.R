@@ -20,7 +20,7 @@
 
 
 calcFAOmassbalance <- function() {
-  local_options(magclass_sizeLimit = 1e+12) 
+  local_options(magclass_sizeLimit = 1e+12)
   past <- findset("past_til2020")
 
   mb <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
@@ -63,12 +63,12 @@ calcFAOmassbalance <- function() {
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
-  #warnings for small amounts getting past rounding for brans and livestock to feed
+  # warnings for small amounts getting past rounding for brans and livestock to feed
   mb3 <- mbind(mb2, feed)
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
-  #quick fix, make 2020 same as 2019
-  forest2020 <- forest[,2019,]
+  # quick fix, make 2020 same as 2019
+  forest2020 <- forest[, 2019, ]
   forest2020 <- setYears(forest2020, 2020)
   forest <- mbind(forest, forest2020)
 
@@ -90,7 +90,7 @@ calcFAOmassbalance <- function() {
   # Adding Crop Residues Production and use
   kres <- findset("kres")
   res <- calcOutput("ResDemand", aggregate = FALSE)
- 
+
   res <- as.magpie(aperm(unwrap(res), c(1, 2, 4, 3, 5)))
   mb3[, , kres][, , c("bioenergy", "domestic_supply", "feed", "other_util", "production")] <- res
 
@@ -113,7 +113,7 @@ calcFAOmassbalance <- function() {
             "oils")][, , "other_util"] <- mb3[, , c("ethanol",
                                                     "oils")][, , "other_util"] - mb3[, , c("ethanol",
                                                                                            "oils")][, , "bioenergy"]
-  #round to 1 ton to avoid calculation issues
+  # round to 1 ton to avoid calculation issues
   mb3 <- round(mb3, 6)
 
   return(list(

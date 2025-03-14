@@ -52,8 +52,8 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
   vcat(2, "Fish production is allocated to oceans, but happens in both Oceans and Inland water bodies")
 
   return(list(
-    x = budget,
-    weight = NULL,
-    unit = "Mt Nr",
-    description = "Nitrogen budget for oceans"))
+              x = budget,
+              weight = NULL,
+              unit = "Mt Nr",
+              description = "Nitrogen budget for oceans"))
 }
