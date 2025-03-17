@@ -47,7 +47,7 @@ calcMAgPIEReport <- function(subtype) {
   } else if (subtype == "co2") {
     mapping <- inline.data.frame(
       "oldnames;newnames",
-      "Emissions|CO2|Land|+|Land-use Change (Mt CO2/yr);co2luc"
+      "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr);co2luc"
     )
 
     x <- x[, , mapping$oldnames]
@@ -70,9 +70,9 @@ calcMAgPIEReport <- function(subtype) {
   getNames(x) <- getNames(x) %>%
     stringr::str_replace_all(c(
       "^C_"               = "",
-      "-PkBudg650-mag-4"    = ".rcp20",
-      "-PkBudg1000-mag-4"   = ".rcp26",
-      "-NPi2025-mag-4"      = ".rcp45"
+      "-PkBudg650-rawluc-mag-4"  = ".rcp20",
+      "-PkBudg1000-rawluc-mag-4" = ".rcp26",
+      "-NPi2025-rawluc-mag-4"    = ".rcp45"
       # "-Base-mag-4"       = ".none",  # nolint
     ))
 
