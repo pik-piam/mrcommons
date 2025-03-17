@@ -3,6 +3,7 @@
 #'
 #' @param per_livestock_unit default false
 #' @param cellular   if TRUE value is calculate on cellular level
+#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @return List of magpie objects with results on country or cellular level, unit and description.
