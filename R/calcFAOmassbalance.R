@@ -45,7 +45,7 @@ calcFAOmassbalance <- function() {
 
   ### Add feed by animal group
   # consists of feed by animal group according to Isabelle Weindls Feed Baskets
-  # plus a balanceflow to bee consistent with FAO
+  # plus a balanceflow to be consistent with FAO
   feed <- calcOutput("FeedPast", balanceflow = FALSE, aggregate = FALSE)
   getNames(feed, dim = 1) <- paste0("feed_", substring(getNames(feed, dim = 1), 7))
   feed <- as.magpie(aperm(unwrap(feed), c(1, 2, 4, 3, 5)))
