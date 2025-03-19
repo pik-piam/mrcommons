@@ -37,7 +37,6 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
   if (convert == TRUE) {
     population <- calcOutput("Population",
                              scenario = c("SSPs", "SDPs"),
-                             naming = "scenario",
                              years = magpiesets::findset("time"),
                              aggregate = FALSE)
     diff <- dimSums(demo, dim = c("sex", "age", "education")) - population[, getYears(demo), getNames(demo, dim = 1)]

@@ -19,7 +19,6 @@ calcDevelopmentState <- function(upper = 12746, lower = 1045) {
 
   gdpPc <- calcOutput("GDPpc",
                       scenario = c("SSPs", "SDPs"),
-                      naming = "scenario",
                       aggregate = FALSE,
                       supplementary = TRUE)
   weight <- collapseNames(gdpPc$weight)
