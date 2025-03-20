@@ -1,13 +1,14 @@
 #' @title calcFeedPast
 #' @description Combines feed baskets of the past with livestock production to get total feed demand
 #'
-#' @param balanceflow if TRUE, non-eaten food is included in feed baskets, if not it is excluded.
+#' @param balanceflow if TRUE, a feed balance flow is included in total feed demand, if not it is excluded.
 #' @param products    products in feed baskets that shall be reported
-#' @param cellular    if TRUE value is calculate on cellular level with returned datajust in dry matter
+#' @param cellular    if TRUE value is calculated on cellular level with returned data just in dry matter
+#' @param cells       Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param nutrients   nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P),
 #'                    Generalizable Energy (GE) and wet matter (WM).
 #' @return List of magpie objects with results on country or cellular level, unit and description.
-#' @author Isabelle Weindl, Benjamin Leon Bodirsky, Kristine Karstems
+#' @author Isabelle Weindl, Benjamin Leon Bodirsky, Kristine Karstens
 #' @examples
 #' \dontrun{
 #' calcOutput("FeedPast")
@@ -37,8 +38,6 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
 
   feedBaskets         <- calcOutput("FeedBasketsPast", non_eaten_food = FALSE, aggregate = FALSE)
   feedBaskets         <- feedBaskets[, , products2]
-
-  # extend feedBaskets to 2020 constantly for now
 
   if (cellular) {
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
