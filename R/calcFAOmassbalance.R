@@ -32,7 +32,7 @@ calcFAOmassbalance <- function() {
                "domestic_supply",
                "food", "feed", "seed", "waste", "other_util", "bioenergy",
                "milling", "brans1", "branoil1", "flour1",
-               "refining", "sugar1", "sugar2", "molasses1",
+               "refining", "sugar1", "sugar2", "sugar3", "molasses1",
                "extracting", "oil1", "oil2", "oilcakes1",
                "fermentation", "alcohol1",
                "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
