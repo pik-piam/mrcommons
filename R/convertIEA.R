@@ -24,8 +24,8 @@ convertIEA <- function(x, subtype) {
       x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
 
     # calculate weight to be used for regional disaggregations
-    wp <- calcOutput("Population", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
-    wg <- calcOutput("GDP", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
+    wp <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[, 2010, ]
+    wg <- calcOutput("GDP", scenario = "SSP2", aggregate = FALSE)[, 2010, ]
     wp <- wp / max(wp)
     wg <- wg / max(wg)
     w <- wp + wg
