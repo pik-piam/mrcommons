@@ -1,7 +1,7 @@
 Type: Package
 Package: mrcommons
 Title: MadRat commons Input Data Library
-Version: 1.51.3
+Version: 1.51.4
 Date: 2025-03-27
 Authors@R: c(
     person("Benjamin Leon", "Bodirsky", , "bodirsky@pik-potsdam.de", role = "aut"),
@@ -21,7 +21,7 @@ Authors@R: c(
     person("Antoine", "Levesque", role = "aut"),
     person("David", "Klein", role = "aut"),
     person("Ewerton", "Araujo", role = "aut"),
-    person("Bleidorn", "Eva", role = "aut"),
+    person("Eva", "Bleidorn", role = "aut"),
     person("Felicitas", "Beier", role = "aut"),
     person("Julian", "Oeser", role = "aut"),
     person("Michaja", "Pehl", role = "aut"),
