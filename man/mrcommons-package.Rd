@@ -39,6 +39,7 @@ Authors:
   \item Antoine Levesque
   \item David Klein
   \item Ewerton Araujo
+  \item Bleidorn Eva
   \item Felicitas Beier
   \item Julian Oeser
   \item Michaja Pehl
