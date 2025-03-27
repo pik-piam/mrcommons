@@ -1,6 +1,6 @@
 # MadRat commons Input Data Library
 
-R package **mrcommons**, version **1.51.4**
+R package **mrcommons**, version **1.51.5**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/mrcommons)](https://cran.r-project.org/package=mrcommons) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009) [![R build status](https://github.com/pik-piam/mrcommons/workflows/check/badge.svg)](https://github.com/pik-piam/mrcommons/actions) [![codecov](https://codecov.io/gh/pik-piam/mrcommons/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrcommons) [![r-universe](https://pik-piam.r-universe.dev/badges/mrcommons)](https://pik-piam.r-universe.dev/builds)
 
@@ -40,7 +40,7 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **mrcommons** in publications use:
 
-Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Bleidorn E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse R, Abrahão G, Weigmann P, Dietrich J (2025). "mrcommons: MadRat commons Input Data Library." doi:10.5281/zenodo.3822009 <https://doi.org/10.5281/zenodo.3822009>, Version: 1.51.4, <https://github.com/pik-piam/mrcommons>.
+Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Bleidorn E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse R, Abrahão G, Weigmann P, Dietrich J (2025). "mrcommons: MadRat commons Input Data Library." doi:10.5281/zenodo.3822009 <https://doi.org/10.5281/zenodo.3822009>, Version: 1.51.5, <https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
 
@@ -52,6 +52,6 @@ A BibTeX entry for LaTeX users is
   date = {2025-03-27},
   year = {2025},
   url = {https://github.com/pik-piam/mrcommons},
-  note = {Version: 1.51.4},
+  note = {Version: 1.51.5},
 }
 ```
