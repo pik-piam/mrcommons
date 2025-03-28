@@ -23,7 +23,7 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
   }
 
   slaughterFactor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor",
-                                                        aggregate = FALSE))[, , kli]
+                                                       aggregate = FALSE))[, , kli]
   attributesLivingAnimals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = FALSE)[, , kli]
 
   weight <- fbask
