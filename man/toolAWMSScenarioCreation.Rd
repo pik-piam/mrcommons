@@ -4,29 +4,48 @@
 \alias{toolAWMSScenarioCreation}
 \title{toolAWMSScenarioCreation}
 \usage{
-toolAWMSScenarioCreation(name, startYear, categories, values, out)
+toolAWMSScenarioCreation(
+  name,
+  startYear,
+  targetYears,
+  targetAWMS,
+  typeAWMS,
+  valuesAWMS,
+  out
+)
 }
 \arguments{
-\item{name}{Name of the scenario}
+\item{name}{Character. Name of the scenario.}
 
-\item{startYear}{Year were prediction starts}
+\item{startYear}{The year when prediction starts.}
 
-\item{categories}{share of manure managed in different animal waste management systems}
+\item{targetYears}{Target years for applying AWMS scenario adjustments.}
 
-\item{values}{target values}
+\item{targetAWMS}{Identifiers for the AWMS items to be targeted with scenario adjustments.}
 
-\item{out}{contains historical data}
+\item{typeAWMS}{Specifies the type of target adjustment for each AWMS in targetAWMS.
+Acceptable values are "target" for absolute target values and "relative_change" for adjustments
+relative to baseline.}
+
+\item{valuesAWMS}{List. Each element corresponds to a target year and contains a numeric vector of
+target values for each AWMS in targetAWMS. For "target" types, the value represents the absolute
+target share; for "relative_change" types, the value is a multiplicative factor applied to baseline shares.}
+
+\item{out}{a magclass object containing historical data, which is used to extract baseline values and to
+propagate the scenario convergence.}
 }
 \value{
-List of magpie objects with results on country level, weight on country level, unit and description.
+a magclass object
 }
 \description{
-tool function to calculate the share of manure managed in different animal waste management systems
-in confinements.
+Tool function to calculate the share of manure managed in different animal waste
+management systems in confinements. This function creates AWMS scenarios by applying
+absolute target shares and relative changes to baseline shares, then distributing any
+remaining manure proportions among non-target AWMS items.
 }
 \seealso{
 \code{\link[=calcAWMSconfShr]{calcAWMSconfShr()}}
 }
 \author{
-Edna J. Molina Bacca
+Michael Crawford, Edna J. Molina Bacca
 }

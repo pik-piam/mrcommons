@@ -1,7 +1,7 @@
 Type: Package
 Package: mrcommons
 Title: MadRat commons Input Data Library
-Version: 1.52.2
+Version: 1.53.0
 Date: 2025-04-08
 Authors@R: c(
     person("Benjamin Leon", "Bodirsky", , "bodirsky@pik-potsdam.de", role = "aut"),

@@ -30,7 +30,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
 
     if (cellular) {
-      devStatePast    <- toolIso2CellCountries(devStatePast, cells = "lpjcell")
+      devStatePast    <- toolIso2CellCountries(devStatePast)
     }
 
     # if the following parameters are changed, they also have to be changed in the GAMS code!
@@ -72,7 +72,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
                                         - fieldbalance[, , "burned"] - fieldbalance[, , "ash"]))[, , "nr"])
       removalshare[is.nan(removalshare)] <- 1
 
-      removalshare <- toolIso2CellCountries(removalshare, cells = "lpjcell")
+      removalshare <- toolIso2CellCountries(removalshare)
       cell2Coord   <- toolGetMappingCoord2Country(pretty = TRUE)
       removalshare <- toolAggregate(x = removalshare, rel = cell2Coord,
                                     from = "iso", to = "coords", partrel = TRUE)
@@ -101,12 +101,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
     }
 
     ### generate output
-    out <- mbind(
-      add_dimension(production, dim = 3.1, nm = "biomass"),
-      add_dimension(removal, dim = 3.1, nm = "removal"),
-      add_dimension(burn, dim = 3.1, nm = "burned"),
-      add_dimension(ash, dim = 3.1, nm = "ash"),
-      add_dimension(recycle, dim = 3.1, nm = "recycle"))
+    out <- mbind(add_dimension(production, dim = 3.1, nm = "biomass"),
+                 add_dimension(removal, dim = 3.1, nm = "removal"),
+                 add_dimension(burn, dim = 3.1, nm = "burned"),
+                 add_dimension(ash, dim = 3.1, nm = "ash"),
+                 add_dimension(recycle, dim = 3.1, nm = "recycle"))
 
   } else if (products == "sum") {
 
