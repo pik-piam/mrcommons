@@ -46,7 +46,7 @@ readSoilGrids <- function(subtype) {
                sandfrac_15     = "SNDPPT_M_sl3_250m_ll.tif",
                # Sand content (50-2000 micro meter) mass fraction in % at depth 0.15 m
                sandfrac_30     = "SNDPPT_M_sl4_250m_ll.tif")
-               # Sand content (50-2000 micro meter) mass fraction in % at depth 0.30 m
+    # Sand content (50-2000 micro meter) mass fraction in % at depth 0.30 m
 
     file <- toolSubtypeSelect(subtype, files)
   }
@@ -72,7 +72,7 @@ readSoilGrids <- function(subtype) {
   map       <- toolGetMappingCoord2Country(pretty = TRUE)
 
   # Change longitude and latitude
-  r50   <- raster(res = 0.5)
+  r50   <- raster(resolution = 0.5)
   mag   <- projectRaster(out, r50, over = TRUE)
   mag   <- as.magpie(terra::extract(mag, map[c("lon", "lat")]), spatial = 1)
 
