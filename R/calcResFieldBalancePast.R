@@ -30,7 +30,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
 
     if (cellular) {
-      devStatePast    <- toolIso2CellCountries(devStatePast)
+      devStatePast    <- toolIso2CellCountries(devStatePast, cells = "lpjcell")
     }
 
     # if the following parameters are changed, they also have to be changed in the GAMS code!
@@ -72,7 +72,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
                                         - fieldbalance[, , "burned"] - fieldbalance[, , "ash"]))[, , "nr"])
       removalshare[is.nan(removalshare)] <- 1
 
-      removalshare <- toolIso2CellCountries(removalshare)
+      removalshare <- toolIso2CellCountries(removalshare, cells = "lpjcell")
       cell2Coord   <- toolGetMappingCoord2Country(pretty = TRUE)
       removalshare <- toolAggregate(x = removalshare, rel = cell2Coord,
                                     from = "iso", to = "coords", partrel = TRUE)

@@ -39,7 +39,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
   feedBaskets         <- calcOutput("FeedBasketsPast", non_eaten_food = FALSE, aggregate = FALSE)
   feedBaskets         <- feedBaskets[, , products2]
   if (cellular) {
-    feedBaskets <- toolIso2CellCountries(feedBaskets)
+    feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
   }
 
   feedConsumption  <- animalProduction * feedBaskets
