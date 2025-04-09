@@ -28,9 +28,9 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   startYear   = "y2010",
                                   targetYears = c("y2030", "y2050", "y2100"),
                                   targetAWMS  = c("digester", "lagoon"),
-                                  valuesAWMS  = list(c(0.10, 0.90),
-                                                     c(0.40, 0.50),
-                                                     c(0.80, 0.10)),
+                                  valuesAWMS  = list(c(0.10, 0.75),
+                                                     c(0.35, 0.00),
+                                                     c(0.70, 0.00)),
                                   typeAWMS    = c("target", "relative_change"),
                                   out)
 
@@ -39,8 +39,8 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   targetYears = c("y2030", "y2050", "y2100"),
                                   targetAWMS  = c("digester", "lagoon"),
                                   valuesAWMS  = list(c(0.10, 0.90),
-                                                     c(0.30, 0.60),
-                                                     c(0.60, 0.30)),
+                                                     c(0.30, 0.50),
+                                                     c(0.50, 0.00)),
                                   typeAWMS    = c("target", "relative_change"),
                                   out)
 
@@ -50,7 +50,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   targetAWMS  = c("digester"),
                                   valuesAWMS  = list(c(0.10),
                                                      c(0.30),
-                                                     c(0.60)),
+                                                     c(0.50)),
                                   typeAWMS    = c("target"),
                                   out)
 
@@ -58,9 +58,9 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   startYear   = "y2010",
                                   targetYears = c("y2030", "y2050", "y2100"),
                                   targetAWMS  = c("lagoon"),
-                                  valuesAWMS  = list(c(1.11),
-                                                     c(1.66),
-                                                     c(3.33)),
+                                  valuesAWMS  = list(c(1.25),
+                                                     c(1.50),
+                                                     c(2.00)),
                                   typeAWMS    = c("relative_change"),
                                   out)
 
@@ -70,7 +70,7 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   targetAWMS  = c("digester"),
                                   valuesAWMS  = list(c(0.10),
                                                      c(0.30),
-                                                     c(0.60)),
+                                                     c(0.50)),
                                   typeAWMS    = c("target"),
                                   out)
 
@@ -78,9 +78,9 @@ calcAWMSconfShr <- function(rev = 0.1) {
                                   startYear   = "y2010",
                                   targetYears = c("y2030", "y2050", "y2100"),
                                   targetAWMS  = c("digester", "lagoon"),
-                                  valuesAWMS  = list(c(0.10, 1.11),
-                                                     c(0.40, 1.66),
-                                                     c(0.80, 3.33)),
+                                  valuesAWMS  = list(c(0.10, 1.25),
+                                                     c(0.35, 1.50),
+                                                     c(0.70, 2.00)),
                                   typeAWMS    = c("target", "relative_change"),
                                   out)
 
