@@ -15,7 +15,7 @@
 
 # recycling of food waste and sewage?
 calcFoodWasteAndSewage <- function(historic = TRUE) {
-  past <- findset("past_til2020")
+  past <- findset("past")
   mb <- calcOutput("FAOmassbalance", aggregate = FALSE)
   demand <- collapseNames(mb[, , "households"][, past, c("nr")])
   getSets(demand)[[3]] <- "ItemCodeItem"
