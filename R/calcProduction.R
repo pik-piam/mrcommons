@@ -263,7 +263,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
                                                  climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
                                                  stage = "smoothed", aggregate = FALSE)[, , "mgrass.rainfed"])
 
-      commonYears <- intersect(getYears(areaPasture), getYears(cropareaMAG))
+      commonYears <- intersect(getYears(areaPasture), getYears(yieldsPasture))
       areaPasture   <- areaPasture[, commonYears, ]
       yieldsPasture <- yieldsPasture[, commonYears, ]
 
