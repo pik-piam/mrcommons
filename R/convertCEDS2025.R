@@ -1,11 +1,11 @@
-#' @title convertCEDS2024
+#' @title convertCEDS2025
 #'
 #' @description converts emission data from the CEDS database
 #' @param x magpie object from source function
 #' @return MAgPIE object
 #' @author Benjamin Leon Bodirsky, David Klein
 
-convertCEDS2024 <- function(x) {
+convertCEDS2025 <- function(x) {
 
   # fill all missing countries with 0
   x[is.na(x)] <- 0
