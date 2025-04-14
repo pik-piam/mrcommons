@@ -1,7 +1,7 @@
 #' Calculate historical system-specific feed baskets based on output of MAgPIE_FEED model
 #' as DM feed biomass (different types of feed) needed per DM livestock products of respective systems
 #'
-#' @return Historical system-specific feed baskets and corresonding weights as a list of two MAgPIE
+#' @return Historical system-specific feed baskets and corresponding weights as a list of two MAgPIE
 #' objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich
 #' @seealso [calcOutput()], [readFeedModel()], [calcFeedBasketsPast()]
