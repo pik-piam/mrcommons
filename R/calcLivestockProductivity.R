@@ -1,13 +1,10 @@
 #' Calculate Yields for Livestock
 #' @description
-#' Provides MAgPIE-FEED data for livestock-yields calculated in the regression
-#' for feed (calcRegressionFEED).. No changes to the content have been done,
-#' besides renaming and providing weights.
+#' Provides livestock yields for historical and future years.
 #'
 #'
-#' @param future if TRUE calculates Constant future and linear trends based on SSP Expert guesses
-#' @return MAgPIE-FEED data for livestock-yields and corresonding weights as a
-#' list of two MAgPIE objects
+#' @param future if TRUE calculates constant future and linear trends based on SSP Expert guesses
+#' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Isabelle Weindl, Lavinia Baumstark, Stephen Wirth
 #' @seealso [calcOutput()], [readSource()]
 #' @examples
