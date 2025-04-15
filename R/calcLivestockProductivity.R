@@ -19,24 +19,21 @@
 
 calcLivestockProductivity <- function(future = TRUE) {
 
-  stock <- readSource("FAO_online", subtype = "LiveHead")
-  prim  <- readSource("FAO_online", subtype = "LivePrim")
-
+  liv <- readSource("FAO_online", subtype = "CropLive2010")
+  
   # separate FAO variable number
-  getNames(stock) <- gsub("\\|", ".", getNames(stock))
-  getNames(prim)  <- gsub("\\|", ".", getNames(prim))
+  getNames(liv) <- gsub("\\|", ".", getNames(liv))
 
   # calculate stockYield
-  types <- c("Pigs", "Cattle", "Chickens")
-  names(types) <- c("Meat, pig", "Meat, cattle", "Meat, chicken")
+  types <- c("Swine / pigs", "Cattle", "Chickens")
+  names(types) <- c("Meat of pig with the bone, fresh or chilled", "Meat of cattle with the bone, fresh or chilled", "Meat of chickens, fresh or chilled")
   # magpie object of 10 time steps for meat from cattle, chicken and pigs
-  x1 <- setNames(prim[, , "production"][, , names(types)], unname(types))
+  x1 <- setNames(liv[, , "Production_(t)"][, , names(types)], unname(types))
   # magpie object of 10 time steps for animal numbers for cattle, chicken and pigs
-  x2 <- collapseNames(stock[, , types, drop = TRUE], collapsedim = 1)
+  x2 <- collapseNames(liv[, , "stock"][, , types, drop = TRUE], collapsedim = 1)
 
-  tmp <- intersect(getYears(x1), getYears(x2))
-  out <- toolNAreplace(x1[, tmp, ] / x2[, tmp, ], x2[, tmp, ], replaceby = dimSums(x1[, tmp, ], dim = 1) /
-                         dimSums(x2[, tmp, ], dim = 1), val.rm = 0)
+  out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) /
+                         dimSums(x2, dim = 1), val.rm = 0)
   stockYield <- out$x
   weight      <- out$weight
   getNames(stockYield) <- paste0("stock_yield.", getNames(stockYield))
@@ -44,9 +41,9 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   # calculate prodYield
   types <- c("Eggs", "Milk")
-  x1 <- setNames(prim[, , "production"][, , c("Eggs, hen, in shell", "Milk, whole fresh cow")], types)
-  x2 <- setNames(prim[, , c("1062.Eggs, hen, in shell.Laying_(Head)",
-                            "882.Milk, whole fresh cow.Milk_Animals_(Head)")], types)
+  x1 <- setNames(liv[, , "Production_(t)"][, , c("Hen eggs in shell, fresh", "Raw milk of cattle")], types)
+  x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(An)",
+                            "882.Raw milk of cattle.Milk_Animals_(An)")], types)
   # prim prod sum / prod head
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) / dimSums(x2, dim = 1), val.rm = 0)
   prodYield <- out$x
@@ -61,14 +58,14 @@ calcLivestockProductivity <- function(future = TRUE) {
   getNames(yield) <- getNames(yield, dim = 2)
   getNames(weight) <- getNames(weight, dim = 2)
   mapping <- data.frame(
-    groups = c("Pigs", "Cattle", "Chickens", "Eggs", "Milk"),
+    groups = c("Swine / pigs", "Cattle", "Chickens", "Eggs", "Milk"),
     sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"), stringsAsFactors = FALSE)
 
   yield <- rename_dimnames(yield, dim = 3, query = mapping, from = "groups", to = "sys")
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "groups", to = "sys")
 
   # preparing output for magpie time steps "past"
-  past <- findset("past")
+  past <- findset("past_til2020")
   yieldPast <- yield[, past, ]
   weightPast <- weight[, past, ]
 
