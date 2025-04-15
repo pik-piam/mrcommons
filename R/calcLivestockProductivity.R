@@ -50,7 +50,7 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   # put both into one magpie
   weight <- mbind(weight, weight2)
-  yield <- mbind(stockYield[, tmp, ], prodYield[, tmp, ])
+  yield <- mbind(stockYield, prodYield)
 
   getNames(yield) <- getNames(yield, dim = 2)
   getNames(weight) <- getNames(weight, dim = 2)
