@@ -20,7 +20,6 @@ calcLivestockProductivity <- function(future = TRUE) {
   
   # separate FAO variable number
   getNames(liv) <- gsub("\\|", ".", getNames(liv))
-
   # calculate stockYield
   types <- c("Swine / pigs", "Cattle", "Chickens")
   names(types) <- c("Meat of pig with the bone, fresh or chilled", "Meat of cattle with the bone, fresh or chilled", "Meat of chickens, fresh or chilled")
@@ -74,28 +73,6 @@ calcLivestockProductivity <- function(future = TRUE) {
     ))
   } else if (future == TRUE) {
     histYield <- clean_magpie(yield, what = "sets")
-
-    # extrapolate the trends to 2020 to reduce the number of time steps filled by the expertGuess-approach below
-    # select two 5-year averages for the 2 time steps to be used for extrapolation
-    average <- 5
-    dt <- floor(average / 2)
-    year1 <- tail(getYears(histYield), n = average + dt + 1)[1]
-    year2 <- tail(getYears(histYield), n = dt + 1)[1]
-    exyears <- c(year1, year2)
-    exyears <- as.numeric(gsub("y", "", exyears))
-
-    dataset <- mbind(toolTimeAverage(histYield[, seq(exyears[1] - dt, exyears[1] + dt), ], average),
-                     toolTimeAverage(histYield[, seq(exyears[2] - dt, exyears[2] + dt), ], average))
-    extra2020 <- time_interpolate(dataset = dataset,
-                                  interpolated_year = 2020,
-                                  integrate_interpolated_years = FALSE,
-                                  extrapolation_type = "linear")
-
-    for (i in getNames(histYield)) {
-      extra2020[, , i] <- toolConditionalReplace(extra2020[, , i], "<0", min(histYield[, , i]))
-    }
-
-    histYield <- mbind(histYield, extra2020)
 
     # selecting data for years included in magpie time steps "time"
     magYears <- findset("time")
