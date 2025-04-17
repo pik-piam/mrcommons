@@ -19,7 +19,7 @@
 calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario = "default") {
 
   if (products == "kres") {
-    past              <- findset("past")
+    past              <- findset("past_til2020")
     relevantNutrients <- c("nr", "p", "k", "c")  # after burning, unclear what dm and ge may be
 
     production        <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag",
@@ -27,7 +27,9 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
     burnshr           <- calcOutput("ResCombustEff", aggregate = FALSE)[, , getNames(production, dim = 1)]
     devStatePast      <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"])
-
+    commonYears  <- intersect(getYears(production), getYears(devStatePast))
+    devStatePast <- devStatePast[, commonYears, ]
+    production   <- production [, commonYears, ]
 
     if (cellular) {
       devStatePast    <- toolIso2CellCountries(devStatePast, cells = "lpjcell")
@@ -85,6 +87,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       removal[, , c("res_nouse")] <- 0
     }
 
+     commonYears <- intersect(getYears(removal), getYears(production))
+      removal     <- removal[, commonYears, ]
+      production  <- production [, commonYears, ]
+      burn        <- burn[, commonYears, ]
+      ash         <- ash [, commonYears, ]
     recycle <- production - removal - burn
 
     ### check for negative recycling shares and decrease removal if nesseccary
