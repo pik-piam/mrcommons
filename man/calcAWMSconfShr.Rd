@@ -25,5 +25,5 @@ calcOutput("AWMSconfShr")
 \code{\link[=calcAWMSconfShrPast]{calcAWMSconfShrPast()}}
 }
 \author{
-Benjamin Leon Bodirsky. Modifications by Edna J. Molina Bacca. Re-written by Michael Crawford.
+Benjamin Leon Bodirsky. Modifications by Edna J. Molina Bacca
 }
