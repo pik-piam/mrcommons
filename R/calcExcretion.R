@@ -60,7 +60,7 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
 
   if (cellular) {
     livestockProduction <- collapseNames(calcOutput("LivestockGridded", details = TRUE, aggregate = FALSE)[, , "dm"])
-
+    livestockProduction <- livestockProduction[, getYears(excretion), ]
     productionWeights   <- new.magpie(cells_and_regions = getItems(livestockProduction, dim = 1),
                                       years = getItems(livestockProduction, dim = 2),
                                       names = outer(getNames(excretion, dim = 1),
