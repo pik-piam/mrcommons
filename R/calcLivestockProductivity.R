@@ -26,8 +26,8 @@ calcLivestockProductivity <- function(future = TRUE) {
   # magpie object of 10 time steps for meat from cattle, chicken and pigs
   x1 <- setNames(liv[, , "Production_(t)"][, , names(types)], unname(types))
   # magpie object of 10 time steps for animal numbers for cattle, chicken and pigs
-  x2_large <- collapseNames(liv[, , "Stocks_(An)"][, , c("Swine / pigs", "Cattle"), drop = TRUE], collapsedim = 1)
-  x2_small <- collapseNames(liv[, , "Stocks_(1000_An)"][, , "Chickens"], collapsedim = c(1,3))
+  x2_large <- collapseNames(liv[, , "stock"][, , c("Swine / pigs", "Cattle"), drop = TRUE], collapsedim = 1)
+  x2_small <- collapseNames(liv[, , "stock"][, , "Chickens"], collapsedim = c(1,3))
   x2 <- mbind(x2_large, x2_small)
 
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) /
@@ -40,7 +40,7 @@ calcLivestockProductivity <- function(future = TRUE) {
   # calculate prodYield
   types <- c("Eggs", "Milk")
   x1 <- setNames(liv[, , "Production_(t)"][, , c("Hen eggs in shell, fresh", "Raw milk of cattle")], types)
-  x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(1000_An)",
+  x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(An)",
                             "882.Raw milk of cattle.Milk_Animals_(An)")], types)
   # prim prod sum / prod head
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) / dimSums(x2, dim = 1), val.rm = 0)
