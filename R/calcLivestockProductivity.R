@@ -42,6 +42,8 @@ calcLivestockProductivity <- function(future = TRUE) {
   x1 <- setNames(liv[, , "Production_(t)"][, , c("Hen eggs in shell, fresh", "Raw milk of cattle")], types)
   x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(An)",
                             "882.Raw milk of cattle.Milk_Animals_(An)")], types)
+  # unit conversion for animal stocks:
+  x2[, , "Eggs"] <- x2[, , "Eggs"]*1000
   # prim prod sum / prod head
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) / dimSums(x2, dim = 1), val.rm = 0)
   prodYield <- out$x
