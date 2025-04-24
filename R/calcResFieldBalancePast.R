@@ -88,11 +88,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       removal[, , c("res_nouse")] <- 0
     }
 
-     commonYears <- intersect(getYears(removal), getYears(production))
-      removal     <- removal[, commonYears, ]
-      production  <- production [, commonYears, ]
-      burn        <- burn[, commonYears, ]
-      ash         <- ash [, commonYears, ]
+    commonYears <- intersect(getYears(removal), getYears(production))
+    removal     <- removal[, commonYears, ]
+    production  <- production [, commonYears, ]
+    burn        <- burn[, commonYears, ]
+    ash         <- ash [, commonYears, ]
     recycle <- production - removal - burn
 
     ### check for negative recycling shares and decrease removal if nesseccary

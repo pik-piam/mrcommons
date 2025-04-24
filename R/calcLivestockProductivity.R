@@ -17,18 +17,20 @@
 calcLivestockProductivity <- function(future = TRUE) {
 
   liv <- readSource("FAO_online", subtype = "CropLive2010")
-  
+
   # separate FAO variable number
   getNames(liv) <- gsub("\\|", ".", getNames(liv))
   # calculate stockYield
   types <- c("Swine / pigs", "Cattle", "Chickens")
-  names(types) <- c("Meat of pig with the bone, fresh or chilled", "Meat of cattle with the bone, fresh or chilled", "Meat of chickens, fresh or chilled")
+  names(types) <- c("Meat of pig with the bone, fresh or chilled",
+                    "Meat of cattle with the bone, fresh or chilled",
+                    "Meat of chickens, fresh or chilled")
   # magpie object of 10 time steps for meat from cattle, chicken and pigs
   x1 <- setNames(liv[, , "Production_(t)"][, , names(types)], unname(types))
   # magpie object of 10 time steps for animal numbers for cattle, chicken and pigs
-  x2_large <- collapseNames(liv[, , "stock"][, , c("Swine / pigs", "Cattle"), drop = TRUE], collapsedim = 1)
-  x2_small <- collapseNames(liv[, , "stock"][, , "Chickens"], collapsedim = c(1,3))
-  x2 <- mbind(x2_large, x2_small)
+  x2large <- collapseNames(liv[, , "stock"][, , c("Swine / pigs", "Cattle"), drop = TRUE], collapsedim = 1)
+  x2small <- collapseNames(liv[, , "stock"][, , "Chickens"], collapsedim = c(1, 3))
+  x2 <- mbind(x2large, x2small)
 
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) /
                          dimSums(x2, dim = 1), val.rm = 0)
@@ -41,7 +43,7 @@ calcLivestockProductivity <- function(future = TRUE) {
   types <- c("Eggs", "Milk")
   x1 <- setNames(liv[, , "Production_(t)"][, , c("Hen eggs in shell, fresh", "Raw milk of cattle")], types)
   x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(An)",
-                            "882.Raw milk of cattle.Milk_Animals_(An)")], types)
+                           "882.Raw milk of cattle.Milk_Animals_(An)")], types)
 
   # prim prod sum / prod head
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) / dimSums(x2, dim = 1), val.rm = 0)
@@ -57,8 +59,8 @@ calcLivestockProductivity <- function(future = TRUE) {
   getNames(yield) <- getNames(yield, dim = 2)
   getNames(weight) <- getNames(weight, dim = 2)
   mapping <- data.frame(
-    groups = c("Swine / pigs", "Cattle", "Chickens", "Eggs", "Milk"),
-    sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"), stringsAsFactors = FALSE)
+                        groups = c("Swine / pigs", "Cattle", "Chickens", "Eggs", "Milk"),
+                        sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"), stringsAsFactors = FALSE)
 
   yield <- rename_dimnames(yield, dim = 3, query = mapping, from = "groups", to = "sys")
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "groups", to = "sys")
@@ -70,9 +72,9 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   if (future == FALSE) {
     return(list(x = yieldPast,
-                weight = weightPast,
-                unit = c("t Fresh matter per animal"),
-                description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
+      weight = weightPast,
+      unit = c("t Fresh matter per animal"),
+      description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))
   } else if (future == TRUE) {
     histYield <- clean_magpie(yield, what = "sets")
@@ -159,7 +161,7 @@ calcLivestockProductivity <- function(future = TRUE) {
       productivity <- add_columns(productivity, addnm = c("y2030", "y2050", "y2100"), dim = 2.1)
       productivity[, c("y2030", "y2050", "y2100"), ] <- setYears(productivity[, c("y2020"), ], NULL)
       productivity[, c("y2030", "y2050", "y2100"), ] <- productivity[, c("y2030", "y2050", "y2100"), ] +
-                                                        setYears(scenario2[, "y2030", ], NULL) * 10
+        setYears(scenario2[, "y2030", ], NULL) * 10
       productivity[, c("y2050", "y2100"), ] <- productivity[, c("y2050", "y2100"), ] + setYears(scenario2[, "y2050", ],
                                                                                                 NULL) * 20
       productivity[, c("y2100"), ] <- productivity[, c("y2100"), ] + setYears(scenario2[, "y2100", ], NULL) * 50
@@ -172,10 +174,10 @@ calcLivestockProductivity <- function(future = TRUE) {
     output <- add_columns(output, addnm = "constant", dim = 3.2)
     output[, , "constant"] <- outputConstant
 
-  return(list(x = output,
-              weight = weight,
-              unit = c("t Fresh matter per animal"),
-              description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
-  ))
+    return(list(x = output,
+      weight = weight,
+      unit = c("t Fresh matter per animal"),
+      description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
+    ))
   }
 }
