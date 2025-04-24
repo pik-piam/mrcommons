@@ -72,7 +72,7 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   if (future == FALSE) {
     return(list(x = yieldPast,
-      weight = weightPast,
+      weight = weightPast + 1e-10,
       unit = c("t Fresh matter per animal"),
       description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))
@@ -175,7 +175,7 @@ calcLivestockProductivity <- function(future = TRUE) {
     output[, , "constant"] <- outputConstant
 
     return(list(x = output,
-      weight = weight,
+      weight = weight + 1e-10,
       unit = c("t Fresh matter per animal"),
       description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))
