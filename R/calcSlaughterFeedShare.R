@@ -23,7 +23,7 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
   }
 
   slaughterFactor          <- collapseNames(calcOutput("Attributes", subtype = "SlaughterFactor",
-                                                        aggregate = FALSE))[, , kli]
+                                                       aggregate = FALSE))[, , kli]
   attributesLivingAnimals <- calcOutput("Attributes", subtype = "LivingAnimals", aggregate = FALSE)[, , kli]
 
   weight <- fbask
@@ -31,7 +31,7 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
   # limit to max 0.85
   slaughterFeedShare[slaughterFeedShare > 0.85] <- 0.85
 
-  out <- toolNAreplace(slaughterFeedShare, weight)
+  out <- toolNAreplace(slaughterFeedShare, weight + 1e-8)
 
 
   return(list(x = out$x,

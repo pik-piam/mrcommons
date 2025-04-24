@@ -20,7 +20,7 @@ readTNC2019 <- function() {
   defer(terraOptions(tempdir = tempdir()))
 
   # create a reference raster with a spatial resolution of 0.5°
-  refRast <- rast(res = 0.5)
+  refRast <- rast(resolution = 0.5)
 
   # read vector data
   tncShp <- vect("./terr-ecoregions-TNC/tnc_terr_ecoregions.shp")
@@ -34,7 +34,7 @@ readTNC2019 <- function() {
     br <- tncShp[tncShp$RealmMHT %in% biomeId[i], "RealmMHT"]
     br <- suppressWarnings(rasterize(br, refRast, cover = FALSE))
     br <- classify(br, cbind(1, i))
-   biomeRealmRast <- suppressWarnings(c(biomeRealmRast, br))
+    biomeRealmRast <- suppressWarnings(c(biomeRealmRast, br))
   }
 
   ## make sure that all magclass cells are covered along the sea coast

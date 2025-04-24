@@ -4,8 +4,8 @@
 #'
 #' @param x MAgPIE object containing IEA values at IEA mixed country-region
 #' resolution
-#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest", or
-#' "Emissions"
+#' @param subtype data subtype. Either "EnergyBalances", "EnergyBalances-latest",
+#' or "Emissions"
 #' @return IEA data as MAgPIE object aggregated to country level
 #' @author Anastasis Giannousakis, Renato Rodrigues, Falk Benke
 #' @importFrom dplyr %>% filter
@@ -24,8 +24,8 @@ convertIEA <- function(x, subtype) {
       x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
 
     # calculate weight to be used for regional disaggregations
-    wp <- calcOutput("Population", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
-    wg <- calcOutput("GDP", scenario = "SSP2", naming = "scenario", aggregate = FALSE)[, 2010, ]
+    wp <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[, 2010, ]
+    wg <- calcOutput("GDP", scenario = "SSP2", aggregate = FALSE)[, 2010, ]
     wp <- wp / max(wp)
     wg <- wg / max(wg)
     w <- wp + wg

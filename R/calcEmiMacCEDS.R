@@ -16,7 +16,7 @@
 #' @importFrom magclass getNames<- getYears<-
 
 calcEmiMacCEDS <- function(baseyear = 2020) {
-  fullceds <- readSource("CEDS2024")[, baseyear, ]
+  fullceds <- readSource("CEDS2025")[, baseyear, ]
 
   # emissions for the calculation of econometric paramter p1
   co2 <- fullceds[, , "co2_c"] * 1e-3 # MtC to GtC

@@ -70,8 +70,9 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
       out <- collapseNames(domestic + transboundary)
       out <- dimOrder(out, perm = c(2, 1))
       if (cellular) {
-        weight <- collapseNames(calcOutput("AtmosphericDeposition", datasource = "ACCMIP", glo = FALSE, cellular = TRUE,
-                                           cells = "lpjcell", emission = FALSE, scenario = NULL, aggregate = FALSE))
+        weight <- collapseNames(calcOutput("AtmosphericDeposition", datasource = "ACCMIP",
+                                           glo_incl_oceans = FALSE, cellular = TRUE, cells = "lpjcell",
+                                           emission = FALSE, scenario = NULL, aggregate = FALSE))
         commonCtries <- intersect(getItems(weight, dim = "iso"), getItems(out, dim = 1))
         out <- out[commonCtries, , ]
         getSets(out) <- c("iso", "year", "landuse", "data1")

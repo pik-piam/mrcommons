@@ -19,7 +19,6 @@ calcDevelopmentState <- function(upper = 12746, lower = 1045) {
 
   gdpPc <- calcOutput("GDPpc",
                       scenario = c("SSPs", "SDPs"),
-                      naming = "scenario",
                       aggregate = FALSE,
                       supplementary = TRUE)
   weight <- collapseNames(gdpPc$weight)
@@ -31,7 +30,7 @@ calcDevelopmentState <- function(upper = 12746, lower = 1045) {
 
   list(x = developed,
        weight = weight,
-       unit = "share",
+       unit = "fraction",
        description = paste("Development state according to worldbank",
                            "definitions: 0 is a low income country with less than 1000 USD",
                            "per capita per year, 1 is a high-income country with more than",

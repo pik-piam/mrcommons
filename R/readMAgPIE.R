@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2025-01"
+  ver <- "2025-03"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -48,21 +48,20 @@ readMAgPIE <- function(subtype) {
     # !!! ATTENTION !!!
     # Please update scenario names in calcMAgPIEReport.R
 
-    fileList <- c("C_SSP1-NPi2025-mag-4.mif",
-                  "C_SSP1-PkBudg1000-mag-4.mif",
-                  "C_SSP1-PkBudg650-mag-4.mif",
-                  #"C_SSP2_lowEn-NPi2025-mag-4.mif", # was infeasible -> use SSP2-NPi2025 instead.
-                  #                                    Remove copy in calcMAgPIEReport if scenario becomes available!
-                  "C_SSP2_lowEn-PkBudg1000-mag-4.mif",
-                  "C_SSP2_lowEn-PkBudg650-mag-4.mif",
-                  "C_SSP2-NPi2025-mag-4.mif",
-                  "C_SSP2-PkBudg1000-mag-4.mif",
-                  "C_SSP2-PkBudg650-mag-4.mif",
-                  "C_SSP3-NPi2025-mag-4.mif",
-                  "C_SSP3-PkBudg1000-mag-4.mif",
-                  "C_SSP5-NPi2025-mag-4.mif",
-                  "C_SSP5-PkBudg1000-mag-4.mif",
-                  "C_SSP5-PkBudg650-mag-4.mif")
+    fileList <- c("C_SSP1-NPi2025-rawluc-mag-4.mif",
+                  "C_SSP1-PkBudg1000-rawluc-mag-4.mif",
+                  "C_SSP1-PkBudg650-rawluc-mag-4.mif",
+                  "C_SSP2_lowEn-NPi2025-rawluc-mag-4.mif",
+                  "C_SSP2_lowEn-PkBudg1000-rawluc-mag-4.mif",
+                  "C_SSP2_lowEn-PkBudg650-rawluc-mag-4.mif",
+                  "C_SSP2-NPi2025-rawluc-mag-4.mif",
+                  "C_SSP2-PkBudg1000-rawluc-mag-4.mif",
+                  "C_SSP2-PkBudg650-rawluc-mag-4.mif",
+                  "C_SSP3-NPi2025-rawluc-mag-4.mif",
+                  "C_SSP3-PkBudg1000-rawluc-mag-4.mif",
+                  "C_SSP5-NPi2025-rawluc-mag-4.mif",
+                  "C_SSP5-PkBudg1000-rawluc-mag-4.mif",
+                  "C_SSP5-PkBudg650-rawluc-mag-4.mif")
 
     x <- NULL
     for (f in fileList) {

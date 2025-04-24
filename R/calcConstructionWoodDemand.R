@@ -20,7 +20,6 @@ calcConstructionWoodDemand <- function() {
   urbanPopulation <- calcOutput("Urban",
                                 scenario = "SSPs",
                                 asShare = FALSE,
-                                naming = "scenario",
                                 years = seq(1995, 2100, 5),
                                 aggregate = FALSE)
 

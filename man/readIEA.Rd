@@ -7,12 +7,12 @@
 readIEA(subtype)
 }
 \arguments{
-\item{subtype}{data subtype. Either "EnergyBalances", "EnergyBalances-2023", or "Emissions".
+\item{subtype}{data subtype. Either "EnergyBalances", "EnergyBalances-latest", or "Emissions".
 \itemize{
-\item "EnergyBalances": IEA energy balances until 2020 (incomplete 2021), data updated in Aug 2022,
+\item "EnergyBalances": IEA energy balances until 2022 (2023 incomplete), data updated in Sep 2024,
 the current default for REMIND input data
 \item "EnergyBalances-latest": IEA energy balances until 2022 (2023 incomplete), data updated in Sep 2024,
-currently used for comparisons only
+currently same as default
 }}
 }
 \value{
