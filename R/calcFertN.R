@@ -9,8 +9,8 @@
 #' @return Fertilizer data for N and corresonding weights as a list of two
 #' MAgPIE objects
 #' @author Lavinia Baumstark
-#' @seealso [calcOutput()], [readIFA()],
-#' [convertIFA()], [readSource()]
+#' @seealso [madrat::calcOutput()], [readIFA()],
+#' [convertIFA()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' calcOutput("FertN")

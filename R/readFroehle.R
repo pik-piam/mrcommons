@@ -6,7 +6,7 @@
 #'
 #' @return MAgPIE object
 #' @author Benjamin Bodirsky
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("Froehle")

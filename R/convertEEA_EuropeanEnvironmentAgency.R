@@ -6,7 +6,7 @@
 #' @param subtype data subtype. Either "ETS", "historical", "projections", or "projections-detailed"
 #' @return magpie object of European Environment Agency (EEA) ETS emissions (GtCO2)
 #' @author Renato Rodrigues, Robin Hasse
-#' @seealso \code{\link{readSource}}
+#'
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "EEA_EuropeanEnvironmentAgency", subtype = "ETS")

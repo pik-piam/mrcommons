@@ -27,7 +27,7 @@ readSource("Lassaletta2014", subtype = "budget", convert = FALSE)
 }
 \seealso{
 \code{\link[=convertLassaletta2014]{convertLassaletta2014()}},
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky, Felicitas Beier

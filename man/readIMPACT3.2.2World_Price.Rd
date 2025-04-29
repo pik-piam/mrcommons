@@ -19,7 +19,7 @@ a <- readSource(type = "IMPACT3.2.2World_Price")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Mishko Stevanovic

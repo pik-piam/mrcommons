@@ -22,7 +22,7 @@ a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Stephen Wirth

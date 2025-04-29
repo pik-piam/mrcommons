@@ -22,7 +22,7 @@ a <- readSource(type = "FeedModel", subtype = "FeedBaskets")
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Isabelle Weindl

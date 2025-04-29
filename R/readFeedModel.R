@@ -6,7 +6,7 @@
 #' @param subtype Available subtypes: "ProdSysRatio", "FeedBaskets" and "FeedBasketsDetailed"
 #' @return magpie object of feed basket data
 #' @author Isabelle Weindl
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "FeedModel", subtype = "FeedBaskets")

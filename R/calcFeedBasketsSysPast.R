@@ -5,7 +5,7 @@
 #' @return Historical system-specific feed baskets and corresonding weights as a list of two MAgPIE
 #' objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich
-#' @seealso [calcOutput()], [readFeedModel()], [calcFeedBasketsPast()]
+#' @seealso [madrat::calcOutput()], [readFeedModel()], [calcFeedBasketsPast()]
 #' @examples
 #' \dontrun{
 #' calcOutput("FeedBasketsSysPast")

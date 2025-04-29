@@ -3,7 +3,7 @@
 #' @return  magpie object of time series of world price of commodities
 #' @author Xiaoxi Wang
 #' @seealso
-#' [readSource()],
+#' [madrat::readSource()],
 #' [readWBGEM()]
 #'
 #' @examples

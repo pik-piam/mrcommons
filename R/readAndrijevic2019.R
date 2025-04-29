@@ -6,7 +6,7 @@
 #'
 #' @author Felicitas Beier
 #'
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("Andrijevic2019")

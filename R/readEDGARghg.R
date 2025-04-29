@@ -1,7 +1,6 @@
 #' @title readEDGAR_GHG
 #' @description read EDGAR GHG emission data
 #' @return magpie objects of EDGAR historical emissions (MtCO2eq)
-#' @seealso \code{\link{readSource}}
 #' @author Pascal Weigmann
 #' @importFrom readxl read_xlsx
 

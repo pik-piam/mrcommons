@@ -9,7 +9,7 @@
 #' \item `production`: read in fertilizer_production.xlsx data }
 #' @return magpie object of the IFA data
 #' @author Lavinia Baumstark
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "IFA", subtype = "consumption")

@@ -9,7 +9,7 @@
 #' @author Benjamin Leon Bodirsky
 #' @seealso
 #' [convertLassaletta2014()],
-#' [readSource()]
+#' [madrat::readSource()]
 #'
 readHHS_USDA <- function() { # nolint: object_name_linter.
   a <- read.csv("appendix2.csv", sep = ";", header = TRUE)

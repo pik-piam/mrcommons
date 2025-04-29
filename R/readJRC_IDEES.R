@@ -16,8 +16,6 @@
 #'
 #' @author Michaja Pehl, Falk Benke
 #'
-#' @seealso [`readSource()`]
-#'
 #' @importFrom tibble tibble
 #' @importFrom dplyr bind_rows bind_cols select mutate
 #' @importFrom readxl read_xlsx
@@ -4142,8 +4140,11 @@ readJRC_IDEES <- function(subtype) { #nolint
       # Emission and Energy subtype have an empty column in the header, filter
       # that out
       colNames <- as.character(
-        read_xlsx(path = file, sheet = sheet, col_names = FALSE, n_max = 1,
-                  .name_repair = "minimal"))
+        read_xlsx(
+          path = file, sheet = sheet, col_names = FALSE, n_max = 1,
+          .name_repair = "minimal"
+        )
+      )
 
       if (grepl("^[0-9]{4}$", colNames[2])) {
         colTypes <- c("text", rep("numeric", length(colNames) - 1))

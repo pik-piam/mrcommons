@@ -10,7 +10,7 @@
 #' @return PBL_MACC_2019 data as MAgPIE object for all subtypes aggregated to
 #' country level
 #' @author Florian Humpenoeder
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 
 convertPBL_MACC_2019 <- function(x, subtype) { # nolint : object_name_linter.
 
@@ -18,21 +18,21 @@ convertPBL_MACC_2019 <- function(x, subtype) { # nolint : object_name_linter.
 
   if (subtype == "baseline_sources") {
     # convert back to CH4 and N2O using AR4 GWP factors
-     x[, , "ch4coal"] <- x[, , "ch4coal"] / 25
-     x[, , "ch4oil"] <- x[, , "ch4oil"] / 25
-     x[, , "ch4gas"] <- x[, , "ch4gas"] / 25
-     x[, , "ch4wstl"] <- x[, , "ch4wstl"] / 25
-     x[, , "ch4wsts"] <- x[, , "ch4wsts"] / 25
-     x[, , "ch4rice"] <- x[, , "ch4rice"] / 25
-     x[, , "ch4animals"] <- x[, , "ch4animals"] / 25
-     x[, , "ch4anmlwst"] <- x[, , "ch4anmlwst"] / 25
-     x[, , "n2otrans"] <- x[, , "n2otrans"] / 298
-     x[, , "n2oadac"] <- x[, , "n2oadac"] / 298
-     x[, , "n2onitac"] <- x[, , "n2onitac"] / 298
-     x[, , "n2ofert"] <- x[, , "n2ofert"] / 298
-     x[, , "n2oanwst"] <- x[, , "n2oanwst"] / 298
-     x[, , "n2owaste"] <- x[, , "n2owaste"] / 298
-     # weight
+    x[, , "ch4coal"] <- x[, , "ch4coal"] / 25
+    x[, , "ch4oil"] <- x[, , "ch4oil"] / 25
+    x[, , "ch4gas"] <- x[, , "ch4gas"] / 25
+    x[, , "ch4wstl"] <- x[, , "ch4wstl"] / 25
+    x[, , "ch4wsts"] <- x[, , "ch4wsts"] / 25
+    x[, , "ch4rice"] <- x[, , "ch4rice"] / 25
+    x[, , "ch4animals"] <- x[, , "ch4animals"] / 25
+    x[, , "ch4anmlwst"] <- x[, , "ch4anmlwst"] / 25
+    x[, , "n2otrans"] <- x[, , "n2otrans"] / 298
+    x[, , "n2oadac"] <- x[, , "n2oadac"] / 298
+    x[, , "n2onitac"] <- x[, , "n2onitac"] / 298
+    x[, , "n2ofert"] <- x[, , "n2ofert"] / 298
+    x[, , "n2oanwst"] <- x[, , "n2oanwst"] / 298
+    x[, , "n2owaste"] <- x[, , "n2owaste"] / 298
+    # weight
     CEDS_CH4 <- readSource("CEDS", subtype = "CH4")[, 2015, ] # nolint : object_name_linter.
     macBaseLandUse <- calcOutput("MacBaseLandUse", subtype = "MAgPIE", aggregate = FALSE)[, 2015, ]
     emiMac <- calcOutput("EmiMac", aggregate = FALSE)
@@ -57,9 +57,9 @@ convertPBL_MACC_2019 <- function(x, subtype) { # nolint : object_name_linter.
     y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode", weight = w, dim = 1, wdim = 1)
     y <- toolCountryFill(y, fill = 0)
 
-   } else {
-     y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode")
-     y <- toolCountryFill(y, fill = 0)
+  } else {
+    y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode")
+    y <- toolCountryFill(y, fill = 0)
   }
 
   return(y)

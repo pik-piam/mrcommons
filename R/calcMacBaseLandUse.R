@@ -4,7 +4,7 @@
 #' @param subtype Source of subset of emissions
 #' @return magpie object
 #' @author David Klein, Julian Oeser
-#' @seealso [calcOutput()]
+#' @seealso [madrat::calcOutput()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput(type = "MacBaseLandUse")

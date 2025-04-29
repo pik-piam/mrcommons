@@ -10,17 +10,15 @@
 #' @param source "ImageMacc" or "PBL_MACC_2019"
 #' @return MAgPIE object
 #' @author Nele Steinmetz, Florian Humpenoeder, Michael Windisch
-#' @seealso [calcOutput()], [readImageMacc()],
+#' @seealso [madrat::calcOutput()], [readImageMacc()],
 #' [convertImageMacc()]
 #' @examples
 #' \dontrun{
 #' calcOutput("MACCsN2O")
 #' }
 #' @importFrom magclass getNames
-calcMACCsN2O <- function(
-    sector = "all",
-    source = "ImageMacc"  # nolint: object_name_linter.
-) {
+calcMACCsN2O <- function(sector = "all", source = "ImageMacc") {  # nolint: object_name_linter.
+
   # readSource N2O and baseline Emissions
   if (source == "ImageMacc") { # nolint
 
@@ -44,7 +42,7 @@ calcMACCsN2O <- function(
     # weight for the aggregation
     baseline <- readSource("ImageMacc", "baseline_sources")
     w <- baseline[, getYears(n2o), c("N2O Transport", "N2O Adipic acid production", "N2O Nitric acid production",
-      "N2O Fertilizer", "N2O Animal waste", "N2O Domestic sewage")]
+                                     "N2O Fertilizer", "N2O Animal waste", "N2O Domestic sewage")]
 
     getNames(w) <- gsub("N2O Transport", "n2otrans", getNames(w))
     getNames(w) <- gsub("N2O Adipic acid production", "n2oadac", getNames(w))

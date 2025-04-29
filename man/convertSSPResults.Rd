@@ -22,7 +22,7 @@ readSource("SSPResults", aggregate = TRUE)
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Abhijeet Mishra, Benjamin Leon Bodirsky, Florian Humpenoeder

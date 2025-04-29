@@ -22,7 +22,7 @@ a <- readSource("Andrijevic2019")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Felicitas Beier

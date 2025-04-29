@@ -20,7 +20,7 @@ managed grassland) in view of all thresholds simultaneously, measured in kg N pe
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Michael S. Crawford

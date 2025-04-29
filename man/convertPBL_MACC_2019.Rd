@@ -22,7 +22,7 @@ country level
 Convert subtypes from PBL_MACC_2019 to data on ISO country level.#'
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Florian Humpenoeder

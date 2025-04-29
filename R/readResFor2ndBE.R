@@ -4,7 +4,7 @@
 #' @return List of magpie objects with results on old ReMIND regions level
 #' @param subtype oldReMIND, newAgriSupply
 #' @author Kristine Karstens
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ResFor2ndBE", subtype = "oldReMIND")

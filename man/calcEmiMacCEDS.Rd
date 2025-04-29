@@ -24,7 +24,7 @@ Therefore, the CO2 from LUC is read from EDGAR with a 2005, a potentially
 different baseyear than the one chosen in the parameter
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readSource]{readSource()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Gabriel Abrahao

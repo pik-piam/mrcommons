@@ -9,7 +9,7 @@
 #' currently same as default
 #' @return magpie object of the IEA
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "IEA", subtype = "EnergyBalances")

@@ -17,7 +17,7 @@ a <- downloadSource()
 
 }
 \seealso{
-\code{\link[=downloadSource]{downloadSource()}} \code{\link[=readGFED]{readGFED()}}
+\code{\link[madrat:downloadSource]{madrat::downloadSource()}} \code{\link[=readGFED]{readGFED()}}
 }
 \author{
 Michael S. Crawford

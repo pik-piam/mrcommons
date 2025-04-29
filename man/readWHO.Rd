@@ -24,7 +24,7 @@ a <- readSource(type = "WHO", subtype = "physical_activity_adults")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Benjamin Bodirsky

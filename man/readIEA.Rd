@@ -28,7 +28,7 @@ a <- readSource(type = "IEA", subtype = "EnergyBalances")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke

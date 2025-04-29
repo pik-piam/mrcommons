@@ -17,7 +17,7 @@ country level
 Convert subtypes from PBL_MACC_2022 to data on ISO country level.#'
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Michael Windisch, Florian Humpenoeder

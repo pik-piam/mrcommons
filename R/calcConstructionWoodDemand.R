@@ -6,7 +6,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Abhijeet Mishra
 #' @seealso
-#' [calcFAOmassbalance_pre()]
+#' [mrfaocore::calcFAOmassbalance_pre()]
 #' @examples
 #' \dontrun{
 #' calcOutput("ConstructionWoodDemand")

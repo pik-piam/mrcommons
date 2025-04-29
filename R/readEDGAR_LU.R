@@ -5,7 +5,7 @@
 #' @param subtype emission type
 #' @return magpie object EDGAR_LU data
 #' @author Florian Humpenoeder
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "EDGAR_LU")

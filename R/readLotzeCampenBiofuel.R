@@ -9,7 +9,7 @@
 #'
 #' @return Future trends in first generation bioenergy demand in ExaJoule as magpie object
 #' @author Ewerton Araujo
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("LotzeCampenBiofuel")

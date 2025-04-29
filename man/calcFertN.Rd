@@ -33,8 +33,8 @@ calcOutput("FertN")
 }
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readIFA]{readIFA()}},
-\code{\link[=convertIFA]{convertIFA()}}, \code{\link[=readSource]{readSource()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[=readIFA]{readIFA()}},
+\code{\link[=convertIFA]{convertIFA()}}, \code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Lavinia Baumstark

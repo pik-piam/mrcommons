@@ -6,7 +6,7 @@
 #' @return MAgPIE object with ISO countries with all indicators for which disaggregation weight was found
 #' @author Abhijeet Mishra, Benjamin Leon Bodirsky, Florian Humpenoeder
 #' @seealso
-#' [readSource()]
+#' [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' readSource("SSPResults", aggregate = TRUE)

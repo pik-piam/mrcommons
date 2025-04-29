@@ -6,8 +6,7 @@
 #' @return PBL_MACC_SSP2_2022 data as MAgPIE object for all subtypes aggregated to
 #' country level
 #' @author Gabriel Abrahão
-#' @seealso [readSource()]
-
+#'
 convertPBL_MACC_SSP2_2022 <- function(x) { # nolint object_name_linter
 
   map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv",

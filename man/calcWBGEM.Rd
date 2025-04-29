@@ -19,7 +19,7 @@ calcOutput("WBGEM")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}},
+\code{\link[madrat:readSource]{madrat::readSource()}},
 \code{\link[=readWBGEM]{readWBGEM()}}
 }
 \author{
