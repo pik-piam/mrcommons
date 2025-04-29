@@ -42,7 +42,7 @@ calcOutput("ResBiomass")
 
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readSource]{readSource()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky

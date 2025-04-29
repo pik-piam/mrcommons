@@ -24,7 +24,7 @@ a <- readSource("ISIMIP", convert = TRUE)
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Jan Philipp Dietrich, Felicitas Beier

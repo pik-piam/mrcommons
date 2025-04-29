@@ -5,7 +5,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Abhijeet Mishra
 #' @seealso
-#' [calcFAOmassbalance_pre()]
+#' [mrfaocore::calcFAOmassbalance_pre()]
 #' @examples
 #' \dontrun{
 #' calcOutput("TimberDemand")
@@ -64,7 +64,7 @@ calcTimberDemand <- function() {
   ## Merge production data
   pulpwoodDescription <- "Pulpwood, round and split, all species (production).production"
   pulpwoodProduction <- (pulpwoodData[, , "Pulpwood and particles (1961-1997).production"]
-                          + setNames(pulpwoodData[, , pulpwoodDescription], NULL))
+                         + setNames(pulpwoodData[, , pulpwoodDescription], NULL))
 
   ## Corrected pulpwood data
   pulpwood <- mbind(pulpwoodProduction, pulpwoodExport, pulpwoodImport)
@@ -122,7 +122,7 @@ calcTimberDemand <- function() {
   ## We'll consider the production, import and export separately
 
   production <- timberFao[, , grep(pattern = "production",
-                                    x = getNames(timberFao, dim = elementShort), value = TRUE)]
+                                   x = getNames(timberFao, dim = elementShort), value = TRUE)]
   import <- timberFao[, , grep(pattern = "import", x = getNames(timberFao, dim = elementShort), value = TRUE)]
   export <- timberFao[, , grep(pattern = "export", x = getNames(timberFao, dim = elementShort), value = TRUE)]
 
@@ -157,7 +157,7 @@ calcTimberDemand <- function() {
   toAdd <- "Other sawnwood"
   production <- add_columns(x = production, addnm = toAdd, dim = 3.1)
   production[, , toAdd] <- (production[, , "Sawlogs and veneer logs"]
-                             - dimSums(production[, , c("Plywood", "Veneer sheets", "Sawnwood")], dim = 3))
+                            - dimSums(production[, , c("Plywood", "Veneer sheets", "Sawnwood")], dim = 3))
   if (min(production[, , toAdd]) < 0) {
     message("Negative values detected when adding category '", toAdd, "'. Setting negative values to 0.")
   }
@@ -176,7 +176,7 @@ calcTimberDemand <- function() {
     if (length(unique(incorrectData$regions)) > 0) {
       indicatorList <- c(indicatorList, indicator)
       export[incorrectData$individual[, 1], incorrectData$individual[, 2], indicator][, , "export"] <- (
-        production[incorrectData$individual[, 1], incorrectData$individual[, 2], indicator][, , "production"])
+        production[incorrectData$individual[, 1], incorrectData$individual[, 2], indicator][, , "production"]) # nolint
     }
   }
   message("Higher exports than production level detected in some countries. Setting these export values ",
@@ -188,8 +188,8 @@ calcTimberDemand <- function() {
   ###### Data cleaning stage
   timberFaoCleaned <- add_columns(timberFaoCleaned, addnm = "other_util", dim = 3.2)
   timberFaoCleaned[, , "other_util"] <- (timberFaoCleaned[, , "production"]
-                                           + timberFaoCleaned[, , "import"]
-                                           - timberFaoCleaned[, , "export"])
+                                         + timberFaoCleaned[, , "import"]
+                                         - timberFaoCleaned[, , "export"])
 
   timberFaoCleaned <- add_columns(timberFaoCleaned, addnm = "domestic_supply", dim = 3.2)
   timberFaoCleaned[, , "domestic_supply"] <- timberFaoCleaned[, , "other_util"]

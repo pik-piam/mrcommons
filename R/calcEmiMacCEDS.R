@@ -12,7 +12,7 @@
 #' @return REMIND data for baseline emissions for maccs and corresonding
 #' weights (NULL) as a list of two MAgPIE objects
 #' @author Gabriel Abrahao
-#' @seealso [calcOutput()], [readSource()]
+#' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @importFrom magclass getNames<- getYears<-
 
 calcEmiMacCEDS <- function(baseyear = 2020) {

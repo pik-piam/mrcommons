@@ -10,8 +10,8 @@
 #' @return Total tau data and corresponding weights as a list of two MAgPIE
 #' objects
 #' @author Benjamin Leon Bodirsky, Kristine Karstens, Felicitas Beier
-#' @seealso [calcTauTotal()], [readTau()],
-#' [convertTau()]
+#' @seealso [madrat::calcTauTotal()], [madrat::readTau()],
+#' [madrat::convertTau()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LanduseIntensity")

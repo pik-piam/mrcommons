@@ -7,7 +7,7 @@
 #' @importFrom madrat regionscode
 #' @return magpie object
 #' @author Julian Oeser
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "MAgPIE", subtype = "EmiAPExo")

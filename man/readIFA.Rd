@@ -25,7 +25,7 @@ a <- readSource(type = "IFA", subtype = "consumption")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Lavinia Baumstark

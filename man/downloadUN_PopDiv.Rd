@@ -15,7 +15,7 @@ a <- downloadSource()
 }
 }
 \seealso{
-\code{\link[=downloadSource]{downloadSource()}} \code{\link[=readUN_PopDiv]{readUN_PopDiv()}}
+\code{\link[madrat:downloadSource]{madrat::downloadSource()}} \code{\link[mrdrivers:readUN_PopDiv]{mrdrivers::readUN_PopDiv()}}
 }
 \author{
 Michael Crawford, Debbora Leip

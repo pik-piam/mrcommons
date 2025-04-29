@@ -28,7 +28,7 @@ a <- readSource("IPCC", "nExcrRate")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Nele Steinmetz

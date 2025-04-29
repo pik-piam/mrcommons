@@ -2,7 +2,7 @@
 #' @description Download he grid-level regional nitrogen boundary datasets from Schulte-Uebbing et al. (2022)
 #' @author Michael S. Crawford
 #'
-#' @seealso [downloadSource()]
+#' @seealso [madrat::downloadSource()]
 #' @examples \dontrun{
 #'  a <- downloadSource("NitrogenBoundariesGridded")
 #' }
@@ -31,19 +31,19 @@ downloadNitrogenBoundariesGridded <- function() {
     title        = "Global spatially explicit critical nitrogen surpluses and critical nitrogen inputs, and their exceedances",
     doi          = "https://doi.org/10.1038/s41586-022-05158-2",
     revision     = "1.0",
-    description  = "Input datafiles: Contains complete set of input files used in the calculations of global, spatially 
+    description  = "Input datafiles: Contains complete set of input files used in the calculations of global, spatially
                     explicit critical nitrogen surpluses and critical nitrogen inputs. All input files are output from the IMAGE-GNM model.
-                    For further information on IMAGE-GNM, see:  Beusen, A. H. W., Van Beek, L. P. H., Bouwman, A. F., Mogollon, J. M., 
-                    & Middelburg, J. J. (2015). Coupling global models for hydrology and nutrient loading to simulate nitrogen and 
-                    phosphorus retention in surface water - Description of IMAGE-GNM and analysis of performance. Geoscientific Model 
-                    Development, 8(12), 4045:4067. https://doi.org/10.5194/gmd-8-4045-2015. Output datafiles: Selection of output datafiles, 
+                    For further information on IMAGE-GNM, see:  Beusen, A. H. W., Van Beek, L. P. H., Bouwman, A. F., Mogollon, J. M.,
+                    & Middelburg, J. J. (2015). Coupling global models for hydrology and nutrient loading to simulate nitrogen and
+                    phosphorus retention in surface water - Description of IMAGE-GNM and analysis of performance. Geoscientific Model
+                    Development, 8(12), 4045:4067. https://doi.org/10.5194/gmd-8-4045-2015. Output datafiles: Selection of output datafiles,
                     supporting results presented in the paper. For more information, see file README.xlsx.",
     unit         = "various, see README.xlsx",
     release_date = "2022-03-29",
     license      = "Creative Commons Attribution 4.0 International",
-    author       = list("L.F. Schulte-Uebbing", 
-                        "A.H.W. Beusen",    
-                        "A.F. Bouwman", 
+    author       = list("L.F. Schulte-Uebbing",
+                        "A.H.W. Beusen",
+                        "A.F. Bouwman",
                         "W. de Vries")
   ))
   # nolint end

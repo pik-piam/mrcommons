@@ -8,7 +8,7 @@
 #' "nExcrRate"
 #' @return IPCC data as MAgPIE object for all subtypes on country level
 #' @author Nele Steinmetz
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("IPCC", "awmsShr")

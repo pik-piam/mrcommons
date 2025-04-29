@@ -4,7 +4,7 @@
 #' @return Historical distribution of livestock production across
 #' different systems and corresponding weights as a list of two MAgPIE objects
 #' @author Isabelle Weindl
-#' @seealso [calcOutput()], [readFeedModel()]
+#' @seealso [madrat::calcOutput()], [readFeedModel()]
 #' @examples
 #' \dontrun{
 #' calcOutput("ProdSysRatioPast")
@@ -26,7 +26,8 @@ calcProdSysRatioPast <- function() {
   mapping <- data.frame(
     kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),
     sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"),
-    stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE
+  )
 
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
 

@@ -26,7 +26,7 @@ calcOutput("MACCsN2O")
 }
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readImageMacc]{readImageMacc()}},
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[=readImageMacc]{readImageMacc()}},
 \code{\link[=convertImageMacc]{convertImageMacc()}}
 }
 \author{

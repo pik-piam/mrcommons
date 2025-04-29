@@ -2,14 +2,10 @@
 #' @description {convert the Expert Guesses for future Livestock Production for the SSP Scenarios
 #' }
 #'
-#'
 #' @param x MAgPIE-Object contaiing data to convert
-#'
-#'
 #'
 #' @return magpie object containing converted expert guesses
 #' @author Stephen Wirth
-#' @seealso [readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")

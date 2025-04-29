@@ -23,7 +23,7 @@ calcOutput("FAOmassbalance")
 }
 }
 \seealso{
-\code{\link[=calcFAOmassbalance_pre]{calcFAOmassbalance_pre()}}
+\code{\link[mrfaocore:calcFAOmassbalance_pre]{mrfaocore::calcFAOmassbalance_pre()}}
 }
 \author{
 Benjamin Leon Bodirsky, Xiaoxi Wang

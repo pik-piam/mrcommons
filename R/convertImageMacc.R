@@ -10,7 +10,7 @@
 #' @return ImageMacc data as MAgPIE object for all subtypes aggregated to
 #' country level
 #' @author Nele Steinmetz
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ImageMacc", "CH4_Energy_Industry")

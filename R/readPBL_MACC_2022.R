@@ -7,7 +7,7 @@
 #' "Default", "Optimistic", "Pessimistic"
 #' @return magpie object of the PBL_MACC_2022 data
 #' @author Michael Windisch, Florian Humpenoeder
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @importFrom data.table as.data.table
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx

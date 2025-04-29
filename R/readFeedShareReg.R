@@ -7,7 +7,7 @@
 #'
 #' @return MAgPIE object containing regression coefficients
 #' @author Isabelle Weindl
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @export
 #'
 #' @examples

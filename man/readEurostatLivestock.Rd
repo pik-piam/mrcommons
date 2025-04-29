@@ -32,7 +32,7 @@ a <- readSource("EurostatLivestock", "MeatProd")
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 David Hötten

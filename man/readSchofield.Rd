@@ -21,7 +21,7 @@ a <- readSource("Schofield")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Benjamin Bodirsky

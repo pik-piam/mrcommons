@@ -20,7 +20,7 @@ a <- readSource("Zhang2015", convert = FALSE)
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky

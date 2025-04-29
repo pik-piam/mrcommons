@@ -23,9 +23,6 @@ a <- readSource(type = "EEA_EuropeanEnvironmentAgency", subtype = "ETS")
 }
 
 }
-\seealso{
-\code{\link{readSource}}
-}
 \author{
 Renato Rodrigues, Robin Hasse
 }

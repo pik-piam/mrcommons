@@ -28,8 +28,8 @@ calcOutput("LanduseIntensity")
 
 }
 \seealso{
-\code{\link[=calcTauTotal]{calcTauTotal()}}, \code{\link[=readTau]{readTau()}},
-\code{\link[=convertTau]{convertTau()}}
+\code{\link[madrat:calcTauTotal]{madrat::calcTauTotal()}}, \code{\link[madrat:readTau]{madrat::readTau()}},
+\code{\link[madrat:convertTau]{madrat::convertTau()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens, Felicitas Beier

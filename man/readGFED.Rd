@@ -24,7 +24,7 @@ a <- readSource("GFED")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Michael S. Crawford

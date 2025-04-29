@@ -9,7 +9,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
 #' @seealso
-#' [calcOutput()]
+#' [madrat::calcOutput()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)

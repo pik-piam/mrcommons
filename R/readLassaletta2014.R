@@ -11,7 +11,7 @@
 #' @author Benjamin Leon Bodirsky, Felicitas Beier
 #' @seealso
 #' [convertLassaletta2014()],
-#' [readSource()]
+#' [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' readSource("Lassaletta2014", subtype = "budget", convert = FALSE)

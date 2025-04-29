@@ -19,7 +19,7 @@ magpie object of the PBL_MACC_2019 data
 Read in PBL MAC curves from Harmsen_et_al_2019 for different subtypes
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Florian Humpenoeder

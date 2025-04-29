@@ -10,7 +10,7 @@
 #'
 #' @return magpie object containing the expert guesses
 #' @author Stephen Wirth
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")

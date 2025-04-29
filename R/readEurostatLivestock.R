@@ -17,7 +17,7 @@
 #' }
 #' @return EUROSTAT livestock data as MAgPIE object
 #' @author David Hötten
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("EurostatLivestock", "MeatProd")

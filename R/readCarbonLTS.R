@@ -5,7 +5,7 @@
 #' @param subtype data subtype.
 #' @return magpie object of the FRA 2015 data
 #' @author Abhijeet Mishra
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("CarbonLTS", "Lauk_et_al")

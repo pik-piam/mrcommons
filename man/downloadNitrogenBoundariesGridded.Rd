@@ -15,7 +15,7 @@ Download he grid-level regional nitrogen boundary datasets from Schulte-Uebbing 
 }
 }
 \seealso{
-\code{\link[=downloadSource]{downloadSource()}}
+\code{\link[madrat:downloadSource]{madrat::downloadSource()}}
 }
 \author{
 Michael S. Crawford

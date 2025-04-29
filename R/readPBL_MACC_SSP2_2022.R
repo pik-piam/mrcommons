@@ -8,12 +8,12 @@
 #' "Default", "Optimistic", "Pessimistic"
 #' @return magpie object of the PBL_MACC_SSP2_2022 data
 #' @author Michael Windisch, Florian Humpenoeder, Gabriel Abrahao
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @importFrom data.table as.data.table
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx
 #' @importFrom magclass as.magpie
-readPBL_MACC_SSP2_2022 <- function(subtype, subset) {
+readPBL_MACC_SSP2_2022 <- function(subtype, subset) { # nolint
 
   readMMC1 <- function(sub, scen) {
     sheetname <- paste0("SSP2 ", sub, "_", scen)
@@ -24,13 +24,14 @@ readPBL_MACC_SSP2_2022 <- function(subtype, subset) {
     iskip <- 0
     while (!(colnames(x)[1] %in% c("t", "year", "period")) || iskip >= 10) {
       iskip <- iskip + 1
-      x <- as.data.table(read_xlsx("Data_MAC_CH4N2O_Harmsen et al_2023_PBL.xlsx", sheet = paste0("SSP2 ", sub, "_", scen), skip = iskip))
+      x <- as.data.table(read_xlsx("Data_MAC_CH4N2O_Harmsen et al_2023_PBL.xlsx",
+                                   sheet = paste0("SSP2 ", sub, "_", scen), skip = iskip))
     }
     x <- melt(x, id.vars = c(1, 2), variable.name = "region")
     names(x) <- c("year", "steps", "region", "value")
     x$type <- sub
     x$scen <- scen
-    # x$steps <- x$steps/20+1 # SSP2 file from Mathijs comes in steps, not with specified prices
+    # x$steps <- x$steps/20+1 # SSP2 file from Mathijs comes in steps, not with specified prices # nolint
     x$year <- factor(x$year)
     x <- x[, c("region", "year", "type", "scen", "steps", "value")]
     x <- as.magpie(x, spatial = 1, temporal = 2, tidy = TRUE)
@@ -42,8 +43,9 @@ readPBL_MACC_SSP2_2022 <- function(subtype, subset) {
     inimage <- read_xlsx("Data_MAC_CH4N2O_Harmsen et al_2023_PBL.xlsx", sheet = "SSP2_CH4 N2O_baseline emissions")
     names(inimage) <- c(
       "year", "region",
-      "ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals", "ch4anmlwst", "n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste"
-      )
+      "ch4coal", "ch4oil", "ch4gas", "ch4wstl", "ch4wsts", "ch4rice", "ch4animals",
+      "ch4anmlwst", "n2otrans", "n2oadac", "n2onitac", "n2ofert", "n2oanwst", "n2owaste"
+    )
     tidyimage <- melt(inimage, id.vars = c(1, 2), variable.name = "type")
     baseimage <- as.magpie(tidyimage, spatial = 2, temporal = 1, tidy = TRUE)
     return(baseimage)
@@ -112,14 +114,15 @@ readPBL_MACC_SSP2_2022 <- function(subtype, subset) {
   if (subtype == "n2onitac") {
     # Try different names used in the Excel sheet
     possiblenames <- c("N2O_nitric acid", "N2O_nitr acid")
-    for (tryname  in possiblenames) {
-        x <- tryCatch(
+    for (tryname in possiblenames) {
+      x <- tryCatch(
         {
           readMMC1(tryname, subset)
         },
-          error = function(e) {
-            return(e)
-        })
+        error = function(e) {
+          return(e)
+        }
+      )
       if (!"error" %in% class(x)) {
         break
       }

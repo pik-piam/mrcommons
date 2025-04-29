@@ -5,7 +5,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author David M Chen
 #' @seealso
-#' [calcFAOmassbalance_pre()]
+#' [mrfaocore::calcFAOmassbalance_pre()]
 #' @examples
 #' \dontrun{
 #' calcOutput("TimberTradeBilateral")

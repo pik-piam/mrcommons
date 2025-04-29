@@ -9,7 +9,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @seealso
-#' [calcGDPpc()]
+#' [mrdrivers::calcGDPpc()]
 #' @examples
 #' \dontrun{
 #' calcOutput("DevelopmentState")

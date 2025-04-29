@@ -21,7 +21,7 @@ calcOutput("FeedBasketsSysPast")
 }
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}, \code{\link[=calcFeedBasketsPast]{calcFeedBasketsPast()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}, \code{\link[=calcFeedBasketsPast]{calcFeedBasketsPast()}}
 }
 \author{
 Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich

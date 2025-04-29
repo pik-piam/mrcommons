@@ -31,7 +31,7 @@ readSource("Lassaletta2014", convert = TRUE)
 }
 \seealso{
 \code{\link[=readLassaletta2014]{readLassaletta2014()}},
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Benjamin Leon Bodirsky
