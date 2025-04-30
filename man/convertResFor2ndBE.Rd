@@ -25,7 +25,7 @@ a <- readSource("ResFor2ndBE", subtype = "oldReMIND", convert = TRUE)
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Kristine Karstens

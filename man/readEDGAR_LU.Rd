@@ -22,7 +22,7 @@ a <- readSource(type = "EDGAR_LU")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Florian Humpenoeder

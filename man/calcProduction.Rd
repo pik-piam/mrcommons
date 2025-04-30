@@ -40,8 +40,8 @@ calcOutput("Production")
 
 }
 \seealso{
-\code{\link[=calcLanduseInitialisation]{calcLanduseInitialisation()}},
-\code{\link[=calcCroparea]{calcCroparea()}}
+\code{\link[mrlandcore:calcLanduseInitialisation]{mrlandcore::calcLanduseInitialisation()}},
+\code{\link[mrlandcore:calcCroparea]{mrlandcore::calcCroparea()}}
 }
 \author{
 Benjamin Leon Bodirsky

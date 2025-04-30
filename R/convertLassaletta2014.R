@@ -12,7 +12,7 @@
 #' @author Benjamin Leon Bodirsky
 #' @seealso
 #' [readLassaletta2014()],
-#' [readSource()]
+#' [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' readSource("Lassaletta2014", convert = TRUE)

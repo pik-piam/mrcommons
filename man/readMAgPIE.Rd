@@ -22,7 +22,7 @@ a <- readSource(type = "MAgPIE", subtype = "EmiAPExo")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Julian Oeser

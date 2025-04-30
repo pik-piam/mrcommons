@@ -41,7 +41,7 @@ a <- readSource("IPCC", "efnsoil", convert = FALSE)
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich,

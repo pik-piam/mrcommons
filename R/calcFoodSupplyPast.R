@@ -12,7 +12,7 @@
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Xiaoxi Wang
 #' @seealso
-#' [calcFAOharmonized()]
+#' [mrfaocore::calcFAOharmonized()]
 #' @examples
 #' \dontrun{
 #' calcOutput("FoodSupplyPast")

@@ -5,7 +5,7 @@
 #' @return MAgPIE object with regional aggregation of SSP regions, including all indicators
 #' @author Abhijeet Mishra, Florian Humpenoeder
 #' @seealso
-#' [readSource()]
+#' [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' readSource("SSPresults", aggregate = FALSE)

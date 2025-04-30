@@ -6,7 +6,7 @@
 #'
 #' @return magpie object with the dimension crops and coeffizients
 #' @author Benjamin Leon Bodrisky, Kristine Karstens
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("HI")

@@ -24,7 +24,7 @@ a <- calcOutput(type = "MacBaseLandUse")
 
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}
 }
 \author{
 David Klein, Julian Oeser

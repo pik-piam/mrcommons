@@ -21,7 +21,7 @@ calcOutput("ProdSysRatioPast")
 }
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[=readFeedModel]{readFeedModel()}}
 }
 \author{
 Isabelle Weindl

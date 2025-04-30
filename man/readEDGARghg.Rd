@@ -12,9 +12,6 @@ magpie objects of EDGAR historical emissions (MtCO2eq)
 \description{
 read EDGAR GHG emission data
 }
-\seealso{
-\code{\link{readSource}}
-}
 \author{
 Pascal Weigmann
 }

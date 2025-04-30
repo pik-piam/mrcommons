@@ -6,7 +6,7 @@
 #'
 #' @return A MAgPIE object with the critical nitrogen surplus in kg N per ha per yr in 2010
 #'
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples \dontrun{
 #'  a <- readSource("NitrogenBoundariesGridded")
 #' }

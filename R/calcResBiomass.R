@@ -13,7 +13,7 @@
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
 #' @author Lavinia Baumstark, Isabelle Weindl, Benjamin Bodirsky
-#' @seealso [calcOutput()], [readSource()]
+#' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' calcOutput("ResBiomass")
@@ -100,7 +100,7 @@ calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
                                                       scenario = scenario))
       # read harvest index
       belowGroundResidues <- (aboveGroundResidues + cropProduction) *
-                             collapseNames(harvestIndex[, , "bg_to_ag"])
+        collapseNames(harvestIndex[, , "bg_to_ag"])
       # read in residues attributes
       attributesBelowGround <- readSource("ProductAttributes",
                                           subtype = "BgResidues")[, , croptypesMAG]

@@ -7,8 +7,8 @@
 #' @return FAO Value Of Production as a list of MAgPIE objects
 #'
 #' @author Roman Popov, Mishko Stevanovic, Patrick v. Jeetze
-#' @seealso [calcOutput()], [readFAO()],
-#' [convertFAO()], [readSource()]
+#' @seealso [madrat::calcOutput()], [mrfaocore::readFAO()],
+#' [mrfaocore::convertFAO()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- calcOutput("AgProductionValue", datasource = "FAO")

@@ -5,7 +5,7 @@
 #'
 #' @return Transport Costs in USD
 #' @author David Chen
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "TransportCostsGTAP")

@@ -6,7 +6,7 @@
 #' @param products if "magpie" do UNIT (m3 --> MT) and name  conversion of the 2 magpie wood products, else "FAO" gives original ones 
 #' @author David M Chen
 #' @seealso
-#' [calcFAOmassbalance_pre()]
+#' [mrfaocore::calcFAOmassbalance_pre()]
 #' @examples
 #' \dontrun{
 #' calcOutput("TimberTradeBilateral")

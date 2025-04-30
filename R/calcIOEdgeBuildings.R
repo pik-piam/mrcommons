@@ -17,8 +17,6 @@
 #' a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 #' }
 #'
-#' @seealso \code{\link{calcOutput}}
-#'
 #' @importFrom dplyr %>% .data all_of filter select
 #' @importFrom tidyr unite
 #' @importFrom madrat readSource toolGetMapping toolAggregate calcOutput

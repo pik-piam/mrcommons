@@ -6,7 +6,7 @@
 #' @return REMIND data for baseline emissions for maccs and corresonding
 #' weights (NULL) as a list of two MAgPIE objects
 #' @author Lavinia Baumstark
-#' @seealso [calcOutput()], [readSource()]
+#' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' calcOutput("calcEmiMac")

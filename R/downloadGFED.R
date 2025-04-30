@@ -3,7 +3,7 @@
 #' as beta, in addition to the emission factors.
 #'
 #' @author Michael S. Crawford
-#' @seealso [downloadSource()] [readGFED()]
+#' @seealso [madrat::downloadSource()] [readGFED()]
 #' @examples \dontrun{
 #' a <- downloadSource()
 #' }

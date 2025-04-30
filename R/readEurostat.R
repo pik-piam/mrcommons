@@ -7,7 +7,7 @@
 #' emissions, or 'latest' for most up-to-date data
 #' @return magpie object of Eurostat historical emissions (MtCO2)
 #' @author Renato Rodrigues
-#' @seealso \code{\link{readSource}}
+#'
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "Eurostat", subtype = "emissions")

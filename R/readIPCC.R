@@ -18,7 +18,7 @@
 #' @return magpie object of the IPCC data
 #' @author Nele Steinmetz, Stephen Wirth, Jan Philipp Dietrich,
 #'         Kristine Karstens
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("IPCC", "awmsShr")

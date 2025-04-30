@@ -16,9 +16,6 @@ country level
 \description{
 Convert subtypes from PBL_MACC_SSP2_2022 to data on ISO country level.
 }
-\seealso{
-\code{\link[=readSource]{readSource()}}
-}
 \author{
 Gabriel Abrahão
 }

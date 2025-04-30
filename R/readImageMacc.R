@@ -11,7 +11,7 @@
 #'                             "HFC_tot", "SF6_tot", "PFC_tot" or "baseline_sources"
 #' @return magpie object of the ImageMacc data
 #' @author Nele Steinmetz
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("ImageMacc", "CH4_Energy_Industry")
@@ -28,13 +28,13 @@
 readImageMacc <- function(subtype) {
 
   files <- c(CH4_Energy_Industry = "Costcurves_CH4_Energy_Industry.csv",
-              CH4_Landuse = "Costcurves_CH4_landuse.csv",
-               N2O_Energy_Industry = "Costcurves_N2O_Energy_Industry.csv",
-               N2O_Landuse = "Costcurves_N2O_landuse.csv",
-               HFC_tot = "Costcurves_HFCtot.csv",
-               SF6_tot = "Costcurves_SF6tot.csv",
-               PFC_tot = "Costcurves_PFCtot.csv",
-               baseline_sources = "Costcurves_baseline_sources.csv")
+             CH4_Landuse = "Costcurves_CH4_landuse.csv",
+             N2O_Energy_Industry = "Costcurves_N2O_Energy_Industry.csv",
+             N2O_Landuse = "Costcurves_N2O_landuse.csv",
+             HFC_tot = "Costcurves_HFCtot.csv",
+             SF6_tot = "Costcurves_SF6tot.csv",
+             PFC_tot = "Costcurves_PFCtot.csv",
+             baseline_sources = "Costcurves_baseline_sources.csv")
 
   file <- toolSubtypeSelect(subtype, files)
 
@@ -50,17 +50,17 @@ readImageMacc <- function(subtype) {
     data <- data[-1, ]
     # tidy dataframe
     data <- reshape(data, idvar = c("t2", "Source", "Region"),
-                     timevar = "class", v.names = "value", varying = list(4:ncol(data)),
-                     direction = "long")
+                    timevar = "class", v.names = "value", varying = list(4:ncol(data)),
+                    direction = "long")
     data$value <- as.numeric(as.character(data$value))
-     # replace numbers in Source
+    # replace numbers in Source
     head <- strsplit(head, ") ")
     head <- unlist(head)
     data$Source[data$Source == 1] <- "CH4 coal losses/leakages"
     data$Source[data$Source == 2] <- "CH4 oil losses/leakages"
     data$Source[data$Source == 3] <- "CH4 natural gas losses/leakages"
     data <- data[, c(1, 3, 2, 4, 5)]
-    }
+  }
 
   if (subtype == "CH4_Landuse") {
     head <- data[2:6, 1]
@@ -79,7 +79,7 @@ readImageMacc <- function(subtype) {
     data$Source[data$Source == 4] <- "CH4 Animals"
     data$Source[data$Source == 5] <- "CH4 Animal waste"
     data <- data[, c(1, 3, 2, 4, 5)]
-    }
+  }
 
   if (subtype == "N2O_Energy_Industry") {
     head <- data[2:4, 1]
@@ -96,7 +96,7 @@ readImageMacc <- function(subtype) {
     data$Source[data$Source == 2] <- "N2O Adipic acid production"
     data$Source[data$Source == 3] <- "N2O Nitric acid production"
     data <- data[, c(1, 3, 2, 4, 5)]
-    }
+  }
 
   if (subtype == "N2O_Landuse") {
     head <- data[2:4, 6]
@@ -113,7 +113,7 @@ readImageMacc <- function(subtype) {
     data$Source[data$Source == 2] <- "N2O Animal waste"
     data$Source[data$Source == 3] <- "N2O Domestic sewage"
     data <- data[, c(1, 3, 2, 4, 5)]
-    }
+  }
 
   if (subtype == "HFC_tot") {
     data <- data[-c(1:4), ]
@@ -123,7 +123,7 @@ readImageMacc <- function(subtype) {
                     timevar = "class", v.names = "value", varying = list(3:ncol(data)),
                     direction = "long")
     data$value <- as.numeric(as.character(data$value))
-    }
+  }
 
   if (subtype == "SF6_tot") {
     data <- data[-c(1:4), ]
@@ -133,7 +133,7 @@ readImageMacc <- function(subtype) {
                     timevar = "class", v.names = "value", varying = list(3:ncol(data)),
                     direction = "long")
     data$value <- as.numeric(as.character(data$value))
-    }
+  }
 
   if (subtype == "PFC_tot") {
     data <- data[-c(1:4), ]
@@ -143,7 +143,7 @@ readImageMacc <- function(subtype) {
                     timevar = "class", v.names = "value", varying = list(3:ncol(data)),
                     direction = "long")
     data$value <- as.numeric(as.character(data$value))
-   } else if (subtype == "baseline_sources") {
+  } else if (subtype == "baseline_sources") {
     names(data) <- data[1, ]
     data <- data[-1, ]
     data <- data[-c(5:11)]
@@ -174,9 +174,9 @@ readImageMacc <- function(subtype) {
 
   x <- as.magpie(data, temporal = 1, spatial = 2, tidy = TRUE)
   regions <- c("1" = "CAN", "2" = "USA", "3" = "CAM", "4" = "SAM", "5" = "NAF",
-             "6" = "WAF", "7" = "EAF", "8" = "SAF", "9" = "WEU", "10" = "CEU",
-             "11" = "FSU", "12" = "MID", "13" = "SAS", "14" = "EAS", "15" = "SEA",
-             "16" = "OCE", "17" = "JAP")
+               "6" = "WAF", "7" = "EAF", "8" = "SAF", "9" = "WEU", "10" = "CEU",
+               "11" = "FSU", "12" = "MID", "13" = "SAS", "14" = "EAS", "15" = "SEA",
+               "16" = "OCE", "17" = "JAP")
 
   row.names(x) <- regions
 

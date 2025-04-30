@@ -21,9 +21,6 @@ magpie object containing converted expert guesses
 a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")
 }
 }
-\seealso{
-\code{\link[=readSource]{readSource()}}
-}
 \author{
 Stephen Wirth
 }

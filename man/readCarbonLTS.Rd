@@ -21,7 +21,7 @@ a <- readSource("CarbonLTS", "Lauk_et_al")
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Abhijeet Mishra

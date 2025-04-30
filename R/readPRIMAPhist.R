@@ -10,7 +10,7 @@
 #' @return magpie object of the PRIMAP-hist data.
 #'
 #' @author Roman Popov
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readPRIMAPhist("PRIMAPhist", "hist")
@@ -20,8 +20,9 @@
 #'
 readPRIMAPhist <- function(subtype) {
 
-  files <- c(hist = "primap-hist_v1.2_data/PRIMAP-hist_v1.2_14-Dec-2017.csv",
-             hist_no_ex = "primap-hist_v1.2_data/PRIMAP-hist_no_extrapolation_v1.2_14-Dec-2017.csv"
+  files <- c(
+    hist = "primap-hist_v1.2_data/PRIMAP-hist_v1.2_14-Dec-2017.csv",
+    hist_no_ex = "primap-hist_v1.2_data/PRIMAP-hist_no_extrapolation_v1.2_14-Dec-2017.csv"
   )
 
   file <- toolSubtypeSelect(subtype, files)

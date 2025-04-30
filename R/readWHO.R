@@ -8,7 +8,7 @@
 #' physical_inactivity_adults and physical_inactivity_underaged
 #' @return magpie object of the WHO data
 #' @author Benjamin Bodirsky
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "WHO", subtype = "physical_activity_adults")
@@ -19,8 +19,8 @@ readWHO <- function(subtype) {
   reformat <- function(x) {
     x <- strsplit(x, split = " ")
     x <- unlist(lapply(x, FUN = function(x) {
-return(x[[1]])
-}))
+      return(x[[1]])
+    }))
     x[x == "No"] <- NA
     x <- as.numeric(x)
     return(x)

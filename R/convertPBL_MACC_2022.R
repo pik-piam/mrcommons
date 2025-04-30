@@ -6,14 +6,14 @@
 #' @return PBL_MACC_2022 data as MAgPIE object for all subtypes aggregated to
 #' country level
 #' @author Michael Windisch, Florian Humpenoeder
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 
 convertPBL_MACC_2022 <- function(x) { # nolint : object_name_linter.
 
   map <- toolGetMapping(type = "regional", name = "regionmapping_IMAGE_PBL_MACC_2019.csv", where = "mappingfolder")
 
-   y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode")
-   y <- toolCountryFill(y, fill = 0)
+  y <- toolAggregate(x, map, from = "RegionCode", to = "CountryCode")
+  y <- toolCountryFill(y, fill = 0)
 
   return(y)
 }

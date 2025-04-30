@@ -8,7 +8,7 @@
 #'
 #' @return data
 #' @author Benjamin Bodirsky
-#' @seealso [calcOutput()], [readSource()]
+#' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' calcOutput("ResFieldBalancePast")

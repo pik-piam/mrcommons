@@ -9,7 +9,7 @@
 #' @return A MAgPIE object with the GFED emissions data and sub-dimensions Partition and Species.
 #' @author Michael S. Crawford
 #'
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples \dontrun{
 #' a <- readSource("GFED")
 #' }

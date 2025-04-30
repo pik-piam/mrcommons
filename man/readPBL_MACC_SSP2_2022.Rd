@@ -23,7 +23,7 @@ Read in PBL MAC curves from Harmsen_et_al_2022 for different subtypes and subset
 baseline-dependent IMAGE SSP2 version
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Michael Windisch, Florian Humpenoeder, Gabriel Abrahao

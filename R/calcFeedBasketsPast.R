@@ -12,7 +12,7 @@
 #' if not it is excluded.
 #'
 #' @author Isabelle Weindl, Benjamin Bodirsky
-#' @seealso [calcOutput()], [readFeedModel()]
+#' @seealso [madrat::calcOutput()], [readFeedModel()]
 #' @examples
 #' \dontrun{
 #' calcOutput("FeedBasketsPast")

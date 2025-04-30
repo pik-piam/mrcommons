@@ -6,7 +6,7 @@
 #' @param future if TRUE calculates constant future and linear trends based on SSP Expert guesses
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Isabelle Weindl, Lavinia Baumstark, Stephen Wirth
-#' @seealso [calcOutput()], [readSource()]
+#' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' calcOutput("LivestockProductivity")

@@ -23,9 +23,6 @@ a <- readSource(type = "Eurostat", subtype = "emissions")
 }
 
 }
-\seealso{
-\code{\link{readSource}}
-}
 \author{
 Renato Rodrigues
 }

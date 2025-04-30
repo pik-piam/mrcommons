@@ -6,7 +6,7 @@
 #' "HFC_tot", "SF6_tot", "PFC_tot" or "baseline_sources"
 #' @return magpie object of the PBL_MACC_2019 data
 #' @author Florian Humpenoeder
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @importFrom data.table as.data.table
 #' @importFrom reshape2 dcast melt
 #' @importFrom readxl read_xlsx

@@ -18,7 +18,7 @@ readSource("SSPresults", aggregate = FALSE)
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Abhijeet Mishra, Florian Humpenoeder

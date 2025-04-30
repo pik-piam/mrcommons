@@ -33,7 +33,7 @@
 #' }
 #' @return magpie object of the ACCMIP data. Unit is t NO2-N  per ha per year, or t NH3-N  per ha per year,...
 #' @author Roman Popov
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readACCMIP("ACCMIP", "nhx_2000")
@@ -53,34 +53,35 @@ readACCMIP <- function(subtype = NULL) {
   } else {
     glo <- FALSE
   }
-  files <- c(nhx_1850 = "accmip_nhx_acchist_1850.nc",
-             noy_1850 = "accmip_noy_acchist_1850.nc",
-             sox_1850 = "accmip_sox_acchist_1850.nc",
-             nhx_1980 = "accmip_nhx_acchist_1980.nc",
-             noy_1980 = "accmip_noy_acchist_1980.nc",
-             sox_1980 = "accmip_sox_acchist_1980.nc",
-             nhx_2000 = "accmip_nhx_acchist_2000.nc",
-             noy_2000 = "accmip_noy_acchist_2000.nc",
-             sox_2000 = "accmip_sox_acchist_2000.nc",
-             nhx_26_2030 = "accmip_nhx_accrcp26_2030.nc",
-             nhx_45_2030 = "accmip_nhx_accrcp45_2030.nc",
-             nhx_85_2030 = "accmip_nhx_accrcp85_2030.nc",
-             noy_26_2030 = "accmip_noy_accrcp26_2030.nc",
-             noy_45_2030 = "accmip_noy_accrcp45_2030.nc",
-             noy_85_2030 = "accmip_noy_accrcp85_2030.nc",
-             sox_26_2030 = "accmip_sox_accrcp26_2030.nc",
-             sox_45_2030 = "accmip_sox_accrcp45_2030.nc",
-             sox_85_2030 = "accmip_sox_accrcp85_2030.nc",
-             nhx_26_2100 = "accmip_nhx_accrcp26_2100.nc",
-             nhx_45_2100 = "accmip_nhx_accrcp45_2100.nc",
-             nhx_85_2100 = "accmip_nhx_accrcp85_2100.nc",
-             noy_26_2100 = "accmip_noy_accrcp26_2100.nc",
-             noy_45_2100 = "accmip_noy_accrcp45_2100.nc",
-             noy_85_2100 = "accmip_noy_accrcp85_2100.nc",
-             sox_26_2100 = "accmip_sox_accrcp26_2100.nc",
-             sox_45_2100 = "accmip_sox_accrcp45_2100.nc",
-             sox_85_2100 = "accmip_sox_accrcp85_2100.nc"
-             )
+  files <- c(
+    nhx_1850 = "accmip_nhx_acchist_1850.nc",
+    noy_1850 = "accmip_noy_acchist_1850.nc",
+    sox_1850 = "accmip_sox_acchist_1850.nc",
+    nhx_1980 = "accmip_nhx_acchist_1980.nc",
+    noy_1980 = "accmip_noy_acchist_1980.nc",
+    sox_1980 = "accmip_sox_acchist_1980.nc",
+    nhx_2000 = "accmip_nhx_acchist_2000.nc",
+    noy_2000 = "accmip_noy_acchist_2000.nc",
+    sox_2000 = "accmip_sox_acchist_2000.nc",
+    nhx_26_2030 = "accmip_nhx_accrcp26_2030.nc",
+    nhx_45_2030 = "accmip_nhx_accrcp45_2030.nc",
+    nhx_85_2030 = "accmip_nhx_accrcp85_2030.nc",
+    noy_26_2030 = "accmip_noy_accrcp26_2030.nc",
+    noy_45_2030 = "accmip_noy_accrcp45_2030.nc",
+    noy_85_2030 = "accmip_noy_accrcp85_2030.nc",
+    sox_26_2030 = "accmip_sox_accrcp26_2030.nc",
+    sox_45_2030 = "accmip_sox_accrcp45_2030.nc",
+    sox_85_2030 = "accmip_sox_accrcp85_2030.nc",
+    nhx_26_2100 = "accmip_nhx_accrcp26_2100.nc",
+    nhx_45_2100 = "accmip_nhx_accrcp45_2100.nc",
+    nhx_85_2100 = "accmip_nhx_accrcp85_2100.nc",
+    noy_26_2100 = "accmip_noy_accrcp26_2100.nc",
+    noy_45_2100 = "accmip_noy_accrcp45_2100.nc",
+    noy_85_2100 = "accmip_noy_accrcp85_2100.nc",
+    sox_26_2100 = "accmip_sox_accrcp26_2100.nc",
+    sox_45_2100 = "accmip_sox_accrcp45_2100.nc",
+    sox_85_2100 = "accmip_sox_accrcp85_2100.nc"
+  )
 
   file <- toolSubtypeSelect(subtype, files)
 

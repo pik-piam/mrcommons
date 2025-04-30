@@ -11,16 +11,14 @@
 #' @param source "ImageMacc" or "PBL_MACC_2019"
 #' @return MAgPIE object
 #' @author Nele Steinmetz, Florian Humpenoeder, Michael Windisch
-#' @seealso [calcOutput()], [readImageMacc()],
+#' @seealso [madrat::calcOutput()], [readImageMacc()],
 #' [convertImageMacc()]
 #' @examples
 #' \dontrun{
 #' calcOutput("MACCsCH4")
 #' }
 #' @importFrom magclass getNames
-calcMACCsCH4 <- function(
-    sector = "all",
-    source = "ImageMacc" # nolint: object_name_linter.
+calcMACCsCH4 <- function(sector = "all", source = "ImageMacc" # nolint: object_name_linter.
 ) {
   # readSource CH4 and baseline Emissions
   if (source == "ImageMacc") { # nolint
@@ -47,10 +45,12 @@ calcMACCsCH4 <- function(
 
     # weight for the aggregation
     baseline <- readSource("ImageMacc", "baseline_sources")
-    w <- baseline[, getYears(ch4), c("CH4 coal losses/leakages", "CH4 oil losses/leakages",
+    w <- baseline[, getYears(ch4), c(
+      "CH4 coal losses/leakages", "CH4 oil losses/leakages",
       "CH4 natural gas losses/leakages", "CH4 Landfills",
       "CH4 Domestic Sewage", "CH4 Wetland rice", "CH4 Animals",
-      "CH4 Animal waste")]
+      "CH4 Animal waste"
+    )]
 
     getNames(w) <- gsub("CH4 coal losses/leakages", "ch4coal", getNames(w))
     getNames(w) <- gsub("CH4 oil losses/leakages", "ch4oil", getNames(w))
@@ -140,7 +140,7 @@ calcMACCsCH4 <- function(
     w[, , ] <- setYears(w[, 2010, ], NULL)
 
 
-  } else if (source == "PBL_MACC_SSP2_2022") {
+  } else if (source == "PBL_MACC_SSP2_2022") { # nolint
 
     unit <- "Tax level 200 steps each 20$/tC"
     description <- "CH4 PBL_MACC_SSP2_2022"

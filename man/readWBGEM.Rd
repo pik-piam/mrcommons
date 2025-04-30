@@ -19,7 +19,7 @@ readSource(type = "WBGEM")
 
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Xiaoxi Wang

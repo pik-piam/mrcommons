@@ -5,7 +5,7 @@
 #'
 #' @return magpie object of the world prices from the IMPACT model for different SSP scenarios
 #' @author Mishko Stevanovic
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource(type = "IMPACT3.2.2World_Price")

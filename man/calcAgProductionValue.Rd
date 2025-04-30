@@ -22,8 +22,8 @@ a <- calcOutput("AgProductionValue", datasource = "FAO")
 
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}, \code{\link[=readFAO]{readFAO()}},
-\code{\link[=convertFAO]{convertFAO()}}, \code{\link[=readSource]{readSource()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}, \code{\link[mrfaocore:readFAO]{mrfaocore::readFAO()}},
+\code{\link[mrfaocore:convertFAO]{mrfaocore::convertFAO()}}, \code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Roman Popov, Mishko Stevanovic, Patrick v. Jeetze

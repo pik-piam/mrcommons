@@ -26,7 +26,7 @@ a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 
 }
 \seealso{
-\code{\link[=calcOutput]{calcOutput()}}
+\code{\link[madrat:calcOutput]{madrat::calcOutput()}}
 }
 \author{
 Benjamin Leon Bodirsky

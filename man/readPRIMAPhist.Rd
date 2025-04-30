@@ -25,7 +25,7 @@ a <- readPRIMAPhist("PRIMAPhist", "hist")
 }
 }
 \seealso{
-\code{\link[=readSource]{readSource()}}
+\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Roman Popov
