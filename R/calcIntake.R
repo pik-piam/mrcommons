@@ -64,11 +64,11 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
       bmi <- bmi[commonregions, , ]
     } else {
       # assume constant BMI before observation period
-      height <- time_interpolate(dataset = height, interpolated_year = findset("past"),
+      height <- time_interpolate(dataset = height, interpolated_year = findset("past_til2020"),
                                  integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      bmi <- time_interpolate(dataset = bmi, interpolated_year = findset("past"),
+      bmi <- time_interpolate(dataset = bmi, interpolated_year = findset("past_til2020"),
                               integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past"),
+      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past_til2020"),
                                      integrate_interpolated_years = FALSE, extrapolation_type = "constant")
       demo <- demo[, getYears(height), ]
       if (method == "Froehle") {
@@ -154,7 +154,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     intkProcap <- collapseNames(intkProcap[, , "All"][, , "B"])
     weight <- collapseNames(weight[, , "All"][, , "B"])
   } else  if (modelinput == "age_groups_hist") {
-    past <- findset("past")
+    past <- findset("past_til2020")
     intkProcap <- collapseNames(intkProcap[, past, "SSP2"])
     intkProcap <- intkProcap[, , "B", invert = TRUE]
     intkProcap <- intkProcap[, , "All", invert = TRUE]
