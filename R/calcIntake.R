@@ -82,7 +82,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     getSets(demo) <- c("region", "year", "scenario", "sex", "age")
 
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
-                              inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
+                             inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
   } else if (standardize == "recommendations") {
     if (method != "HHS_USDA") {
       stop("Method for this standadization type not available")
@@ -93,7 +93,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
       inactivity <- inactivity[commonregions, getYears(demo), ]
     }
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = NULL, inactivity = inactivity,
-                              method = method, aggregate = FALSE)
+                             method = method, aggregate = FALSE)
   } else if (standardize == "BMI") {
     height <- calcOutput("BodyHeight", convert = convert, aggregate = FALSE)
     commonregions <- intersect(getItems(demo, dim = 1.1), getItems(inactivity, dim = 1.1))
@@ -126,7 +126,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     weight[, , "15--19"] <- 21 * (height[, , "15--19"] / 100)^2
 
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
-                              inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
+                             inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
   } else {
     stop("unknown setting for standardize")
   }
