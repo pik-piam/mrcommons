@@ -11,20 +11,165 @@
 #'   - `'MBunkers'`: read worksheets from the Bunkers files
 #'   - `'Residential'`: read worksheets from the Residential files
 #'   - `'Tertiary'`: read worksheets from the Tertiary (Services and Agriculture) files
+#'   append `'_2021'` to get the updated data from 2021 (only available for some
+#'   sectors)
 #'
 #' @return A [`magpie`][magclass::magclass] object.
 #'
-#' @author Michaja Pehl, Falk Benke
+#' @author Michaja Pehl, Falk Benke, Robin Hasse
 #'
 #' @importFrom tibble tibble
-#' @importFrom dplyr bind_rows bind_cols select mutate
-#' @importFrom readxl read_xlsx
-#' @importFrom tidyr drop_na pivot_longer
+#' @importFrom dplyr bind_rows bind_cols select mutate group_by filter summarise
+#'   across all_of .data %>% rename matches
+#' @importFrom readxl read_xlsx excel_sheets
+#' @importFrom tidyr drop_na pivot_longer separate_wider_delim
 #' @importFrom rlang sym is_empty
 #' @importFrom magclass as.magpie
+#' @importFrom quitte as.quitte
 
 #' @export
 readJRC_IDEES <- function(subtype) { #nolint
+
+  # FUNCTIONS ------------------------------------------------------------------
+
+  extractSector <- function(subtype,
+                            suffix = "_2021",
+                            available = c("Residential", "Tertiary")) {
+    sector <- sub(paste0("^(.*)", suffix, "$"), "\\1", subtype)
+    if (!sector %in% available) {
+      stop("This read function has only been implemented for the sectors ",
+           paste(available, collapse = ", "), " and not for ", sector, ".")
+    }
+    return(sector)
+  }
+
+
+
+  getFiles <- function(subtype) {
+    sector <- extractSector(subtype)
+    list.files("JRC-IDEES-2021", paste0(".*_", sector, "_[A-Z]{2}\\.xlsx$"),
+               recursive = TRUE, full.names = TRUE)
+  }
+
+
+
+  getSheets <- function(file) {
+    allSheets <- excel_sheets(file)
+    sheets <- setdiff(allSheets, c("cover", "index"))
+    return(sheets)
+  }
+
+
+
+  extractCols <- function(df) {
+    df %>%
+      separate_wider_delim("Code", ".",
+                           names = c("varType", "unit", "region", "var"),
+                           too_many = "merge") %>%
+      # remove region from Code
+      unite("Code", "varType", "unit", "var", sep = ".")
+  }
+
+
+
+  isVintageData <- function(df) {
+    isTRUE(df[1, 1] == "Year of installation:")
+  }
+
+
+
+  dropFirstLine <- function(df) {
+    colNames <- colnames(df)
+    valCols <- colNames != "Code"
+    colnames(df)[valCols] <- df[1, valCols]
+    df <- df[2:nrow(df), ]
+    return(df)
+  }
+
+
+
+  removeDuplicatedRows <- function(x) {
+    dupl <- duplicated(select(x, -"value"))
+    conflictDuplicates <- x[dupl, ] %>%
+      group_by(across(-all_of("value"))) %>%
+      filter(max(.data$value) - min(.data$value) >
+               0.01 * abs(mean(.data$value))) %>%
+      summarise(.groups = "drop")
+    if (nrow(conflictDuplicates) > 0) {
+      warning("There are duplicates with different values:\n",
+              paste(capture.output(conflictDuplicates), collapse = "\n"))
+    }
+    return(x[!dupl, ])
+
+  }
+
+
+
+  recoverVintageDim <- function(x) {
+    if (!"vintage" %in% getSets(x)) {
+      x <- add_dimension(x, 3.2, "vintage", NA)
+    }
+    return(x)
+  }
+
+
+  # READ -----------------------------------------------------------------------
+
+  ## 2021 data ====
+
+  if (endsWith(subtype, "_2021")) {
+
+    data <- do.call(rbind, lapply(getFiles(subtype), function(file) {
+      fileData <- do.call(rbind, lapply(getSheets(file), function(sheet) {
+        sheetData <- read_xlsx(file, sheet, .name_repair = "minimal")
+
+        if (!"Code" %in% colnames(sheetData)) {
+          return(NULL)
+        }
+
+        vintage <- isVintageData(sheetData)
+        if (vintage) {
+          refPeriod <- as.numeric(colnames(sheetData)[2])
+          sheetData <- dropFirstLine(sheetData)
+        }
+
+        sheetData <- sheetData %>%
+          select(matches("(\\d{4}|^Code)$")) %>%
+          filter(!is.na(.data$Code)) %>%
+          mutate(across(matches("\\d{4}"), as.numeric)) %>%
+          extractCols() %>%
+          pivot_longer(matches("\\d{4}"), names_to = "period")
+
+        if (vintage) {
+          sheetData <- sheetData %>%
+            rename(vintage = .data$period) %>%
+            mutate(period = refPeriod)
+        } else {
+          sheetData <- sheetData %>%
+            mutate(vintage = NA,
+                   period = as.numeric(.data$period))
+        }
+
+        return(sheetData)
+      }))
+      return(fileData)
+    }))
+
+    data <- data %>%
+      removeDuplicatedRows() %>%
+      mutate(Code = gsub("\\.", "-", .data$Code)) %>%
+      as.quitte() %>%
+      as.magpie() %>%
+      recoverVintageDim()
+
+
+
+    return(data)
+  }
+
+
+  ## 2015 data ====
+
   # ---- subtype column information ----
 
   # nolint start
