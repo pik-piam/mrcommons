@@ -21,7 +21,7 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
                                      irrigation = FALSE) {
   fixBiomass <- NULL
   fixFreeliving <- NULL
-  past <- findset("past")
+  past <- findset("past_til2020")
   if ((fixation_types == "both") && !sum_plantparts) {
     warning("sum_plantparts set to true")
     sum_plantparts <- TRUE # nolint: object_name_linter.
@@ -49,14 +49,17 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
   }
   if (fixation_types %in% c("both", "fixation_freeliving")) {
     area <- collapseNames(calcOutput("Croparea", cellular = cellular, aggregate = FALSE,
-                                     sectoral = "kcr", physical = TRUE, irrigation = irrigation)[, past, ])
+                                     sectoral = "kcr", physical = TRUE, irrigation = irrigation))
+    cyears <- intersect(getYears(area), past)
+    area <- area[, cyears, ]
     freeliving <- setYears(readSource("Herridge", subtype = "freeliving", convert = FALSE), NULL)
     freeliving <- area * freeliving
-    freeliving <- freeliving[, getYears(fixBiomass), ]
+    freeliving <- freeliving[, intersect(getYears(fixBiomass), getYears(freeliving)), ]
     fixFreeliving <- add_dimension(freeliving, dim = 3.1, nm = "fixation_freeliving")
   }
 
-  out <- collapseNames(mbind(fixBiomass, fixFreeliving))
+  out <- collapseNames(mbind(fixBiomass[, intersect(getYears(fixBiomass), getYears(freeliving)), ],
+                             fixFreeliving[, intersect(getYears(fixBiomass), getYears(freeliving)), ]))
 
   return(list(x = out,
               weight = NULL,
