@@ -36,6 +36,7 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   } else {
     fertilizer <- NULL
   }
+
   # som missing
 
   adeposition <- setNames(
@@ -47,6 +48,12 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   cyears  <- intersect(getYears(adeposition), past)
   fertilizer <- fertilizer[, cyears, ]
   fertilizer <- setNames(fertilizer, "fertilizer")
+
+  harvest <- harvest[, cyears, ]
+  excretion <- excretion[, cyears, ]
+  fixation <- fixation[, cyears, ]
+
+
 
   if (!cellular) adeposition["ATA", , ] <- 0  ### Antarctica has large deposition but no icefree land
 
@@ -60,7 +67,6 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
     setNames(adeposition, "deposition"),
     fertilizer
   )
-
   # Balanceflow based on assumption that everything above max_nue on country level is definitely a bug
   # For cellular calculation same threshold will be used
   if (!is.null(max_nue)) {

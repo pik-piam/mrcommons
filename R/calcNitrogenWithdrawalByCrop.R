@@ -20,14 +20,14 @@
 
 calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, irrigation = FALSE) {
 
-  past <- findset("past")
+  past <- findset("past_til2020")
 
   if (irrigation %in% c("rainfed", "irrigated")) {  # again, for size reasons
     irrigation2 <- irrigation
     irrigation <- TRUE
   } else {
-irrigation2 <- FALSE
-}
+    irrigation2 <- FALSE
+  }
 
   harvest <- collapseNames(calcOutput("Production", products = "kcr", cellular = cellular,
                                       attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
@@ -89,13 +89,13 @@ irrigation2 <- FALSE
     out[is.nan(out)] <- 0
     unit <- "Mt Nr"
   } else {
-stop("unknown indicator")
-}
+    stop("unknown indicator")
+  }
 
   return(list(x = out,
-              weight = weight,
-              unit = unit,
-              description = "Nitrogen inputs by crop type",
-              isocountries = !cellular
-              ))
+    weight = weight,
+    unit = unit,
+    description = "Nitrogen inputs by crop type",
+    isocountries = !cellular
+  ))
 }
