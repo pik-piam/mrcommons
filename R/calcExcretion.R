@@ -22,7 +22,7 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
 
   # read in sets
   nutrients  <- c("nr", "p", "k")
-  past       <- findset("past")
+  past       <- findset("past_til2020")
   kres       <- findset("kres")
   kli2       <- findset(set = "kli", alias = TRUE)
   kli        <- findset(set = "kli")
@@ -60,7 +60,8 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
 
   if (cellular) {
     livestockProduction <- collapseNames(calcOutput("LivestockGridded", details = TRUE, aggregate = FALSE)[, , "dm"])
-    livestockProduction <- livestockProduction[, getYears(excretion), ]
+    livestockProduction <- livestockProduction[, intersect(getYears(excretion),
+                                                           getYears(livestockProduction)), ]
     productionWeights   <- new.magpie(cells_and_regions = getItems(livestockProduction, dim = 1),
                                       years = getItems(livestockProduction, dim = 2),
                                       names = outer(getNames(excretion, dim = 1),

@@ -19,7 +19,7 @@
 
 calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE, cells = "lpjcell") {
 
-  past               <- findset("past")
+  past               <- findset("past_til2020")
   excretion          <- collapseNames(calcOutput("Excretion", cellular = cellular, cells = cells, attributes = "npkc",
                                                  aggregate = FALSE)[, past, "confinement"])
   emissionFactorsN   <- calcOutput("EF3confinement", selection = "recycling", aggregate = FALSE)
