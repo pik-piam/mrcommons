@@ -58,8 +58,8 @@ calcNitrogenFixationPast <- function(fixation_types = "both", # nolint: object_n
     fixFreeliving <- add_dimension(freeliving, dim = 3.1, nm = "fixation_freeliving")
   }
 
-  out <- collapseNames(mbind(fixBiomass[, intersect(getYears(fixBiomass), getYears(freeliving)), ],
-                             fixFreeliving[, intersect(getYears(fixBiomass), getYears(freeliving)), ]))
+  out <- collapseNames(mbind(fixBiomass[, intersect(getYears(fixBiomass), getYears(fixFreeliving)), ],
+                             fixFreeliving[, intersect(getYears(fixBiomass), getYears(fixFreeliving)), ]))
 
   return(list(x = out,
               weight = NULL,
