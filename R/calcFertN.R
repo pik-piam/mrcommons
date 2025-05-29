@@ -16,10 +16,9 @@
 #' calcOutput("FertN")
 #' }
 #' @importFrom magpiesets findset
-#' @importFrom mstools toolFertilizerDistribution
 #'
-calcFertN <- function(appliedto = "total", cellular = FALSE, deposition = "CEDS",
-                      max_snupe = 0.85) { # nolint: object_name_linter.
+calcFertN <- function(appliedto = "total", cellular = FALSE,
+                      deposition = "CEDS", max_snupe = 0.85) { # nolint: object_name_linter.
   fert <- readSource("IFA", subtype = "consumption")[, , "Grand Total N", drop = TRUE]
 
   # split fertilizer into
@@ -39,7 +38,7 @@ calcFertN <- function(appliedto = "total", cellular = FALSE, deposition = "CEDS"
       budget <- calcOutput("NitrogenBudgetCropland", include_fertilizer = FALSE, deposition = deposition,
                            max_snupe = max_snupe, cellular = cellular, aggregate = FALSE)
       nue <- calcOutput("SNUpE", max_snupe = max_snupe, aggregate = FALSE)[, findset("past"), "constant"]
-      nue <- nue[getItems(budget, dim = 1.1), , ]
+      nue <- nue[getItems(budget, dim = 1.3), , ]
       nue[nue == 0] <-  max_snupe   # default starting value
 
       withdrawals <- dimSums(budget[, , c("harvest", "ag", "bg")], dim = 3.1)
@@ -53,7 +52,7 @@ calcFertN <- function(appliedto = "total", cellular = FALSE, deposition = "CEDS"
       budget <- calcOutput("NitrogenBudgetPasture", include_fertilizer = FALSE, deposition = deposition,
                            max_nue = max_snupe, cellular = cellular, aggregate = FALSE)
       nue <- calcOutput("NuePasture", aggregate = FALSE)[, findset("past"), "constant"]
-      nue <- nue[getItems(budget, dim = 1.1), , ]
+      nue <- nue[getItems(budget, dim = 1.3), , ]
       nue[nue == 0] <-  max_snupe   # default starting value
 
       withdrawals <- dimSums(budget[, , c("harvest")], dim = 3.1)
@@ -70,22 +69,18 @@ calcFertN <- function(appliedto = "total", cellular = FALSE, deposition = "CEDS"
   if (cellular) {
     past <- findset("past")
     fert <- fert[, past, ]
-
-    mapping <- toolGetMapping(name = "CountryToCellMapping.rds", where = "mstools")
+    mapping <- toolGetMappingCoord2Country()
     missing <- dimSums(fert, dim = 1) - dimSums(fert[unique(mapping$iso), , ], dim = 1)
     vcat(verbosity = 2, paste0("Not all countries included in mapping. ",
                                "Fertilizer not accounted for in 2010 sums up to ",
                                round(missing[, 2010, ], 2), " Tg Nr"))
 
-    fert <- toolFertilizerDistribution(iteration_max = 20,
-                                       max_snupe = 0.85,
-                                       mapping = mapping,
-                                       from = "celliso",
-                                       to = "iso",
-                                       fertilizer = fert,
-                                       SNUpE = nue,
-                                       withdrawals = withdrawals,
-                                       organicinputs = organicinputs)
+    fert <- mstools::toolFertilizerDistribution(iterMax = 20,
+                                                maxSnupe = 0.85,
+                                                fertilizer = fert,
+                                                snupe = nue,
+                                                withdrawals = withdrawals,
+                                                organicinputs = organicinputs)
   }
 
   return(list(x = fert,
