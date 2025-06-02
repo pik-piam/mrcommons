@@ -18,10 +18,10 @@
 
 
 readExpertGuessSSPLivestockProduction <- function(subtype) {
-  
+
   # input data version
   ver <- "2025-06"
-  
+
   files <- c(
     ssp1 = "animal_productivity_expert_guess_ssp1.csv",
     ssp2 = "animal_productivity_expert_guess_ssp2.csv",
@@ -29,9 +29,9 @@ readExpertGuessSSPLivestockProduction <- function(subtype) {
     ssp4 = "animal_productivity_expert_guess_ssp4.csv",
     ssp5 = "animal_productivity_expert_guess_ssp5.csv"
   )
-  
+
   file <- toolSubtypeSelect(subtype, files)
-  
+
   x <- read.magpie(file.path(ver, file))
   return(x)
 }
