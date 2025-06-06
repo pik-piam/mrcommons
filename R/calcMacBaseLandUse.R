@@ -17,9 +17,11 @@ calcMacBaseLandUse <- function(subtype) {
   # Create empty magclass object with all dimensions that can be filled below (so it's
   # easy to see which entries remain empty afterwards)
   isoCountry <- read.csv2(system.file("extdata", "iso_country.csv", package = "madrat"), row.names = NULL)
-  sources    <- c("co2luc", "n2oanwstm", "n2ofertin", "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp",
-                  "n2opeatland", "n2oforest", "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals",
-                  "ch4peatland", "ch4forest", "ch4savan", "ch4agwaste")
+  sources    <- c("co2luc", "co2lucPos", "co2lucNegUnintent", "co2lucNegIntentAR", "co2lucNegIntentAgroforestry",
+                  "co2lucNegIntentTimber", "co2lucNegIntentSCM", "co2lucNegIntentPeat", "n2oanwstm", "n2ofertin",
+                  "n2oanwstc", "n2ofertcr", "n2ofertsom", "n2ofertrb", "n2oanwstp", "n2opeatland", "n2oforest",
+                  "n2osavan", "n2oagwaste", "ch4rice", "ch4anmlwst", "ch4animals", "ch4peatland", "ch4forest",
+                  "ch4savan", "ch4agwaste")
 
   y <- new.magpie(cells_and_regions = isoCountry$x,
                   years = seq(2005, 2150, 5),
@@ -136,6 +138,13 @@ calcMacBaseLandUse <- function(subtype) {
 
     # emission types in REMIND that are updated with MAgPIE data
     emiMacMagpie <- c("co2luc",
+                      "co2lucPos",
+                      "co2lucNegUnintent",
+                      "co2lucNegIntentAR",
+                      "co2lucNegIntentAgroforestry",
+                      "co2lucNegIntentTimber",
+                      "co2lucNegIntentSCM",
+                      "co2lucNegIntentPeat",
                       "n2oanwstm",
                       "n2ofertin",
                       "n2oanwstc",
@@ -153,8 +162,6 @@ calcMacBaseLandUse <- function(subtype) {
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
     xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE, warnNA = FALSE)
     xCO2[, 1995, ] <- 0 # replace NA with 0 (only CO2 has NA in 1995)
-    xCO2 <- add_dimension(xCO2, dim = 3.3, nm = "co2luc")
-    getSets(xCO2) <- c("region", "year", "scenario", "variable", "data")
 
     # Read N2O, CH4 baseline for all SSPs/SDP from MAgPIE reports
     xCH4N2O <- calcOutput("MAgPIEReport", subtype = "ch4n2o", aggregate = FALSE)
