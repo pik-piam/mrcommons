@@ -46,13 +46,33 @@ calcMAgPIEReport <- function(subtype) {
 
   } else if (subtype == "co2") {
     mapping <- inline.data.frame(
-      "oldnames;newnames",
-      "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr);co2luc"
+      "magpieNames;remindNames",
+      "Emissions|CO2|Land RAW|+|Land-use Change (Mt CO2/yr);co2luc",
+      "Emissions|CO2|Land RAW|Land-use Change|+|Deforestation (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|+|Forest degradation (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|+|Other land conversion (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|+|Wood Harvest (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|Peatland|+|Positive (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|Peatland|+|Negative (Mt CO2/yr);co2lucNegIntentPeat",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|CO2-price AR (Mt CO2/yr);co2lucNegIntentAR",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|NPI_NDC AR (Mt CO2/yr);co2lucNegIntentAR",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|Cropland Tree Cover (Mt CO2/yr);co2lucNegIntentAgroforestry",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|Other Land (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|Secondary Forest (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Regrowth|+|Timber Plantations (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Residual|+|Positive (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|Residual|+|Negative (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Soil|++|Emissions (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land RAW|Land-use Change|Soil|Cropland management|+|Withdrawals (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Soil|Land Conversion|+|Withdrawals (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land RAW|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals (Mt CO2/yr);co2lucNegIntentSCM",
+      "Emissions|CO2|Land RAW|Land-use Change|Timber|+|Storage in HWP (Mt CO2/yr);co2lucNegIntentTimber",
+      "Emissions|CO2|Land RAW|Land-use Change|Timber|+|Release from HWP (Mt CO2/yr);co2lucPos"
     )
 
-    x <- x[, , mapping$oldnames]
-    # rename
-    getNames(x, dim = 3) <- mapping$newnames
+    # aggregate (sum over) MAgPIE variables to REMIND entys
+    x <- toolAggregate(x[,,mapping$magpieNames], rel = mapping, from = "magpieNames", to = "remindNames", dim = 3.3)
+
     d <- "CO2 land emissions"
     u <- "Mt CO2/yr"
 
