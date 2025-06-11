@@ -33,8 +33,7 @@ calcFAOmassbalance <- function(version = "join2010") {
   mb <- calcOutput("FAOmassbalance_pre", version = version, aggregate = FALSE)[, past, ]
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")
   mb1[, , "bioenergy"] <- 0
-  mb1 <- mb1[, ,
-             c("production", "production_estimated",
+  items <- intersect(getItems(mb1, dim = 3.2), c("production", "production_estimated",
                "export", "import", "stock_variation",
                "domestic_supply",
                "food", "feed", "seed", "waste", "other_util", "bioenergy",
@@ -45,7 +44,8 @@ calcFAOmassbalance <- function(version = "join2010") {
                "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
                "distilling", "ethanol1", "distillers_grain1",
                "distillingloss",
-               "households")]
+               "households"))
+  mb1 <- mb1[, , items]
   newitems <- setdiff(findset("kall"), getNames(mb1, dim = 1))
   mb2 <- add_columns(mb1, dim = 3.1, addnm = newitems)
   mb2[, , newitems] <- 0
