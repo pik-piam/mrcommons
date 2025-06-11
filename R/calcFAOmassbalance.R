@@ -19,11 +19,18 @@
 #' @importFrom withr local_options
 
 
-calcFAOmassbalance <- function() {
+calcFAOmassbalance <- function(version = "join2010") {
   local_options(magclass_sizeLimit = 1e+12)
+ 
+  if (version == "join2010") {
   past <- findset("past_til2020")
+  } else if (version == "pre2010") {
+  past <- findset("past")
+  } else if (version == "post2010") {
+  past <- c("y2010", "y2015", "y2020")
+  }
 
-  mb <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
+  mb <- calcOutput("FAOmassbalance_pre", version = version, aggregate = FALSE)[, past, ]
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")
   mb1[, , "bioenergy"] <- 0
   mb1 <- mb1[, ,
@@ -59,12 +66,12 @@ calcFAOmassbalance <- function() {
   # test to check whether distribution of feed was ok
   if (any(round(
                 mb2[, , "feed"][, , getNames(mb, dim = 1)]
-                - dimSums(feed[, , getNames(mb, dim = 1)], dim = 3.2),
+                - dimSums(feed[, getYears(mb2) , getNames(mb, dim = 1)], dim = 3.2),
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
   # warnings for small amounts getting past rounding for brans and livestock to feed
-  mb3 <- mbind(mb2, feed)
+  mb3 <- mbind(mb2, feed[, getYears(mb2), ])
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
   # quick fix, make 2020 same as 2019
@@ -85,14 +92,14 @@ calcFAOmassbalance <- function() {
 
   # Adding Pasture as feed item
   mb3[, , "pasture"][, ,
-                     c("domestic_supply", "production", "feed")] <- dimSums(feed[, , "pasture"], dim = 3.2)
+                     c("domestic_supply", "production", "feed")] <- dimSums(feed[, getYears(mb3), "pasture"], dim = 3.2)
 
   # Adding Crop Residues Production and use
   kres <- findset("kres")
   res <- calcOutput("ResDemand", aggregate = FALSE)
 
   res <- as.magpie(aperm(unwrap(res), c(1, 2, 4, 3, 5)))
-  mb3[, , kres][, , c("bioenergy", "domestic_supply", "feed", "other_util", "production")] <- res
+  mb3[, , kres][, , c("bioenergy", "domestic_supply", "feed", "other_util", "production")] <- res[, getYears(mb3), ]
 
   ##############################################################################
   ### Dividing other_util into bioenergy and other_util
