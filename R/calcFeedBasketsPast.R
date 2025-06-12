@@ -19,12 +19,19 @@
 #' }
 #' @importFrom magclass getNames
 
-calcFeedBasketsPast <- function(non_eaten_food = TRUE) { # nolint
+calcFeedBasketsPast <- function(non_eaten_food = TRUE, FAOversion = "join2010") { # nolint
 
-  yearsPast   <- findset("past_til2020")
+  if (FAOversion == "join2010") {
+  yearsPast <- findset("past_til2020")
+  } else if (FAOversion == "pre2010") {
+  yearsPast <- findset("past")
+  } else if (FAOversion == "post2010") {
+  yearsPast <- c("y2010", "y2015", "y2020")
+  }
+
   kli         <- findset("kli")
   kap         <- findset("kap")
-  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, yearsPast, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = FAOversion, aggregate = FALSE)[, yearsPast, ]
 
   weight           <- collapseNames(massbalance[, , kap][, , "dm"][, , "production"])
   getNames(weight) <- paste0("alias_", getNames(weight))

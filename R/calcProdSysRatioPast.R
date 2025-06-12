@@ -12,10 +12,15 @@
 #' @importFrom magclass getNames
 #' @importFrom luscale rename_dimnames
 
-calcProdSysRatioPast <- function() {
+calcProdSysRatioPast <- function(FAOversion = "join2010") {
 
+  if (FAOversion == "join2010") {
   past <- findset("past_til2020")
-
+  } else if (FAOversion == "pre2010") {
+  past <- findset("past")
+  } else if (FAOversion == "post2010") {
+  past <- c("y2010", "y2015", "y2020")
+  }
   # read in data
   prodsysratio <-  readSource(type = "FeedModel", subtype = "ProdSysRatio")
 
@@ -27,7 +32,7 @@ calcProdSysRatioPast <- function() {
 
   # use livestock production as weight
   kli <- findset("kli")
-  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = FAOversion, aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(
