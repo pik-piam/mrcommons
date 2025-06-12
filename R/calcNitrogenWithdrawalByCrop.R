@@ -52,7 +52,7 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
     add_dimension(harvest, nm = "harvest", dim = 3.1),
     add_dimension(ag, nm = "ag", dim = 3.1),
     add_dimension(bg, nm = "bg", dim = 3.1),
-    add_dimension(-fixation, nm = "fixation_crops", dim = 3.1),
+    add_dimension(-fixation[, getYears(harvest),], nm = "fixation_crops", dim = 3.1),
     add_dimension(-seed, nm = "seed", dim = 3.1)
   )
 
