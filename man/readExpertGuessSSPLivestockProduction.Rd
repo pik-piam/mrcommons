@@ -25,5 +25,5 @@ a <- readSource("ExpertGuessSSPLivestockProduction","ssp1")
 \code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
-Stephen Wirth
+Stephen Wirth, Isabelle Weindl
 }

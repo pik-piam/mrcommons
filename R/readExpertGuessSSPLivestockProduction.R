@@ -9,7 +9,7 @@
 #'
 #'
 #' @return magpie object containing the expert guesses
-#' @author Stephen Wirth
+#' @author Stephen Wirth, Isabelle Weindl
 #' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
@@ -19,6 +19,8 @@
 
 readExpertGuessSSPLivestockProduction <- function(subtype) {
 
+  # input data version
+  ver <- "2025-06"
 
   files <- c(
     ssp1 = "animal_productivity_expert_guess_ssp1.csv",
@@ -30,6 +32,6 @@ readExpertGuessSSPLivestockProduction <- function(subtype) {
 
   file <- toolSubtypeSelect(subtype, files)
 
-  x <- read.magpie(file)
+  x <- read.magpie(file.path(ver, file))
   return(x)
 }

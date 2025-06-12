@@ -75,10 +75,8 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
                    setNames(collapseNames(ag[, , "biomass"]), "ag"),
                    setNames(bg, "bg"))
 
-  inputsDirect <- mbind(
-    setNames(seed, "seed"),
-    setNames(fixation[, , "fixation_crops"], "fixation_crops")
-  )
+  inputsDirect <- mbind(setNames(seed, "seed"),
+                        setNames(fixation[, , "fixation_crops"], "fixation_crops"))
 
   inputs <- mbind(
     setNames(fixation[, , "fixation_freeliving"], "fixation_freeliving"),
