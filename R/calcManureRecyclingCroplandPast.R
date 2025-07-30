@@ -19,13 +19,17 @@
 
 calcManureRecyclingCroplandPast <- function(products = "sum", cellular = FALSE, cells = "lpjcell") {
 
-  past               <- findset("past")
+  past               <- findset("past_til2020")
   excretion          <- collapseNames(calcOutput("Excretion", cellular = cellular, cells = cells, attributes = "npkc",
-                                                 aggregate = FALSE)[, past, "confinement"])
+                                                 aggregate = FALSE)[, , "confinement"])
   emissionFactorsN   <- calcOutput("EF3confinement", selection = "recycling", aggregate = FALSE)
   lossRatesC         <- calcOutput("ClossConfinement", aggregate = FALSE)
   animalWasteMSShare <- collapseNames(calcOutput("AWMSconfShr", aggregate = FALSE)[, past, "constant"])
-
+  
+  cyears <- intersect(past, getYears(excretion))
+  excretion <- excretion[, cyears, ]
+  animalWasteMSShare <- animalWasteMSShare[, cyears, ]
+  
   if (cellular) {
 
     countries <- getItems(excretion, dim = ifelse(cells == "lpjcell", 1.3, 1.1))

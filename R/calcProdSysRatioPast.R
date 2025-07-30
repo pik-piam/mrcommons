@@ -12,15 +12,27 @@
 #' @importFrom magclass getNames
 #' @importFrom luscale rename_dimnames
 
-calcProdSysRatioPast <- function() {
+calcProdSysRatioPast <- function(FAOversion = "join2010") {
 
+  if (FAOversion == "join2010") {
+  past <- findset("past_til2020")
+  } else if (FAOversion == "pre2010") {
   past <- findset("past")
+  } else if (FAOversion == "post2010") {
+  past <- c("y2010", "y2015", "y2020")
+  }
   # read in data
   prodsysratio <-  readSource(type = "FeedModel", subtype = "ProdSysRatio")
 
+  #Extend historical data by filling in missing years with constant values
+  missingYears <- setdiff(past, getYears(prodsysratio))
+  if (length(missingYears) > 0) {
+    prodsysratio <- toolHoldConstant(prodsysratio, years = missingYears)
+  }
+
   # use livestock production as weight
   kli <- findset("kli")
-  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = FAOversion, aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(
@@ -31,15 +43,13 @@ calcProdSysRatioPast <- function() {
 
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
 
-
   # remove datasets with NAs in weight/data
   prodsysratio <- toolNAreplace(x = prodsysratio, weight = weight, replaceby = 0)
   weight <- prodsysratio$weight
   out <- prodsysratio$x
 
-
   return(list(x = out, weight = weight,
               unit = "-",
-              description = "Detailed historical system-specific feed requirements in
-              DM per DM products generated for 5 livestock commodities."))
+              description = "Historical distribution of livestock production across
+              different systems."))
 }

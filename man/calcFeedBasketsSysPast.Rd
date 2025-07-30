@@ -8,7 +8,7 @@ as DM feed biomass (different types of feed) needed per DM livestock products of
 calcFeedBasketsSysPast()
 }
 \value{
-Historical system-specific feed baskets and corresonding weights as a list of two MAgPIE
+Historical system-specific feed baskets and corresponding weights as a list of two MAgPIE
 objects
 }
 \description{

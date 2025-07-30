@@ -21,7 +21,8 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
 
   if (cellular) {
 
-    past <- findset("past")
+    past <- findset("past_til2020")
+    past <- as.integer(gsub("y", "", past))
     # approach based on
     # Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission
     # from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction. Alterra.
@@ -30,11 +31,13 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
 
     pet    <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
                          climatetype = "GSWP3-W5E5:historical", subtype = "mpet",
-                         stage = "smoothed", aggregate = FALSE)[, past, ]
+                         stage = "smoothed", aggregate = FALSE)
+    cyears <- intersect(getYears(pet, as.integer = TRUE), past)
+    pet <- pet[, cyears, ]
     prec   <- calcOutput("LPJmLClimateInput_new", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
                          climatetype  = "GSWP3-W5E5:historical",
                          variable = "precipitation:monthlySum",
-                         stage = "smoothed", aggregate = FALSE)[, past, ]
+                         stage = "smoothed", aggregate = FALSE)[, cyears, ]
 
     ratio <- prec / (pet + 0.001)
 
@@ -82,8 +85,9 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
                      setNames(budget3[, , "urban"], "urban"))
   }
 
-  return(list(x = fracLeachAverage,
-              weight = weight,
+  cyears <- intersect(getYears(fracLeachAverage), getYears(weight))
+  return(list(x = fracLeachAverage[, cyears, ],
+              weight = weight[, cyears, ],
               unit = "Million ha",
               min = 0,
               max = 0.31,
