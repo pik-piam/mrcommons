@@ -1,6 +1,6 @@
 # MadRat commons Input Data Library
 
-R package **mrcommons**, version **1.57.0**
+R package **mrcommons**, version **1.59.0**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/mrcommons)](https://cran.r-project.org/package=mrcommons) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009) [![R build status](https://github.com/pik-piam/mrcommons/workflows/check/badge.svg)](https://github.com/pik-piam/mrcommons/actions) [![codecov](https://codecov.io/gh/pik-piam/mrcommons/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrcommons) [![r-universe](https://pik-piam.r-universe.dev/badges/mrcommons)](https://pik-piam.r-universe.dev/builds)
 
@@ -40,7 +40,7 @@ In case of questions / problems please contact Jan Philipp Dietrich <dietrich@pi
 
 To cite package **mrcommons** in publications use:
 
-Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Bleidorn E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse R, Abrahão G, Weigmann P, Dietrich J (2025). "mrcommons: MadRat commons Input Data Library." doi:10.5281/zenodo.3822009 <https://doi.org/10.5281/zenodo.3822009>, Version: 1.57.0, <https://github.com/pik-piam/mrcommons>.
+Bodirsky B, Karstens K, Baumstark L, Weindl I, Wang X, Mishra A, Wirth S, Stevanovic M, Steinmetz N, Kreidenweis U, Rodrigues R, Popov R, Humpenoeder F, Giannousakis A, Levesque A, Klein D, Araujo E, Bleidorn E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse R, Abrahão G, Weigmann P, Dietrich J (2025). "mrcommons: MadRat commons Input Data Library." doi:10.5281/zenodo.3822009 <https://doi.org/10.5281/zenodo.3822009>, Version: 1.59.0, <https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
 
@@ -49,9 +49,9 @@ A BibTeX entry for LaTeX users is
   title = {mrcommons: MadRat commons Input Data Library},
   author = {Benjamin Leon Bodirsky and Kristine Karstens and Lavinia Baumstark and Isabelle Weindl and Xiaoxi Wang and Abhijeet Mishra and Stephen Wirth and Mishko Stevanovic and Nele Steinmetz and Ulrich Kreidenweis and Renato Rodrigues and Roman Popov and Florian Humpenoeder and Anastasis Giannousakis and Antoine Levesque and David Klein and Ewerton Araujo and Eva Bleidorn and Felicitas Beier and Julian Oeser and Michaja Pehl and Debbora Leip and Michael Crawford and Edna {Molina Bacca} and Patrick {von Jeetze} and Eleonora Martinelli and Felix Schreyer and Bjoern Soergel and Pascal Sauer and David Hötten and Robin Hasse and Gabriel Abrahão and Pascal Weigmann and Jan Philipp Dietrich},
   doi = {10.5281/zenodo.3822009},
-  date = {2025-06-06},
+  date = {2025-07-30},
   year = {2025},
   url = {https://github.com/pik-piam/mrcommons},
-  note = {Version: 1.57.0},
+  note = {Version: 1.59.0},
 }
 ```
