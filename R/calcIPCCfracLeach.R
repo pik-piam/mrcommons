@@ -15,13 +15,12 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-#' @importFrom magpiesets findset
 
 calcIPCCfracLeach <- function(cellular = TRUE) {
 
   if (cellular) {
 
-    past <- findset("past_til2020")
+    past <- magpiesets::findset("past_til2020")
     past <- as.integer(gsub("y", "", past))
     # approach based on
     # Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission
@@ -29,24 +28,32 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     # http://library.wur.nl/WebQuery/wurpubs/406284.
     # estimate potential evapotranspiration using LPJmL (based on Priestley–Taylor PET model)
 
-    pet    <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
-                         climatetype = "GSWP3-W5E5:historical", subtype = "mpet",
-                         stage = "smoothed", aggregate = FALSE)
+    pet    <- calcOutput("LPJmL_new",
+                         version = "LPJmL4_for_MAgPIE_44ac93de",
+                         climatetype = "GSWP3-W5E5:historical",
+                         subtype = "mpet",
+                         stage = "smoothed",
+                         aggregate = FALSE)
     cyears <- intersect(getYears(pet, as.integer = TRUE), past)
     pet <- pet[, cyears, ]
-    prec   <- calcOutput("LPJmLClimateInput_new", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
-                         climatetype  = "GSWP3-W5E5:historical",
-                         variable = "precipitation:monthlySum",
-                         stage = "smoothed", aggregate = FALSE)[, cyears, ]
 
-    ratio <- prec / (pet + 0.001)
+    precipitation   <- calcOutput("LPJmLClimateInput_new",
+                                  lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
+                                  climatetype  = "GSWP3-W5E5:historical",
+                                  variable = "precipitation:monthlySum",
+                                  stage = "smoothed",
+                                  aggregate = FALSE)
+    precipitation <- precipitation[, cyears, ]
+
+    ratio <- precipitation / (pet + 0.001)
 
     fracLeach <- 0.05 + (0.3 - 0.05) / (1 - 0.23) * (ratio - 0.23)
     fracLeach[fracLeach < 0.05] <- 0.05 # minimum leaching
     fracLeach[fracLeach > 0.3] <- 0.3 # maximum leaching
     fracLeach[ratio < 0.1] <- 0 # no leaching without water
 
-    fracLeachAverage <- dimSums(fracLeach[, , ], dim = 3) / 12
+    stopifnot(ndata(fracLeach) == 12)
+    fracLeachAverage <- dimSums(fracLeach, dim = 3) / 12
 
     vcat(2, paste("For ", length(which(is.na(fracLeachAverage))),
                   " entries, no PET was possible to compute. set leaching to 0.3"))
@@ -61,16 +68,19 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
     fracLeachAverage   <- lu
     fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
-    irrig <- calcOutput("LUH2v2", aggregate = FALSE, cellular = TRUE, cells = "lpjcell", irrigation = TRUE)
+    irrig <- calcOutput("LUH3", aggregate = FALSE, cellular = TRUE, irrigation = TRUE)
 
-    irrigShr <- collapseNames(irrig[, , "irrigated"][, , "crop"] / irrig[, , "total"][, , "crop"])
+    cyears <- intersect(getYears(fracLeachAverage), getYears(irrig))
+    fracLeachAverage <- fracLeachAverage[, cyears, ]
+    irrig <- irrig[, cyears, ]
+
+    irrigShr <- collapseNames(irrig[, , "crop.irrigated"] / dimSums(irrig[, , "crop"], 3))
     irrigShr[is.nan(irrigShr)] <- 0
 
     # set leaching to maximum for irrigated regimes
     fracLeachAverage[, , "crop"] <- fracLeachAverage[, , "crop"] * (1 - irrigShr) + 0.3 * irrigShr
 
-    weight  <- lu
-    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = weight, dim = 1, to = "iso", zeroWeight = "allow")
+    fracLeachAverage <- toolAggregate(fracLeachAverage, weight = lu, dim = 1, to = "iso", zeroWeight = "allow")
     fracLeachAverage[is.na(fracLeachAverage)] <- 0.05 # mostly forest in desert countries
     fracLeachAverage  <- toolCountryFill(fracLeachAverage, fill = 0.3)
     budget  <- calcOutput("NitrogenBudgetCropland",  aggregate = FALSE)[, , "surplus"]
