@@ -40,7 +40,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
 
   soilc      <- setNames(soilc[, , 1] + 1 / 3 * soilc[, , 2], "soilc")
 
-  states      <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")
+  states <- calcOutput("LUH3", landuseTypes = "LUH3", cellular = TRUE, yrs = cyears, aggregate = FALSE)
   cyears <- intersect(getYears(states, as.integer = TRUE), cyears)
   states <- states[, cyears, ]
   crops       <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
