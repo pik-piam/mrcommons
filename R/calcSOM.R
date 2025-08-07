@@ -56,9 +56,6 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   cshare     <- dimSums(cropshare * carbshare, dim = 3)
   cshare[cshare == 0] <- 1 # target for cropland in cells without cropland equal to nat veg just as backup.
 
-  # in principle possible to add begr/betr area based on LUH2v2
-  # crpbf_c3per: C3 perennial crops grown as biofuels
-  # crpbf_c4per: C4 perennial crops grown as biofuels
   soilc <- soilc[, cyears, ]
   targetCcrop    <- soilc * cshare * cropArea
   targetCNoncrop <- soilc * noncropArea
