@@ -39,36 +39,29 @@ convertCEDS2025 <- function(x) {
   x[, , "no2_n"] <- x[, , "no2_n"] / 46 * 14
   x[, , "co2_c"] <- x[, , "co2_c"] / 44 * 12
 
-
-
-
-  # most shipping and aviation data is global only (except 1A3dii_Domestic-navigation
-  # regional). We want to distribute it evenly across all countries.
-  # Therefore, save global data because it will be removed by toolCountryfill
-
-  # 1A3dii_Domestic-navigation   regional (global value is zero )
-  # 1A3di_International-shipping global   (no regional values exist)
-  # 1A3ai_International-aviation global   (no regional values exist)
-  # 1A3aii_Domestic-aviation     global   (no regional values exist)
-
+  # international shipping and aviation data is global only.
+  # We want to distribute it evenly across all countries for now, so it will not
+  # be removed by toolCountryfill.
   varGlob <- c("1A3di_International-shipping",
-               "1A3ai_International-aviation",
-               "1A3aii_Domestic-aviation")
-  xGLO <- x["GLO", , varGlob]
+               "1A3ai_International-aviation")
 
-  # remove global values. Note: the sector 2A1_Cement-production has a global
-  # sum that is indentical to the sum over regions
+  xGLO <- x["GLO", , varGlob]
   x <- x["GLO", , invert = TRUE]
-  # fills missing ISO countires and remove unknown ISO countires
+
+  # fills missing ISO countires and remove unknown ISO countries
   x <- toolCountryFill(x, fill = 0)
 
   # Create weight 1 for xGLO
-  w <- new.magpie(getItems(x, dim = 1), getItems(x, dim = 2), getItems(xGLO, dim = 3), fill = 1)
+  w <- new.magpie(getItems(x, dim = 1),
+                  getItems(x, dim = 2),
+                  getItems(xGLO, dim = 3),
+                  fill = 1)
 
   # Create mapping of each country to GLO
   mapping <- data.frame(from = getItems(x, dim = 1), to = "GLO")
 
-  # Spread global shipping and aviation data evenly across countries and save it to regions of x
+  # Spread global shipping and aviation data evenly across countries and save it
+  # to regions of x
   x[, , varGlob] <- toolAggregate(xGLO, mapping, weight = w)
 
   return(x)
