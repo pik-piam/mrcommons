@@ -7,16 +7,13 @@
 calcLivestockProductivity(future = TRUE)
 }
 \arguments{
-\item{future}{if TRUE calculates Constant future and linear trends based on SSP Expert guesses}
+\item{future}{if TRUE calculates constant future and linear trends based on SSP Expert guesses}
 }
 \value{
-MAgPIE-FEED data for livestock-yields and corresonding weights as a
-list of two MAgPIE objects
+List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Provides MAgPIE-FEED data for livestock-yields calculated in the regression
-for feed (calcRegressionFEED).. No changes to the content have been done,
-besides renaming and providing weights.
+Provides livestock yields for historical and future years.
 }
 \examples{
 \dontrun{

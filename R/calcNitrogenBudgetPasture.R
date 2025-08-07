@@ -20,7 +20,7 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
                                       include_fertilizer = TRUE, # nolint: object_name_linter.
                                       deposition = "CEDS",
                                       max_nue = 0.9) { # nolint: object_name_linter.
-  past <- findset("past")
+  past <- findset("past_til2020")
 
   harvest <- collapseNames(calcOutput("Production", products = "pasture", cellular = cellular,
                                       aggregate = FALSE)[, past, "nr"])
@@ -29,17 +29,32 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   fixation <- collapseNames(calcOutput("NitrogenBNF", cellular = cellular, aggregate = FALSE)[, , "past"])
   if (include_fertilizer == TRUE) {
     fertilizer <- calcOutput("FertN", aggregate = FALSE, appliedto = "past", cellular = cellular,
-                             deposition = deposition, max_snupe = max_nue)[, past, ]
+                             deposition = deposition, max_snupe = max_nue)
+    cyears <- intersect(getYears(fertilizer), past)
+    fertilizer <- fertilizer[, cyears, ]
     fertilizer <- setNames(fertilizer, "fertilizer")
   } else {
     fertilizer <- NULL
   }
+
   # som missing
 
   adeposition <- setNames(
-    collapseNames(dimSums(calcOutput("AtmosphericDeposition", datasource = deposition, cellular = cellular,
-                                     aggregate = FALSE)[, past, "past"], dim = c(3.4))),
-    "deposition")
+                          collapseNames(dimSums(calcOutput("AtmosphericDeposition",
+                                                           datasource = deposition,
+                                                           cellular = cellular,
+                                                           aggregate = FALSE)[, , "past"], dim = c(3.4))),
+                          "deposition")
+  cyears  <- intersect(getYears(adeposition), past)
+  fertilizer <- fertilizer[, cyears, ]
+  fertilizer <- setNames(fertilizer, "fertilizer")
+
+  harvest <- harvest[, cyears, ]
+  excretion <- excretion[, cyears, ]
+  fixation <- fixation[, cyears, ]
+
+
+
   if (!cellular) adeposition["ATA", , ] <- 0  ### Antarctica has large deposition but no icefree land
 
   outputs <- mbind(
@@ -52,7 +67,6 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
     setNames(adeposition, "deposition"),
     fertilizer
   )
-
   # Balanceflow based on assumption that everything above max_nue on country level is definitely a bug
   # For cellular calculation same threshold will be used
   if (!is.null(max_nue)) {
@@ -68,9 +82,9 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   out <- mbind(outputs, inputs, balanceflow, surplus)
 
   return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr",
-    description = "Nitrogen budget on pastures for historical period",
-    isocountries = !cellular))
+              x = out,
+              weight = NULL,
+              unit = "Mt Nr",
+              description = "Nitrogen budget on pastures for historical period",
+              isocountries = !cellular))
 }

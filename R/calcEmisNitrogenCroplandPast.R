@@ -75,8 +75,8 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
     # Add indirect deposition emissions for N2O ####
     ef <- setYears(readSource("IPCC", "emissionfactors", convert = FALSE), NULL)
     emisDep <- dimSums(
-      dep[, , "crop"],
-      dim = 3) * ef[, , "ef_5"]
+                       dep[, , "crop"],
+                       dim = 3) * ef[, , "ef_5"]
     emis <- add_columns(emis, addnm = "deposition", dim = 3.1)
     emis[, , "deposition"] <- 0
     emis[, , "n2o_n_direct"][, , "deposition"] <- emisDep
@@ -89,8 +89,8 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
     )
     emis <- add_columns(emis, addnm = "natural", dim = 3.1)
     emis[, , "natural"] <- 0
-    emis[, , "natural"] <- emisNatural
-
+    emis[, , "natural"] <- emisNatural[, getYears(emis), ]
+    emis <- emis[, getYears(dep), ]
 
     # add dinitrification ####
 
@@ -140,8 +140,8 @@ calcEmisNitrogenCroplandPast <- function(method = "IPCC") {
 
 
   return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr in various forms",
-    description = "Nitrogen losses from cropland soils"))
+              x = out,
+              weight = NULL,
+              unit = "Mt Nr in various forms",
+              description = "Nitrogen losses from cropland soils"))
 }

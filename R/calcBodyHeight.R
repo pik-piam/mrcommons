@@ -12,10 +12,10 @@ calcBodyHeight <- function(convert = TRUE) {
 
   demo <- calcOutput("Demography", education = FALSE, aggregate = FALSE)
   demo <- collapseNames(demo[, , "SSP2"])
-  demo <- time_interpolate(demo, interpolated_year = 1961:2010)
+  demo <- time_interpolate(demo, interpolated_year = 1961:2015)
 
   height <- readSource("NCDrisc", subtype = "height", convert = convert)
-  height <- time_interpolate(height, interpolated_year = 1890:2014, extrapolation_type = "constant")
+  height <- time_interpolate(height, interpolated_year = 1890:2019, extrapolation_type = "constant")
   if (!convert) {
     demo <- demo[getItems(height, dim = 1), , ]
   }

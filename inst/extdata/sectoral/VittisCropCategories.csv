@@ -1,11 +1,11 @@
 Vittis,ProductionItem,kcr
 barl,44|Barley,tece
-grou,"242|Groundnuts, with shell",groundnut
-maiz,56|Maize,maiz
+grou,"242|Groundnuts, excluding shelled",groundnut
+maiz,"56|Maize (corn)",maiz
 pota,116|Potatoes,potato
 sugb,157|Sugar beet,sugr_beet
-rice,"27|Rice, paddy",rice_pro
+rice,"27|Rice",rice_pro
 sunf,267|Sunflower seed,sunflower
 sorg,83|Sorghum,trce
-soyb,236|Soybeans,soybean
+soyb,236|Soya beans,soybean
 whea,15|Wheat,tece

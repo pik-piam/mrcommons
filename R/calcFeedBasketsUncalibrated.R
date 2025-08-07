@@ -11,7 +11,7 @@
 
 calcFeedBasketsUncalibrated <- function() {
 
-  past <- findset("past")
+  past <- findset("past_til2020")
   calibYear <- tail(past, 1)
 
   outEff <- calcOutput("FeedEfficiencyFuture", aggregate = FALSE)
@@ -41,7 +41,7 @@ calcFeedBasketsUncalibrated <- function() {
       stop("not all feed items assigned to main,const,anti")
     }
 
-    # esitmate the composition of the sub-baskets
+    # estimate the composition of the sub-baskets
     compositionMain <- fbaskSysTmp[, , main][, , sys] / dimSums(fbaskSysTmp[, , main][, , sys], dim = "kall")
     compositionAnti <- fbaskSysTmp[, , anti][, , sys] / dimSums(fbaskSysTmp[, , anti][, , sys], dim = "kall")
 

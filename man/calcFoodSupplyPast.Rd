@@ -9,6 +9,7 @@ calcFoodSupplyPast(
   products = NULL,
   product_aggr = FALSE,
   populationweight = "PopulationPast",
+  FAOversion = "join2010",
   attributes = c("kcal", "protein", "wm")
 )
 }

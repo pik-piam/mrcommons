@@ -15,12 +15,12 @@
 
 calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus") {
   vcat(2, "strange to change leaching attribute in if statement. Is this correct?")
-  past <- findset("past")
+  past <- findset("past_til2020")
   dep <- calcOutput("AtmosphericDeposition", datasource = deposition, glo_incl_oceans = FALSE,
                     cellular = FALSE, emission = FALSE, aggregate = FALSE)
   depGlo <- calcOutput("AtmosphericDeposition", datasource = deposition, glo_incl_oceans = TRUE,
                        cellular = FALSE, emission = FALSE, aggregate = FALSE)
-
+  past <- intersect(getYears(depGlo), past)
   deposition <- (dimSums(depGlo, dim = 3) - dimSums(dep, dim = c(1, 3)))[, past, ]
 
   if (leaching == "Nsurplus") {
@@ -52,8 +52,8 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
   vcat(2, "Fish production is allocated to oceans, but happens in both Oceans and Inland water bodies")
 
   return(list(
-    x = budget,
-    weight = NULL,
-    unit = "Mt Nr",
-    description = "Nitrogen budget for oceans"))
+              x = budget,
+              weight = NULL,
+              unit = "Mt Nr",
+              description = "Nitrogen budget for oceans"))
 }

@@ -1,13 +1,10 @@
 #' Calculate Yields for Livestock
 #' @description
-#' Provides MAgPIE-FEED data for livestock-yields calculated in the regression
-#' for feed (calcRegressionFEED).. No changes to the content have been done,
-#' besides renaming and providing weights.
+#' Provides livestock yields for historical and future years.
 #'
 #'
-#' @param future if TRUE calculates Constant future and linear trends based on SSP Expert guesses
-#' @return MAgPIE-FEED data for livestock-yields and corresonding weights as a
-#' list of two MAgPIE objects
+#' @param future if TRUE calculates constant future and linear trends based on SSP Expert guesses
+#' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Isabelle Weindl, Lavinia Baumstark, Stephen Wirth
 #' @seealso [madrat::calcOutput()], [madrat::readSource()]
 #' @examples
@@ -19,24 +16,24 @@
 
 calcLivestockProductivity <- function(future = TRUE) {
 
-  stock <- readSource("FAO_online", subtype = "LiveHead")
-  prim  <- readSource("FAO_online", subtype = "LivePrim")
+  liv <- readSource("FAO_online", subtype = "CropLive2010")
 
   # separate FAO variable number
-  getNames(stock) <- gsub("\\|", ".", getNames(stock))
-  getNames(prim)  <- gsub("\\|", ".", getNames(prim))
-
+  getNames(liv) <- gsub("\\|", ".", getNames(liv))
   # calculate stockYield
-  types <- c("Pigs", "Cattle", "Chickens")
-  names(types) <- c("Meat, pig", "Meat, cattle", "Meat, chicken")
+  types <- c("Swine / pigs", "Cattle", "Chickens")
+  names(types) <- c("Meat of pig with the bone, fresh or chilled",
+                    "Meat of cattle with the bone, fresh or chilled",
+                    "Meat of chickens, fresh or chilled")
   # magpie object of 10 time steps for meat from cattle, chicken and pigs
-  x1 <- setNames(prim[, , "production"][, , names(types)], unname(types))
+  x1 <- setNames(liv[, , "Production_(t)"][, , names(types)], unname(types))
   # magpie object of 10 time steps for animal numbers for cattle, chicken and pigs
-  x2 <- collapseNames(stock[, , types, drop = TRUE], collapsedim = 1)
+  x2large <- collapseNames(liv[, , "stock"][, , c("Swine / pigs", "Cattle"), drop = TRUE], collapsedim = 1)
+  x2small <- collapseNames(liv[, , "stock"][, , "Chickens"], collapsedim = c(1, 3))
+  x2 <- mbind(x2large, x2small)
 
-  tmp <- intersect(getYears(x1), getYears(x2))
-  out <- toolNAreplace(x1[, tmp, ] / x2[, tmp, ], x2[, tmp, ], replaceby = dimSums(x1[, tmp, ], dim = 1) /
-                         dimSums(x2[, tmp, ], dim = 1), val.rm = 0)
+  out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) /
+                         dimSums(x2, dim = 1), val.rm = 0)
   stockYield <- out$x
   weight      <- out$weight
   getNames(stockYield) <- paste0("stock_yield.", getNames(stockYield))
@@ -44,9 +41,10 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   # calculate prodYield
   types <- c("Eggs", "Milk")
-  x1 <- setNames(prim[, , "production"][, , c("Eggs, hen, in shell", "Milk, whole fresh cow")], types)
-  x2 <- setNames(prim[, , c("1062.Eggs, hen, in shell.Laying_(Head)",
-                            "882.Milk, whole fresh cow.Milk_Animals_(Head)")], types)
+  x1 <- setNames(liv[, , "Production_(t)"][, , c("Hen eggs in shell, fresh", "Raw milk of cattle")], types)
+  x2 <- setNames(liv[, , c("1062.Hen eggs in shell, fresh.Laying_(An)",
+                           "882.Raw milk of cattle.Milk_Animals_(An)")], types)
+
   # prim prod sum / prod head
   out <- toolNAreplace(x1 / x2, x2, replaceby = dimSums(x1, dim = 1) / dimSums(x2, dim = 1), val.rm = 0)
   prodYield <- out$x
@@ -56,54 +54,30 @@ calcLivestockProductivity <- function(future = TRUE) {
 
   # put both into one magpie
   weight <- mbind(weight, weight2)
-  yield <- mbind(stockYield[, tmp, ], prodYield[, tmp, ])
+  yield <- mbind(stockYield, prodYield)
 
   getNames(yield) <- getNames(yield, dim = 2)
   getNames(weight) <- getNames(weight, dim = 2)
   mapping <- data.frame(
-    groups = c("Pigs", "Cattle", "Chickens", "Eggs", "Milk"),
-    sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"), stringsAsFactors = FALSE
-  )
+                        groups = c("Swine / pigs", "Cattle", "Chickens", "Eggs", "Milk"),
+                        sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"), stringsAsFactors = FALSE)
 
   yield <- rename_dimnames(yield, dim = 3, query = mapping, from = "groups", to = "sys")
   weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "groups", to = "sys")
 
   # preparing output for magpie time steps "past"
-  past <- findset("past")
+  past <- findset("past_til2020")
   yieldPast <- yield[, past, ]
   weightPast <- weight[, past, ]
 
   if (future == FALSE) {
-    return(list(
-      x = yieldPast,
-      weight = weightPast,
+    return(list(x = yieldPast,
+      weight = weightPast + 1e-10,
       unit = c("t Fresh matter per animal"),
       description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))
   } else if (future == TRUE) {
     histYield <- clean_magpie(yield, what = "sets")
-
-    # extrapolate the trends to 2020 to reduce the number of time steps filled by the expertGuess-approach below
-    # select two 5-year averages for the 2 time steps to be used for extrapolation
-    average <- 5
-    dt <- floor(average / 2)
-    year1 <- tail(getYears(histYield), n = average + dt + 1)[1]
-    year2 <- tail(getYears(histYield), n = dt + 1)[1]
-    exyears <- c(year1, year2)
-    exyears <- as.numeric(gsub("y", "", exyears))
-
-    dataset <- mbind(toolTimeAverage(histYield[, seq(exyears[1] - dt, exyears[1] + dt), ], average),
-                     toolTimeAverage(histYield[, seq(exyears[2] - dt, exyears[2] + dt), ], average))
-    extra2020 <- time_interpolate(dataset = dataset,
-                                  interpolated_year = 2020,
-                                  integrate_interpolated_years = FALSE,
-                                  extrapolation_type = "linear")
-
-    for (i in getNames(histYield)) {
-      extra2020[, , i] <- toolConditionalReplace(extra2020[, , i], "<0", min(histYield[, , i]))
-    }
-
-    histYield <- mbind(histYield, extra2020)
 
     # selecting data for years included in magpie time steps "time"
     magYears <- findset("time")
@@ -200,9 +174,8 @@ calcLivestockProductivity <- function(future = TRUE) {
     output <- add_columns(output, addnm = "constant", dim = 3.2)
     output[, , "constant"] <- outputConstant
 
-    return(list(
-      x = output,
-      weight = weight,
+    return(list(x = output,
+      weight = weight + 1e-10,
       unit = c("t Fresh matter per animal"),
       description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))

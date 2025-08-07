@@ -13,20 +13,22 @@
 
 calcLivestockGridded <- function(details = FALSE) {
 
-  selectyears <- findset("past")
-
   countryToCell <- toolGetMappingCoord2Country()
   countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
 
   # country-level livestock production
-  livestockProduction <- calcOutput("FAOmassbalance", aggregate = FALSE)[, selectyears, "production"]
+  livestockProduction <- calcOutput("FAOmassbalance", aggregate = FALSE)[, , "production"]
 
   # ruminant categories
   ruminants     <- c("livst_milk", "livst_rum")
 
   # Divide ruminants in extensive and intensive depending on feedmix
   feedPast      <- calcOutput("FeedPast", nutrients = "nr", aggregate = FALSE)
-  ruminantFeed  <- collapseNames(feedPast[, selectyears, c("alias_livst_milk", "alias_livst_rum")])
+  commonYears         <- intersect(getYears(feedPast), getYears(livestockProduction))
+  feedPast            <- feedPast[, commonYears, ]
+  livestockProduction <- livestockProduction[, commonYears, ]
+
+  ruminantFeed  <- collapseNames(feedPast[, , c("alias_livst_milk", "alias_livst_rum")])
   cropbasedFeed <- dimSums(ruminantFeed[, , "pasture", invert = TRUE], dim = 3.2) / dimSums(ruminantFeed, dim = 3.2)
   pastbasedFeed <- collapseNames(ruminantFeed[, , "pasture"]) / dimSums(ruminantFeed, dim = 3.2)
   cropbasedFeed[is.na(cropbasedFeed)] <- 0
@@ -41,7 +43,14 @@ calcLivestockGridded <- function(details = FALSE) {
   # calculate extensive ruminant production per cell from pasture production share
   pastureProduction     <- collapseNames(calcOutput("Production", products = "pasture",
                                                     cellular = TRUE, cells = "lpjcell",
-                                                    calibrated = TRUE, aggregate = FALSE)[, selectyears, "nr"])
+                                                    calibrated = TRUE, aggregate = FALSE)[, , "nr"])
+
+  commonYears   <- intersect(getYears(pastureProduction), getYears(livestockProduction))
+  livestockProduction <- livestockProduction[, commonYears, ]
+  pastureProduction   <- pastureProduction[, commonYears, ]
+  extensiveRuminant   <- extensiveRuminant[, commonYears, ]
+  intensiveRuminant   <- intensiveRuminant[, commonYears, ]
+
   countries <- getItems(pastureProduction, dim = 1.3)
   extensiveRuminantCell <- toolAggregate(extensiveRuminant[countries, , ], rel = countryToCell,
                                          weight = pastureProduction + 10^(-10),
@@ -50,7 +59,14 @@ calcLivestockGridded <- function(details = FALSE) {
   # calculate intensive ruminant production per cell from cropland share
   kcrProduction <- calcOutput("Production", products = "kcr",
                               cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
-  kcrProduction <- kcrProduction[, selectyears, "dm"][, , c("betr", "begr"), invert = TRUE]
+  kcrProduction <- kcrProduction[, , "dm"][, , c("betr", "begr"), invert = TRUE]
+
+  commonYears   <- intersect(getYears(kcrProduction), getYears(livestockProduction))
+  kcrProduction <- kcrProduction[, commonYears, ]
+  extensiveRuminantCell <- extensiveRuminantCell[, commonYears, ]
+  intensiveRuminant     <- intensiveRuminant[, commonYears, ]
+  livestockProduction   <- livestockProduction[, commonYears, ]
+
   cropProduction        <- dimSums(collapseNames(kcrProduction), dim = 3)
   intensiveRuminantCell <- toolAggregate(intensiveRuminant[countries, , ], rel = countryToCell,
                                          weight = cropProduction + 10^(-10),
@@ -64,11 +80,11 @@ calcLivestockGridded <- function(details = FALSE) {
 
   # Divide pigs and poultry in extensive and intensive depending on development state
   developmentState      <- calcOutput("DevelopmentState", aggregate = FALSE)
-  developmentState      <- setNames(collapseNames(developmentState[countries, selectyears, "SSP2"]), nm = poultry[1])
+  developmentState      <- setNames(collapseNames(developmentState[countries, commonYears, "SSP2"]), nm = poultry[1])
   developmentState      <- mbind(developmentState, setNames(developmentState, nm = poultry[2]))
   upper                 <- calcOutput("DevelopmentState", upper = 30000, aggregate = FALSE)
   developmentState      <- mbind(developmentState,
-                                 setNames(collapseNames(upper[countries, selectyears, "SSP2"]),
+                                 setNames(collapseNames(upper[countries, commonYears, "SSP2"]),
                                           nm = pig))
 
   pigPoultryProduction  <- collapseNames(livestockProduction[countries, , c(pig, poultry)])
@@ -77,8 +93,9 @@ calcLivestockGridded <- function(details = FALSE) {
 
   # calculate extensive poultry and pig production per cell from urbanarea share
   landuseInitialization   <- calcOutput("LanduseInitialisation", cellular = TRUE,
+                                        selectyears = commonYears,
                                         cells = "lpjcell", aggregate = FALSE)
-  urbanarea               <- landuseInitialization[, selectyears, "urban"]
+  urbanarea               <- landuseInitialization[, , "urban"]
   extensivePigPoultryCell <- toolAggregate(extensivePigPoultry, rel = countryToCell,
                                            weight = urbanarea + 10^(-10),
                                            from = "iso", to = "coordiso", dim = 1)

@@ -21,9 +21,10 @@ calcNitrogenBNF <- function(cellular = FALSE) {
     bnf <- toolCountryFill(bnf, fill = 0)
   }
 
-  bnf[, , "crop"] <- dimSums(calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular,
-                                        fixation_types = "both", sum_plantparts = TRUE),
-                             dim = 3)
+  bnfcrop <- dimSums(calcOutput("NitrogenFixationPast", aggregate = FALSE, cellular = cellular,
+                                fixation_types = "both", sum_plantparts = TRUE),
+                     dim = 3)
+  bnf[, , "crop"] <- bnfcrop[, getYears(bnf), ]
 
   return(list(x = bnf,
               weight = NULL,

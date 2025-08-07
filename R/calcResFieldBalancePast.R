@@ -19,15 +19,16 @@
 calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario = "default") {
 
   if (products == "kres") {
-    past              <- findset("past")
     relevantNutrients <- c("nr", "p", "k", "c")  # after burning, unclear what dm and ge may be
 
     production        <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag",
-                                                  aggregate = FALSE, scenario = scenario))[, past, relevantNutrients]
+                                                  aggregate = FALSE, scenario = scenario))[, , relevantNutrients]
 
     burnshr           <- calcOutput("ResCombustEff", aggregate = FALSE)[, , getNames(production, dim = 1)]
-    devStatePast      <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, past, "SSP2"])
-
+    devStatePast      <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, , "SSP2"])
+    commonYears  <- intersect(getYears(production), getYears(devStatePast))
+    devStatePast <- devStatePast[, commonYears, ]
+    production   <- production [, commonYears, ]
 
     if (cellular) {
       devStatePast    <- toolIso2CellCountries(devStatePast, cells = "lpjcell")
@@ -76,6 +77,8 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       cell2Coord   <- toolGetMappingCoord2Country(pretty = TRUE)
       removalshare <- toolAggregate(x = removalshare, rel = cell2Coord,
                                     from = "iso", to = "coords", partrel = TRUE)
+      cyears <- intersect(getYears(production), getYears(removalshare))
+      removalshare <- removalshare[, cyears, ]
       removal <- (production - burn - ash) * removalshare
 
     } else {
@@ -85,6 +88,11 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       removal[, , c("res_nouse")] <- 0
     }
 
+    commonYears <- intersect(getYears(removal), getYears(production))
+    removal     <- removal[, commonYears, ]
+    production  <- production [, commonYears, ]
+    burn        <- burn[, commonYears, ]
+    ash         <- ash [, commonYears, ]
     recycle <- production - removal - burn
 
     ### check for negative recycling shares and decrease removal if nesseccary

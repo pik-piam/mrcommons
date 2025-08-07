@@ -17,18 +17,19 @@
 #' }
 #' @importFrom magpiesets findset
 calcFertilizerByCrop <- function(indicator = "total", deposition = "Nsurplus2", cellular = FALSE) {
-  past <- findset("past")
+  past <- findset("past_til2020")
   nb <- calcOutput("NitrogenBudgetCropland", deposition = deposition, cellular = cellular, aggregate = FALSE)
 
   withdrawal <- calcOutput("NitrogenWithdrawalByCrop", cellular = cellular, aggregate = FALSE, indicator = "total")
   withdrawal <- dimSums(withdrawal, dim = 3.1)
   inputs <- nb[, , c("fertilizer", "som", "deposition", "manure_conf", "bg_recycling",
                      "ag_recycling", "ag_ash", "fixation_freeliving")]
-
-  inputsPerCrop <- inputs / dimSums(withdrawal, dim = 3.1) * withdrawal
+  cyears <- intersect(getYears(nb), getYears(withdrawal))
+  inputsPerCrop <- inputs[, cyears, ] / dimSums(withdrawal[, cyears, ],
+                                                dim = 3.1) * withdrawal[, cyears, ]
   if (indicator == "by_physical_area") {
     area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE,
-                                     cellular = cellular, sectoral = "kcr")[, past, ])
+                                     cellular = cellular, sectoral = "kcr")[, cyears, ])
     out <- inputsPerCrop[, , getNames(area)] / area
     weight <- out
     weight[, , ] <- area
@@ -56,9 +57,9 @@ calcFertilizerByCrop <- function(indicator = "total", deposition = "Nsurplus2", 
   }
 
   return(list(x = out,
-              weight = weight,
-              unit = unit,
-              description = "Nitrogen inputs by crop type",
-              isocountries = !cellular
-              ))
+    weight = weight,
+    unit = unit,
+    description = "Nitrogen inputs by crop type",
+    isocountries = !cellular
+  ))
 }

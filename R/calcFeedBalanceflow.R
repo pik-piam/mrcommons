@@ -1,8 +1,8 @@
 #' @title calcFeedBalanceflow
-#' @description Calculates feed balanceflows from MAgPIE-Feed model to meet FAO data
+#' @description Calculates feed balance flows from MAgPIE-Feed model to meet FAO data
 #'
 #' @param per_livestock_unit default false
-#' @param cellular   if TRUE value is calculate on cellular level
+#' @param cellular   if TRUE value is calculated on cellular level
 #' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
@@ -24,7 +24,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   perLivestockUnit <- per_livestock_unit # nolint
 
   products2 <- findset(products, noset = "orignal")
-  past      <- findset("past")
+  past      <- findset("past_til2020")
 
   if (!perLivestockUnit) {
     prodAttributes      <- calcOutput("Attributes", aggregate = FALSE)
@@ -33,7 +33,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
     faoFeed          <- add_columns(faoFeed, addnm = "pasture", dim = 3.1)
 
-    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE,
+    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE, cells = "lpjcell",
                                    aggregate = FALSE, nutrients = "all", products = products)
     magFeed          <- magFeednutrients[, , "dm"]
 
@@ -54,7 +54,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     faoFeed[, , "pasture"][which(reducedgraz < 0.5 * faoFeed[, , "pasture"])] <-
       0.5 * faoFeed[, , "pasture"][which(reducedgraz < 0.5 * faoFeed[, , "pasture"])]
 
-    ## adjusted feed shares of pasture and 'indefinite' feed ressources for ruminants in South and Central Asia:
+    ## adjusted feed shares of pasture and 'indefinite' feed resources for ruminants in South and Central Asia:
     # Table 3.28, Wirsenius 2000
     rumPastshrInd <- 0.360  # Permanent pasture (including browse)
     rumScavshrInd <- 0.225  # Herbage and browse from forest and other land & thinning and weeding in cropland
@@ -73,9 +73,9 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     if (any(round(dimSums(feedBalanceflow2, dim = 3.1) - feedBalanceflow, 5) != 0)) {
 
       vcat(verbosity = 2, paste(
-        "Difficult to distribute the balanceflow between different livestock",
-        "commodities, because it is not used at all in the feedbaskets.",
-        "Distributed to ruminants for now."))
+                                "Difficult to distribute the balanceflow between different livestock",
+                                "commodities, because it is not used at all in the feedbaskets.",
+                                "Distributed to ruminants for now."))
       overflow                                <- feedBalanceflow - dimSums(feedBalanceflow2, dim = 3.1)
       feedBalanceflow2[, , "alias_livst_rum"] <- feedBalanceflow2[, , "alias_livst_rum"] + overflow
 
@@ -114,7 +114,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       # fading out the balanceflow until 2050.
       # Has to be the same as the SlaugherBalanceflow outfade!
       feedBalanceflow  <- convergence(origin = feedBalanceflow, aim = 0,
-                                      start_year = "y2010", end_year = "y2050", type = "s")
+                                      start_year = past[length(past)], end_year = "y2050", type = "s")
     } else if (future == "constant") {
       feedBalanceflow  <- toolHoldConstantBeyondEnd(feedBalanceflow)
       # Has to be the same as the SlaugherBalanceflow outfade!
@@ -127,7 +127,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   } else if (perLivestockUnit) {
 
     kli  <- findset("kli")
-    past <- findset("past")
+    past <- findset("past_til2020")
 
     feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
                                   products = products, future = future, aggregate = FALSE)
@@ -155,8 +155,11 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   if (cellular) {
     if (cells == "magpiecell") {
       feedBalanceflow <- toolCoord2Isocell(feedBalanceflow, cells = cells)
+      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
+
     }
   }
+
 
   return(list(x = feedBalanceflow,
               weight = weight,

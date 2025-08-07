@@ -5,7 +5,7 @@
 \title{Calculate historical distribution of livestock production across
 different systems based on output of MAgPIE_FEED model}
 \usage{
-calcProdSysRatioPast()
+calcProdSysRatioPast(FAOversion = "join2010")
 }
 \value{
 Historical distribution of livestock production across

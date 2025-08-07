@@ -4,7 +4,7 @@
 \alias{calcFAOmassbalance}
 \title{calcFAOmassbalance}
 \usage{
-calcFAOmassbalance()
+calcFAOmassbalance(version = "join2010")
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
@@ -26,5 +26,5 @@ calcOutput("FAOmassbalance")
 \code{\link[mrfaocore:calcFAOmassbalance_pre]{mrfaocore::calcFAOmassbalance_pre()}}
 }
 \author{
-Benjamin Leon Bodirsky, Xiaoxi Wang
+Benjamin Leon Bodirsky, Xiaoxi Wang, David Chen
 }

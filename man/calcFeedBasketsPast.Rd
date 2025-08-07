@@ -4,7 +4,7 @@
 \alias{calcFeedBasketsPast}
 \title{calcFeedBasketsPast}
 \usage{
-calcFeedBasketsPast(non_eaten_food = TRUE)
+calcFeedBasketsPast(non_eaten_food = TRUE, FAOversion = "join2010")
 }
 \arguments{
 \item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,
