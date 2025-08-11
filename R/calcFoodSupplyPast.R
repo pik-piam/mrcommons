@@ -25,10 +25,10 @@ calcFoodSupplyPast <- function(
     products = NULL,
     product_aggr = FALSE, # nolint: object_name_linter.
     populationweight = "PopulationPast",
-    FAOversion = "join2010",
+    faoVersion = "join2010",
     attributes = c("kcal", "protein", "wm")) {
   kfo <- findset("kfo")
-  kcal <- calcOutput("FAOmassbalance", version = FAOversion, aggregate = FALSE)
+  kcal <- calcOutput("FAOmassbalance", version = faoVersion, aggregate = FALSE)
   kcal <- kcal[, , "households"][, , kfo][, , c("ge", "nr", "wm")]
   kcal <- collapseNames(kcal)
 
