@@ -7,6 +7,8 @@
 #' conversions are made more explicit using simple assumptions. The first part of this
 #' function is the calcFAOmassbalance_pre.
 #'
+#' @param version whether to use the pre ("pre2010") or post ("post2010") 2010 versions of FAOSTAT Food balances,
+#' or "join2010" which joins them at 2010
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky, Xiaoxi Wang, David Chen
 #' @seealso
@@ -21,30 +23,30 @@
 
 calcFAOmassbalance <- function(version = "join2010") {
   local_options(magclass_sizeLimit = 1e+12)
- 
+
   if (version == "join2010") {
-  past <- findset("past_til2020")
+    past <- findset("past_til2020")
   } else if (version == "pre2010") {
-  past <- findset("past")
+    past <- findset("past")
   } else if (version == "post2010") {
-  past <- c("y2010", "y2015", "y2020")
+    past <- c("y2010", "y2015", "y2020")
   }
 
   mb <- calcOutput("FAOmassbalance_pre", version = version, aggregate = FALSE)[, past, ]
   mb1 <- add_columns(mb, dim = 3.2, addnm = "bioenergy")
   mb1[, , "bioenergy"] <- 0
   items <- intersect(getItems(mb1, dim = 3.2), c("production", "production_estimated",
-               "export", "import", "stock_variation",
-               "domestic_supply",
-               "food", "feed", "seed", "waste", "other_util", "bioenergy",
-               "milling", "brans1", "branoil1", "flour1",
-               "refining", "sugar1", "sugar2", "sugar3", "molasses1",
-               "extracting", "oil1", "oil2", "oilcakes1",
-               "fermentation", "alcohol1",
-               "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
-               "distilling", "ethanol1", "distillers_grain1",
-               "distillingloss",
-               "households"))
+                                                 "export", "import", "stock_variation",
+                                                 "domestic_supply",
+                                                 "food", "feed", "seed", "waste", "other_util", "bioenergy",
+                                                 "milling", "brans1", "branoil1", "flour1",
+                                                 "refining", "sugar1", "sugar2", "sugar3", "molasses1",
+                                                 "extracting", "oil1", "oil2", "oilcakes1",
+                                                 "fermentation", "alcohol1",
+                                                 "alcohol2", "alcohol3", "alcohol4", "brewers_grain1",
+                                                 "distilling", "ethanol1", "distillers_grain1",
+                                                 "distillingloss",
+                                                 "households"))
   mb1 <- mb1[, , items]
   newitems <- setdiff(findset("kall"), getNames(mb1, dim = 1))
   mb2 <- add_columns(mb1, dim = 3.1, addnm = newitems)
@@ -66,7 +68,7 @@ calcFAOmassbalance <- function(version = "join2010") {
   # test to check whether distribution of feed was ok
   if (any(round(
                 mb2[, , "feed"][, , getNames(mb, dim = 1)]
-                - dimSums(feed[, getYears(mb2) , getNames(mb, dim = 1)], dim = 3.2),
+                - dimSums(feed[, getYears(mb2), getNames(mb, dim = 1)], dim = 3.2),
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }

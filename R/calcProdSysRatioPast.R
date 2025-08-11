@@ -3,6 +3,7 @@
 #'
 #' @return Historical distribution of livestock production across
 #' different systems and corresponding weights as a list of two MAgPIE objects
+#' @param faoVersion which version of FAO food balances to use in mass balance
 #' @author Isabelle Weindl
 #' @seealso [madrat::calcOutput()], [readFeedModel()]
 #' @examples
@@ -12,14 +13,14 @@
 #' @importFrom magclass getNames
 #' @importFrom luscale rename_dimnames
 
-calcProdSysRatioPast <- function(FAOversion = "join2010") {
+calcProdSysRatioPast <- function(faoVersion = "join2010") {
 
-  if (FAOversion == "join2010") {
-  past <- findset("past_til2020")
-  } else if (FAOversion == "pre2010") {
-  past <- findset("past")
-  } else if (FAOversion == "post2010") {
-  past <- c("y2010", "y2015", "y2020")
+  if (faoVersion == "join2010") {
+    past <- findset("past_til2020")
+  } else if (faoVersion == "pre2010") {
+    past <- findset("past")
+  } else if (faoVersion == "post2010") {
+    past <- c("y2010", "y2015", "y2020")
   }
   # read in data
   prodsysratio <-  readSource(type = "FeedModel", subtype = "ProdSysRatio")
@@ -32,7 +33,7 @@ calcProdSysRatioPast <- function(FAOversion = "join2010") {
 
   # use livestock production as weight
   kli <- findset("kli")
-  massbalance <- calcOutput("FAOmassbalance_pre", version = FAOversion, aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(
