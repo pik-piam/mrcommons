@@ -37,7 +37,7 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipcc
     socLossShare           <- dimSums(ipccClimate * scfSub2IPCCclimate, dim = 3.1)
 
     if (subsystems == "aggregated") {
-      magCrop      <- calcOutput("Croparea", physical = TRUE, cellular = TRUE, cells = cells,
+      magCrop      <- calcOutput("Croparea", physical = TRUE, cellular = TRUE,
                                  irrigation = FALSE, aggregate = FALSE)
       kcr2all      <- data.frame(list(kcr = getNames(socLossShare), all = rep("all", 19)))
       socLossShare <- toolAggregate(socLossShare, weight = magCrop, rel = kcr2all, from = "kcr", to = "all", dim = 3)

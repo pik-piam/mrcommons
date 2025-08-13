@@ -58,7 +58,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
                                       dim = 3.1, partrel = TRUE)[, , magCropTypes]
 
       cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cellular = TRUE,
-                                   cells = "lpjcell", irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
+                                   irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
 
       commonYears <- intersect(getYears(yieldsLPJ), getYears(cropareaMAG))
       cropareaMAG <- cropareaMAG[, commonYears, ]

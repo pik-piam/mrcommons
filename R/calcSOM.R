@@ -48,7 +48,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   noncropArea <- dimSums(states, dim = 3) - cropArea
   rm(states)
 
-  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cells = "lpjcell",
+  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
                                          cellular = TRUE, irrigation = FALSE, aggregate = FALSE), cyears)
   cropshare  <- toolConditionalReplace(cropshare / dimSums(cropshare, dim = 3), "is.na()", 0)
   carbshare  <- calcOutput("SOCLossShare", aggregate = FALSE, subsystems = TRUE,
