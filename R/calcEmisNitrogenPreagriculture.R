@@ -21,6 +21,9 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
   # calibrating the natural rate of leaching ####
   fixnat <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
   land   <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
+  commonYears <- intersect(getYears(fixnat), getYears(land))
+  fixnat <- fixnat[, commonYears, ]
+  land <- land[, commonYears, ]
   fix    <- fixnat * land
   inputs <- (58 + 6 + 2.9 + 1.6 + 1.6 + 4)
 
@@ -92,10 +95,9 @@ calcEmisNitrogenPreagriculture <- function(cellular = FALSE, deposition = TRUE) 
     out <- toolCountryFill(out, fill = colSums(out) * 10^-10)
   }
 
-  return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr in various forms",
-    min = 0,
-    description = "Nitrogen emissions from soils under 100% natural cover (even for crop and urban)"))
+  return(list(x = out,
+              weight = NULL,
+              unit = "Mt Nr in various forms",
+              min = 0,
+              description = "Nitrogen emissions from soils under 100% natural cover (even for crop and urban)"))
 }
