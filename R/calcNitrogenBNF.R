@@ -13,6 +13,9 @@
 calcNitrogenBNF <- function(cellular = FALSE) {
   land <- calcOutput("LanduseInitialisation", aggregate = FALSE, cellular = TRUE)
   bnfRate <- calcOutput("NitrogenFixationRateNatural", aggregate = FALSE)
+  commonYears <- intersect(getYears(land), getYears(bnfRate))
+  land <- land[, commonYears, ]
+  bnfRate <- bnfRate[, commonYears, ]
   bnf <- land * bnfRate
   bnf[, , c("crop", "urban")] <- 0
 
