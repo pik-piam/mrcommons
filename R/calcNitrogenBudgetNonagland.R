@@ -34,7 +34,7 @@ calcNitrogenBudgetNonagland <- function(deposition = "CEDS",
 
   # Balanceflow based on assumption that everything above max_nue on country level is definitely a bug
   if (!is.null(max_nue)) {
-    balanceflow <- dimSums(outputs, dim = 3.2) / max_nue - dimSums(inputs, dim = 3.2)
+    balanceflow <- (dimSums(outputs, dim = 3.2) / max_nue) - dimSums(inputs, dim = 3.2)
     balanceflow[balanceflow < 0] <- 0
   } else {
     balanceflow <- dimSums(outputs, dim = 3.2) * 0

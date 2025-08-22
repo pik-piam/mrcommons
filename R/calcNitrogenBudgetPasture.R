@@ -70,9 +70,8 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   # Balanceflow based on assumption that everything above max_nue on country level is definitely a bug
   # For cellular calculation same threshold will be used
   if (!is.null(max_nue)) {
-    balanceflow <- (dimSums(outputs, dim = 3.1)) / max_nue - dimSums(inputs, dim = 3.1)
+    balanceflow <- (dimSums(outputs, dim = 3.1) / max_nue) - dimSums(inputs, dim = 3.1)
     balanceflow[balanceflow < 0] <- 0
-
   } else {
     balanceflow <- dimSums(outputs, dim = 3.1) * 0
   }
