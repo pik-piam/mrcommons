@@ -109,7 +109,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     feedBalanceflow  <- add_columns(feedBalanceflow, addnm = newItems, dim = 3.2)
     feedBalanceflow[, , newItems] <- 0
 
-    if (future == TRUE) {
+    if (future) {
       feedBalanceflow  <- toolHoldConstantBeyondEnd(feedBalanceflow)
       # fading out the balanceflow until 2050.
       # Has to be the same as the SlaugherBalanceflow outfade!

@@ -50,7 +50,7 @@ calcEDGAR6 <- function(non_country = FALSE, nutrient = TRUE) { # nolint
     v56[, , to] <- v56[, , to] * factor
     return(v56)
   }
-  if (nutrient == TRUE) {
+  if (nutrient) {
     v56 <- reformulate("n2o", "n2o_n", 1 / 44 * 28, v56)
     v56 <- reformulate("no2", "no2_n", 1 / 46 * 14, v56)
     v56 <- reformulate("nh3", "nh3_n", 1 / 17 * 14, v56)

@@ -114,7 +114,7 @@ calcLivestockGridded <- function(details = FALSE) {
     x <- mbind(ruminantProdCell, pigPoultryProdCell)
     getSets(x) <- c("x", "y", "iso", "year", "ItemCodeItem", "attributes")
 
-  } else if (details == TRUE) {
+  } else if (details) {
 
     x <- mbind(add_dimension(extensiveRuminantCell, dim = 3.1, add = "intensity", nm = "ext"),
                add_dimension(intensiveRuminantCell, dim = 3.1, add = "intensity", nm = "int"),

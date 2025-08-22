@@ -119,7 +119,7 @@ readISIMIP <- function(subtype = "airww:LPJmL:gfdl-esm2m:2b") {
 
     nameClean <- function(x, subtype, order = FALSE) {
 
-      if ((grepl("pDSSAT", subtype) || grepl("LPJmL", subtype)) && order == TRUE) {
+      if ((grepl("pDSSAT", subtype) || grepl("LPJmL", subtype)) && order) {
         x <- collapseNames(x)
         x <- dimOrder(x = x, perm = c(2, 1))
       }

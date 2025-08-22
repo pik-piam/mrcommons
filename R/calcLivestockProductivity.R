@@ -76,7 +76,7 @@ calcLivestockProductivity <- function(future = TRUE) {
       unit = c("t Fresh matter per animal"),
       description = "livestock productivity (yield) as stock (meat producers) or producer (dairy/egg) yield"
     ))
-  } else if (future == TRUE) {
+  } else if (future) {
     histYield <- clean_magpie(yield, what = "sets")
 
     # selecting data for years included in magpie time steps "time"

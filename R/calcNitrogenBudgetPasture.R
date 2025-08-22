@@ -1,5 +1,6 @@
 #' @title calcNitrogenBudgetPasture
 #' @description Calculates Nitrogen Budgets for Pasture soils on country levels.
+#'
 #' @param include_fertilizer including fertilizer in budget. Use FALSE to avoid circularities in specific cases
 #' @param deposition if FALSE, deposition is not accounted for in the distribution.
 #' Use FALSE to avoid circularities in calcNitrogenBudget
@@ -7,15 +8,12 @@
 #' takes care that the nitrogen use efficiency does not exceed the numeric value in balanceflow.
 #' @param cellular cellular disaggreagation or national values
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
+#'
 #' @author Benjamin Leon Bodirsky
 #' @examples
 #' \dontrun{
 #' calcOutput("NitrogenBudgetPasture")
 #' }
-#' @importFrom magclass setNames
-
-
-
 calcNitrogenBudgetPasture <- function(cellular = FALSE,
                                       include_fertilizer = TRUE, # nolint: object_name_linter.
                                       deposition = "CEDS",
@@ -27,7 +25,7 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   excretion <- collapseNames(dimSums(calcOutput("Excretion", cellular = cellular,
                                                 aggregate = FALSE)[, , "grazing"][, , "nr"], dim = 3.2))
   fixation <- collapseNames(calcOutput("NitrogenBNF", cellular = cellular, aggregate = FALSE)[, , "past"])
-  if (include_fertilizer == TRUE) {
+  if (include_fertilizer) {
     fertilizer <- calcOutput("FertN", aggregate = FALSE, appliedto = "past", cellular = cellular,
                              deposition = deposition, max_snupe = max_nue)
     cyears <- intersect(getYears(fertilizer), past)

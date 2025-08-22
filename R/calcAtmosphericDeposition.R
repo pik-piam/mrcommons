@@ -23,7 +23,9 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
 
   luhdata <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
 
-  if (is.null(scenario)) scenario <- "rcp45"
+  if (is.null(scenario)) {
+    scenario <- "rcp45"
+  }
 
   if (datasource %in% c("ACCMIP")) {
     accmip <- calcOutput("ACCMIP", glo_incl_oceans = glo_incl_oceans, aggregate = FALSE)
@@ -58,7 +60,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   } else {
     emi <- calcOutput("EmissionInventory", aggregate = FALSE, datasource = datasource, targetResolution = NULL)
     emi <- dimSums(emi[, , c("nh3_n", "no2_n")], dim = 3.1)
-    if (glo_incl_oceans == TRUE) {
+    if (glo_incl_oceans) {
       out <- dimSums(emi, dim = c(1))
     } else {
       redepShare <- calcOutput("AtmosphericRedepositionShare", scenario = scenario,
@@ -96,7 +98,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   out[out < 0] <- 0
 
   # Reduce number of grid cells to 59199
-  if (cells == "magpiecell" && cellular == TRUE) {
+  if (cells == "magpiecell" && cellular) {
     out <- toolCoord2Isocell(out, cells = "magpiecell")
   }
 
