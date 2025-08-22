@@ -11,8 +11,6 @@
 #' calcOutput("NitrogenBudgetOcean")
 #' }
 #' @importFrom magclass setNames
-
-
 calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus") {
   vcat(2, "strange to change leaching attribute in if statement. Is this correct?")
   past <- findset("past_til2020")
@@ -51,8 +49,7 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
 
   vcat(2, "Fish production is allocated to oceans, but happens in both Oceans and Inland water bodies")
 
-  return(list(
-              x = budget,
+  return(list(x = budget,
               weight = NULL,
               unit = "Mt Nr",
               description = "Nitrogen budget for oceans"))
