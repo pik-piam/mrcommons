@@ -13,10 +13,6 @@
 #' \dontrun{
 #' calcOutput("NitrogenBudgetCropland")
 #' }
-#' @importFrom magclass setNames
-
-
-
 calcNitrogenBudgetCropland <- function(cellular = FALSE,
                                        deposition = "CEDS",
                                        include_fertilizer = TRUE, # nolint: object_name_linter.
@@ -28,9 +24,7 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
   ag <- collapseNames(calcOutput("ResFieldBalancePast", aggregate = FALSE, cellular = cellular)[, past, "nr"])
   bg <- dimSums(collapseNames(calcOutput("ResBiomass", cellular = cellular,
                                          plantparts = "bg", aggregate = FALSE)[, , "nr"]), dim = 3.1)
-
   seed <- dimSums(calcOutput("Seed", cellular = cellular, products = "kcr", aggregate = FALSE)[, , "nr"], dim = 3)
-
   fixation <- dimSums(calcOutput("NitrogenFixationPast", fixation_types = "both", sum_plantparts = TRUE,
                                  aggregate = FALSE, cellular = cellular), dim = 3.2)
   som <- calcOutput("SOMlossN", cellular = cellular, aggregate = FALSE)
@@ -38,10 +32,10 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
   if (cellular) {
     som <- toolCell2isoCell(som)
   }
-  if (include_fertilizer == TRUE) {
+
+  if (include_fertilizer) {
     fertilizer <- calcOutput("FertN", aggregate = FALSE, appliedto = "crop", cellular = cellular,
                              deposition = deposition, max_snupe = max_snupe)
-
     fertilizer <- setNames(fertilizer, "fertilizer")
     cyears <- intersect(getYears(fertilizer), past)
     fertilizer <- fertilizer[, cyears, ]
@@ -57,21 +51,20 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
   fixation <- fixation[, cyears, ]
   som <- som[, cyears, ]
 
-
   manure <- collapseNames(calcOutput("ManureRecyclingCroplandPast", aggregate = FALSE,
                                      cellular = cellular)[, cyears, "nr"])
   manureCroplandGrazing <- collapseNames(dimSums(calcOutput("Excretion", cellular = cellular,
                                                             aggregate = FALSE)[, , "stubble_grazing"][, cyears, "nr"],
                                                  dim = 3.2))
-  adeposition <- setNames(collapseNames(
-                                        dimSums(calcOutput("AtmosphericDeposition", datasource = deposition,
+  adeposition <- setNames(collapseNames(dimSums(calcOutput("AtmosphericDeposition", datasource = deposition,
                                                            cellular = cellular,
-                                                           aggregate = FALSE)[, cyears, "crop"], dim = c(3.4))),
-  "deposition")
-  if (!cellular) adeposition["ATA", , ] <- 0
+                                                           aggregate = FALSE)[, cyears, "crop"], dim = 3.4)),
+                          "deposition")
+  if (!cellular) {
+    adeposition["ATA", , ] <- 0
+  }
 
-  outputs <- mbind(
-                   setNames(harvest, "harvest"),
+  outputs <- mbind(setNames(harvest, "harvest"),
                    setNames(collapseNames(ag[, , "biomass"]), "ag"),
                    setNames(bg, "bg"))
 
@@ -90,13 +83,12 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
     fertilizer
   )
 
-  # Balanceflow based on assumption that everything above max_snupe on country level is definetly a bug
-  # For cellular calculation same trashhold will be used
+  # Balanceflow based on assumption that everything above max_snupe on country level is definitely a bug
+  # For cellular calculation same threshold will be used
   if (!is.null(max_snupe)) {
-    balanceflow <- (dimSums(outputs, dim = 3.1) - dimSums(inputsDirect, dim = 3.1)) /
-      max_snupe - dimSums(inputs, dim = 3.1)
+    outMinusIn <- dimSums(outputs, dim = 3.1) - dimSums(inputsDirect, dim = 3.1)
+    balanceflow <- (outMinusIn / max_snupe) - dimSums(inputs, dim = 3.1)
     balanceflow[balanceflow < 0] <- 0
-
   } else {
     balanceflow <- dimSums(outputs, dim = 3.1) * 0
   }
