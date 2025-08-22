@@ -37,34 +37,29 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
 
   # som missing
 
-  adeposition <- setNames(
-                          collapseNames(dimSums(calcOutput("AtmosphericDeposition",
+  adeposition <- setNames(collapseNames(dimSums(calcOutput("AtmosphericDeposition",
                                                            datasource = deposition,
                                                            cellular = cellular,
-                                                           aggregate = FALSE)[, , "past"], dim = c(3.4))),
+                                                           aggregate = FALSE)[, , "past"], dim = 3.4)),
                           "deposition")
   cyears  <- intersect(getYears(adeposition), past)
   fertilizer <- fertilizer[, cyears, ]
-  fertilizer <- setNames(fertilizer, "fertilizer")
-
   harvest <- harvest[, cyears, ]
   excretion <- excretion[, cyears, ]
   fixation <- fixation[, cyears, ]
 
+  fertilizer <- setNames(fertilizer, "fertilizer")
 
+  if (!cellular) {
+    adeposition["ATA", , ] <- 0  ### Antarctica has large deposition but no icefree land
+  }
 
-  if (!cellular) adeposition["ATA", , ] <- 0  ### Antarctica has large deposition but no icefree land
+  outputs <- setNames(harvest, "harvest")
 
-  outputs <- mbind(
-    setNames(harvest, "harvest")
-  )
-
-  inputs <- mbind(
-    setNames(fixation, "fixation_freeliving"),
-    setNames(excretion, "grazing"),
-    setNames(adeposition, "deposition"),
-    fertilizer
-  )
+  inputs <- mbind(setNames(fixation, "fixation_freeliving"),
+                  setNames(excretion, "grazing"),
+                  setNames(adeposition, "deposition"),
+                  fertilizer)
   # Balanceflow based on assumption that everything above max_nue on country level is definitely a bug
   # For cellular calculation same threshold will be used
   if (!is.null(max_nue)) {
@@ -78,8 +73,7 @@ calcNitrogenBudgetPasture <- function(cellular = FALSE,
   surplus <- setNames(dimSums(inputs, dim = 3) + dimSums(balanceflow, dim = 3) - dimSums(outputs, dim = 3), "surplus")
   out <- mbind(outputs, inputs, balanceflow, surplus)
 
-  return(list(
-              x = out,
+  return(list(x = out,
               weight = NULL,
               unit = "Mt Nr",
               description = "Nitrogen budget on pastures for historical period",
