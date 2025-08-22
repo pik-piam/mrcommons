@@ -22,7 +22,7 @@ convertISIMIP <- function(x, subtype) {
     # read in LUH landarea as weight
     luh3 <- calcOutput("LUH3", cellular = TRUE, yrs = 1995, aggregate = FALSE)
     landarea <- dimSums(luh3, 3)
-    landarea <- collapseDim(landarea) + 10^-10
+    landarea <- collapseDim(landarea, dim = "iso") + 10^-10
 
     x        <- collapseDim(x, dim = "region")
 
