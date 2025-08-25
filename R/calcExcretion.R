@@ -47,7 +47,6 @@ calcExcretion <- function(cellular = FALSE, cells = "lpjcell", attributes = "npk
   removedForFuel           <- collapseNames(feed[, , "pasture"] * (fuelShare))
   leftOnCropland           <- dimSums(feed[, , kres] * croplandGrazingShare, dim = 3.2)
   feedTotal                <- dimSums(feed, dim = 3.2)
-  
   confinement              <- feedTotal - leftOnPasture - removedForFuel - leftOnCropland
   
   feedingSystems           <- mbind(add_dimension(leftOnPasture,  dim = 3.1, nm = "grazing"),

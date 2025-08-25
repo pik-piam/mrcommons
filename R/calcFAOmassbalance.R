@@ -72,7 +72,6 @@ calcFAOmassbalance <- function(version = "join2010") {
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
-  # warnings for small amounts getting past rounding for brans and livestock to feed
   mb3 <- mbind(mb2, feed[, getYears(mb2), ])
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
