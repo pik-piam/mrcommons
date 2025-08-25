@@ -72,7 +72,6 @@ calcFAOmassbalance <- function(version = "join2010") {
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
-  # warnings for small amounts getting past rounding for brans and livestock to feed
   mb3 <- mbind(mb2, feed[, getYears(mb2), ])
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
@@ -80,7 +79,7 @@ calcFAOmassbalance <- function(version = "join2010") {
   forest2020 <- forest[, 2019, ]
   forest2020 <- setYears(forest2020, 2020)
   forest <- mbind(forest, forest2020)
-
+  #convert to dry matter content
   mb3[, , getNames(mb3[, , paste0("wood.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
