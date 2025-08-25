@@ -22,14 +22,14 @@ calcBiocharAttributes <- function(processCond = "default") {
   # Mapping of internal names for pyrolysis process conditions to column headers
   # in source files
   processMapping <- list(
-    "SP-400"    = "Slow pyrolysis 400°C",
-    "SP-500"    = "Slow pyrolysis 500°C",
-    "SP-650"    = "Slow pyrolysis 650°C",
-    "SP-800"    = "Slow pyrolysis 800°C",
-    "FP-500"    = "Fast pyrolysis 500°C",
+    "SP-400"    = "Slow pyrolysis 400 deg C",
+    "SP-500"    = "Slow pyrolysis 500 deg C",
+    "SP-650"    = "Slow pyrolysis 650 deg C",
+    "SP-800"    = "Slow pyrolysis 800 deg C",
+    "FP-500"    = "Fast pyrolysis 500 deg C",
     "P-Woolf"   = "Fischer-Tropsch - Woolf et al (2014)",
-    "P-Buffi"   = "biopyrFuel -  Buffi et al (2024) with H2",
-    "P-KonTiki" = "KonTiki -  Cornelissen et al (2016)"
+    "P-Buffi"   = "biopyrFuel - Buffi et al (2024) with H2",
+    "P-KonTiki" = "KonTiki - Cornelissen et al (2016)"
   )
 
   allProcessConds <- names(processMapping)
