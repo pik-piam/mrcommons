@@ -8,7 +8,7 @@
 #' @return Magpie object with the dimensions "properties" and "process_cond"
 #'
 #' @author Isabelle Weindl
-#' @seealso [readSource()]
+#' @seealso [madrat::readSource()]
 #' @examples
 #' \dontrun{
 #' a <- readSource("PyrolysisConditions")
