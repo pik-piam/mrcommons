@@ -26,7 +26,7 @@ calculates manure recycling to cropland based on excretions, animal waste manage
 }
 \examples{
 \dontrun{
-calcOutput("calcManureRecyclingCroplandPast")
+calcOutput("ManureRecyclingCroplandPast")
 }
 }
 \seealso{

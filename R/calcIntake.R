@@ -150,7 +150,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
   intakeAll <- dimSums(intkProcap[, , "All", invert = TRUE] * weight[, , "All", invert = TRUE], dim = 3.2)
   intkProcap[, , "All"] <- intakeAll / dimSums(weight[, , "All", invert = TRUE], dim = "age")
 
-  if (modelinput) {
+  if (isTRUE(modelinput)) {
     intkProcap <- collapseNames(intkProcap[, , "All"][, , "B"])
     weight <- collapseNames(weight[, , "All"][, , "B"])
   } else  if (modelinput == "age_groups_hist") {
@@ -161,7 +161,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     weight <- weight[, past, "SSP2"]
     weight <- weight[, , "B", invert = TRUE]
     weight <- weight[, , "All", invert = TRUE]
-  } else if (modelinput != FALSE) {
+  } else if (!isFALSE(modelinput)) {
     stop("unknown setting for modelinput")
   }
 

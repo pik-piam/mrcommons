@@ -7,14 +7,12 @@
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @return List of magpie objects with results on country or cellular level, unit and description.
+#'
 #' @author Isabelle Weindl, Kristine Karstens
 #' @examples
 #' \dontrun{
 #' calcOutput("FeedBalanceflow")
 #' }
-#'
-#' @importFrom magclass getNames lowpass convergence
-
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 cellular = FALSE,
                                 cells = "lpjcell",
@@ -109,7 +107,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     feedBalanceflow  <- add_columns(feedBalanceflow, addnm = newItems, dim = 3.2)
     feedBalanceflow[, , newItems] <- 0
 
-    if (future) {
+    if (isTRUE(future)) {
       feedBalanceflow  <- toolHoldConstantBeyondEnd(feedBalanceflow)
       # fading out the balanceflow until 2050.
       # Has to be the same as the SlaugherBalanceflow outfade!
