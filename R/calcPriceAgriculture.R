@@ -143,7 +143,7 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     aggregation <- toolGetMapping("FAOitems_online_2010update.csv",
                                   type = "sectoral", where = "mrfaocore")
 
-    qprod <- collapseNames(calcOutput("FAOharmonized", source = "join2010", aggregate = FALSE)[, , "production"])
+    qprod <- collapseNames(calcOutput("FAOharmonized", src = "join2010", aggregate = FALSE)[, , "production"])
 
     # "2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake" need to be aggregated to get "oilpalm"
     # remove the original "oilpalm" which has only area harvested
