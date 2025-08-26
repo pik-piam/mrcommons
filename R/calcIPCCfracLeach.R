@@ -64,9 +64,12 @@ calcIPCCfracLeach <- function(cellular = TRUE) {
   } else if (!cellular) {
 
     lu <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+    ifl <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
 
-    fracLeachAverage   <- lu
-    fracLeachAverage[] <- calcOutput("IPCCfracLeach", aggregate = FALSE, cellular = TRUE)
+    commonYears <- intersect(getYears(lu), getYears(ifl))
+
+    fracLeachAverage   <- lu[, commonYears, ]
+    fracLeachAverage[] <- ifl[, commonYears, ]
 
     irrig <- calcOutput("LUH3", aggregate = FALSE, cellular = TRUE, irrigation = TRUE)
 
