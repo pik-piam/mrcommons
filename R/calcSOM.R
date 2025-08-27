@@ -77,8 +77,8 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   cropC    <- cropCha    <- deltaCcrop    <- targetCcrop
   noncropC <- noncropCha <- deltaCnoncrop <- targetCNoncrop
 
-  cropC[, 2:length(cyears), ]              <- NA
-  noncropC[, 2:length(cyears), ]           <- NA
+  cropC[, 2:length(cyears), ]             <- NA
+  noncropC[, 2:length(cyears), ]          <- NA
 
   cropCha[, , ]    <- deltaCcrop[, , ]    <- NA
   noncropCha[, , ] <- deltaCnoncrop[, , ] <- NA
@@ -134,8 +134,8 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
 
   } else if (subtype == "density") {
 
-    deltaCCropHa    <- toolNAreplace(deltaCcrop    / cropArea)$x
-    deltaCNoncropHa <- toolNAreplace(deltaCnoncrop / noncropArea)$x
+    deltaCCropHa     <- toolNAreplace(deltaCcrop    / cropArea)$x
+    deltaCNoncropHa  <- toolNAreplace(deltaCnoncrop / noncropArea)$x
 
     targetCCropHa    <- toolNAreplace(targetCcrop    / cropArea)$x
     targetCNoncropHa <- toolNAreplace(targetCNoncrop / noncropArea)$x
@@ -157,12 +157,13 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   }
 
   # delete first 20 years of spin-up
-
   out <- out[, -c(1:10), ]
-  if (cells == "magpiecell") out <- toolCoord2Isocell(out)
 
-  return(list(
-              x            = out,
+  if (cells == "magpiecell") {
+    out <- toolCoord2Isocell(out)
+  }
+
+  return(list(x            = out,
               weight       = weight,
               unit         = unit,
               description  = paste("Carbon in cropland and non-cropland soils, as well as change",
