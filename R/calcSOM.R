@@ -156,7 +156,6 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
     stop(paste("Subtype", subtype, "does not exist yet."))
   }
 
-  # delete first 20 years of spin-up
   out <- out[, -c(1:10), ]
 
   if (cells == "magpiecell") {
