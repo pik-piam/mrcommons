@@ -29,7 +29,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
 
   if (datasource %in% c("ACCMIP")) {
     accmip <- calcOutput("ACCMIP", glo_incl_oceans = glo_incl_oceans, aggregate = FALSE)
-    if (emission == FALSE) {
+    if (!emission) {
       accmip2 <- add_dimension(dimSums(accmip[, , c("drydep", "wetdep")][, , c("nh3_n", "no2_n")],
                                        dim = 3.2),
                                dim = 3.2, nm = "deposition")
@@ -41,7 +41,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
     accmip2 <- time_interpolate(accmip2, interpolated_year = time, integrate_interpolated_years = FALSE,
                                 extrapolation_type = "constant")
 
-    if (glo_incl_oceans == FALSE) {
+    if (!glo_incl_oceans) {
       vcat(2, "using constant landuse patterns for future deposition.",
            " Does not affect model results as they will be scaled with area lateron")
       luhdata2 <- toolHoldConstantBeyondEnd(luhdata)
@@ -52,7 +52,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
     } else {
       out <- accmip2
     }
-    if ((cellular == FALSE) && (glo_incl_oceans == FALSE)) {
+    if (!cellular && !glo_incl_oceans) {
       out <- dimSums(out, dim = c("x", "y"))
       out <- toolCountryFill(out, fill = 0, verbosity = 2)
     }
@@ -93,7 +93,7 @@ calcAtmosphericDeposition <- function(datasource = "ACCMIP", glo_incl_oceans = F
   }
 
   if (any(out < -1e-08)) {
-    warning("very negative numbers. Check")
+    warning("numbers < -1e-08, check mrcommons:::calcAtmosphericDeposition")
   }
   out[out < 0] <- 0
 

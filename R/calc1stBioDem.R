@@ -29,8 +29,8 @@ calc1stBioDem <- function(subtype = "all") {
   # if values decline, keep them constant
   x <- x[, sort(getYears(x)), ]
   for (y in 2:length(getYears(x))) {
-      x[, y, c("oils", "ethanol")] <- pmax(x[, y, c("oils", "ethanol")],
-                                           setYears(x[, y - 1, c("oils", "ethanol")], NULL))
+    x[, y, c("oils", "ethanol")] <- pmax(setYears(x[, y, c("oils", "ethanol")], NULL),
+                                         setYears(x[, y - 1, c("oils", "ethanol")], NULL))
   }
 
   # interpolate years

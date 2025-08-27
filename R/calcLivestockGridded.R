@@ -109,18 +109,15 @@ calcLivestockGridded <- function(details = FALSE) {
   pigPoultryProdCell      <- extensivePigPoultryCell + intensivePigPoultryCell
 
   ### Total Livestock
-  if (details == FALSE) {
-
-    x <- mbind(ruminantProdCell, pigPoultryProdCell)
-    getSets(x) <- c("x", "y", "iso", "year", "ItemCodeItem", "attributes")
-
-  } else if (details) {
-
+  if (details) {
     x <- mbind(add_dimension(extensiveRuminantCell, dim = 3.1, add = "intensity", nm = "ext"),
                add_dimension(intensiveRuminantCell, dim = 3.1, add = "intensity", nm = "int"),
                add_dimension(extensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "ext"),
                add_dimension(intensivePigPoultryCell, dim = 3.1, add = "intensity", nm = "int"))
     getSets(x) <- c("x", "y", "iso", "year", "intensity", "ItemCodeItem", "attributes")
+  } else {
+    x <- mbind(ruminantProdCell, pigPoultryProdCell)
+    getSets(x) <- c("x", "y", "iso", "year", "ItemCodeItem", "attributes")
   }
 
   # Check for NAs and negatives
