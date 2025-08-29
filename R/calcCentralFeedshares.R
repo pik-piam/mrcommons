@@ -59,7 +59,7 @@ calcCentralFeedshares <- function() {
 
   # use livestock production as weight
   kl <- c("livst_pig", "livst_rum", "livst_milk")
-  past <- findset("past")
+  past <- findset("past_til2020")
   massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kl][, , "dm"][, , "production"])
 

@@ -4,11 +4,13 @@
 \alias{calcFeedBasketsPast}
 \title{calcFeedBasketsPast}
 \usage{
-calcFeedBasketsPast(non_eaten_food = TRUE)
+calcFeedBasketsPast(non_eaten_food = TRUE, faoVersion = "join2010")
 }
 \arguments{
 \item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,
 if not it is excluded.}
+
+\item{faoVersion}{which version of FAO food baskets to use}
 }
 \value{
 Historical feed baskets and corresponding weights

@@ -4,7 +4,11 @@
 \alias{calcTimberTradeBilateral}
 \title{calcTimberTradeBilateral}
 \usage{
-calcTimberTradeBilateral()
+calcTimberTradeBilateral(products = "magpie")
+}
+\arguments{
+\item{products}{if "magpie" do UNIT (m3 --> MT) and name  conversion of the 2 magpie
+wood products, else "FAO" gives original ones}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

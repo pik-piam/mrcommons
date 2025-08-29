@@ -5,7 +5,10 @@
 \title{Calculate historical distribution of livestock production across
 different systems based on output of MAgPIE_FEED model}
 \usage{
-calcProdSysRatioPast()
+calcProdSysRatioPast(faoVersion = "join2010")
+}
+\arguments{
+\item{faoVersion}{which version of FAO food balances to use in mass balance}
 }
 \value{
 Historical distribution of livestock production across

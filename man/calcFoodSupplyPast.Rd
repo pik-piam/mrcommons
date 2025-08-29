@@ -9,6 +9,7 @@ calcFoodSupplyPast(
   products = NULL,
   product_aggr = FALSE,
   populationweight = "PopulationPast",
+  faoVersion = "join2010",
   attributes = c("kcal", "protein", "wm")
 )
 }
@@ -23,6 +24,8 @@ are summed over livestock products, staples and vegfruits.}
 
 \item{populationweight}{datasource of populationweight: FAO can be selected in order
 to better meet exact values. Normal datasource is PopulationPast}
+
+\item{faoVersion}{which version of FAO food balances to use in mass balance}
 
 \item{attributes}{attributes of different products,i.e., kcal,protein,wm}
 }

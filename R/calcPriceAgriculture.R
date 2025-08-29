@@ -140,21 +140,17 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
 
     # Annual producer prices in US$17/tDM
     out         <- readSource("FAO_online", subtype = "PricesProducerAnnual", convert = TRUE)
-    aggregation <- toolGetMapping("FAOitems_online.csv",
-                                  type = "sectoral", where = "mappingfolder")
+    aggregation <- toolGetMapping("FAOitems_online_2010update.csv",
+                                  type = "sectoral", where = "mrfaocore")
 
-    # production item for oilpalm exists twice:
-    # "254|Oil, palm fruit", "254|Oil palm fruit" - in out only the latter exists
-    aggregation <- aggregation[aggregation$ProductionItem != "254|Oil, palm fruit", ]
-
-    qprod <- collapseNames(calcOutput("FAOharmonized", aggregate = FALSE)[, , "production"])
+    qprod <- collapseNames(calcOutput("FAOharmonized", src = "join2010", aggregate = FALSE)[, , "production"])
 
     # "2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake" need to be aggregated to get "oilpalm"
-    qprod <- add_columns(qprod, addnm = "oilpalm", dim = 3.1)
-    qprod[, , "oilpalm"] <- dimSums(qprod[, , c("2577|Palm Oil", "2576|Palmkernel Oil", "2595|Palmkernel Cake")])
+    # remove the original "oilpalm" which has only area harvested
+    qprod[, , "oilpalm"] <- dimSums(qprod[, , c("2577|Palm Oil", "2576|Palmkernel Oil", "259|Cake of palm kernel")])
 
-    qprod <- toolAggregate(qprod, rel = aggregation, from = "FoodBalanceItem",
-                           to = "ProductionItem", dim = 3, partrel = TRUE, verbosity = 2)
+    qprod <- toolAggregate(qprod, rel = aggregation, from = "post2010_FoodBalanceItem",
+                           to = "post2010_ProductionItem", dim = 3, partrel = TRUE, verbosity = 2)
 
     comms <- intersect(getNames(out), getNames(qprod))
     years <- intersect(getYears(out), getYears(qprod))
@@ -165,9 +161,9 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     qprod[out == 0] <- 0
 
     # weighted aggregation of fao prices to magpie commodities
-    out <- toolAggregate(out, rel = aggregation, weight = qprod + 10^-10, from = "ProductionItem",
+    out <- toolAggregate(out, rel = aggregation, weight = qprod + 10^-10, from = "post2010_ProductionItem",
                          to = "k", dim = 3, partrel = TRUE, verbosity = 2)
-    out <- out[, , -which(getNames(out) %in% c("remaining", "not_clear"), arr.ind = TRUE)]
+    out <- out[, , -which(getNames(out) %in% c("remaining", "not_clear", ""), arr.ind = TRUE)]
 
     # correct the prices for dry matter values
     dm <- 1 / readSource("ProductAttributes", "Products")[, , "wm"]
@@ -177,9 +173,9 @@ calcPriceAgriculture <- function(datasource = "IMPACT3.2.2World_Price", unit = "
     out <- add_dimension(out, dim = 3.2, add = "model", nm = datasource)
     names(dimnames(out))[3] <- gsub("data1", "variable", names(dimnames(out))[3])
 
-    weight <- toolAggregate(qprod, rel = aggregation, from = "ProductionItem",
+    weight <- toolAggregate(qprod, rel = aggregation, from = "post2010_ProductionItem",
                             to = "k", dim = 3.1, partrel = TRUE, verbosity = 2)
-    weight <- weight[, , -which(getNames(weight) %in% c("remaining", "not_clear"), arr.ind = TRUE)]
+    weight <- weight[, , -which(getNames(weight) %in% c("remaining", "not_clear", ""), arr.ind = TRUE)]
     description <- "FAO prices based on Annual Produces Prices statistics."
     isocountries <- TRUE
   }

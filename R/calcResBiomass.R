@@ -45,7 +45,7 @@ calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
   } else if (plantparts %in% c("ag", "bg")) {
     # read in area harvested
     harvestedArea  <- calcOutput("Croparea", sectoral = "kcr", physical = FALSE,
-                                 cellular = cellular, cells = "lpjcell",
+                                 cellular = cellular,
                                  irrigation = irrigation, aggregate = FALSE)
     # cyears here above
     cropProduction <- collapseNames(calcOutput("Production", products = "kcr", attributes = "dm",

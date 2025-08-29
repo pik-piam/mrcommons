@@ -6,7 +6,7 @@
 #'                       if not it is excluded.
 #' @param fadeout        if TRUE, feed basket calibration fades out till 2050.
 #' @param method         "new" for additive calibration at end,
-#'                       "old" for multiplikative calibration of calShr and end values.
+#'                       "old" for multiplicative calibration of calShr and end values.
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
 #' @author Isabelle Weindl, Benjamin Leon Bodirsky, Stephen Wirth, Jan Philipp Dietrich
@@ -28,11 +28,11 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
 
     fbaskSys <- toolHoldConstantBeyondEnd(fbaskSys)
 
-    past  <- findset("past")
+    past  <- findset("past_til2020")
     calib <- fbaskSys[, past, ] - feedBasketsUNCALIB[, past, ]
     calibCONST       <- toolHoldConstantBeyondEnd(calib)
     calibDECLINE2050 <- convergence(origin = calibCONST, aim = 0,
-                                    start_year = 2010, end_year = 2050, type = "s")
+                                    start_year = 2020, end_year = 2050, type = "s")
 
     if (fadeout) {
       calibChosen <- calibDECLINE2050
@@ -143,7 +143,7 @@ calcFeedBaskets <- function(non_eaten_food = FALSE, # nolint
     ctype <- .belong2type(commodities = getNames(fbaskSys, dim = 2),
                           elems = getNames(fbaskSys))
 
-    past <- findset("past")
+    past <- findset("past_til2020")
     year <- tail(past, 1)
 
     # read in the ratio of livestock production allocated to the different systems

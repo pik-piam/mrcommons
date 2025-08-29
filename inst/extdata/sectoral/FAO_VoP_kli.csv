@@ -1,34 +1,30 @@
-* mapping between FAO and MAgPIE livestock categories for VoP
-* the FAO elemants "1182|Honey, natural"; “"987|Wool, greasy"; "1183|Beeswax", and "1185|Silk-worm cocoons, reelable" (which can't be mapped to the normal MAgPIE livestock categories) are mapped to "livst_other"
-
-
-"FAO_item","kli"
-"1062|Eggs, hen, in shell","livst_egg"
-"944|Meat indigenous, cattle","livst_rum"
-"1094|Meat indigenous, chicken","livst_chick"
-"1032|Meat indigenous, goat","livst_rum"
-"1055|Meat indigenous, pig","livst_pig"
-"1012|Meat indigenous, sheep","livst_rum"
-"951|Milk, whole fresh buffalo","livst_milk"
-"882|Milk, whole fresh cow","livst_milk"
-"1020|Milk, whole fresh goat","livst_milk"
-"982|Milk, whole fresh sheep","livst_milk"
-"1137|Meat indigenous, camel","livst_rum"
-"1120|Meat indigenous, horse","livst_rum"
-"1144|Meat indigenous, rabbit","livst_rum"
-"1087|Meat indigenous, turkey","livst_chick"
-"1130|Milk, whole fresh camel","livst_milk"
-"1070|Meat indigenous, duck","livst_chick"
-"1077|Meat indigenous, geese","livst_chick"
-"1163|Meat, game","livst_rum"
-"1091|Eggs, other bird, in shell","livst_egg"
-"972|Meat indigenous, buffalo","livst_rum"
-"1084|Meat indigenous, bird nes","livst_chick"
-"1122|Meat indigenous, ass","livst_rum"
-"1166|Meat nes","livst_pig"
-"1124|Meat indigenous, mule","livst_rum"
-"1161|Meat indigenous, other camelids","livst_rum"
-"1182|Honey, natural","livst_other"
-"987|Wool, greasy","livst_other"
-"1183|Beeswax","livst_other"
-"1185|Silk-worm cocoons, reelable","livst_other"
+pre1124_FAO_Item,post1124_FAO_Item,kli
+"1062|Eggs, hen, in shell","1062|Hen eggs in shell, fresh",livst_egg
+"944|Meat indigenous, cattle","867|Meat of cattle with the bone, fresh or chilled",livst_rum
+"1094|Meat indigenous, chicken","1058|Meat of chickens, fresh or chilled",livst_chick
+"1032|Meat indigenous, goat","1017|Meat of goat, fresh or chilled",livst_rum
+"1055|Meat indigenous, pig","1035|Meat of pig with the bone, fresh or chilled",livst_pig
+"1012|Meat indigenous, sheep","977|Meat of sheep, fresh or chilled",livst_rum
+"951|Milk, whole fresh buffalo",951|Raw milk of buffalo,livst_milk
+"882|Milk, whole fresh cow",882|Raw milk of cattle,livst_milk
+"1020|Milk, whole fresh goat",1020|Raw milk of goats,livst_milk
+"982|Milk, whole fresh sheep",982|Raw milk of sheep,livst_milk
+"1137|Meat indigenous, camel","1127|Meat of camels, fresh or chilled",livst_rum
+"1120|Meat indigenous, horse","1097|Horse meat, fresh or chilled",livst_rum
+"1144|Meat indigenous, rabbit","1141|Meat of rabbits and hares, fresh or chilled",livst_rum
+"1087|Meat indigenous, turkey","1080|Meat of turkeys, fresh or chilled",livst_chick
+"1130|Milk, whole fresh camel",1130|Raw milk of camel,livst_milk
+"1070|Meat indigenous, duck","1069|Meat of ducks, fresh or chilled",livst_chick
+"1077|Meat indigenous, geese","1073|Meat of geese, fresh or chilled",livst_chick
+"1163|Meat, game","1163|Game meat, fresh, chilled or frozen",livst_rum
+"1091|Eggs, other bird, in shell","1091|Eggs from other birds in shell, fresh, nec",livst_egg
+"972|Meat indigenous, buffalo","947|Meat of buffalo, fresh or chilled",livst_rum
+"1084|Meat indigenous, bird nes","1089|Meat of pigeons and other birds nec, fresh, chilled or frozen",livst_chick
+"1122|Meat indigenous, ass","1108|Meat of asses, fresh or chilled",livst_rum
+1166|Meat nes,"1166|Other meat of mammals, fresh or chilled",livst_pig
+"1124|Meat indigenous, mule","1111|Meat of mules, fresh or chilled",livst_rum
+"1161|Meat indigenous, other camelids","1158|Meat of other domestic camelids, fresh or chilled",livst_rum
+"1182|Honey, natural",1182|Natural honey,livst_other
+"987|Wool, greasy","987|Shorn wool, greasy, including fleece-washed shorn wool",livst_other
+1183|Beeswax,1183|Beeswax,livst_other
+"1185|Silk-worm cocoons, reelable",1185|Silk-worm cocoons suitable for reeling,livst_other
