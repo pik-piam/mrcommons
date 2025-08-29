@@ -34,7 +34,7 @@ calcDemography <- function(convert = TRUE, education = TRUE) {
 
   # test for differences in population and demography datasets
 
-  if (convert == TRUE) {
+  if (isTRUE(convert)) {
     population <- calcOutput("Population",
                              scenario = c("SSPs", "SDPs"),
                              years = magpiesets::findset("time"),

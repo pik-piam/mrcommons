@@ -1,18 +1,16 @@
 #' Calculate historical distribution of livestock production across
 #' different systems based on output of MAgPIE_FEED model
 #'
+#' @param faoVersion which version of FAO food balances to use in mass balance
 #' @return Historical distribution of livestock production across
 #' different systems and corresponding weights as a list of two MAgPIE objects
-#' @param faoVersion which version of FAO food balances to use in mass balance
+#'
 #' @author Isabelle Weindl
 #' @seealso [madrat::calcOutput()], [readFeedModel()]
 #' @examples
 #' \dontrun{
 #' calcOutput("ProdSysRatioPast")
 #' }
-#' @importFrom magclass getNames
-#' @importFrom luscale rename_dimnames
-
 calcProdSysRatioPast <- function(faoVersion = "join2010") {
 
   if (faoVersion == "join2010") {
@@ -36,21 +34,19 @@ calcProdSysRatioPast <- function(faoVersion = "join2010") {
   massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
-  mapping <- data.frame(
-    kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),
-    sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"),
-    stringsAsFactors = FALSE
-  )
+  mapping <- data.frame(kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),
+                        sys = c("sys_pig", "sys_beef", "sys_chicken", "sys_hen", "sys_dairy"),
+                        stringsAsFactors = FALSE)
 
-  weight <- rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
+  weight <- luscale::rename_dimnames(weight, dim = 3, query = mapping, from = "kli", to = "sys")
 
   # remove datasets with NAs in weight/data
   prodsysratio <- toolNAreplace(x = prodsysratio, weight = weight, replaceby = 0)
   weight <- prodsysratio$weight
   out <- prodsysratio$x
 
-  return(list(x = out, weight = weight,
+  return(list(x = out,
+              weight = weight,
               unit = "-",
-              description = "Historical distribution of livestock production across
-              different systems."))
+              description = "Historical distribution of livestock production across different systems."))
 }

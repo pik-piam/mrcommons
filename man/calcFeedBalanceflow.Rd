@@ -33,7 +33,6 @@ Calculates feed balance flows from MAgPIE-Feed model to meet FAO data
 \dontrun{
 calcOutput("FeedBalanceflow")
 }
-
 }
 \author{
 Isabelle Weindl, Kristine Karstens

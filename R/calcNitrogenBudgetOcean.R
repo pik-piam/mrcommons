@@ -18,12 +18,6 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
   depGlo <- calcOutput("AtmosphericDeposition", datasource = deposition, glo_incl_oceans = TRUE,
                        cellular = FALSE, emission = FALSE, aggregate = FALSE)
 
-  commonYears <- intersect(getYears(dep), getYears(depGlo))
-  dep <- dep[, commonYears, ]
-  depGlo <- depGlo[, commonYears, ]
-
-  deposition <- dimSums(depGlo, dim = 3) - dimSums(dep, dim = c(1, 3))
-
   if (leaching == "Nsurplus") {
     groundwater <- dimSums(calcOutput("EmisNitrogenPast", method = "IPCC", aggregate = FALSE)[, , "no3_n"],
                            dim = c(3.1, 3.2))
@@ -36,10 +30,13 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
   waterloss <- calcOutput("EmisNitrogenWater", method = leaching, aggregate = FALSE)
   fish <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "fish"][, , "production"][, , "nr"])
 
+  commonYears <- intersect(getYears(dep), getYears(depGlo))
   commonYears <- intersect(commonYears, getYears(groundwater))
   commonYears <- intersect(commonYears, getYears(sewage))
   commonYears <- intersect(commonYears, getYears(waterloss))
   commonYears <- intersect(commonYears, getYears(fish))
+  dep <- dep[, commonYears, ]
+  depGlo <- depGlo[, commonYears, ]
   groundwater <- groundwater[, commonYears, ]
   sewage <- sewage[, commonYears, ]
   waterloss <- waterloss[, commonYears, ]
@@ -56,7 +53,7 @@ calcNitrogenBudgetOcean <- function(deposition = "ACCMIP", leaching = "Nsurplus"
   # uncertainties and the potential relevance of climate change. Philosophical Transactions of the Royal
   # Society B: Biological Sciences 368, 20130121–20130121 (2013).
   budget["ATA", , "fixation_ocean"] <- 140
-  budget["ATA", , "deposition"] <- deposition
+  budget["ATA", , "deposition"] <- dimSums(depGlo, dim = 3) - dimSums(dep, dim = c(1, 3))
   budget["ATA", , "surplus"] <- dimSums(budget[, , c("fixation_ocean", "deposition")], dim = c(1, 3)) -
     dimSums(budget[, , c("fish")], dim = c(1, 3))
 
