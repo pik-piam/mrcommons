@@ -13,7 +13,7 @@ if not it is excluded.}
 \item{fadeout}{if TRUE, feed basket calibration fades out till 2050.}
 
 \item{method}{"new" for additive calibration at end,
-"old" for multiplikative calibration of calShr and end values.}
+"old" for multiplicative calibration of calShr and end values.}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

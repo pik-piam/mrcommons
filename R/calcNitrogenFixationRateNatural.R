@@ -17,13 +17,15 @@
 
 calcNitrogenFixationRateNatural <- function(cells = "lpjcell") {
 
-  years <- findset("past")
-
+  years <- findset("past_til2020")
+  years <- as.integer(gsub("y", "", years))
   # evapotranspiration (in m^3 per ha)
   etRate    <- collapseNames(calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
                                         climatetype = "GSWP3-W5E5:historical", subtype = "aet",
-                                        stage = "smoothed", aggregate = FALSE)[, years, ])
+                                        stage = "smoothed", aggregate = FALSE))
 
+  cyears <- intersect(getYears(etRate, as.integer = TRUE), years)
+  etRate <- etRate[, cyears, ]
   startYear <- "y1965"
 
   land <- dimSums(setYears(calcOutput("LanduseInitialisation",

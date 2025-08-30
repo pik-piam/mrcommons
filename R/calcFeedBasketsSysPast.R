@@ -1,10 +1,10 @@
 #' Calculate historical system-specific feed baskets based on output of MAgPIE_FEED model
 #' as DM feed biomass (different types of feed) needed per DM livestock products of respective systems
 #'
-#'
-#' @return Historical system-specific feed baskets and corresonding weights as a list of two MAgPIE
+#' @return Historical system-specific feed baskets and corresponding weights as a list of two MAgPIE
 #' objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich
+#' @param faoVersion which version of FAO food baskets to use
 #' @seealso [madrat::calcOutput()], [readFeedModel()], [calcFeedBasketsPast()]
 #' @examples
 #' \dontrun{
@@ -13,11 +13,23 @@
 #' @importFrom magclass getNames
 #' @importFrom luscale rename_dimnames
 
-calcFeedBasketsSysPast <- function() {
+calcFeedBasketsSysPast <- function(faoVersion = "join2010") {
 
+  if (faoVersion == "join2010") {
+    past <- findset("past_til2020")
+  } else if (faoVersion == "pre2010") {
+    past <- findset("past")
+  } else if (faoVersion == "post2010") {
+    past <- c("y2010", "y2015", "y2020")
+  }
   # read in system-specific feed basket data (for sys_dairy,sys_beef,sys_pig,sys_hen,sys_chicken)
   fbaskSys <-  readSource(type = "FeedModel", subtype = "FeedBaskets")
 
+  # Extend historical data by filling in missing years with constant values
+  missingYears <- setdiff(past, getYears(fbaskSys))
+  if (length(missingYears) > 0) {
+    fbaskSys <- toolHoldConstant(fbaskSys, years = missingYears)
+  }
 
   # expand dim=3.2 to kall (add products like wood and woodfuel)
   kdiff               <- setdiff(findset("kall"), getNames(fbaskSys, dim = 2))
@@ -26,8 +38,7 @@ calcFeedBasketsSysPast <- function() {
 
   # use livestock production as weight
   kli  <- findset("kli")
-  past <- findset("past")
-  massbalance <- calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, past, ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),

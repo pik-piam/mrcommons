@@ -73,9 +73,9 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
     yield   <- toolTimeAverage(yield, average)
   }
 
-  years <- findset("past")
-  yield <- yield[, years, ]
-  area  <- area[,  years, ]
+  cyears <- intersect(getYears(yield), getYears(area))
+  yield <- yield[, cyears, ]
+  area <- area[, cyears, ]
 
   return(list(x            = yield,
               weight       = area + 10^-10,

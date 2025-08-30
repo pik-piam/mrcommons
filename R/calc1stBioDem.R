@@ -15,7 +15,7 @@
 #' @importFrom magpiesets findset
 
 calc1stBioDem <- function(subtype = "all") {
-  past <- findset("past")
+  past <- findset("past_til2020")
   time <- findset("time")
 
   x <- collapseNames(calcOutput(type = "FAOmassbalance", aggregate = FALSE)[, , "bioenergy"][, , "ge"])

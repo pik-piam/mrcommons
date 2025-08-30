@@ -26,8 +26,8 @@ calcEmisNitrogenPast <- function(method = "IPCC") {
   addemis <- setdiff(allemis, getNames(inventory, dim = 2))
 
   if (length(addemis) > 0) {
-inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
-}
+    inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
+  }
   inventory <- inventory[, , allemis]
 
 
@@ -35,10 +35,11 @@ inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
     ### Add own estimates
     cropland <- calcOutput("EmisNitrogenCroplandPast", method = method, aggregate = FALSE)
     pasture <- calcOutput("EmisNitrogenPasturePast", method = method, aggregate = FALSE)
+    pasture <- pasture[, getYears(cropland), ]
     awms <- add_dimension(
-      x = dimSums(calcOutput("EmisNitrogenAWMSPast", aggregate = FALSE),
-                dim = c(3.1, 3.2))[, , getNames(cropland, dim = 2)], dim = 3.1, nm = "awms")
-
+                          x = dimSums(calcOutput("EmisNitrogenAWMSPast", aggregate = FALSE),
+                                      dim = c(3.1, 3.2))[, , getNames(cropland, dim = 2)], dim = 3.1, nm = "awms")
+    awms <- awms[, getYears(cropland), ]
     emisAg <- mbind(
       cropland,
       pasture,
@@ -49,7 +50,8 @@ inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
     emisAg <- add_columns(emisAg, dim = 3.2, addnm = c("n2o_n_indirect"))
     ef <- setYears(readSource("IPCC", "emissionfactors", convert = FALSE), NULL)
     emisAg[, , "n2o_n_indirect"] <- collapseNames(emisAg[, , "nh3_n"] * ef[, , "ef_5"]
-                                                + dimSums(emisAg[, , c("nh3_n", "no2_n")], dim = 3.2) * ef[, , "ef_4"])
+                                                  + dimSums(emisAg[, , c("nh3_n", "no2_n")],
+                                                            dim = 3.2) * ef[, , "ef_4"])
 
     inventory <- mbind(inventory, emisAg)
     inventory <- inventory[, , "agriculture", invert = TRUE]
@@ -61,11 +63,14 @@ inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
     cropland <- calcOutput("EmisNitrogenCroplandPast", method = method, aggregate = FALSE)
     pasture <- calcOutput("EmisNitrogenPasturePast", method = method, aggregate = FALSE)
     awms <- add_dimension(
-      x = dimSums(calcOutput("EmisNitrogenAWMSPast", aggregate = FALSE),
-                dim = c(3.1, 3.2))[, , getNames(cropland, dim = 2)], dim = 3.1, nm = "awms")
+                          x = dimSums(calcOutput("EmisNitrogenAWMSPast", aggregate = FALSE),
+                                      dim = c(3.1, 3.2))[, , getNames(cropland, dim = 2)], dim = 3.1, nm = "awms")
+    awms <- awms[, getYears(cropland), ]
     natural <- calcOutput("EmisNitrogenNonaglandPast", method = method, aggregate = FALSE)
     oceans <- calcOutput("EmisNitrogenOceans", method = method, aggregate = FALSE)
+    oceans <- oceans[, getYears(cropland), ]
     water <- calcOutput("EmisNitrogenWater", method = method, aggregate = FALSE)
+    water <- water[, getYears(cropland), ]
 
 
     emisAg <- mbind(
@@ -88,10 +93,10 @@ inventory <- add_columns(inventory, dim = 3.2, addnm = addemis)
 
   }
   return(list(
-    x = inventory,
-    weight = NULL,
-    unit = "Mt N2O-N, NH3-N, NO2-N, NO3-N, N2-N",
-    description = "(Not yet) Complete emission inventory for nitrogen emissions
+              x = inventory,
+              weight = NULL,
+              unit = "Mt N2O-N, NH3-N, NO2-N, NO3-N, N2-N",
+              description = "(Not yet) Complete emission inventory for nitrogen emissions
                    including were possible own estimates for the past. n2o_n_direct
                    and n2o_n_indirect are subcategories of n2o_n."))
 }

@@ -3,6 +3,8 @@
 #' A  very rough disaggregation of timber demand to bilateral trade flows
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
+#' @param products if "magpie" do UNIT (m3 --> MT) and name  conversion of the 2 magpie
+#' wood products, else "FAO" gives original ones
 #' @author David M Chen
 #' @seealso
 #' [mrfaocore::calcFAOmassbalance_pre()]
@@ -12,7 +14,7 @@
 #' }
 #' @export
 
-calcTimberTradeBilateral <- function() {
+calcTimberTradeBilateral <- function(products = "magpie") {
 
   bilat <- readSource("FAOTradeMatrix", "import_qty_kforestry", convert = TRUE)
   # because the forestry matrix doesn't include many proeducts, including woodfuel completely,
@@ -51,12 +53,27 @@ calcTimberTradeBilateral <- function() {
   getSets(out)[c(1, 2)] <- c("im", "ex")
   out[is.na(out)] <- 0
   out[is.infinite(out)] <- 0
+  unit <- "mio m3"
+
+  if (products == "magpie") {
+    # convert to dry matter content, 0.6 and 0.3 respectively
+    out[, , "Industrial roundwood"] <- out[, , "Industrial roundwood"] * 0.6
+    out <- add_columns(out, dim = 3, addnm = "wood")
+    out[, , "wood"] <- out[, , "Industrial roundwood"]
+
+    out[, , "Wood fuel"] <- out[, , "Wood fuel"] * 0.3
+    out <- add_columns(out, dim = 3, addnm = "woodfuel")
+    out[, , "woodfuel"] <- out[, , "Wood fuel"]
+
+    out <- out[, , c("wood", "woodfuel")]
+    unit <- "mio T"
+  }
 
   return(list(
     x = out,
     weight = NULL,
     min = 0,
-    unit = "mio m3",
+    unit = unit,
     description = "Calculates bilateral timber trade based on historical FAO data"
   ))
 }
