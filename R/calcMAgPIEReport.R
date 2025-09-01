@@ -71,10 +71,23 @@ calcMAgPIEReport <- function(subtype) {
     )
 
     # aggregate (sum over) MAgPIE variables to REMIND entys
-    x <- toolAggregate(x[,,mapping$magpieNames], rel = mapping, from = "magpieNames", to = "remindNames", dim = 3.3)
+    x <- toolAggregate(x[, , mapping$magpieNames], rel = mapping, from = "magpieNames", to = "remindNames", dim = 3.3)
 
     d <- "CO2 land emissions"
     u <- "Mt CO2/yr"
+
+  } else if (subtype == "fertilizer") {
+    mapping <- inline.data.frame(
+      "magpieNames;remindNames",
+      "Resources|Nitrogen|Pasture Budget|Inputs|+|Fertilizer (Mt Nr/yr);fertilizer",
+      "Resources|Nitrogen|Cropland Budget|Inputs|+|Fertilizer (Mt Nr/yr);fertilizer"
+    )
+
+    # aggregate (sum over) MAgPIE variables to REMIND entys
+    x <- toolAggregate(x[, , mapping$magpieNames], rel = mapping, from = "magpieNames", to = "remindNames", dim = 3.3)
+
+    d <- "Fertilizer Input"
+    u <- "Mt Nr/yr"
 
   } else {
     stop("Unknown subtype", subtype)
