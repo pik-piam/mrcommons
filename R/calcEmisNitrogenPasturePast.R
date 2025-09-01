@@ -45,26 +45,30 @@ calcEmisNitrogenPasturePast <- function(method = "IPCC") {
     }
 
     # anthropogenic emissions ####
-    emis <- calcOutput("EmisNitrogenPasturePast", method = "IPCC", aggregate = FALSE)
+    emis <- calcOutput("EmisNitrogenPasturePast",
+                       method = "IPCC",
+                       aggregate = FALSE)[, getYears(dep), ]
 
     # Add indirect deposition emissions for N2O ####
     ef <- setYears(readSource("IPCC", "emissionfactors", convert = FALSE), NULL)
     emisDep <- dimSums(
-      dep[, , "past"],
-dim = 3) * ef[, , "ef_5"]
+                       dep[, , "past"],
+                       dim = 3) * ef[, , "ef_5"]
     emis[, , "n2o_n_direct"] <- emis[, , "n2o_n_direct"] + emisDep
 
     # Add natural emissions ####
     emisNatural <- collapseNames(
-                      calcOutput("EmisNitrogenPreagriculture", aggregate = FALSE, deposition = FALSE)
-                      [, , "past"][, , c("n2_n", "accumulation"), invert = TRUE]
-                      )
-    emis <- emis + emisNatural
+      calcOutput("EmisNitrogenPreagriculture", aggregate = FALSE, deposition = FALSE)
+      [, , "past"][, , c("n2_n", "accumulation"), invert = TRUE]
+    )
+    cyears <- intersect(getYears(emis), getYears(emisNatural))
+    emis <- emis[, cyears, ] + emisNatural[, cyears, ]
 
     # add dinitrification ####
-    emisSum <- dimSums(emis, dim = c(3.1))
-
-    n2 <- setNames(budget[, , "surplus"] - dimSums(emisSum, dim = 3), "n2_n")
+    cyears <- intersect(getYears(emis), getYears(budget))
+    emisSum <- dimSums(emis, dim = c(3.1))[, cyears, ]
+    n2 <- setNames(budget[, cyears, "surplus"] -
+                     dimSums(emisSum[, cyears, ], dim = 3), "n2_n")
     n2[n2 < 0] <- 0
 
     emisSum <- add_columns(emisSum, addnm = c("n2_n"), dim = 3.1)
@@ -73,15 +77,15 @@ dim = 3) * ef[, , "ef_5"]
 
 
     # Scaling emissions with surplus ####
-
-    denitrificationShr <- setNames(dimSums(emisSum[, , c("n2o_n_direct", "n2_n")], dim = c(1, 3)) /
-                                      dimSums(budget[, , "surplus"], dim = c(1, 3)), NULL)
-    unscaled <- mbind(emisSum[, , c("nh3_n", "no2_n", "no3_n")],
-                    setNames(denitrificationShr * budget[, , "surplus"], "denitrification"))
+    denitrificationShr <- setNames(dimSums(emisSum[, cyears, c("n2o_n_direct", "n2_n")],
+                                           dim = c(1, 3)) /
+                                     dimSums(budget[, cyears, "surplus"], dim = c(1, 3)), NULL)
+    unscaled <- mbind(emisSum[, cyears, c("nh3_n", "no2_n", "no3_n")],
+                      setNames(denitrificationShr * budget[, cyears, "surplus"], "denitrification"))
 
     emissionShares <- setYears(unscaled[, baseyear, ] / dimSums(unscaled[, baseyear, ], dim = 3), NULL)
     emissionSharesGlo <- setYears(dimSums(unscaled[, baseyear, ], dim = 1, na.rm = TRUE) /
-                                      dimSums(unscaled[, baseyear, ], dim = c(1, 3), na.rm = TRUE), NULL)
+                                    dimSums(unscaled[, baseyear, ], dim = c(1, 3), na.rm = TRUE), NULL)
     emissionShares[which(dimSums(emisSum[, , ], dim = c(2, 3)) < 0.001), , ] <- emissionSharesGlo
 
     # distributing cropland surplus according to these shares.
@@ -103,9 +107,9 @@ dim = 3) * ef[, , "ef_5"]
 
 
   return(list(
-    x = out,
-    weight = NULL,
-    unit = "Mt Nr in various forms",
-    min = 0,
-    description = "Nitrogen emissions from pasture soils"))
+              x = out,
+              weight = NULL,
+              unit = "Mt Nr in various forms",
+              min = 0,
+              description = "Nitrogen emissions from pasture soils"))
 }

@@ -35,7 +35,7 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
 
 
   return(list(x = out$x,
-              weight = out$weight,
+              weight = out$weight + 1e-10,
               unit = "Share of DM,Nr,P,K,WM or gross energy",
               description = "Share of feed intake that gets withdrawn by slaughtermass per product",
               min = 0,

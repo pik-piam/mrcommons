@@ -64,11 +64,11 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
       bmi <- bmi[commonregions, , ]
     } else {
       # assume constant BMI before observation period
-      height <- time_interpolate(dataset = height, interpolated_year = findset("past"),
+      height <- time_interpolate(dataset = height, interpolated_year = findset("past_til2020"),
                                  integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      bmi <- time_interpolate(dataset = bmi, interpolated_year = findset("past"),
+      bmi <- time_interpolate(dataset = bmi, interpolated_year = findset("past_til2020"),
                               integrate_interpolated_years = FALSE, extrapolation_type = "constant")
-      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past"),
+      inactivity <- time_interpolate(dataset = inactivity, interpolated_year = findset("past_til2020"),
                                      integrate_interpolated_years = FALSE, extrapolation_type = "constant")
       demo <- demo[, getYears(height), ]
       if (method == "Froehle") {
@@ -82,7 +82,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     getSets(demo) <- c("region", "year", "scenario", "sex", "age")
 
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
-                              inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
+                             inactivity = inactivity, method = method, tmean = tmean, aggregate = FALSE)
   } else if (standardize == "recommendations") {
     if (method != "HHS_USDA") {
       stop("Method for this standadization type not available")
@@ -93,7 +93,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
       inactivity <- inactivity[commonregions, getYears(demo), ]
     }
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = NULL, inactivity = inactivity,
-                              method = method, aggregate = FALSE)
+                             method = method, aggregate = FALSE)
   } else if (standardize == "BMI") {
     height <- calcOutput("BodyHeight", convert = convert, aggregate = FALSE)
     commonregions <- intersect(getItems(demo, dim = 1.1), getItems(inactivity, dim = 1.1))
@@ -126,7 +126,7 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
     weight[, , "15--19"] <- 21 * (height[, , "15--19"] / 100)^2
 
     intkProcap <- calcOutput("IntakeBodyweight", bodyweight = weight, bodyheight = height,
-                              inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
+                             inactivity = inactivity, tmean = tmean, method = method, aggregate = FALSE)
   } else {
     stop("unknown setting for standardize")
   }
@@ -150,18 +150,18 @@ calcIntake <- function(convert = TRUE, modelinput = FALSE, standardize = FALSE, 
   intakeAll <- dimSums(intkProcap[, , "All", invert = TRUE] * weight[, , "All", invert = TRUE], dim = 3.2)
   intkProcap[, , "All"] <- intakeAll / dimSums(weight[, , "All", invert = TRUE], dim = "age")
 
-  if (modelinput == TRUE) {
+  if (isTRUE(modelinput)) {
     intkProcap <- collapseNames(intkProcap[, , "All"][, , "B"])
     weight <- collapseNames(weight[, , "All"][, , "B"])
   } else  if (modelinput == "age_groups_hist") {
-    past <- findset("past")
+    past <- findset("past_til2020")
     intkProcap <- collapseNames(intkProcap[, past, "SSP2"])
     intkProcap <- intkProcap[, , "B", invert = TRUE]
     intkProcap <- intkProcap[, , "All", invert = TRUE]
     weight <- weight[, past, "SSP2"]
     weight <- weight[, , "B", invert = TRUE]
     weight <- weight[, , "All", invert = TRUE]
-  } else if (modelinput != FALSE) {
+  } else if (!isFALSE(modelinput)) {
     stop("unknown setting for modelinput")
   }
 

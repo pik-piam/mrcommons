@@ -17,13 +17,13 @@ Use FALSE to avoid circularities in calcNitrogenBudget}
 \item{max_nue}{NULL or a numeric value. if numeric, an additional N balanceflow is included that takes
 care that the nitrogen use efficiency does not exceed the numeric value in balanceflow.}
 
-\item{cellular}{TRUE returns output on 0.5° grid}
+\item{cellular}{TRUE returns output on 0.5 degree grid}
 }
 \value{
-List of magpie object with results on country level, weight on country level, unit and description.
+Nitrogen Budgets for Non-agricultural land
 }
 \description{
-Calculates Nitrogen Budgets for Non-agricultural land on country levels.
+Calculates Nitrogen Budgets for Non-agricultural land.
 }
 \examples{
 \dontrun{
