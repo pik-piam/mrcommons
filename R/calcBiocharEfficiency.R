@@ -129,6 +129,6 @@ calcBiocharEfficiency <- function(processCond = "default", outputType = "default
     x = out,
     weight = NULL,
     unit = "dimensionless",
-    description = "H/C ratio and biochar yields per unit biomass on the basis of mass (dry matter), energy, and carbon"
+    description = "Biochar yields per unit biomass on the basis of mass (dry matter), energy, and carbon"
   ))
 }
