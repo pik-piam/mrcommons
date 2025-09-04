@@ -40,7 +40,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   cropcal <- cropcal[, , c("swh", "wwh"), invert = TRUE]
 
   ## mask cropcal to current area, assume 2010 area for now to avoid very large dataset
-  areaMask <- calcOutput("Croparea", cellular = TRUE, cells = "lpjcell",
+  areaMask <- calcOutput("Croparea", cellular = TRUE,
                          aggregate = FALSE)[, 2010, ]
   areaMask <- ifelse(areaMask > 0, 1, 0)
   areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), invert = TRUE]

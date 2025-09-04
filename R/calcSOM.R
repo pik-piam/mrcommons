@@ -40,7 +40,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
 
   soilc      <- setNames(soilc[, , 1] + 1 / 3 * soilc[, , 2], "soilc")
 
-  states      <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")
+  states <- calcOutput("LUH3", landuseTypes = "LUH3", cellular = TRUE, yrs = cyears, aggregate = FALSE)
   cyears <- intersect(getYears(states, as.integer = TRUE), cyears)
   states <- states[, cyears, ]
   crops       <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
@@ -48,7 +48,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   noncropArea <- dimSums(states, dim = 3) - cropArea
   rm(states)
 
-  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cells = "lpjcell",
+  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
                                          cellular = TRUE, irrigation = FALSE, aggregate = FALSE), cyears)
   cropshare  <- toolConditionalReplace(cropshare / dimSums(cropshare, dim = 3), "is.na()", 0)
   carbshare  <- calcOutput("SOCLossShare", aggregate = FALSE, subsystems = TRUE,
@@ -56,9 +56,6 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   cshare     <- dimSums(cropshare * carbshare, dim = 3)
   cshare[cshare == 0] <- 1 # target for cropland in cells without cropland equal to nat veg just as backup.
 
-  # in principle possible to add begr/betr area based on LUH2v2
-  # crpbf_c3per: C3 perennial crops grown as biofuels
-  # crpbf_c4per: C4 perennial crops grown as biofuels
   soilc <- soilc[, cyears, ]
   targetCcrop    <- soilc * cshare * cropArea
   targetCNoncrop <- soilc * noncropArea

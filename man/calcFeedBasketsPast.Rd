@@ -4,7 +4,11 @@
 \alias{calcFeedBasketsPast}
 \title{calcFeedBasketsPast}
 \usage{
+<<<<<<< HEAD
 calcFeedBasketsPast(non_eaten_food = TRUE, faoVersion = "join2010")
+=======
+calcFeedBasketsPast(non_eaten_food = TRUE, FAOversion = "join2010")
+>>>>>>> 18c90272 (no more luh2 anywhere)
 }
 \arguments{
 \item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,

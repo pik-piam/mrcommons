@@ -11,7 +11,7 @@ MAgPIE object of amount of N (Mt)
 }
 \description{
 calculates amount of yearly N from rock weathering by country or global total,
-disaggregated by land use type (LUH2v2 6 class, with FAO forest correction)
+disaggregated by land use type (6 classes from LanduseInitialisation)
 }
 \author{
 David M Chen
