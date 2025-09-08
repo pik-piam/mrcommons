@@ -16,7 +16,7 @@
 #' This is done in delta cropland soilc.
 #' @param climatetype Switch between different climate scenarios (default on "historical")
 #' @param subtype "stock" (default) for absoulte values, "density" for per hectar values
-#' @param "lpjcell" for 67420 cells
+#' @param cells (deprecated) Only option "lpjcell" for 67420 cells
 #'
 #' @return List of magpie object with results on country or cellular level,
 #' weight on cellular level, unit and description.
