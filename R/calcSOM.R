@@ -16,7 +16,7 @@
 #' This is done in delta cropland soilc.
 #' @param climatetype Switch between different climate scenarios (default on "historical")
 #' @param subtype "stock" (default) for absoulte values, "density" for per hectar values
-#' @param cells "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
+#' @param "lpjcell" for 67420 cells
 #'
 #' @return List of magpie object with results on country or cellular level,
 #' weight on cellular level, unit and description.
@@ -46,7 +46,6 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   crops       <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
   cropArea    <- dimSums(states[, , crops], dim = 3)
   noncropArea <- dimSums(states, dim = 3) - cropArea
-  rm(states)
 
   cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
                                          cellular = TRUE, irrigation = FALSE, aggregate = FALSE), cyears)
@@ -154,10 +153,6 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   }
 
   out <- out[, -c(1:10), ]
-
-  if (cells == "magpiecell") {
-    out <- toolCoord2Isocell(out)
-  }
 
   return(list(x            = out,
               weight       = weight,
