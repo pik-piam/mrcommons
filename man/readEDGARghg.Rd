@@ -4,7 +4,11 @@
 \alias{readEDGARghg}
 \title{readEDGAR_GHG}
 \usage{
-readEDGARghg()
+readEDGARghg(subtype = "ghg_by_sector")
+}
+\arguments{
+\item{subtype}{ghg_by_sector to read in the sheet GHG_by_sector_and_country,
+lulucf to read in the sheet LULUCF_countries}
 }
 \value{
 magpie objects of EDGAR historical emissions (MtCO2eq)
