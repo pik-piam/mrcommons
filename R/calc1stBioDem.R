@@ -15,30 +15,30 @@
 #' @importFrom magpiesets findset
 
 calc1stBioDem <- function(subtype = "all") {
-  past <- findset("past")
+  past <- findset("past_til2020")
   time <- findset("time")
 
   x <- collapseNames(calcOutput(type = "FAOmassbalance", aggregate = FALSE)[, , "bioenergy"][, , "ge"])
   x <- add_columns(x, dim = 2.1, addnm = setdiff(time, past))
   x[, setdiff(time, past), ] <- 0
 
-  # for oil and ethanol replace FAO with Lotze-Campen projection 
+  # for oil and ethanol replace FAO with Lotze-Campen projection
   bioenergyProjection <- readSource("LotzeCampenBiofuel") [, , c("oils", "ethanol")]
   x[, c("y2020", "y2030"), c("oils", "ethanol")] <- bioenergyProjection[, c("y2020", "y2030"), c("oils", "ethanol")]
-  
+
   # if values decline, keep them constant
   x <- x[, sort(getYears(x)), ]
   for (y in 2:length(getYears(x))) {
-      x[, y, c("oils", "ethanol")] <- pmax(x[, y, c("oils", "ethanol")],
-                                           setYears(x[, y - 1, c("oils", "ethanol")], NULL))
+    x[, y, c("oils", "ethanol")] <- pmax(setYears(x[, y, c("oils", "ethanol")], NULL),
+                                         setYears(x[, y - 1, c("oils", "ethanol")], NULL))
   }
-  
+
   # interpolate years
   x[, , c("oils", "ethanol")] <-
     time_interpolate(dataset = x[, , c("oils", "ethanol")][, c("y2015", "y2025"), , invert = TRUE],
                      interpolated_year = c("y2015", "y2025"),
                      integrate_interpolated_years = TRUE)
-  
+
   # if countries have no oil data in 2020 ...
   countriesWithoutValuesOils <- where(x[, "y2020", "oils"] == 0)$true$regions
   # ... fill 2015-2030 with 2010 values

@@ -17,11 +17,10 @@ calcIPCCefNSoil <- function() {
   efnSoil <- (surplus * 0 + 1) * efnSoil
   efnSoil[, , c("inorg_fert", "man_crop", "resid", "som")][, , "no3_n"] <- leach[, , "crop"]
 
-  return(list(
-    x = efnSoil,
-    weight = surplus,
-    unit = "Share",
-    description = paste("Emission factors from cropland soils. If IPCC, using",
-                        "the ipcc emission factors as share of applied N inputs.",
-                        "If Nloss, as share of cropland budget surplus.")))
+  return(list(x = efnSoil,
+              weight = surplus,
+              unit = "Share",
+              description = paste("Emission factors from cropland soils. If IPCC, using",
+                                  "the ipcc emission factors as share of applied N inputs.",
+                                  "If Nloss, as share of cropland budget surplus.")))
 }

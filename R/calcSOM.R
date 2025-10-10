@@ -16,7 +16,7 @@
 #' This is done in delta cropland soilc.
 #' @param climatetype Switch between different climate scenarios (default on "historical")
 #' @param subtype "stock" (default) for absoulte values, "density" for per hectar values
-#' @param cells "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
+#' @param cells (deprecated) Only option "lpjcell" for 67420 cells
 #'
 #' @return List of magpie object with results on country or cellular level,
 #' weight on cellular level, unit and description.
@@ -28,40 +28,42 @@
 #'
 calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjcell") {
 
-  years      <- seq(1951, 2010, 1)
+  ypast <- as.integer(gsub("y", "", findset("past_til2020")))
+  yend <- tail(ypast, n = 1)
+  years      <- seq(1951, yend, 1)
 
   soilc      <- calcOutput("LPJmL_new", version = "LPJmL4_for_MAgPIE_44ac93de",
                            climatetype = "GSWP3-W5E5:historical", subtype = "soilc_layer",
-                           stage = "raw", aggregate = FALSE, years = years)
+                           stage = "raw", aggregate = FALSE)
+  cyears <- intersect(getYears(soilc, as.integer = TRUE), years)
+  soilc <- soilc[, cyears, ]
 
   soilc      <- setNames(soilc[, , 1] + 1 / 3 * soilc[, , 2], "soilc")
 
-  states      <- readSource("LUH2v2", subtype = "states", convert = "onlycorrect")[, years, ]
+  states <- calcOutput("LUH3", landuseTypes = "LUH3", cellular = TRUE, yrs = cyears, aggregate = FALSE)
+  cyears <- intersect(getYears(states, as.integer = TRUE), cyears)
+  states <- states[, cyears, ]
   crops       <- c("c3ann", "c4ann", "c3per", "c4per", "c3nfx")
   cropArea    <- dimSums(states[, , crops], dim = 3)
   noncropArea <- dimSums(states, dim = 3) - cropArea
-  rm(states)
 
-  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cells = "lpjcell",
-                                         cellular = TRUE, irrigation = FALSE, aggregate = FALSE), years)
+  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
+                                         cellular = TRUE, irrigation = FALSE, aggregate = FALSE), cyears)
   cropshare  <- toolConditionalReplace(cropshare / dimSums(cropshare, dim = 3), "is.na()", 0)
   carbshare  <- calcOutput("SOCLossShare", aggregate = FALSE, subsystems = TRUE,
                            rate = "change", factor = "ipccReduced", cells = "lpjcell")
   cshare     <- dimSums(cropshare * carbshare, dim = 3)
   cshare[cshare == 0] <- 1 # target for cropland in cells without cropland equal to nat veg just as backup.
 
-  # in principle possible to add begr/betr area based on LUH2v2
-  # crpbf_c3per: C3 perennial crops grown as biofuels
-  # crpbf_c4per: C4 perennial crops grown as biofuels
-
+  soilc <- soilc[, cyears, ]
   targetCcrop    <- soilc * cshare * cropArea
   targetCNoncrop <- soilc * noncropArea
 
   transitions <- cropArea
-  stopifnot(length(years) >= 2)
-  transitions[, years[2:length(years)], ] <- (cropArea[, years[2:length(years)], ]
-                                              - setYears(cropArea[, years[seq_along(years) - 1], ],
-                                                         years[2:length(years)]))
+  stopifnot(length(cyears) >= 2)
+  transitions[, cyears[2:length(cyears)], ] <- (cropArea[, cyears[2:length(cyears)], ]
+                                                - setYears(cropArea[, cyears[seq_along(cyears) - 1], ],
+                                                           cyears[2:length(cyears)]))
 
   abandonnedland <- newland <- transitions
   abandonnedland[abandonnedland > 0] <- 0
@@ -71,8 +73,8 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   cropC    <- cropCha    <- deltaCcrop    <- targetCcrop
   noncropC <- noncropCha <- deltaCnoncrop <- targetCNoncrop
 
-  cropC[, 2:length(years), ]              <- NA
-  noncropC[, 2:length(years), ]           <- NA
+  cropC[, 2:length(cyears), ]             <- NA
+  noncropC[, 2:length(cyears), ]          <- NA
 
   cropCha[, , ]    <- deltaCcrop[, , ]    <- NA
   noncropCha[, , ] <- deltaCnoncrop[, , ] <- NA
@@ -83,7 +85,7 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   noncropCha[, 1, ] <- noncropC[, 1, ] / noncropArea[, 1, ]
   noncropCha[is.nan(noncropCha)] <- 0
 
-  for (yearX in (2:length(years))) {
+  for (yearX in (2:length(cyears))) {
 
     cropC[, yearX, ] <- (setYears(cropC[, yearX - 1, ], NULL)
                          + newland[, yearX, ] * setYears(noncropCha[, yearX - 1, ], NULL)
@@ -128,8 +130,8 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
 
   } else if (subtype == "density") {
 
-    deltaCCropHa    <- toolNAreplace(deltaCcrop    / cropArea)$x
-    deltaCNoncropHa <- toolNAreplace(deltaCnoncrop / noncropArea)$x
+    deltaCCropHa     <- toolNAreplace(deltaCcrop    / cropArea)$x
+    deltaCNoncropHa  <- toolNAreplace(deltaCnoncrop / noncropArea)$x
 
     targetCCropHa    <- toolNAreplace(targetCcrop    / cropArea)$x
     targetCNoncropHa <- toolNAreplace(targetCNoncrop / noncropArea)$x
@@ -150,17 +152,13 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
     stop(paste("Subtype", subtype, "does not exist yet."))
   }
 
-  # delete first 20 years of spin-up
-
   out <- out[, -c(1:10), ]
-  if (cells == "magpiecell") out <- toolCoord2Isocell(out)
 
-  return(list(
-    x            = out,
-    weight       = weight,
-    unit         = unit,
-    description  = paste("Carbon in cropland and non-cropland soils, as well as change",
-                         "over time due to built-up or loss. Change is not equivalen to",
-                         "the difference in carbon_cropland_soils over time, as the area changes."),
-    isocountries = FALSE))
+  return(list(x            = out,
+              weight       = weight,
+              unit         = unit,
+              description  = paste("Carbon in cropland and non-cropland soils, as well as change",
+                                   "over time due to built-up or loss. Change is not equivalen to",
+                                   "the difference in carbon_cropland_soils over time, as the area changes."),
+              isocountries = FALSE))
 }

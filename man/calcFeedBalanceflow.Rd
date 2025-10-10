@@ -15,7 +15,7 @@ calcFeedBalanceflow(
 \arguments{
 \item{per_livestock_unit}{default false}
 
-\item{cellular}{if TRUE value is calculate on cellular level}
+\item{cellular}{if TRUE value is calculated on cellular level}
 
 \item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
@@ -27,13 +27,12 @@ calcFeedBalanceflow(
 List of magpie objects with results on country or cellular level, unit and description.
 }
 \description{
-Calculates feed balanceflows from MAgPIE-Feed model to meet FAO data
+Calculates feed balance flows from MAgPIE-Feed model to meet FAO data
 }
 \examples{
 \dontrun{
 calcOutput("FeedBalanceflow")
 }
-
 }
 \author{
 Isabelle Weindl, Kristine Karstens
