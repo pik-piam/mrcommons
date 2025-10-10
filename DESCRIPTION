@@ -1,8 +1,8 @@
 Type: Package
 Package: mrcommons
 Title: MadRat commons Input Data Library
-Version: 1.63.0
-Date: 2025-09-09
+Version: 1.64.0
+Date: 2025-10-10
 Authors@R: c(
     person("Benjamin Leon", "Bodirsky", , "bodirsky@pik-potsdam.de", role = "aut"),
     person("Kristine", "Karstens", role = "aut"),
@@ -43,7 +43,7 @@ Description: Provides useful functions and a common structure to all the
     input data required to run models like MAgPIE and REMIND of model
     input data.
 License: LGPL-3 | file LICENSE
-URL:https://github.com/pik-piam/mrcommons,
+URL: https://github.com/pik-piam/mrcommons,
     https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues
 Depends:
@@ -86,4 +86,4 @@ Suggests:
 Encoding: UTF-8
 LazyData: no
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
