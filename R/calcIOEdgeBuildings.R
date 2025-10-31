@@ -35,8 +35,8 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
   # convert from ktoe to EJ
   data <- switch(ieaVersion,
-    default = readSource("IEA", subtype = "EnergyBalances"),
-    latest  = readSource("IEA", subtype = "EnergyBalances-latest")
+                 default = readSource("IEA", subtype = "EnergyBalances"),
+                 latest  = readSource("IEA", subtype = "EnergyBalances-latest")
   ) * 4.1868e-5
 
 
@@ -44,8 +44,8 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # AGGREGATE ------------------------------------------------------------------
 
   target <- switch(subtype,
-    output_EDGE = "EDGEitems",
-    output_EDGE_buildings = "EDGE_buildings"
+                   output_EDGE = "EDGEitems",
+                   output_EDGE_buildings = "EDGE_buildings"
   )
 
   mapping <- toolGetMapping(type = "sectoral",
@@ -54,11 +54,11 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     read.csv2(stringsAsFactors = FALSE, na.strings = "") %>%
     select(all_of(c("iea_product", "iea_flows", target, "Weight"))) %>%
     na.omit() %>%
-    unite("target", all_of(target), sep = ".") %>%
     unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
+    mutate(Weight = as.numeric(.data[["Weight"]])) %>%
     filter(.data[["product.flow"]] %in% getNames(data),
-           .data[["Weight"]] != 0) %>%
-    mutate(Weight = as.numeric(.data[["Weight"]]))
+           .data[["Weight"]] != 0, !is.na(.data[["Weight"]]))
+
 
   weight <- as.magpie(mapping[, c("iea_product", "iea_flows", "Weight")])
 
@@ -74,9 +74,9 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     collapseNames()
 
   data <- switch(subtype,
-    output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",
-                                   into = c("feresbiotrad", "feresbiomod")),
-    output_EDGE_buildings = toolSplitBiomass(data, gdppop, split = "bioshare")
+                 output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",
+                                                into = c("feresbiotrad", "feresbiomod")),
+                 output_EDGE_buildings = toolSplitBiomass(data, gdppop, split = "bioshare")
   )
 
   return(list(x = data,
