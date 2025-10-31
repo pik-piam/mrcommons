@@ -54,6 +54,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     read.csv2(stringsAsFactors = FALSE, na.strings = "") %>%
     select(all_of(c("iea_product", "iea_flows", target, "Weight"))) %>%
     na.omit() %>%
+    unite("target", all_of(target), sep = ".") %>%
     unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
     mutate(Weight = as.numeric(.data[["Weight"]])) %>%
     filter(.data[["product.flow"]] %in% getNames(data),
