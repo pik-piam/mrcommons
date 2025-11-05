@@ -35,8 +35,8 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
   # convert from ktoe to EJ
   data <- switch(ieaVersion,
-                 default = readSource("IEA", subtype = "EnergyBalances"),
-                 latest  = readSource("IEA", subtype = "EnergyBalances-latest")
+    default = readSource("IEA", subtype = "EnergyBalances"),
+    latest  = readSource("IEA", subtype = "EnergyBalances-latest")
   ) * 4.1868e-5
 
 
@@ -44,8 +44,8 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # AGGREGATE ------------------------------------------------------------------
 
   target <- switch(subtype,
-                   output_EDGE = "EDGEitems",
-                   output_EDGE_buildings = "EDGE_buildings"
+    output_EDGE = "EDGEitems",
+    output_EDGE_buildings = "EDGE_buildings"
   )
 
   mapping <- toolGetMapping(type = "sectoral",
@@ -75,9 +75,9 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     collapseNames()
 
   data <- switch(subtype,
-                 output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",
-                                                into = c("feresbiotrad", "feresbiomod")),
-                 output_EDGE_buildings = toolSplitBiomass(data, gdppop, split = "bioshare")
+    output_EDGE = toolSplitBiomass(data, gdppop, split = "feresbioshare",
+                                   into = c("feresbiotrad", "feresbiomod")),
+    output_EDGE_buildings = toolSplitBiomass(data, gdppop, split = "bioshare")
   )
 
   return(list(x = data,
