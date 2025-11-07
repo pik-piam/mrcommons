@@ -56,9 +56,10 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     na.omit() %>%
     unite("target", all_of(target), sep = ".") %>%
     unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
+    mutate(Weight = as.numeric(.data[["Weight"]])) %>%
     filter(.data[["product.flow"]] %in% getNames(data),
-           .data[["Weight"]] != 0) %>%
-    mutate(Weight = as.numeric(.data[["Weight"]]))
+           .data[["Weight"]] != 0, !is.na(.data[["Weight"]]))
+
 
   weight <- as.magpie(mapping[, c("iea_product", "iea_flows", "Weight")])
 
