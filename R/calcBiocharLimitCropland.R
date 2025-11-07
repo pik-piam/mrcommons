@@ -94,10 +94,19 @@ calcBiocharLimitCropland <- function(dataBCLimit = "CRCF_draft_2025",
   }
 
 
+  ## Description:
+  description <- paste(
+    "Upper limit of biochar application on cropland.",
+    "Default case ('dataBCLimit = \"CRCF_draft_2025\"') applies a cumulative limit",
+    "of 50 t/ha over any 10-year period, following the EC CRCF biochar draft (2025).",
+    "This cumulative limit is translated to a constant annual limit."
+  )
+
+
   return(list(
     x = massLimit,
     weight = NULL,
     unit = unit,
-    description = "Upper limit of biochar application on cropland"
+    description = description
   ))
 }
