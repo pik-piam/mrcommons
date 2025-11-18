@@ -4,13 +4,19 @@
 \alias{calcFeedBasketsPast}
 \title{calcFeedBasketsPast}
 \usage{
-calcFeedBasketsPast(non_eaten_food = TRUE, faoVersion = "join2010")
+calcFeedBasketsPast(
+  non_eaten_food = TRUE,
+  faoVersion = "join2010",
+  yearly = FALSE
+)
 }
 \arguments{
 \item{non_eaten_food}{if TRUE, non-eaten food is included in feed baskets,
 if not it is excluded.}
 
 \item{faoVersion}{which version of FAO food baskets to use}
+
+\item{yearly}{whether to calculate yearly data or only magpie 5year timesteps}
 }
 \value{
 Historical feed baskets and corresponding weights

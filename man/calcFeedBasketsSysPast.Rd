@@ -5,10 +5,12 @@
 \title{Calculate historical system-specific feed baskets based on output of MAgPIE_FEED model
 as DM feed biomass (different types of feed) needed per DM livestock products of respective systems}
 \usage{
-calcFeedBasketsSysPast(faoVersion = "join2010")
+calcFeedBasketsSysPast(faoVersion = "join2010", yearly = FALSE)
 }
 \arguments{
 \item{faoVersion}{which version of FAO food baskets to use}
+
+\item{yearly}{whether to calculate yearly data or only magpie 5year timesteps}
 }
 \value{
 Historical system-specific feed baskets and corresponding weights as a list of two MAgPIE

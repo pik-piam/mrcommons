@@ -11,6 +11,7 @@
 #' @param non_eaten_food if TRUE, non-eaten food is included in feed baskets,
 #' if not it is excluded.
 #' @param faoVersion which version of FAO food baskets to use
+#' @param yearly whether to calculate yearly data or only magpie 5year timesteps
 #'
 #' @author Isabelle Weindl, Benjamin Bodirsky
 #' @seealso [madrat::calcOutput()], [readFeedModel()]
@@ -20,7 +21,7 @@
 #' }
 #' @importFrom magclass getNames
 
-calcFeedBasketsPast <- function(non_eaten_food = TRUE, faoVersion = "join2010") { # nolint
+calcFeedBasketsPast <- function(non_eaten_food = TRUE, faoVersion = "join2010", yearly = FALSE) { # nolint
 
   if (faoVersion == "join2010") {
     yearsPast <- findset("past_til2020")
@@ -32,17 +33,20 @@ calcFeedBasketsPast <- function(non_eaten_food = TRUE, faoVersion = "join2010") 
 
   kli         <- findset("kli")
   kap         <- findset("kap")
-  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, yearsPast, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)
+
+  if (yearly == FALSE) {
+    massbalance <- massbalance[, yearsPast, ]
+  }
 
   weight           <- collapseNames(massbalance[, , kap][, , "dm"][, , "production"])
   getNames(weight) <- paste0("alias_", getNames(weight))
 
   # read in system-specific feed basket data (for sys_dairy,sys_beef,sys_pig,sys_hen,sys_chicken)
-  fbaskSys <-  calcOutput("FeedBasketsSysPast", aggregate = FALSE)
-
+  fbaskSys <-  calcOutput("FeedBasketsSysPast", aggregate = FALSE, yearly = yearly)
 
   # read in the ratio of livestock production allocated to the different systems
-  prodSysRatio <- calcOutput("ProdSysRatioPast", aggregate = FALSE)
+  prodSysRatio <- calcOutput("ProdSysRatioPast", aggregate = FALSE, yearly = yearly)
 
   # calculation of product-specific feed basket data (for livst_chick,livst_egg,livst_milk,livst_pig,livst_rum)
   fbask <- dimSums(prodSysRatio * fbaskSys, dim = 3.1)

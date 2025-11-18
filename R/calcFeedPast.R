@@ -7,6 +7,7 @@
 #' @param cells       Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param nutrients   nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P),
 #'                    Generalizable Energy (GE) and wet matter (WM).
+#' @param yearly whether to calculate yearly data or only magpie 5year timesteps
 #' @return List of magpie objects with results on country or cellular level, unit and description.
 #' @author Isabelle Weindl, Benjamin Leon Bodirsky, Kristine Karstens
 #' @examples
@@ -17,7 +18,7 @@
 #' @importFrom magclass getNames
 
 calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell",
-                         products = "kall", nutrients = "all") {
+                         products = "kall", nutrients = "all", yearly = FALSE) {
 
   if (cellular && (length(nutrients) > 1)) {
     stop("out of memory reasons, cellular datasets can only be used with one nutrient")
@@ -31,7 +32,10 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
 
   kliProduction       <- calcOutput("Production", products = "kli", cells = "lpjcell",
                                     cellular = cellular, aggregate = FALSE)
-  livestockProduction <- collapseNames(kliProduction[, past, "dm"])
+  livestockProduction <- collapseNames(kliProduction[, , "dm"])
+  if (yearly == FALSE) {
+    livestockProduction <- livestockProduction[, past, ]
+  }
   animalProduction    <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
   animalProduction[, , "fish"]        <- 0
   getNames(animalProduction, dim = 1) <- paste0("alias_", getNames(animalProduction, dim = 1))

@@ -5,6 +5,7 @@
 #' objects
 #' @author Isabelle Weindl, Benjamin Bodirsky, Jan Philipp Dietrich
 #' @param faoVersion which version of FAO food baskets to use
+#' @param yearly whether to calculate yearly data or only magpie 5year timesteps
 #' @seealso [madrat::calcOutput()], [readFeedModel()], [calcFeedBasketsPast()]
 #' @examples
 #' \dontrun{
@@ -13,7 +14,7 @@
 #' @importFrom magclass getNames
 #' @importFrom luscale rename_dimnames
 
-calcFeedBasketsSysPast <- function(faoVersion = "join2010") {
+calcFeedBasketsSysPast <- function(faoVersion = "join2010", yearly = FALSE) {
 
   if (faoVersion == "join2010") {
     past <- findset("past_til2020")
@@ -31,6 +32,13 @@ calcFeedBasketsSysPast <- function(faoVersion = "join2010") {
     fbaskSys <- toolHoldConstant(fbaskSys, years = missingYears)
   }
 
+  (if (yearly == TRUE) {
+    fbaskSys <- time_interpolate(fbaskSys, interpolated_year = c(min(getYears(fbaskSys, as.integer = TRUE)):
+                                                                   max(getYears(fbaskSys, as.integer = TRUE))),
+                                 integrate_interpolated_years = TRUE)
+  })
+
+
   # expand dim=3.2 to kall (add products like wood and woodfuel)
   kdiff               <- setdiff(findset("kall"), getNames(fbaskSys, dim = 2))
   fbaskSys            <- add_columns(fbaskSys, addnm = kdiff, dim = 3.2)
@@ -38,7 +46,7 @@ calcFeedBasketsSysPast <- function(faoVersion = "join2010") {
 
   # use livestock production as weight
   kli  <- findset("kli")
-  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, getYears(fbaskSys), ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),

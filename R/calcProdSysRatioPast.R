@@ -2,6 +2,7 @@
 #' different systems based on output of MAgPIE_FEED model
 #'
 #' @param faoVersion which version of FAO food balances to use in mass balance
+#' @param yearly whether to calculate yearly data or only magpie 5year timesteps
 #' @return Historical distribution of livestock production across
 #' different systems and corresponding weights as a list of two MAgPIE objects
 #'
@@ -11,7 +12,7 @@
 #' \dontrun{
 #' calcOutput("ProdSysRatioPast")
 #' }
-calcProdSysRatioPast <- function(faoVersion = "join2010") {
+calcProdSysRatioPast <- function(faoVersion = "join2010", yearly = FALSE) {
 
   if (faoVersion == "join2010") {
     past <- findset("past_til2020")
@@ -23,15 +24,24 @@ calcProdSysRatioPast <- function(faoVersion = "join2010") {
   # read in data
   prodsysratio <-  readSource(type = "FeedModel", subtype = "ProdSysRatio")
 
-  #Extend historical data by filling in missing years with constant values
+  # Extend historical data by filling in missing years with constant values
   missingYears <- setdiff(past, getYears(prodsysratio))
   if (length(missingYears) > 0) {
     prodsysratio <- toolHoldConstant(prodsysratio, years = missingYears)
   }
 
+  (if (yearly == TRUE) {
+    prodsysratio <- time_interpolate(prodsysratio, interpolated_year = c(min(getYears(prodsysratio,
+                                                                                      as.integer = TRUE)):
+                                                                           max(getYears(prodsysratio,
+                                                                                        as.integer = TRUE))),
+                                     integrate_interpolated_years = TRUE)
+  })
+
+
   # use livestock production as weight
   kli <- findset("kli")
-  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, past, ]
+  massbalance <- calcOutput("FAOmassbalance_pre", version = faoVersion, aggregate = FALSE)[, getYears(prodsysratio), ]
   weight <- collapseNames(massbalance[, , kli][, , "dm"][, , "production"])
 
   mapping <- data.frame(kli = c("livst_pig", "livst_rum", "livst_chick", "livst_egg", "livst_milk"),

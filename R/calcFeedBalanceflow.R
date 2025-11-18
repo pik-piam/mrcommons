@@ -6,6 +6,7 @@
 #' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
+#' @param yearly whether to calculate yearly data or only magpie 5year timesteps
 #' @return List of magpie objects with results on country or cellular level, unit and description.
 #'
 #' @author Isabelle Weindl, Kristine Karstens
@@ -17,7 +18,8 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 cellular = FALSE,
                                 cells = "lpjcell",
                                 products = "kall",
-                                future = "constant") {
+                                future = "constant",
+                                yearly = FALSE) {
 
   perLivestockUnit <- per_livestock_unit # nolint
 
@@ -27,12 +29,15 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   if (!perLivestockUnit) {
     prodAttributes      <- calcOutput("Attributes", aggregate = FALSE)
 
-    faoFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, past, "feed"])
+    faoFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , "feed"])
+    if (yearly == FALSE) {
+      faoFeednutrients <- faoFeednutrients[, past, ]
+    }
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
     faoFeed          <- add_columns(faoFeed, addnm = "pasture", dim = 3.1)
 
     magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE, cells = "lpjcell",
-                                   aggregate = FALSE, nutrients = "all", products = products)
+                                   aggregate = FALSE, nutrients = "all", products = products, yearly = yearly)
     magFeed          <- magFeednutrients[, , "dm"]
 
     magFeedShare     <- magFeed / dimSums(magFeed, dim = 3.1)
@@ -87,7 +92,8 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
       magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE,
                                      cellular = TRUE, cells = "lpjcell",
-                                     aggregate = FALSE, nutrients = "dm", products = products)
+                                     aggregate = FALSE, nutrients = "dm",
+                                     products = products, yearly = yearly)
       magFeedCell      <- magFeedCell[, , commonproducts]
       magFeedCountry   <- toolAggregate(magFeedCell, rel = countryToCell,
                                         from = "coordiso", to = "iso", dim = 1, partrel = TRUE)
@@ -128,10 +134,14 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     past <- findset("past_til2020")
 
     feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
-                                  products = products, future = future, aggregate = FALSE)
+                                  products = products, future = future, aggregate = FALSE,
+                                  yearly = yearly)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
                                                     cellular = cellular, cells = "lpjcell",
-                                                    aggregate = FALSE)[, , kli][, past, "dm"])
+                                                    aggregate = FALSE)[, , kli][, , "dm"])
+    if (yearly == FALSE) {
+      livestockProduction <- livestockProduction[, past, ]
+    }
     livestockProduction <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
     livestockProduction[, , "fish"] <- 0
 

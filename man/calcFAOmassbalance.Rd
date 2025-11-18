@@ -4,11 +4,13 @@
 \alias{calcFAOmassbalance}
 \title{calcFAOmassbalance}
 \usage{
-calcFAOmassbalance(version = "join2010")
+calcFAOmassbalance(version = "join2010", yearly = FALSE)
 }
 \arguments{
 \item{version}{whether to use the pre ("pre2010") or post ("post2010") 2010 versions of FAOSTAT Food balances,
 or "join2010" which joins them at 2010}
+
+\item{yearly}{whether to calculate yearly data or only magpie 5year timesteps}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
