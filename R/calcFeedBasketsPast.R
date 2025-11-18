@@ -72,6 +72,7 @@ calcFeedBasketsPast <- function(non_eaten_food = TRUE, faoVersion = "join2010", 
     data <- data[, , kall]
   }
 
+  weight <- weight[, getYears(data), ]
   # remove datasets with NAs in weight/data
   data   <- toolNAreplace(x = data, weight = weight, replaceby = 0)
   weight <- data$weight

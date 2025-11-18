@@ -40,14 +40,14 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
   animalProduction[, , "fish"]        <- 0
   getNames(animalProduction, dim = 1) <- paste0("alias_", getNames(animalProduction, dim = 1))
 
-  feedBaskets         <- calcOutput("FeedBasketsPast", non_eaten_food = FALSE, aggregate = FALSE)
+  feedBaskets         <- calcOutput("FeedBasketsPast", yearly = yearly, non_eaten_food = FALSE, aggregate = FALSE)
   feedBaskets         <- feedBaskets[, , products2]
 
   if (cellular) {
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
   }
 
-  feedConsumption  <- animalProduction * feedBaskets
+  feedConsumption  <- animalProduction[, getYears(feedBaskets), ] * feedBaskets
   min              <- 0
 
   if (balanceflow) {

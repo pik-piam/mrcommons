@@ -4,13 +4,15 @@
 \alias{calcResDemand}
 \title{calcResDemand}
 \usage{
-calcResDemand(cellular = FALSE, scenario = "dafault")
+calcResDemand(cellular = FALSE, scenario = "dafault", yearly = yearly)
 }
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}
 
 \item{scenario}{define scenario switch for sensititvy analysis
 for historical SOC budget}
+
+\item{yearly}{whether to calculate yearly data or only magpie 5year timesteps}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.

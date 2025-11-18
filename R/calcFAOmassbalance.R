@@ -59,24 +59,25 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
   ### Add feed by animal group
   # consists of feed by animal group according to Isabelle Weindls Feed Baskets
   # plus a balanceflow to be consistent with FAO
-  feed <- calcOutput("FeedPast", balanceflow = FALSE, aggregate = FALSE)
+  feed <- calcOutput("FeedPast", balanceflow = FALSE, aggregate = FALSE, yearly = yearly)
   getNames(feed, dim = 1) <- paste0("feed_", substring(getNames(feed, dim = 1), 7))
   feed <- as.magpie(aperm(unwrap(feed), c(1, 2, 4, 3, 5)))
 
-  balanceflow <- calcOutput("FeedBalanceflow", aggregate = FALSE, future = FALSE)
+  balanceflow <- calcOutput("FeedBalanceflow", aggregate = FALSE, future = FALSE, yearly = yearly)
   getNames(balanceflow, dim = 1) <- paste0("feed_", getNames(balanceflow, dim = 1))
   balanceflow <- balanceflow * calcOutput("Attributes", aggregate = FALSE)
   balanceflow <- as.magpie(aperm(unwrap(balanceflow), c(1, 2, 4, 3, 5)))
 
   feed <- feed + balanceflow
   # test to check whether distribution of feed was ok
+  cyears <- intersect(getYears(mb2), getYears(feed))
   if (any(round(
-                mb2[, , "feed"][, , getNames(mb, dim = 1)]
-                - dimSums(feed[, getYears(mb2), getNames(mb, dim = 1)], dim = 3.2),
+                mb2[, cyears, "feed"][, , getNames(mb, dim = 1)]
+                - dimSums(feed[, cyears, getNames(mb, dim = 1)], dim = 3.2),
                 7) != 0)) {
     vcat(verbosity = 1, "Something is strange here. Check Feedbalanceflow")
   }
-  mb3 <- mbind(mb2, feed[, getYears(mb2), ])
+  mb3 <- mbind(mb2[, cyears, ], feed[, cyears, ])
 
   forest <- calcOutput("TimberDemand", aggregate = FALSE)
   # quick fix, make 2020 same as 2019
@@ -101,7 +102,7 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
 
   # Adding Crop Residues Production and use
   kres <- findset("kres")
-  res <- calcOutput("ResDemand", aggregate = FALSE)
+  res <- calcOutput("ResDemand", aggregate = FALSE, yearly = yearly)
 
   res <- as.magpie(aperm(unwrap(res), c(1, 2, 4, 3, 5)))
   mb3[, , kres][, , c("bioenergy", "domestic_supply", "feed", "other_util", "production")] <- res[, getYears(mb3), ]
@@ -138,7 +139,7 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
   # oils already have trade, what to do?
   scf <- mb3[, , "ethanol"][, , "bioenergy"] /
     (bioenergy[, getYears(mb3), "ethanol"][
-                                           , , "INDPROD", drop = TRUE] * ethanolOilFactor)
+                                           , , "INDPROD", drop = TRUE] * ethanolOilFactor[, , "ethanol"])
   scf[is.na(scf)] <- 0
   mb3[, , "ethanol"][, , "import"] <- mb3[, , "ethanol"][, , "import"] * scf
   mb3[, , "ethanol"][, , "export"] <- mb3[, , "ethanol"][, , "export"] * scf

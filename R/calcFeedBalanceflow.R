@@ -43,7 +43,8 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     magFeedShare     <- magFeed / dimSums(magFeed, dim = 3.1)
     magFeedShare[is.nan(magFeedShare)] <- 0
     commonproducts <- intersect(getNames(faoFeed, dim = 1), getNames(magFeed, dim = 2))
-
+    faoFeed <- faoFeed[, getYears(magFeed), ]
+    faoFeednutrients <- faoFeednutrients[, getYears(magFeed), ]
     # include estimates for pasture feed demand to benchmark data faoFeed:
     faoFeed[, , "pasture"] <- collapseNames(dimSums(magFeed, dim = 3.1))[, , "pasture"]
     # reduced pasture feed demand (which is determined in the feed model as balance post)
@@ -149,7 +150,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       livestockProduction <- toolHoldConstantBeyondEnd(livestockProduction)
     }
 
-    feedBalanceflow <- feedBalanceflow / livestockProduction
+    feedBalanceflow <- feedBalanceflow / livestockProduction[, getYears(feedBalanceflow), ]
     feedBalanceflow[is.na(feedBalanceflow)] <- 0
     feedBalanceflow[is.infinite(feedBalanceflow)] <- 0
 
