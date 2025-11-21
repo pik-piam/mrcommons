@@ -4,7 +4,7 @@
 \alias{calcResDemand}
 \title{calcResDemand}
 \usage{
-calcResDemand(cellular = FALSE, scenario = "dafault", yearly = yearly)
+calcResDemand(cellular = FALSE, scenario = "dafault", yearly = FALSE)
 }
 \arguments{
 \item{cellular}{If TRUE calculation and output on cellular level}

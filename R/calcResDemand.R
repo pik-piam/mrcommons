@@ -15,7 +15,7 @@
 #' }
 #' @importFrom magclass setNames
 
-calcResDemand <- function(cellular = FALSE, scenario = "dafault", yearly = yearly) {
+calcResDemand <- function(cellular = FALSE, scenario = "dafault", yearly = FALSE) {
 
   mapping       <- toolGetMapping("mappingCrop2Residue.csv", where = "mrcommons", type = "sectoral")
 
