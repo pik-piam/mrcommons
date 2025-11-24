@@ -160,7 +160,7 @@ readEEA_EuropeanEnvironmentAgency <- function(subtype) { # nolint: object_name_l
   } else if (subtype == "ghgEmissionIntensityElec") {
     # Greenhouse gas emission intensity of electricity generation in Europe
     # https://www.eea.europa.eu/ims/greenhouse-gas-emission-intensity-of-1
-    x <- read.csv("co2-emission-intensity-13.csv") %>%
+    x <- read.csv("co2-emission-intensity-15.csv") %>%
       select(period = 1, region = 2, value = 3) %>%
       filter(.data[["region"]] != "EU-27") %>%
       as.magpie(spatial = "region", temporal = "period", datacol = "value") %>%
