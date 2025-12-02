@@ -11,6 +11,7 @@
 readIPCCClimate <-  function() {
 
   raster1d12 <- rast("CLIMATE_ZONE.rst")
+  terra::crs(raster1d2) <- "WGS84"
   raster1d12 <- terra::ifel(raster1d12 == 0, NA, raster1d12)
   zoneNames  <- as.character(raster::levels(raster1d12)[[1]]$category)
   raster1d2  <- terra::aggregate(raster1d12, fact = 6, fun = "modal", na.rm = TRUE)
