@@ -2,26 +2,28 @@
 #' @description Read IPCC climate classification
 #'
 #' @return Magpie object with results on cellular level for 12 IPCC climate zone types
+#'
 #' @author  Kristine Karstens
 #' @examples
 #' \dontrun{
 #' readSource("IPCCClimate", convert = "onlycorrect")
 #' }
-
 readIPCCClimate <-  function() {
-
-  raster1d12 <- rast("CLIMATE_ZONE.rst")
+  raster1d12 <- terra::rast("CLIMATE_ZONE.rst")
+  terra::crs(raster1d12) <- "WGS84"
   raster1d12 <- terra::ifel(raster1d12 == 0, NA, raster1d12)
-  zoneNames  <- as.character(raster::levels(raster1d12)[[1]]$category)
+  zoneNames  <- as.character(terra::levels(raster1d12)[[1]]$category)
   raster1d2  <- terra::aggregate(raster1d12, fact = 6, fun = "modal", na.rm = TRUE)
 
   # fill NAs iterativly
-  for (i in 1:4) raster1d2  <- terra::focal(raster1d2, w = 9, "modal", na.policy = "only", na.rm = TRUE)
+  for (i in 1:4) {
+    raster1d2 <- terra::focal(raster1d2, w = 9, "modal", na.policy = "only", na.rm = TRUE)
+  }
 
   # Load celliso names for 1:67420 magpie cells
-  map   <- toolGetMappingCoord2Country(pretty = TRUE)
+  map <- toolGetMappingCoord2Country(pretty = TRUE)
   # Change longitude and latitude
-  mag   <- as.magpie(as.numeric(terra::extract(raster1d2, map[c("lon", "lat")])[, -1]), spatial = 1)
+  mag <- as.magpie(as.numeric(terra::extract(raster1d2, map[c("lon", "lat")])[, -1]), spatial = 1)
 
   getNames(mag) <- "unknown"
   getYears(mag) <- NULL
