@@ -9,8 +9,7 @@ calcResBiomass(
   cells = "lpjcell",
   plantparts = "both",
   irrigation = FALSE,
-  attributes = "all",
-  scenario = "default"
+  attributes = "all"
 )
 }
 \arguments{
@@ -24,9 +23,6 @@ problems for cellular outputs}
 \item{irrigation}{if TRUE, distinguishes irrigated and non-irrigated crops}
 
 \item{attributes}{in dm, wm, ge, nr, p, k}
-
-\item{scenario}{define scenario switch for sensititvy analysis
-for historical SOC budget}
 }
 \value{
 MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
