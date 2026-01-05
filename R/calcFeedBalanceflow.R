@@ -31,7 +31,8 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
     faoFeednutrients <- collapseNames(calcOutput("FAOmassbalance_pre", aggregate = FALSE)[, , "feed"])
     if (yearly == FALSE) {
-      faoFeednutrients <- faoFeednutrients[, past, ]
+      cyears <- intersect(past, getYears(faoFeednutrients))
+      faoFeednutrients <- faoFeednutrients[, cyears, ]
     }
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
     faoFeed          <- add_columns(faoFeed, addnm = "pasture", dim = 3.1)
@@ -103,9 +104,10 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
       feedBalanceflow  <- toolAggregate(feedBalanceflow, rel = countryToCell, from = "iso",
                                         to = "coordiso", dim = 1, partrel = TRUE)
+      cyears           <- intersect(getYears(feedBalanceflow), getYears(magFeedCellshare))
 
       for (livst_x in getNames(feedBalanceflow, dim = 1)) {
-        feedBalanceflow[, , livst_x]  <- feedBalanceflow[, , livst_x] * magFeedCellshare[, , livst_x]
+        feedBalanceflow[, cyears, livst_x]  <- feedBalanceflow[, cyears, livst_x] * magFeedCellshare[, cyears, livst_x]
       }
     }
 
@@ -118,8 +120,9 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       feedBalanceflow  <- toolHoldConstantBeyondEnd(feedBalanceflow)
       # fading out the balanceflow until 2050.
       # Has to be the same as the SlaugherBalanceflow outfade!
+      pastYears        <- getYears(feedBalanceflow)
       feedBalanceflow  <- convergence(origin = feedBalanceflow, aim = 0,
-                                      start_year = past[length(past)], end_year = "y2050", type = "s")
+                                      start_year = pastYears[length(pastYears)], end_year = "y2050", type = "s")
     } else if (future == "constant") {
       feedBalanceflow  <- toolHoldConstantBeyondEnd(feedBalanceflow)
       # Has to be the same as the SlaugherBalanceflow outfade!
@@ -141,7 +144,8 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                                     cellular = cellular, cells = "lpjcell",
                                                     aggregate = FALSE)[, , kli][, , "dm"])
     if (yearly == FALSE) {
-      livestockProduction <- livestockProduction[, past, ]
+      cyears <- intersect(past, getYears(livestockProduction))
+      livestockProduction <- livestockProduction[, cyears, ]
     }
     livestockProduction <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
     livestockProduction[, , "fish"] <- 0
@@ -150,11 +154,12 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       livestockProduction <- toolHoldConstantBeyondEnd(livestockProduction)
     }
 
-    feedBalanceflow <- feedBalanceflow / livestockProduction[, getYears(feedBalanceflow), ]
+    cyears <- intersect(getYears(feedBalanceflow), getYears(livestockProduction))
+    feedBalanceflow <- feedBalanceflow[, cyears, ] / livestockProduction[, cyears, ]
     feedBalanceflow[is.na(feedBalanceflow)] <- 0
     feedBalanceflow[is.infinite(feedBalanceflow)] <- 0
 
-    weight <- livestockProduction
+    weight <- livestockProduction[, cyears, ]
     unit   <- "1"
 
   } else {
@@ -168,7 +173,6 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
     }
   }
-
 
   return(list(x = feedBalanceflow,
               weight = weight,

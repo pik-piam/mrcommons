@@ -3,8 +3,6 @@
 #'
 #' @param cellular If TRUE calculation and output on cellular level
 #' @param products "sum" (default) or "kres"
-#' @param scenario define scenario switch for sensititvy analysis
-#'                 for historical SOC budget
 #'
 #' @return data
 #' @author Benjamin Bodirsky
@@ -16,13 +14,13 @@
 #'
 #' @importFrom magpiesets findset
 
-calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario = "default") {
+calcResFieldBalancePast <- function(cellular = FALSE, products = "sum") {
 
   if (products == "kres") {
     relevantNutrients <- c("nr", "p", "k", "c")  # after burning, unclear what dm and ge may be
 
     production        <- collapseNames(calcOutput("ResBiomass", cellular = cellular, plantparts = "ag",
-                                                  aggregate = FALSE, scenario = scenario))[, , relevantNutrients]
+                                                  aggregate = FALSE))[, , relevantNutrients]
 
     burnshr           <- calcOutput("ResCombustEff", aggregate = FALSE)[, , getNames(production, dim = 1)]
     devStatePast      <- collapseNames(calcOutput("DevelopmentState", aggregate = FALSE)[, , "SSP2"])
@@ -65,8 +63,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
     if (cellular) {
       # to avoid negative values, take the regional share of removal by product
-      fieldbalance <- calcOutput("ResFieldBalancePast", cellular = FALSE, aggregate = FALSE,
-                                 products = "kres", scenario = scenario)
+      fieldbalance <- calcOutput("ResFieldBalancePast", cellular = FALSE, aggregate = FALSE, products = "kres")
       # use nr for removalshare decision
       removalshare <- collapseNames((fieldbalance[, , "removal"]
                                      / (fieldbalance[, , "biomass"]
@@ -82,8 +79,8 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
       removal <- (production - burn - ash) * removalshare
 
     } else {
-      removal      <- collapseNames(calcOutput("ResDemand", cellular = FALSE, aggregate = FALSE,
-                                               scenario = scenario)[, , "domestic_supply"])[, , relevantNutrients]
+      removal      <- collapseNames(calcOutput("ResDemand", cellular = FALSE,
+                                               aggregate = FALSE)[, , "domestic_supply"])[, , relevantNutrients]
       removal      <- add_columns(removal, addnm = c("res_nouse"), dim = 3.1)
       removal[, , c("res_nouse")] <- 0
     }
@@ -117,8 +114,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum", scenario
 
   } else if (products == "sum") {
 
-    out <- calcOutput("ResFieldBalancePast", cellular = cellular, products = "kres",
-                      aggregate = FALSE,  scenario = scenario)
+    out <- calcOutput("ResFieldBalancePast", cellular = cellular, products = "kres", aggregate = FALSE)
     out <- dimSums(out, dim = 3.2)
 
   } else {
