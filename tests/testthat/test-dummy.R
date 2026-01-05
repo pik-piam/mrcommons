@@ -1,1 +1,1 @@
-test-dummy.R
+skip("dummy test")
