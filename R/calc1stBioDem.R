@@ -22,10 +22,6 @@ calc1stBioDem <- function(subtype = "all") {
   x <- add_columns(x, dim = 2.1, addnm = setdiff(time, past))
   x[, setdiff(time, past), ] <- 0
 
-  # for oil and ethanol replace FAO with Lotze-Campen projection
-  bioenergyProjection <- readSource("LotzeCampenBiofuel") [, , c("oils", "ethanol")]
-  x[, c("y2020", "y2030"), c("oils", "ethanol")] <- bioenergyProjection[, c("y2020", "y2030"), c("oils", "ethanol")]
-
   # if values decline, keep them constant
   x <- x[, sort(getYears(x)), ]
   for (y in 2:length(getYears(x))) {
