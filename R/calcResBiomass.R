@@ -7,8 +7,6 @@
 #'                   problems for cellular outputs
 #' @param irrigation if TRUE, distinguishes irrigated and non-irrigated crops
 #' @param attributes in dm, wm, ge, nr, p, k
-#' @param scenario   define scenario switch for sensititvy analysis
-#'                   for historical SOC budget
 #'
 #' @return MAgPIE-FEED data for ProdResAg and corresonding weights as a list of
 #' two MAgPIE objects
@@ -21,8 +19,7 @@
 #'
 calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
                            plantparts = "both",
-                           irrigation = FALSE, attributes = "all",
-                           scenario = "default") {
+                           irrigation = FALSE, attributes = "all") {
 
   croptypesMAG <- findset("kcr")
 
@@ -32,14 +29,12 @@ calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
                                         cells = "lpjcell",
                                         aggregate = FALSE, plantparts = "ag",
                                         irrigation = irrigation,
-                                        attributes = attributes,
-                                        scenario = scenario)
+                                        attributes = attributes)
     belowGroundResidues   <- calcOutput("ResBiomass", cellular = cellular,
                                         cells = "lpjcell",
                                         aggregate = FALSE, plantparts = "bg",
                                         irrigation = irrigation,
-                                        attributes = attributes,
-                                        scenario = scenario)
+                                        attributes = attributes)
     residueProduction     <- mbind(aboveGroundResidues, belowGroundResidues)
 
   } else if (plantparts %in% c("ag", "bg")) {
@@ -58,21 +53,6 @@ calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
     harvestedArea  <- harvestedArea[, cyears, ]
 
     harvestIndex   <- setYears(readSource("HI"), NULL)[, , croptypesMAG]
-
-    if (grepl("freeze*", scenario)) {
-      # select year by scenario name
-      freezeYear <- as.integer(gsub("freeze", "", scenario))
-
-      # calculate yields and freeze yield levels
-      cropYields  <- toolConditionalReplace(cropProduction[, cyears, ] /
-                                              harvestedArea[, cyears, ],
-                                            c("is.na()", "is.infinite()"), 0)
-      cropYields  <- toolFreezeEffect(cropYields, freezeYear,
-                                      constrain = "first_use")
-
-      # recalculate production
-      cropProduction <- cropYields[, cyears, ] * harvestedArea[, cyears, ]
-    }
 
     if (plantparts == "ag") {
       # calculate residue production
@@ -96,8 +76,7 @@ calcResBiomass <- function(cellular = FALSE, cells = "lpjcell",
       aboveGroundResidues <- collapseNames(calcOutput("ResBiomass", cellular = cellular,
                                                       cells = "lpjcell",
                                                       plantparts = "ag", attributes = "dm",
-                                                      irrigation = irrigation, aggregate = FALSE,
-                                                      scenario = scenario))
+                                                      irrigation = irrigation, aggregate = FALSE))
       # read harvest index
       belowGroundResidues <- (aboveGroundResidues + cropProduction) *
         collapseNames(harvestIndex[, , "bg_to_ag"])

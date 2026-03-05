@@ -34,7 +34,8 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
                                     cellular = cellular, aggregate = FALSE)
   livestockProduction <- collapseNames(kliProduction[, , "dm"])
   if (yearly == FALSE) {
-    livestockProduction <- livestockProduction[, past, ]
+    cyears <- intersect(past, getYears(kliProduction))
+    livestockProduction <- livestockProduction[, cyears, ]
   }
   animalProduction    <- add_columns(livestockProduction, addnm = "fish", dim = 3.1)
   animalProduction[, , "fish"]        <- 0
@@ -47,14 +48,17 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
     feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
   }
 
-  feedConsumption  <- animalProduction[, getYears(feedBaskets), ] * feedBaskets
+  cyears <- intersect(getYears(feedBaskets), getYears(animalProduction))
+  feedConsumption  <- animalProduction[, cyears, ] * feedBaskets[, cyears, ]
   min              <- 0
 
   if (balanceflow) {
     balanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, products = products, aggregate = FALSE)
     getNames(balanceflow, dim = 1) <- paste0("alias_", getNames(balanceflow, dim = 1))
-    feedConsumption <- feedConsumption + balanceflow[getCells(feedConsumption), getYears(feedConsumption),
-                                                     getNames(feedConsumption)]
+
+    cyears <- intersect(getYears(feedConsumption), getYears(balanceflow))
+    feedConsumption <- feedConsumption[, cyears, ] + balanceflow[getCells(feedConsumption), cyears,
+                                                                 getNames(feedConsumption)]
     min <- -Inf
 
   } else if (balanceflow != FALSE) {
