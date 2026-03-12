@@ -35,7 +35,7 @@
 #' @importFrom tibble as_tibble tribble
 #' @importFrom stats na.omit
 #' @importFrom tidyr complete gather nesting spread crossing
-#'
+#' @export
 #'
 
 # nolint start
