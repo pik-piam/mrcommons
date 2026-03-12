@@ -1,6 +1,7 @@
 #' Apply adjustments to industry-related IEA data
 #'
-#' This function prepares the industry-related IEA before mapping it to REMIND sectors. There are three different types of adjustments done:
+#' This function prepares the industry-related IEA before mapping it to REMIND sectors.
+#' There are three different types of adjustments done:
 #' 1. replace coke oven and blast furnace outputs (`BLFURGS`, `OGASES`, `OVENCOKE`,
 #' `COKEOVGS`, `COALTAR`, `NONCRUDE`) by inputs
 #' (required for dealing with energy flows from the steel sector to other sectors)
@@ -17,9 +18,6 @@
 #' @md
 #' @param data MAgPIE object containing the IEA Energy Balances data
 #'
-#' @param ieamatch mapping of IEA product/flow combinations to REMIND sectors and energy carriers
-#'
-#'
 #' @param threshold minimum share each industry subsector uses of each product.
 #'   Defaults to 1 %.
 #' @param fixing temporary flag
@@ -30,15 +28,23 @@
 #'
 #' @importFrom assertr not_na assert
 #' @importFrom dplyr anti_join group_by inner_join left_join mutate pull rename
-#'     select summarise
-#' @importFrom readr read_delim cols col_skip col_character
+#'     select summarise semi_join everything ungroup
 #' @importFrom quitte cartesian interpolate_missing_periods overwrite
-#'             character.data.frame interpolate_missing_periods_
+#'             character.data.frame interpolate_missing_periods_ sum_total_
 #' @importFrom rlang .data
-#' @importFrom tibble as_tibble
+#' @importFrom tibble as_tibble tribble
 #' @importFrom stats na.omit
 #' @importFrom tidyr complete gather nesting spread crossing
-#' @export
+#'
+#'
+
+# nolint start
+
+# TODO Reduce unnecessary imports
+# TODO Deal with linter warnings
+# TODO Decide where to put this
+# TODO Can we remove fixing?
+
 toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) {
 
   ####
@@ -834,3 +840,4 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
 
   return(data)
 }
+# nolint end

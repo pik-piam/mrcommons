@@ -1,8 +1,8 @@
 Type: Package
 Package: mrcommons
 Title: MadRat commons Input Data Library
-Version: 1.66.1
-Date: 2026-02-23
+Version: 1.66.2
+Date: 2026-03-12
 Authors@R: c(
     person("Benjamin Leon", "Bodirsky", , "bodirsky@pik-potsdam.de", role = "aut"),
     person("Kristine", "Karstens", role = "aut"),
@@ -56,6 +56,7 @@ Depends:
     mstools (>= 0.6.0),
     R (>= 2.10.0)
 Imports:
+    assertr,
     countrycode,
     data.table,
     dplyr,
