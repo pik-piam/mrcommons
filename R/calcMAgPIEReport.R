@@ -107,20 +107,20 @@ calcMAgPIEReport <- function(subtype) {
       bind_rows()
 
     # Find magpie variable names that exist in the report and select only those from the mapping
-    magpieNamesExisting <- mag2rem$mag %in% getNames(x, dim =3)
+    magpieNamesExisting <- mag2rem$mag %in% getNames(x, dim = 3)
 
     # Select only the existing variable names from the mapping for MAgPIE and REMIND respectively
     magpieNamesToUse <- mag2rem$mag[magpieNamesExisting]
     remindNamesToUse <- mag2rem$rem[magpieNamesExisting]
 
     # Reduce the data to the variables that we actually need
-    x <- x[,,magpieNamesToUse]
+    x <- x[, , magpieNamesToUse]
 
     # Rename the MAgPIE variables to the REMIND variable names
-    getNames(x, dim =3) <- remindNamesToUse
+    getNames(x, dim = 3) <- remindNamesToUse
     
     # Rename NO2 into NOx
-    getNames(x, dim =3) <- gsub("NO2", "NOx", getNames(x, dim =3))
+    getNames(x, dim = 3) <- gsub("NO2", "NOx", getNames(x, dim = 3))
 
     d <- "Air pollutant emissions from land"
     u <- "Mt/yr"
