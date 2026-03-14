@@ -56,12 +56,17 @@ calcTimberTradeBilateral <- function(products = "magpie") {
   unit <- "mio m3"
 
   if (products == "magpie") {
-    # convert to dry matter content, 0.6 and 0.3 respectively
-    out[, , "Industrial roundwood"] <- out[, , "Industrial roundwood"] * 0.6
+    # Convert m3 to tDM using IPCC climate-region wood density (tDM per m3).
+    # out has bilateral (im.ex) spatial dim, so apply density per importer country.
+    woodDensity <- calcOutput("WoodDensity", aggregate = FALSE)
+    for (im in getItems(out, dim = 1.1)) {
+      d <- if (im %in% getCells(woodDensity)) as.numeric(woodDensity[im, , ]) else 0.5
+      out[im, , "Industrial roundwood"] <- out[im, , "Industrial roundwood"] * d
+      out[im, , "Wood fuel"]            <- out[im, , "Wood fuel"] * d
+    }
+
     out <- add_columns(out, dim = 3, addnm = "wood")
     out[, , "wood"] <- out[, , "Industrial roundwood"]
-
-    out[, , "Wood fuel"] <- out[, , "Wood fuel"] * 0.3
     out <- add_columns(out, dim = 3, addnm = "woodfuel")
     out[, , "woodfuel"] <- out[, , "Wood fuel"]
 
