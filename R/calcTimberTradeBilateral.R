@@ -56,6 +56,11 @@ calcTimberTradeBilateral <- function(products = "magpie") {
   unit <- "mio m3"
 
   if (products == "magpie") {
+    # FAO woodfuel stacking correction: FAO woodfuel statistics are widely reported
+    # in stacked m3 (stere) rather than solid m3, overstating volumes by ~35%.
+    # Standard stacking factor: 1 stere = 0.65 solid m3.
+    # Sources: FAO (2004) UWET Section 5.1.3; FAO/ITTO/UNECE (2020) Table 2.2.
+    out[, , "Wood fuel"] <- out[, , "Wood fuel"] * 0.65
     # Convert m3 to tDM using IPCC climate-region wood density (tDM per m3).
     # out has bilateral (im.ex) spatial dim, so apply density per importer country.
     woodDensity <- calcOutput("WoodDensity", aggregate = FALSE)
