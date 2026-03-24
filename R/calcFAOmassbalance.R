@@ -84,17 +84,23 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
   forest2020 <- forest[, 2019, ]
   forest2020 <- setYears(forest2020, 2020)
   forest <- mbind(forest, forest2020)
-  # convert to dry matter content
+  # Convert m3 to tDM using IPCC climate-region wood density (tDM per m3)
+  woodDensity <- calcOutput("WoodDensity", aggregate = FALSE)
+  # FAO woodfuel stacking correction: FAO woodfuel statistics are widely reported
+  # in stacked m3 (stere) rather than solid m3, overstating volumes by ~35%.
+  # Standard stacking factor: 1 stere = 0.65 solid m3.
+  # Sources: FAO (2004) UWET Section 5.1.3; FAO/ITTO/UNECE (2020) Table 2.2.
+  forest[, , "Wood fuel"] <- forest[, , "Wood fuel"] * 0.65
   mb3[, , getNames(mb3[, , paste0("wood.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
                                                                   getYears(forest)),
-                                                      getNames(forest[, , "Industrial roundwood"])] * 0.6
+                                                      getNames(forest[, , "Industrial roundwood"])] * woodDensity
   mb3[, , getNames(mb3[, , paste0("woodfuel.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
                                                                   getYears(forest)),
-                                                      getNames(forest[, , "Wood fuel"])] * 0.3
+                                                      getNames(forest[, , "Wood fuel"])] * woodDensity
 
   # Adding Pasture as feed item
   mb3[, , "pasture"][, ,

@@ -4,20 +4,24 @@
 \alias{calcGrowingStockPlantations}
 \title{calcGrowingStockPlantations}
 \usage{
-calcGrowingStockPlantations()
+calcGrowingStockPlantations(indicator = "per_ha")
+}
+\arguments{
+\item{indicator}{Either "per_ha" (m3/ha, area-weighted) or "total" (Mm3, absolute).}
 }
 \value{
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates the growing stocks on FAO data.
+Calculates the growing stocks from FAO data for planted forests (plantations).
 }
 \examples{
 \dontrun{
-calcOutput("GrowingStockPlantations", aggregate = TRUE)
+calcOutput("GrowingStockPlantations", indicator = "per_ha", aggregate = TRUE)
+calcOutput("GrowingStockPlantations", indicator = "total", aggregate = TRUE)
 }
 
 }
 \author{
-Abhijeet Mishra
+Abhijeet Mishra, Florian Humpenoeder
 }
