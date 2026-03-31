@@ -1,0 +1,21 @@
+# calcPhysicalInactivity
+
+physical inactivity level estimate based on Hallal, Pedro C, Lars Bo
+Andersen, Fiona C Bull, Regina Guthold, William Haskell, and Ulf
+Ekelund. 2012. "Global Physical Activity Levels: Surveillance Progress,
+Pitfalls, and Prospects." The Lancet 380 (9838):247-57.
+https://doi.org/10.1016/S0140-6736(12)60646-1.
+
+## Usage
+
+``` r
+calcPhysicalInactivity(update = TRUE)
+```
+
+## Arguments
+
+- update:
+
+  WHO estimates from http://apps.who.int/gho/data/view.main.2487?lang=en
+  seem to have updated. TRUE provides the results as they were online on
+  27.2.2024

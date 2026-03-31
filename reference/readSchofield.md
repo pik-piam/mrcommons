@@ -1,0 +1,33 @@
+# Read parameters of Schofield equations
+
+University, United Nations. 2004. Human Energy Requirements: Report of a
+Joint FAO/WHO/UNU Expert Consultation: Rome, 17-24 October 2001. Vol. 1.
+Food & Agriculture Org.
+http://books.google.com/books?hl=en&lr=&id=8WW7LP5h6usC&oi=fnd&pg=PR3&dq=%22working+groups.+The+work+of+these+groups+preceded+the+expert+consultation+and+served+as%22+%22for+discussions+and+exchange+during+the+meeting.+Thanks+are+also+due+to+Dr+E.%22+&ots=8Fizk–Hr6&sig=ocPdelHKyX2_npUTh41zZRRHf68.
+\#nolint
+
+## Usage
+
+``` r
+readSchofield()
+```
+
+## Value
+
+MAgPIE object
+
+## See also
+
+[`madrat::readSource()`](https://rdrr.io/pkg/madrat/man/readSource.html)
+
+## Author
+
+Benjamin Bodirsky
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+a <- readSource("Schofield")
+} # }
+```
