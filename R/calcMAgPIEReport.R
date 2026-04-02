@@ -76,6 +76,55 @@ calcMAgPIEReport <- function(subtype) {
     d <- "CO2 land emissions"
     u <- "Mt CO2/yr"
 
+  } else if (subtype == "AirPollutants") {
+
+    createMappingMag2Rem <- function(replacement) {
+
+      # Define generic mapping from MAgPIE to REMIND variable names for all species
+      mag2remGeneric <- tibble::tribble(
+        ~mag                                                                                , ~rem                                                               ,
+        'Emissions|SPECIES|AFOLU|Agriculture (Mt SPECIES/yr)'                               , 'Emi|SPECIES|AFOLU|+|Agriculture (Mt SPECIES/yr)'                  ,
+        'Emissions|SPECIES|Land|Biomass Burning|+|Burning of Crop Residues (Mt SPECIES/yr)' , 'Emi|SPECIES|AFOLU|+|Agricultural Waste Burning (Mt SPECIES/yr)'   ,
+        'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
+        'Emissions|SPECIES|AFOLU|Land|Fires (Mt SPECIES/yr)'                                , 'Emi|SPECIES|AFOLU|Land|+|Fires (Mt SPECIES/yr)'                   ,
+        'Emissions|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'               , 'Emi|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'    ,
+        'Emissions|SPECIES|AFOLU|Land|Fires|+|Grassland Burning (Mt SPECIES/yr)'            , 'Emi|SPECIES|AFOLU|Land|Fires|+|Grassland Burning (Mt SPECIES/yr)' ,
+        'Emissions|SPECIES|AFOLU|Land|Fires|+|Peat Burning (Mt SPECIES/yr)'                 , 'Emi|SPECIES|AFOLU|Land|Fires|+|Peat Burning (Mt SPECIES/yr)'
+      )
+
+      # replace "SPECIES" with the actual species name given from sapply below
+      mag2remGeneric |> mutate(across(everything(), ~ gsub("SPECIES", replacement, .x)))
+
+    }
+
+    species <- c("BC","CO","NH3","NO2","OC","SO2","VOC")
+
+    # create mapping for all species
+    mag2rem <- species |>
+      sapply(createMappingMag2Rem,
+             simplify = FALSE,
+             USE.NAMES = TRUE) |>
+      bind_rows()
+
+    # Find magpie variable names that exist in the report and select only those from the mapping
+    magpieNamesExisting <- mag2rem$mag %in% getNames(x, dim = 3)
+
+    # Select only the existing variable names from the mapping for MAgPIE and REMIND respectively
+    magpieNamesToUse <- mag2rem$mag[magpieNamesExisting]
+    remindNamesToUse <- mag2rem$rem[magpieNamesExisting]
+
+    # Reduce the data to the variables that we actually need
+    x <- x[, , magpieNamesToUse]
+
+    # Rename the MAgPIE variables to the REMIND variable names
+    getNames(x, dim = 3) <- remindNamesToUse
+    
+    # Rename NO2 into NOx
+    getNames(x, dim = 3) <- gsub("NO2", "NOx", getNames(x, dim = 3))
+
+    d <- "Air pollutant emissions from land"
+    u <- "Mt/yr"
+
   } else if (subtype == "fertilizer") {
     mapping <- inline.data.frame(
       "magpieNames;remindNames",
