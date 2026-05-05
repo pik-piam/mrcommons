@@ -45,7 +45,7 @@
 # TODO Decide where to put this
 # TODO Can we remove fixing?
 
-toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) {
+toolFixIEAdataForIndustrySubsectors <- function(data, fixing = 3, threshold = 1e-2) {
 
   ####
 
@@ -605,7 +605,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
 
   data[is.na(data)] <- 0
 
-  if (!fixing) {
+  if (fixing == 1) {
     return(data)
   }
 
@@ -618,38 +618,6 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
                     'MACHINE','MINING', 'FOODPRO', 'PAPERPRO', 'WOODPRO',
                     'CONSTRUC', 'TEXTILES')
 
-  # all products associated with those flows
-
-  # these used to be retrieved from the iea mapping before
-  # products_to_fix <- ieamatch %>%
-  #   filter(.data$iea_flows %in% flows_to_fix) %>%
-  #   getElement('iea_product') %>%
-  #   unique()
-
-  # now, we hard code them, as the mapping is being refactored, potentially causing
-  # unwanted side effects in this tool function
-
-  # for now, we use the products associated with the flows, according to the old mapping
-  # TODO: revise and update the list of products to be fixed
-  products_to_fix <- c(
-    'ADDITIVE', 'ANTCOAL', 'AVGAS', 'BIODIESEL', 'BIOGASES', 'BIOGASOL', 'BITCOAL', 'BITUMEN',
-    'BKB', 'BROWN', 'CHARCOAL', 'COKCOAL', 'CRNGFEED', 'CRUDEOIL', 'ELECTR', 'ETHANE',
-    'GASCOKE', 'GASWKSGS', 'GEOTHERM', 'HARDCOAL', 'HEAT', 'INDWASTE', 'JETGAS', 'LIGNITE',
-    'LPG', 'LUBRIC', 'MUNWASTEN', 'MUNWASTER', 'NAPHTHA', 'NATGAS', 'NGL', 'NONBIODIES',
-    'NONBIOGASO', 'NONBIOJETK', 'OBIOLIQ', 'OILSHALE', 'ONONSPEC', 'OTHKERO', 'PARWAX', 'PATFUEL',
-    'PEAT', 'PEATPROD', 'PETCOKE', 'PRIMSBIO', 'REFFEEDS', 'REFINGAS', 'RENEWNS', 'RESFUEL',
-    'SUBCOAL', 'WHITESP'
-  )
-
-  # products to fix according to the latest mapping
-  # products_to_fix <- c(
-  #   'ANTCOAL', 'AVGAS', 'BIODIESEL', 'BIOGASES', 'BIOGASOL', 'BITCOAL', 'BITUMEN', 'BKB',
-  #   'BROWN', 'CHARCOAL', 'COKCOAL', 'CRNGFEED', 'CRUDEOIL', 'ELECTR', 'ETHANE', 'GASCOKE',
-  #   'GASWKSGS', 'GEOTHERM', 'HARDCOAL', 'HEAT', 'INDWASTE', 'LIGNITE', 'LPG', 'LUBRIC',
-  #   'MUNWASTEN', 'MUNWASTER', 'NAPHTHA', 'NATGAS', 'NGL', 'NONBIODIES', 'NONBIOGASO', 'NONBIOJETK',
-  #   'OBIOLIQ', 'OILSHALE', 'ONONSPEC', 'OTHKERO', 'PARWAX', 'PATFUEL', 'PEAT', 'PEATPROD',
-  #   'PETCOKE', 'PRIMSBIO', 'REFINGAS', 'RENEWNS', 'RESFUEL', 'SUBCOAL', 'WHITESP'
-  # )
 
   region_mapping <- toolGetMapping(name = 'regionmapping_21_EU11.csv',
                                    type = 'regional',
@@ -660,9 +628,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
   ## 2.2 Extend industry subsector time series ----
   # subset of data containing industry subsector products and flows
 
-  product_flow_to_fix <- cartesian(products_to_fix,
-                                   c(flows_to_fix, 'TOTIND', 'INONSPEC'))
-  data_industry <- data[, , intersect(getNames(data), product_flow_to_fix)] %>%
+  data_industry <- data[, , c(flows_to_fix, 'TOTIND', 'INONSPEC')] %>%
     .clean_data() %>%
     inner_join(region_mapping, 'iso3c')
 
@@ -678,6 +644,10 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
       FUN = function(x) { mean(x, na.rm = TRUE) })) %>%
     ungroup()
 
+  if (fixing == 2) {
+    return(data)
+  }
+
   # 3. Fix suspicious products in industry ----
 
   ## 3.1 Prepare data to fix ----
@@ -687,6 +657,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
   data_to_fix <- data_industry %>%
     filter(.data$flow %in% c('TOTIND', 'INONSPEC')) %>%
     spread(.data$flow, .data$value) %>%
+    mutate("INONSPEC" = ifelse(is.na(.data$INONSPEC), 0, .data$INONSPEC)) %>%
     filter(1 - .data$INONSPEC / .data$TOTIND < 1e-2) %>%
     select('iso3c', 'region', 'year', 'product', 'TOTIND')
 
@@ -696,7 +667,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
       filter('TOTIND' != .data$flow),
 
     data_to_fix %>%
-      select(-.data$TOTIND),
+      select(-"TOTIND"),
 
     c('iso3c', 'region', 'year', 'product')
   ) %>%
@@ -742,9 +713,8 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing, threshold = 1e-2) 
     c('region', 'year', 'product')
   ) %>%
     # replace "suspicious" data with averages
-    mutate(value = .data$TOTIND * .data$value) %>%
-    select(.data$iso3c, .data$region, .data$year, .data$product, .data$flow,
-           .data$value) %>%
+    mutate("value" = .data$TOTIND * .data$value) %>%
+    select("iso3c", "region", "year", "product", "flow", "value") %>%
     assert(not_na, .data$value) %>%
     overwrite(data_industry)
 
