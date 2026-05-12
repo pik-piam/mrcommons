@@ -19,6 +19,8 @@ Useful links:
 
 Authors:
 
+- Jan Philipp Dietrich <dietrich@pik-potsdam.de>
+
 - Benjamin Leon Bodirsky <bodirsky@pik-potsdam.de>
 
 - Kristine Karstens

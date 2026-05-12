@@ -19,7 +19,6 @@ Kristine Karstens
 ## Examples
 
 ``` r
-
 if (FALSE) { # \dontrun{
 readSource("IPCCClimate", convert="onlycorrect")
 } # }

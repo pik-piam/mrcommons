@@ -6,20 +6,20 @@ different climate cliassification schemes
 ## Usage
 
 ``` r
-calcClimateClass(datasource = "koeppen", cells = "magpiecell")
+calcClimateClass(datasource = "koeppen")
 ```
 
 ## Arguments
 
 - datasource:
 
-  select source from: - koeppen for Koeppen Geiger Classification
-  http://koeppen-geiger.vu-wien.ac.at/ - ipcc, ipccReduced,
-  ipccReduced2019 for IPCC Guideline climate classification
+  select source from:
 
-- cells:
+  - koeppen for Koeppen Geiger Classification
+    http://koeppen-geiger.vu-wien.ac.at/
 
-  "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
+  - ipcc, ipccReduced, ipccReduced2019 for IPCC Guideline climate
+    classification
 
 ## Value
 
