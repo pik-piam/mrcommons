@@ -18,6 +18,7 @@
 #' \dontrun{
 #' calcOutput("FAOmassbalance")
 #' }
+
 #' @importFrom magclass getNames<- as.magpie
 #' @importFrom withr local_options
 
@@ -84,17 +85,23 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
   forest2020 <- forest[, 2019, ]
   forest2020 <- setYears(forest2020, 2020)
   forest <- mbind(forest, forest2020)
-  # convert to dry matter content
+  # Convert m3 to tDM using IPCC climate-region wood density (tDM per m3)
+  woodDensity <- calcOutput("WoodDensity", aggregate = FALSE)
+  # FAO woodfuel stacking correction: FAO woodfuel statistics are widely reported
+  # in stacked m3 (stere) rather than solid m3, overstating volumes by ~35%.
+  # Standard stacking factor: 1 stere = 0.65 solid m3.
+  # Sources: FAO (2004) UWET Section 5.1.3; FAO/ITTO/UNECE (2020) Table 2.2.
+  forest[, , "Wood fuel"] <- forest[, , "Wood fuel"] * 0.65
   mb3[, , getNames(mb3[, , paste0("wood.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
                                                                   getYears(forest)),
-                                                      getNames(forest[, , "Industrial roundwood"])] * 0.6
+                                                      getNames(forest[, , "Industrial roundwood"])] * woodDensity
   mb3[, , getNames(mb3[, , paste0("woodfuel.",
                                   getNames(forest, dim = 2),
                                   ".dm")])] <- forest[, intersect(getYears(mb3),
                                                                   getYears(forest)),
-                                                      getNames(forest[, , "Wood fuel"])] * 0.3
+                                                      getNames(forest[, , "Wood fuel"])] * woodDensity
 
   # Adding Pasture as feed item
   mb3[, , "pasture"][, ,
@@ -112,39 +119,39 @@ calcFAOmassbalance <- function(version = "join2010", yearly = FALSE) {
   bioenergy <- calcOutput("1stBioenergyPast", aggregate = FALSE)
   att <- calcOutput("Attributes", aggregate = FALSE)
   ethanolOilFactor <- (att / (collapseNames(att[, , "ge"])))[, , c("ethanol", "oils")]
-  mb3[, , c("ethanol", "oils")][, , "bioenergy"] <- bioenergy[, getYears(mb3),
-                                                              c("ethanol", "oils")][
-                                                                                    , , "INDPROD", drop = TRUE] *
-    ethanolOilFactor
-  mb3[, , c("ethanol", "oils")][, , "import"] <- bioenergy[, getYears(mb3),
-                                                           c("ethanol", "oils")][
-                                                                                 , , "IMPORTS", drop = TRUE] *
-    ethanolOilFactor
-  mb3[, , c("ethanol", "oils")][, , "export"] <- bioenergy[, getYears(mb3),
-                                                           c("ethanol", "oils")][
-                                                                                 , , "EXPORTS", drop = TRUE] * -1 *
-    ethanolOilFactor
+  bioenergy <- bioenergy[, getYears(mb3), c("ethanol", "oils")] * ethanolOilFactor
+
+  # in IEA, TES (total energy supply) = INDPROD (indigenous production) + IMPORTS + EXPORTS (with negative values).
+  # for us, TES is bioenergy use.
+  mb3[, , c("ethanol", "oils")
+  ][, , "bioenergy"] <- dimSums(bioenergy[, , c("ethanol", "oils")
+                                ][, , c("INDPROD", "IMPORTS", "EXPORTS")] # exports are negative
+                                , dim = 3.2)
+
+  # For ethanol where we dont have trade data, we use the trade data from IEA.
+  mb3[, , c("ethanol")][, , "import"] <- (bioenergy[, , "ethanol"])[, , "IMPORTS", drop = TRUE]
+  mb3[, , c("ethanol")][, , "export"] <- -(bioenergy[, , "ethanol"]
+  )[, , "EXPORTS", drop = TRUE] # exports are negative
+  mb3[, , c("ethanol")][, , "other_util"]  <- mb3[, , "production"][, , "ethanol"] +
+    mb3[, , "import"][, , "ethanol"] -
+    mb3[, , "export"][, , "ethanol"]
 
   # in some cases bioenergy demand from EEA exceeds ethanol production.
   # We limit it to the availabiltiy in FAOmassbalance_pre
-  exceeded <- mb3[, , c("ethanol", "oils")][, , "bioenergy"] > mb3[, , c("ethanol", "oils")][, , "other_util"]
-  mb3[, , c("ethanol",
-            "oils")][, , "bioenergy"][exceeded] <- mb3[, , c("ethanol",
-                                                             "oils")][, , "other_util"][exceeded]
-  mb3[, , c("ethanol",
-            "oils")][, , "other_util"] <- mb3[, , c("ethanol",
-                                                    "oils")][, , "other_util"] - mb3[, , c("ethanol",
-                                                                                           "oils")][, , "bioenergy"]
-  # now scale exports and imports by same amount that the total production was scaled by, only for ethanol
-  # oils already have trade, what to do?
-  scf <- mb3[, , "ethanol"][, , "bioenergy"] /
-    (bioenergy[, getYears(mb3), "ethanol"][
-                                           , , "INDPROD", drop = TRUE] * ethanolOilFactor[, , "ethanol"])
-  scf[is.na(scf)] <- 0
-  mb3[, , "ethanol"][, , "import"] <- mb3[, , "ethanol"][, , "import"] * scf
-  mb3[, , "ethanol"][, , "export"] <- mb3[, , "ethanol"][, , "export"] * scf
+  exceeded <- ifelse(collapseNames(mb3[, , c("ethanol", "oils")][, , "bioenergy"]) >
+                       collapseNames(mb3[, , c("ethanol", "oils")][, , "other_util"]),
+                     collapseNames(mb3[, , c("ethanol", "oils")][, , "bioenergy"]) -
+                       collapseNames(mb3[, , c("ethanol", "oils")][, , "other_util"]),
+                     0)
 
-  # round to 1 ton to avoid calculation issues
+  mb3[, , c("ethanol", "oils")][, , "bioenergy"] <- mb3[, , c("ethanol", "oils")][, , "bioenergy"] - exceeded
+
+  mb3[, , c("ethanol", "oils")][, , "other_util"] <- mb3[, , c("ethanol", "oils")][, , "other_util"] -
+    mb3[, , c("ethanol", "oils")][, , "bioenergy"]
+
+
+
+  ### round to 1 ton to avoid calculation issues
   mb3 <- round(mb3, 6)
 
   return(list(
