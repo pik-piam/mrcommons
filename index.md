@@ -1,6 +1,6 @@
 # MadRat commons Input Data Library
 
-R package **mrcommons**, version **1.67.2**
+R package **mrcommons**, version **1.67.3**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009)
 [![R build
@@ -56,7 +56,7 @@ E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von
 Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse
 R, Abrahão G, Weigmann P, Dietrich J (2026). “mrcommons: MadRat commons
 Input Data Library.” <doi:10.5281/zenodo.3822009>
-<https://doi.org/10.5281/zenodo.3822009>, Version: 1.67.2,
+<https://doi.org/10.5281/zenodo.3822009>, Version: 1.67.3,
 <https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
@@ -69,6 +69,6 @@ A BibTeX entry for LaTeX users is
  date = {2026-05-12},
  year = {2026},
  url = {https://github.com/pik-piam/mrcommons},
- note = {Version: 1.67.2},
+ note = {Version: 1.67.3},
 }
 ```
