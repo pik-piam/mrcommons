@@ -20,7 +20,6 @@
 #'
 #' @param threshold minimum share each industry subsector uses of each product.
 #'   Defaults to 1 %.
-#' @param fixing temporary flag
 #'
 #' @return a MAgPIE object
 #'
@@ -43,9 +42,8 @@
 # TODO Reduce unnecessary imports
 # TODO Deal with linter warnings
 # TODO Decide where to put this
-# TODO Can we remove fixing?
 
-toolFixIEAdataForIndustrySubsectors <- function(data, fixing = 3, threshold = 1e-2) {
+toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
 
   ####
 
@@ -605,10 +603,6 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing = 3, threshold = 1e
 
   data[is.na(data)] <- 0
 
-  if (fixing == 1) {
-    return(data)
-  }
-
   # 2. Prepare Industry Subsector Time Series ----
 
   ## 2.1 Define flows and mappings ----
@@ -643,10 +637,6 @@ toolFixIEAdataForIndustrySubsectors <- function(data, fixing = 3, threshold = 1e
       # ignoring NAs in mean() stumps the mean on the edges to four/three years
       FUN = function(x) { mean(x, na.rm = TRUE) })) %>%
     ungroup()
-
-  if (fixing == 2) {
-    return(data)
-  }
 
   # 3. Fix suspicious products in industry ----
 
