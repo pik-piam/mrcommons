@@ -39,7 +39,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
 
   # apply IEA data postprocessing
-  data <- toolFixIEAdataForIndustrySubsectors(data, fixing = TRUE)
+  data <- toolFixIEAdataForIndustrySubsectors(data)
 
   # AGGREGATE ------------------------------------------------------------------
 
