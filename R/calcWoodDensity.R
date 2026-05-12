@@ -12,6 +12,7 @@
 #' }
 #' @importFrom magclass new.magpie getNames getCells getYears setYears dimSums
 #' @importFrom madrat toolAggregate toolCountryFill
+#' @importFrom mstools toolGetMappingCoord2Country
 #' @export
 
 calcWoodDensity <- function() {
@@ -20,15 +21,22 @@ calcWoodDensity <- function() {
   # Source: IPCC 2006, Vol 4, Chapter 12, Table 12.4
   ipccDensity <- c(A = 0.59, B = 0.52, C = 0.45, D = 0.45, E = 0.45)
 
-  # Get cell-level Koeppen-Geiger climate class shares
+  # Get cell-level Koeppen-Geiger climate class shares and aggregate to country
+  # level, weighted by total land area per cell
   climateClass <- calcOutput("ClimateClass", datasource = "koeppen", aggregate = FALSE)
+  landArea     <- dimSums(calcOutput("LandArea", aggregate = FALSE), dim = 3)
+
+  mapping <- toolGetMappingCoord2Country()
+  mapping$coordiso <- paste(mapping$coords, mapping$iso, sep = ".")
+  climateClass <- toolAggregate(climateClass, rel = mapping, from = "coordiso", to = "iso",
+                                weight = landArea)
 
   # Use first year only (shares are time-invariant)
   if (!is.null(getYears(climateClass))) {
     climateClass <- setYears(climateClass[, 1, ], NULL)
   }
 
-  # Normalize climate class shares to sum to 1 per spatial unit
+  # Normalize climate class shares to sum to 1 per country
   total <- dimSums(climateClass, dim = 3)
   climateClass <- climateClass / total
   climateClass[is.na(climateClass)] <- 0
@@ -39,8 +47,10 @@ calcWoodDensity <- function() {
   densityMag <- new.magpie(cells_and_regions = "GLO", years = NULL, names = getNames(climateClass),
                            fill = densityVec)
 
-  # Weighted average density: sum(share_clcl * density_clcl) per spatial unit
+  # Weighted average density per country
   x <- dimSums(climateClass * densityMag, dim = 3)
+
+  # Fill countries that have no cells (e.g. small island states)
   x <- toolCountryFill(x, fill = 0.5)
 
   return(list(x = x,
