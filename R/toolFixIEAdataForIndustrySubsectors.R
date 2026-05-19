@@ -608,6 +608,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
   ## 2.1 Define flows and mappings ----
 
   # all industry subsector flows
+  # is this selection of flows correct?
   flows_to_fix <- c('IRONSTL', 'CHEMICAL', 'NONFERR', 'NONMET', 'TRANSEQ',
                     'MACHINE','MINING', 'FOODPRO', 'PAPERPRO', 'WOODPRO',
                     'CONSTRUC', 'TEXTILES')
@@ -627,16 +628,17 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     inner_join(region_mapping, 'iso3c')
 
   ## 2.3 Apply five-year moving average ----
-  data_industry <- data_industry %>%
-    group_by(.data$iso3c, .data$region, .data$product, .data$flow) %>%
-    arrange(.data$year) %>%
-    mutate(value = zoo::rollapply(
-      # pad data with two leading and trailing NAs
-      data = c(NA, NA, .data$value, NA, NA),
-      width = 5,
-      # ignoring NAs in mean() stumps the mean on the edges to four/three years
-      FUN = function(x) { mean(x, na.rm = TRUE) })) %>%
-    ungroup()
+  # TODO: what to do with this?
+  # data_industry <- data_industry %>%
+  #   group_by(.data$iso3c, .data$region, .data$product, .data$flow) %>%
+  #   arrange(.data$year) %>%
+  #   mutate(value = zoo::rollapply(
+  #     # pad data with two leading and trailing NAs
+  #     data = c(NA, NA, .data$value, NA, NA),
+  #     width = 5,
+  #     # ignoring NAs in mean() stumps the mean on the edges to four/three years
+  #     FUN = function(x) { mean(x, na.rm = TRUE) })) %>%
+  #   ungroup()
 
   # 3. Fix suspicious products in industry ----
 
