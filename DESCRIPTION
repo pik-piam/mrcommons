@@ -51,6 +51,7 @@ Depends:
     madrat (>= 3.10.0),
     magclass (>= 3.17),
     mrdrivers (>= 7.1.1),
+    mrenergycore (>= 0.2.0),
     mrfaocore (>= 1.0.0),
     mrlandcore (>= 1.0.0),
     mstools (>= 0.6.0),
