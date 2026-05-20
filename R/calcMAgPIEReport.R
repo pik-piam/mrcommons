@@ -118,7 +118,7 @@ calcMAgPIEReport <- function(subtype) {
 
     # Rename the MAgPIE variables to the REMIND variable names
     getNames(x, dim = 3) <- remindNamesToUse
-    
+
     # Rename NO2 into NOx
     getNames(x, dim = 3) <- gsub("NO2", "NOx", getNames(x, dim = 3))
 
@@ -148,13 +148,17 @@ calcMAgPIEReport <- function(subtype) {
   # !!! ATTENTION !!!
   # If you change the name of the baseline scenario from "none" to something else update "none" in calcMacBaseLandUse.R
 
-  # Rename the MAgPIE scenarios
-  getNames(x) <- getNames(x) %>%
-    stringr::str_replace_all(c(
+  datetimepattern <- "_20[0-9]{2}-[0-9]{2}-[0-9]{2}_[0-9]{2}_[0-9]{2}_[0-9]{2}"
+
+  # Rename the MAgPIE scenarios: e.g. "C_SSP1-PkBudg1000_2026-05-08_01.33.54-mag-4" to "SSP1.rcp26"
+  getNames(x, dim = "scenario") <- getNames(x, dim = "scenario") %>%
+      stringr::str_replace_all(datetimepattern, "") %>%
+      stringr::str_replace_all(c(
       "^C_"               = "",
-      "-PkBudg650-mag-4"  = ".rcp20",
+      "-PkBudg750-mag-4"  = ".rcp20",
       "-PkBudg1000-mag-4" = ".rcp26",
-      "-NPi2025-mag-4"    = ".rcp45"
+      "-NPi2025-mag-4"    = ".rcp45",
+      "-NDC-mag-4"        = ".rcp37"
       # "-Base-mag-4"       = ".none",  # nolint
     ))
 

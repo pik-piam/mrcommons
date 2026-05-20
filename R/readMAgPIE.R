@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2025-04"
+  ver <- "2026-05"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -62,6 +62,17 @@ readMAgPIE <- function(subtype) {
                   "C_SSP5-NPi2025-mag-4.mif",
                   "C_SSP5-PkBudg1000-mag-4.mif",
                   "C_SSP5-PkBudg650-mag-4.mif")
+
+    fileList <- c("C_SSP1-PkBudg1000_2026-05-08_01.33.54-mag-4.mif",
+                  "C_SSP1-PkBudg750_2026-05-08_01.33.45-mag-4.mif",
+                  #"C_SSP2-EcBudg500_2026-05-08_01.32.56-mag-4.mif",
+                  "C_SSP2-NDC_2026-05-08_01.32.26-mag-4.mif",
+                  "C_SSP2-NPi2025_2026-05-07_17.51.37-mag-4.mif",
+                  "C_SSP2-PkBudg1000_2026-05-08_01.32.46-mag-4.mif",
+                  "C_SSP2-PkBudg750_2026-05-08_01.32.36-mag-4.mif"
+                  #"C_SSP2-PkBudg750_wo100EJBiobound_2026-05-08_15.04.36-mag-4.mif",
+                  #"C_SSP3-rollBack_2026-05-08_01.33.25-mag-4.mif"
+                  )
 
     x <- NULL
     for (f in fileList) {
