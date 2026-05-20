@@ -20,7 +20,7 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipcc
                              cells = "lpjcell") {
 
   ipccClimate        <- calcOutput("ClimateClass", aggregate = FALSE,
-                                   datasource = factor, cells = cells)
+                                   datasource = factor)
 
   factor2SCF         <- c(ipccReduced     = "SCF_sub",
                           ipccReduced2019 = "SCF_sub2019")
