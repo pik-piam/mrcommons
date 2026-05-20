@@ -10,8 +10,7 @@
 #' \dontrun{
 #' test <- readSource("EU_ReferenceScenario", subtype = "2020", convert = TRUE)
 #' }
-#' @importFrom madrat toolGetMapping toolCountryFill toolAggregate
-#'   toolCountry2isocode
+#' @importFrom madrat toolGetMapping toolCountryFill toolAggregate toolCountry2isocode
 #' @importFrom magclass getItems<- getItems getSets<- setItems mselect
 #' @importFrom utils read.csv2
 #' @export

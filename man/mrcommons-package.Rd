@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jan Philipp Dietrich \email{dietrich@pik-potsdam.de}
   \item Benjamin Leon Bodirsky \email{bodirsky@pik-potsdam.de}
   \item Kristine Karstens
   \item Lavinia Baumstark

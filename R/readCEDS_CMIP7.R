@@ -28,9 +28,9 @@ readCEDS_CMIP7 <- function() {
                               names_to = "period",
                               values_to = "value")
   data <- data %>%
-    mutate(period = gsub("X", "", period)) %>%
-    mutate(region = gsub("World|global", "GLO", region)) %>%
-    filter(period >= 1990)
+    mutate(period = gsub("X", "", .data$period)) %>%
+    mutate(region = gsub("World|global", "GLO", .data$region)) %>%
+    filter(.data$period >= 1990)
 
   mdata <- as.magpie(data, spatial = "region", temporal = "period")
   out <- clean_magpie(mdata)

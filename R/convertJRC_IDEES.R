@@ -14,11 +14,9 @@
 #'
 #' @seealso [`readJRC_IDEES()`]
 #'
-#' @importFrom dplyr %>% distinct filter full_join group_by left_join mutate
-#'                  pull select
+#' @importFrom dplyr %>% distinct filter full_join group_by left_join mutate pull select
 #' @importFrom madrat getISOlist toolCountry2isocode toolCountryFill
-#' @importFrom magclass as.data.frame as.magpie getNames getNames<-
-#'   add_dimension
+#' @importFrom magclass as.data.frame as.magpie getNames getNames<- add_dimension
 #' @importFrom quitte add_countrycode_ character.data.frame
 #' @importFrom rlang sym syms
 #' @importFrom tibble as_tibble
