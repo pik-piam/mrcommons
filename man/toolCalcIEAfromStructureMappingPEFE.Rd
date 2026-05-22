@@ -4,7 +4,7 @@
 \alias{toolCalcIEAfromStructureMappingPEFE}
 \title{toolCalcIEAfromStructureMappingPEFE}
 \usage{
-toolCalcIEAfromStructureMappingPEFE(data, structureMapping, subtype = "remind")
+toolCalcIEAfromStructureMappingPEFE(data, structureMapping)
 }
 \arguments{
 \item{data}{data to map}

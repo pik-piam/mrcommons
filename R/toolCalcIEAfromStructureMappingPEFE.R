@@ -10,7 +10,7 @@
 #' @importFrom rlang .data
 #' @importFrom stats na.omit
 #' @export
-toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype = "remind") {
+toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping) {
   # choose the name of the column which should be targeted in the structureMapping
 
   targetName <- "magpie_items"
