@@ -74,7 +74,6 @@ Imports:
     rlang,
     stringr,
     terra,
-    tibble,
     tidyr,
     withr,
     zoo

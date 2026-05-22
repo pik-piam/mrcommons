@@ -3,8 +3,6 @@
 #'
 #' @param data data to map
 #' @param structureMapping mapping to use
-#' @param subtype remind (default), edge, pfu or magpie
-#'
 #' @return MAgPIE object with completed time dimensionality.
 #' @author Anastasis Giannousakis, Lavinia Baumstark, Isabelle Weindl
 #'
@@ -14,22 +12,12 @@
 #' @export
 toolCalcIEAfromStructureMappingPEFE <- function(data, structureMapping, subtype = "remind") {
   # choose the name of the column which should be targeted in the structureMapping
-  if (subtype == "remind") {
-    targetName <- "REMINDitems_out"
-  } else if (subtype == "edge") {
-    targetName <- "EDGEitems"
-  } else if (subtype == "pfu") {
-    targetName <- "pfu"
-  } else if (subtype == "magpie") {
-    targetName <- "magpie_items"
-  } else {
-    stop("valid subtypes are 'remind', 'edge', 'pfu' and 'magpie'")
-  }
 
+  targetName <- "magpie_items"
   rawMapping <- read.csv2(structureMapping, stringsAsFactors = FALSE)
   ieamatch <- na.omit(rawMapping[c("iea_product", "iea_flows", targetName, "Weight")]) %>%
-    unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
-    filter(!!sym("product.flow") %in% getNames(data))
+    tidyr::unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
+    filter(.data$product.flow %in% getNames(data))
 
   # take only the items that are assigned to model categories
   ieamatch <- subset(ieamatch, !grepl("not_used", ieamatch[[targetName]]))

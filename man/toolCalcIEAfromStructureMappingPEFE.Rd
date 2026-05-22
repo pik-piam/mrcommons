@@ -10,8 +10,6 @@ toolCalcIEAfromStructureMappingPEFE(data, structureMapping, subtype = "remind")
 \item{data}{data to map}
 
 \item{structureMapping}{mapping to use}
-
-\item{subtype}{remind (default), edge, pfu or magpie}
 }
 \value{
 MAgPIE object with completed time dimensionality.
