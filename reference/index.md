@@ -184,6 +184,7 @@
   convertBodirsky2018
 - [`convertCEDS2021()`](convertCEDS2021.md) : convertCEDS2021
 - [`convertCEDS2025()`](convertCEDS2025.md) : convertCEDS2025
+- [`convertCEDS_CMIP7()`](convertCEDS_CMIP7.md) : convertCEDS_CMIP7
 - [`convertDomingues()`](convertDomingues.md) : convertDomingues
 - [`convertEEA_EuropeanEnvironmentAgency()`](convertEEA_EuropeanEnvironmentAgency.md)
   : Convert European Environment Agency (EEA) data
@@ -259,6 +260,7 @@
 - [`readBodirsky2018()`](readBodirsky2018.md) : readBodirsky2018
 - [`readCEDS2021()`](readCEDS2021.md) : readCEDS2021
 - [`readCEDS2025()`](readCEDS2025.md) : readCEDS2025
+- [`readCEDS_CMIP7()`](readCEDS_CMIP7.md) : readCEDS_CMIP7
 - [`readCarbonLTS()`](readCarbonLTS.md) : readCarbonLTS
 - [`readDomingues()`](readDomingues.md) : readDomingues
 - [`readEDGAR6()`](readEDGAR6.md) : readEDGAR6
