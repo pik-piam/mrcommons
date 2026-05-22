@@ -1,4 +1,4 @@
-#' @title readCEDS_CMIP7
+#' @title readCMIP7_CEDS
 #'
 #' @description reads in harmonized emission data used for CMIP7 from three files.
 #' country_file for energy related emissions on country level and global bunker
@@ -9,7 +9,7 @@
 #' @return MAgPIE object
 #' @author Pascal Weigmann
 
-readCEDS_CMIP7 <- function() {
+readCMIP7_CEDS <- function() {
 
   release <- "2025-12-07"
 

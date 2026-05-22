@@ -1,12 +1,12 @@
-#' @title convertCEDS_CMIP7
+#' @title convertCMIP7_CEDS
 #'
 #' @description converts harmonized emission data used for CMIP7, global data
-#' is removed here, use ``readSource(CEDS_CMIP7, convert = FALSE)`` to obtain it.
+#' is removed here, use ``readSource(CMIP7_CEDS, convert = FALSE)`` to obtain it.
 #' @param x magpie object from source function
 #' @return MAgPIE object
 #' @author Pascal Weigmann
 
-convertCEDS_CMIP7 <- function(x) {
+convertCMIP7_CEDS <- function(x) {
 
   # add Kosovo to Serbia
   kos <- x["kos", , ]
