@@ -2,5 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-mrcommons.Rproj
+.positai
+*.Rproj
+.Rproj.user
 .positai
