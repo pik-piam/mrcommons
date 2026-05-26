@@ -115,7 +115,7 @@
 <url><loc>/reference/convertBodirsky2018.html</loc></url>
 <url><loc>/reference/convertCEDS2021.html</loc></url>
 <url><loc>/reference/convertCEDS2025.html</loc></url>
-<url><loc>/reference/convertCEDS_CMIP7.html</loc></url>
+<url><loc>/reference/convertCMIP7_CEDS.html</loc></url>
 <url><loc>/reference/convertDomingues.html</loc></url>
 <url><loc>/reference/convertEEA_EuropeanEnvironmentAgency.html</loc></url>
 <url><loc>/reference/convertEU_ReferenceScenario.html</loc></url>
@@ -173,7 +173,7 @@
 <url><loc>/reference/readBodirsky2018.html</loc></url>
 <url><loc>/reference/readCEDS2021.html</loc></url>
 <url><loc>/reference/readCEDS2025.html</loc></url>
-<url><loc>/reference/readCEDS_CMIP7.html</loc></url>
+<url><loc>/reference/readCMIP7_CEDS.html</loc></url>
 <url><loc>/reference/readCarbonLTS.html</loc></url>
 <url><loc>/reference/readDomingues.html</loc></url>
 <url><loc>/reference/readEDGAR6.html</loc></url>
