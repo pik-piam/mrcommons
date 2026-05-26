@@ -23,14 +23,13 @@
 #'
 #' @return a MAgPIE object
 #'
-#' @author Michaja Pehl, Felix Schreyer
+#' @author Michaja Pehl, Felix Schreyer, Falk Benke
 #'
 #' @importFrom assertr not_na assert
 #' @importFrom dplyr anti_join group_by inner_join left_join mutate pull rename
 #'     select summarise semi_join everything ungroup
 #' @importFrom quitte cartesian interpolate_missing_periods overwrite
 #'             character.data.frame interpolate_missing_periods_ sum_total_
-#' @importFrom rlang .data
 #' @importFrom tibble as_tibble tribble
 #' @importFrom stats na.omit
 #' @importFrom tidyr complete gather nesting spread crossing
@@ -603,29 +602,33 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
 
   data[is.na(data)] <- 0
 
+  # clean up no longer used data to save space
+  rm(replace, subtract, sumFlows)
+  rm(list = ls(pattern = "^data_"))
+
   # 2. Prepare Industry Subsector Time Series ----
 
   ## 2.1 Define flows and mappings ----
 
   # all industry subsector flows
-  # is this selection of flows correct?
-  flows_to_fix <- c('IRONSTL', 'CHEMICAL', 'NONFERR', 'NONMET', 'TRANSEQ',
-                    'MACHINE','MINING', 'FOODPRO', 'PAPERPRO', 'WOODPRO',
-                    'CONSTRUC', 'TEXTILES')
+  flows_to_fix <- c(
+    "CHEMICAL", "CONSTRUC", "FOODPRO", "IRONSTL", "MACHINE",
+    "MINING", "NONFERR", "NONMET", "PAPERPRO", "TEXTILES",
+    "TRANSEQ", "WOODPRO"
+  )
 
-
-  region_mapping <- toolGetMapping(name = 'regionmapping_21_EU11.csv',
-                                   type = 'regional',
-                                   where = 'mappingfolder') %>%
+  region_mapping <- toolGetMapping(name = "regionmapping_21_EU11.csv",
+                                   type = "regional",
+                                   where = "mappingfolder") %>%
     as_tibble() %>%
-    select('iso3c' = 'CountryCode', 'region' = 'RegionCode')
+    select("iso3c" = "CountryCode", "region" = "RegionCode")
 
   ## 2.2 Extend industry subsector time series ----
   # subset of data containing industry subsector products and flows
 
-  data_industry <- data[, , c(flows_to_fix, 'TOTIND', 'INONSPEC')] %>%
+  data_industry <- data[, , c(flows_to_fix, "TOTIND", "INONSPEC")] %>%
     .clean_data() %>%
-    inner_join(region_mapping, 'iso3c')
+    inner_join(region_mapping, "iso3c")
 
   ## 2.3 Apply five-year moving average ----
   # TODO: what to do with this?
@@ -666,37 +669,43 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     as_tibble()
 
   data_for_fixing <- full_join(
+
     # compute global averages
     data_for_fixing %>%
       group_by(.data$year, .data$product, .data$flow) %>%
       summarise(value = sum(.data$value), .groups = 'drop_last') %>%
-      mutate(global_share = .data$value / sum(.data$value)) %>%
+      mutate("global_share" = .data$value / sum(.data$value)) %>%
       ungroup() %>%
       select(-.data$value) %>%
       # and expand to all regions
-      mutate(region = NA_character_) %>%
-      complete(nesting(!!!syms(c('year', 'product', 'flow', 'global_share'))),
-               region = unique(region_mapping$region)),
+      mutate("region" = NA_character_) %>%
+      complete(nesting(!!!syms(c("year", "product", "flow", "global_share"))),
+               region = unique(region_mapping$region)) %>%
+      filter(!is.na(.data$region)),
 
     # compute regional averages
     data_for_fixing %>%
       group_by(.data$year, .data$region, .data$product, .data$flow) %>%
       summarise(value = sum(.data$value), .groups = 'drop_last') %>%
-      mutate(regional_share = .data$value / sum(.data$value)) %>%
+      mutate("regional_share" = .data$value / sum(.data$value)) %>%
       ungroup() %>%
-      select(-.data$value),
+      select(-"value"),
 
     c('year', 'region', 'product', 'flow')
   ) %>%
+    group_by(.data$year, .data$region, .data$product) %>%
+    mutate("use_global" = all(is.na(.data$regional_share))) %>%
+    ungroup() %>%
     # use regional averages if available, global averages otherwise
-    mutate(value = ifelse(!is.na(.data$regional_share), .data$regional_share,
-                          .data$global_share)) %>%
-    select(-.data$regional_share, -.data$global_share) %>%
+    mutate(value = ifelse(.data$use_global == TRUE, .data$global_share,
+                          ifelse(is.na(.data$regional_share), 0, .data$regional_share))) %>%
+    select(- c("regional_share", "global_share", "use_global")) %>%
     interpolate_missing_periods_(
       periods = list(year = sub('^y([0-9]{4})$', '\\1', getYears(data)) %>%
                        as.integer() %>%
                        sort()),
       expand.values = TRUE, method = 'linear')
+
 
   # calculated fixed data
   data_industry_fixed <- left_join(
@@ -710,81 +719,68 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     assert(not_na, .data$value) %>%
     overwrite(data_industry)
 
+
   ## 3.2 Redistribute products to industry-related flows ----
   # redistribute at least <threshold> of each product into each subsector
+
+  # which flow belongs to which subsector?
+  subsector_mapping <- tribble(
+    ~subsector,    ~flow,
+    "cement",      "NONMET",
+    "chemicals",   "CHEMICAL",
+    "steel",       "IRONSTL") %>%
+    complete(flow = c(flows_to_fix, "INONSPEC"),
+             fill = list(subsector = "otherInd"))
+
   data_industry_fixed <- data_industry_fixed %>%
-    complete(nesting(!!!syms(c('iso3c', 'region', 'year', 'product'))),
-             flow = c(flows_to_fix, 'INONSPEC'),
+    complete(nesting(!!!syms(c("iso3c", "region", "year", "product"))),
+             flow = c(flows_to_fix, "INONSPEC"),
              fill = list(value = 0)) %>%
     group_by(.data$iso3c, .data$year, .data$product) %>%
-    # which flow belongs to which subsector?
-    right_join(
-      tribble(
-        ~subsector,    ~flow,
-        'cement',      'NONMET',
-        'chemicals',   'CHEMICAL',
-        'steel',       'IRONSTL') %>%
-        complete(flow = c(flows_to_fix, 'INONSPEC'),
-                 fill = list(subsector = 'otherInd')),
-
-      'flow'
-    ) %>%
+    right_join(subsector_mapping, by = "flow") %>%
     # compute subsector totals
     group_by(.data$subsector, .add = TRUE) %>%
-    mutate(subsector.total = sum(.data$value),
-           subsector.count = n()) %>%
+    mutate("subsector.total" = sum(.data$value),
+           "subsector.count" = n()) %>%
     ungroup(.data$subsector) %>%
     mutate(
       # each subsector consumes at least <threshold> of the total consumption of
       # each product (with the exception of heat, which is only consumed in the
       #  otherInd subsector)
-      subsector.min = ifelse('HEAT' == .data$product, 0,
+      "subsector.min" = ifelse("HEAT" == .data$product, 0,
                              threshold * sum(.data$value)),
       # if total subsector consumption is below the minimum, consumption must be
       # added
-      subsector.add = pmax(0, .data$subsector.min - .data$subsector.total),
+      "subsector.add" = pmax(0, .data$subsector.min - .data$subsector.total),
       # each flow gets consumption added according to its share in total
       # subsector consumption
-      flow.add = ifelse(0 != .data$subsector.total,
-                        ( .data$subsector.add
-                          / .data$subsector.total
-                          * .data$value
-                        ),
+      "flow.add" = ifelse(0 != .data$subsector.total,
+                        (.data$subsector.add / .data$subsector.total * .data$value),
                         .data$subsector.add / .data$subsector.count),
       # if the additional flow is zero, consumption has to be subtracted from\
       # this flow, in relation to its share of all flows with
       # more-than-threshold consumption
-      flow.add = ifelse(0 != .data$flow.add, .data$flow.add,
-                        ( -sum(.data$flow.add)
-                          * .data$value
-                          / sum(.data$value[0 == .data$flow.add])
-                        )),
-      value = .data$value + .data$flow.add) %>%
-    ungroup() %>%
-    select('iso3c', 'region', 'year', 'product', 'flow', 'value')
+      "flow.add" = ifelse(0 != .data$flow.add,
+                          .data$flow.add,
+                          (-sum(.data$flow.add) * .data$value / sum(.data$value[0 == .data$flow.add]))),
+      "value.new" = .data$value + .data$flow.add) %>%
+      ungroup() %>%
+      select("iso3c", "region", "year", "product", "flow", "value" = "value.new")
 
   ## 3.3 Replace and append fixed data ----
   data_industry_fixed_overwrite <- data_industry_fixed %>%
-    semi_join(
-      data_industry,
-
-      c('iso3c', 'region', 'year', 'product', 'flow')
-    ) %>%
-    select('iso3c', 'year', 'product', 'flow', 'value') %>%
+    semi_join(data_industry, c("iso3c", "region", "year", "product", "flow")) %>%
+    select("iso3c", "year", "product", "flow", "value") %>%
     as.magpie(spatial = 1, temporal = 2, datacol = 5)
 
   data_industry_fixed_append <- data_industry_fixed %>%
-    anti_join(
-      data_industry,
-
-      c('iso3c', 'region', 'year', 'product', 'flow')
-    ) %>%
-    select('iso3c', 'year', 'product', 'flow', 'value') %>%
-    complete(nesting(!!!syms(c('product', 'flow'))),
+    anti_join(data_industry, c("iso3c", "region", "year", "product", "flow")) %>%
+    select("iso3c", "year", "product", "flow", "value") %>%
+    complete(nesting(!!!syms(c("product", "flow"))),
              iso3c = getRegions(data),
              year = getYears(data, as.integer = TRUE),
              fill = list(value = 0)) %>%
-    select('iso3c', 'year', 'product', 'flow', 'value') %>%
+    select("iso3c", "year", "product", "flow", "value") %>%
     as.magpie(spatial = 1, temporal = 2, datacol = 5)
 
   data[getRegions(data_industry_fixed_overwrite),
