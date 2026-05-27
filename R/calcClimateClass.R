@@ -7,7 +7,6 @@
 #'                     http://koeppen-geiger.vu-wien.ac.at/
 #'                   - ipcc, ipccReduced, ipccReduced2019 for IPCC Guideline climate classification
 #*                     `https://esdac.jrc.ec.europa.eu/projects/RenewableEnergy/Data/Climate_Zone.zip`
-#' @param cells "magpiecell" for 59199 cells or "lpjcell" for 67420 cells
 #'
 #' @return Clustered MAgPIE object on requested resolution
 #' @author Abhijeet Mishra, Kristine Karstens
@@ -19,7 +18,7 @@
 #'
 #' @export
 
-calcClimateClass <- function(datasource = "koeppen", cells = "magpiecell") {
+calcClimateClass <- function(datasource = "koeppen") {
 
   if (datasource == "koeppen") {
 
@@ -39,8 +38,7 @@ calcClimateClass <- function(datasource = "koeppen", cells = "magpiecell") {
     stop("Source inc calcClimateClass unkown.")
   }
 
-  if (cells == "magpiecell") x <- toolCoord2Isocell(x)
-  weight <- calcOutput("LandArea", cells = cells, aggregate = FALSE)
+  weight <- calcOutput("LandArea", aggregate = FALSE)
 
   return(list(x = x,
               weight = weight,

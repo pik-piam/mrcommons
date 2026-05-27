@@ -19,8 +19,7 @@
 #' @author Michaja Pehl, Falk Benke, Robin Hasse
 #'
 #' @importFrom tibble tibble
-#' @importFrom dplyr bind_rows bind_cols select mutate group_by filter summarise
-#'   across all_of .data %>% rename matches
+#' @importFrom dplyr bind_rows bind_cols select mutate group_by filter summarise across all_of .data %>% rename matches
 #' @importFrom readxl read_xlsx excel_sheets
 #' @importFrom tidyr drop_na pivot_longer separate_wider_delim
 #' @importFrom rlang sym is_empty
