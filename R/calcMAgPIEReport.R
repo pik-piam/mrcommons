@@ -81,11 +81,14 @@ calcMAgPIEReport <- function(subtype) {
     createMappingMag2Rem <- function(replacement) {
 
       # Define generic mapping from MAgPIE to REMIND variable names for all species
+      # Emissions|X|Land|+|Agriculture  endogenous  NH3, NO2 
+      # Emissions|X|AFOLU|Agriculture   exogenous   BC, CO, OC, SO2 and VOC : all zero --> dont import them from MAgPIE report
+      # Peatland emissions are zero and ignored completely
       mag2remGeneric <- tibble::tribble(
         ~mag                                                                                , ~rem                                                               ,
-        'Emissions|SPECIES|AFOLU|Agriculture (Mt SPECIES/yr)'                               , 'Emi|SPECIES|AFOLU|+|Agriculture (Mt SPECIES/yr)'                  ,
+        'Emissions|SPECIES|Land|+|Agriculture (Mt SPECIES/yr)'                              , 'Emi|SPECIES|AFOLU|+|Agriculture (Mt SPECIES/yr)'                  ,
+        #'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
         'Emissions|SPECIES|Land|Biomass Burning|+|Burning of Crop Residues (Mt SPECIES/yr)' , 'Emi|SPECIES|AFOLU|+|Agricultural Waste Burning (Mt SPECIES/yr)'   ,
-        'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
         'Emissions|SPECIES|AFOLU|Land|Fires (Mt SPECIES/yr)'                                , 'Emi|SPECIES|AFOLU|Land|+|Fires (Mt SPECIES/yr)'                   ,
         'Emissions|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'               , 'Emi|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'    ,
         'Emissions|SPECIES|AFOLU|Land|Fires|+|Grassland Burning (Mt SPECIES/yr)'            , 'Emi|SPECIES|AFOLU|Land|Fires|+|Grassland Burning (Mt SPECIES/yr)' ,
@@ -158,9 +161,18 @@ calcMAgPIEReport <- function(subtype) {
       "-PkBudg750-mag-4"  = ".rcp20",
       "-PkBudg1000-mag-4" = ".rcp26",
       "-NPi2025-mag-4"    = ".rcp45",
+      #"-rollBack-mag-4"   = ".rcp45", # only SSP3 available
       "-NDC-mag-4"        = ".rcp37"
       # "-Base-mag-4"       = ".none",  # nolint
     ))
+
+  # Fill missing scenarios expected in REMIND with scenarios that are closest to them and rename them to the expected scenario names in REMIND
+  # no SSP5 data available --> use SSP2 data
+  SSP5 <- x[, , "SSP2"]
+  getNames(SSP5, dim = 1) <- "SSP5"
+  x <- mbind(x, SSP5)
+  # rcp37 must be added to the scenario_config.csv for SSP2-NDC that currently takes 4.5 from the NPI2025
+
 
   return(list(
     x = x,
