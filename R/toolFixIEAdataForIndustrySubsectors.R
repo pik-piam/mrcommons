@@ -28,8 +28,7 @@
 #' @importFrom assertr not_na assert
 #' @importFrom dplyr anti_join group_by inner_join left_join mutate pull rename
 #'     select summarise semi_join everything ungroup
-#' @importFrom quitte cartesian interpolate_missing_periods overwrite
-#'             character.data.frame interpolate_missing_periods_ sum_total_
+#' @importFrom quitte character.data.frame sum_total_
 #' @importFrom tibble as_tibble tribble
 #' @importFrom stats na.omit
 #' @importFrom tidyr complete gather nesting spread crossing
@@ -699,13 +698,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     # use regional averages if available, global averages otherwise
     mutate(value = ifelse(.data$use_global == TRUE, .data$global_share,
                           ifelse(is.na(.data$regional_share), 0, .data$regional_share))) %>%
-    select(- c("regional_share", "global_share", "use_global")) %>%
-    interpolate_missing_periods_(
-      periods = list(year = sub('^y([0-9]{4})$', '\\1', getYears(data)) %>%
-                       as.integer() %>%
-                       sort()),
-      expand.values = TRUE, method = 'linear')
-
+    select(-c("regional_share", "global_share", "use_global"))
 
   # calculated fixed data
   data_industry_fixed <- left_join(
@@ -716,9 +709,9 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     # replace "suspicious" data with averages
     mutate("value" = .data$TOTIND * .data$value) %>%
     select("iso3c", "region", "year", "product", "flow", "value") %>%
-    assert(not_na, .data$value) %>%
-    overwrite(data_industry)
-
+    # remove data where fixing is not possible, because no data for fixing available
+    filter(!is.na(.data$value)) %>%
+    quitte::overwrite(data_industry)
 
   ## 3.2 Redistribute products to industry-related flows ----
   # redistribute at least <threshold> of each product into each subsector
@@ -772,6 +765,8 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     semi_join(data_industry, c("iso3c", "region", "year", "product", "flow")) %>%
     select("iso3c", "year", "product", "flow", "value") %>%
     as.magpie(spatial = 1, temporal = 2, datacol = 5)
+
+  data_industry_fixed_overwrite[is.na(data_industry_fixed_overwrite)] <- 0
 
   data_industry_fixed_append <- data_industry_fixed %>%
     anti_join(data_industry, c("iso3c", "region", "year", "product", "flow")) %>%
