@@ -8,11 +8,9 @@ calcClimateClass(datasource = "koeppen")
 }
 \arguments{
 \item{datasource}{select source from:
-\itemize{
-\item koeppen for Koeppen Geiger Classification
+- koeppen for Koeppen Geiger Classification
 http://koeppen-geiger.vu-wien.ac.at/
-\item ipcc, ipccReduced, ipccReduced2019 for IPCC Guideline climate classification
-}}
+- ipcc, ipccReduced, ipccReduced2019 for IPCC Guideline climate classification}
 }
 \value{
 Clustered MAgPIE object on requested resolution
