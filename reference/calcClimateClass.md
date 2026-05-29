@@ -13,13 +13,9 @@ calcClimateClass(datasource = "koeppen")
 
 - datasource:
 
-  select source from:
-
-  - koeppen for Koeppen Geiger Classification
-    http://koeppen-geiger.vu-wien.ac.at/
-
-  - ipcc, ipccReduced, ipccReduced2019 for IPCC Guideline climate
-    classification
+  select source from: - koeppen for Koeppen Geiger Classification
+  http://koeppen-geiger.vu-wien.ac.at/ - ipcc, ipccReduced,
+  ipccReduced2019 for IPCC Guideline climate classification
 
 ## Value
 
