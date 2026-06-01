@@ -649,21 +649,17 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
   # all products that use less then 1 % of total energy outside of non-specified
   # industry are 'suspicious' and will be fixed
   data_to_fix <- data_industry %>%
-    filter(.data$flow %in% c('TOTIND', 'INONSPEC')) %>%
+    filter(.data$flow %in% c("TOTIND", "INONSPEC")) %>%
     spread(.data$flow, .data$value) %>%
     mutate("INONSPEC" = ifelse(is.na(.data$INONSPEC), 0, .data$INONSPEC)) %>%
     filter(1 - .data$INONSPEC / .data$TOTIND < 1e-2) %>%
-    select('iso3c', 'region', 'year', 'product', 'TOTIND')
+    select("iso3c", "region", "year", "product", "TOTIND")
 
   # use all non-suspicious data to calculate regional and global averages
   data_for_fixing <- anti_join(
-    data_industry %>%
-      filter('TOTIND' != .data$flow),
-
-    data_to_fix %>%
-      select(-"TOTIND"),
-
-    c('iso3c', 'region', 'year', 'product')
+    data_industry %>% filter(.data$flow != "TOTIND"),
+    data_to_fix %>% select(-"TOTIND"),
+    c("iso3c", "region", "year", "product")
   ) %>%
     as_tibble()
 
@@ -672,7 +668,7 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     # compute global averages
     data_for_fixing %>%
       group_by(.data$year, .data$product, .data$flow) %>%
-      summarise(value = sum(.data$value), .groups = 'drop_last') %>%
+      summarise(value = sum(.data$value), .groups = "drop_last") %>%
       mutate("global_share" = .data$value / sum(.data$value)) %>%
       ungroup() %>%
       select(-.data$value) %>%
@@ -685,12 +681,12 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
     # compute regional averages
     data_for_fixing %>%
       group_by(.data$year, .data$region, .data$product, .data$flow) %>%
-      summarise(value = sum(.data$value), .groups = 'drop_last') %>%
+      summarise(value = sum(.data$value), .groups = "drop_last") %>%
       mutate("regional_share" = .data$value / sum(.data$value)) %>%
       ungroup() %>%
       select(-"value"),
 
-    c('year', 'region', 'product', 'flow')
+    c("year", "region", "product", "flow")
   ) %>%
     group_by(.data$year, .data$region, .data$product) %>%
     mutate("use_global" = all(is.na(.data$regional_share))) %>%
@@ -704,14 +700,26 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
   data_industry_fixed <- left_join(
     data_to_fix,
     data_for_fixing,
-    c('region', 'year', 'product')
+    c("region", "year", "product")
   ) %>%
     # replace "suspicious" data with averages
     mutate("value" = .data$TOTIND * .data$value) %>%
     select("iso3c", "region", "year", "product", "flow", "value") %>%
     # remove data where fixing is not possible, because no data for fixing available
-    filter(!is.na(.data$value)) %>%
-    quitte::overwrite(data_industry)
+    filter(!is.na(.data$value))
+
+  # replace fixed industry products, make sure that there are no overlaps
+  data_industry_fixed <- rbind(
+    # totals in industry data
+    data_industry %>% filter(.data$flow == "TOTIND"),
+    # industry products that did not need fixing
+    data_industry %>%
+      filter(.data$flow != "TOTIND") %>%
+      anti_join(data_industry_fixed, by = c("iso3c", "region", "year", "product")),
+    # industry products that were fixed
+    data_industry_fixed
+  )
+
 
   ## 3.2 Redistribute products to industry-related flows ----
   # redistribute at least <threshold> of each product into each subsector
