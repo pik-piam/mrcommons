@@ -16,9 +16,13 @@
 #'
 calcAgProductionValue <- function(datasource = "FAO") {
 
+  # make a deprecated note for the function
+  .Deprecated(msg = paste0("calcAgProductionValue is deprecated. Please use calcVoPcrops, ",
+                           "calcVoPlivestock or calcVoPAFF from mrfactors instead."))
+
   if (datasource == "FAO") {
     data <- readSource("FAO_online", "ValueOfProd")
-    data <- data[, , "Gross_Production_Value_(USDMER05)_(1000_US$)"] / 1000
+    data <- data[, , "Gross_Production_Value_(USDMER17)_(1000_US$)"] / 1000
     data <- collapseNames(data)
 
     aggregation <- toolGetMapping("FAOitems.csv", type = "sectoral", where = "mappingfolder")
@@ -45,6 +49,6 @@ calcAgProductionValue <- function(datasource = "FAO") {
 
   return(list(x = out,
               weight = NULL,
-              unit = "million_USDMER05/yr",
+              unit = "million_USDMER17/yr",
               description = description))
 }
