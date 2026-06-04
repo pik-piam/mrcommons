@@ -81,13 +81,14 @@ calcMAgPIEReport <- function(subtype) {
     createMappingMag2Rem <- function(replacement) {
 
       # Define generic mapping from MAgPIE to REMIND variable names for all species
-      # Emissions|X|Land|+|Agriculture  endogenous  NH3, NO2 
+      # Emissions|X|Land|+|Agriculture  endogenous  NH3, NO2
       # Emissions|X|AFOLU|Agriculture   exogenous   BC, CO, OC, SO2 and VOC : all zero --> dont import them from MAgPIE report
       # Peatland emissions are zero and ignored completely
+      #'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
+
       mag2remGeneric <- tibble::tribble(
         ~mag                                                                                , ~rem                                                               ,
         'Emissions|SPECIES|Land|+|Agriculture (Mt SPECIES/yr)'                              , 'Emi|SPECIES|AFOLU|+|Agriculture (Mt SPECIES/yr)'                  ,
-        #'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
         'Emissions|SPECIES|Land|Biomass Burning|+|Burning of Crop Residues (Mt SPECIES/yr)' , 'Emi|SPECIES|AFOLU|+|Agricultural Waste Burning (Mt SPECIES/yr)'   ,
         'Emissions|SPECIES|AFOLU|Land|Fires (Mt SPECIES/yr)'                                , 'Emi|SPECIES|AFOLU|Land|+|Fires (Mt SPECIES/yr)'                   ,
         'Emissions|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'               , 'Emi|SPECIES|AFOLU|Land|Fires|+|Forest Burning (Mt SPECIES/yr)'    ,
@@ -96,7 +97,7 @@ calcMAgPIEReport <- function(subtype) {
       )
 
       # replace "SPECIES" with the actual species name given from sapply below
-      mag2remGeneric |> mutate(across(everything(), ~ gsub("SPECIES", replacement, .x)))
+      mag2remGeneric |> mutate(across(dplyr::everything(), ~ gsub("SPECIES", replacement, .x)))
 
     }
 
