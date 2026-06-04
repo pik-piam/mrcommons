@@ -18,9 +18,6 @@
 #' @md
 #' @param data MAgPIE object containing the IEA Energy Balances data
 #'
-#' @param threshold minimum share each industry subsector uses of each product.
-#'   Defaults to 1 %.
-#'
 #' @return a MAgPIE object
 #'
 #' @author Michaja Pehl, Felix Schreyer, Falk Benke
@@ -41,7 +38,7 @@
 # TODO Deal with linter warnings
 # TODO Decide where to put this
 
-toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
+toolFixIEAdataForIndustrySubsectors <- function(data) {
 
   ####
 
@@ -722,7 +719,9 @@ toolFixIEAdataForIndustrySubsectors <- function(data, threshold = 1e-2) {
 
 
   ## 3.2 Redistribute products to industry-related flows ----
-  # redistribute at least <threshold> of each product into each subsector
+  # redistribute at least 1% of each product into each subsector
+
+  threshold <- 1e-2
 
   # which flow belongs to which subsector?
   subsector_mapping <- tribble(
