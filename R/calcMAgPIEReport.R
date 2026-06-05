@@ -82,7 +82,7 @@ calcMAgPIEReport <- function(subtype) {
 
       # Define generic mapping from MAgPIE to REMIND variable names for all species
       # Emissions|X|Land|+|Agriculture  endogenous  NH3, NO2
-      # Emissions|X|AFOLU|Agriculture   exogenous   BC, CO, OC, SO2 and VOC : all zero --> dont import them from MAgPIE report
+      # Emissions|X|AFOLU|Agriculture   temporarily existed as dummy zeros for BC, CO, OC, SO2, VOC to achieve completeness of emissions reporting for ScenarioMIP. Will be removed from magpie4 reporting --> dont import them from MAgPIE report
       # Peatland emissions are zero and ignored completely
       #'Emissions|SPECIES|Land|+|Peatland (Mt SPECIES/yr)'                                 , 'Emi|SPECIES|AFOLU|Land|+|Peatland (Mt SPECIES/yr)'                ,
 
