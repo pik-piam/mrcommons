@@ -52,7 +52,7 @@ calcMacBaseLandUse <- function(subtype) {
     }
 
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
-    x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
+    x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp37", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
 
     # emission types that are updated with new MAgPIE 4 data
