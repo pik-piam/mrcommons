@@ -34,7 +34,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y,
                      dim = 3.3,
                      add = "rcp",
-                     nm = c("rcp20", "rcp26", "rcp45", "none"))
+                     nm = c("rcp20", "rcp26", "rcp37", "rcp45", "none"))
 
   if (subtype == "MAgPIE") {
     # Read emission baselines for MAC in REMIND. These data have been calcualted by external scripts, that calcualte
