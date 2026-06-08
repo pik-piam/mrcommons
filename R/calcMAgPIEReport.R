@@ -174,6 +174,9 @@ calcMAgPIEReport <- function(subtype) {
   x <- mbind(x, SSP5)
   # rcp37 must be added to the scenario_config.csv for SSP2-NDC that currently takes 4.5 from the NPI2025
 
+  # Remove years before 2005. They are not relevant for REMIND and would raise warnings about NA,
+  # because "Emi|BC|AFOLU|Land|Fires|+|Peat Burning (Mt BC/yr)" is NA for 1995
+  x <- x[,c(1995, 2000),,invert = TRUE]
 
   return(list(
     x = x,
