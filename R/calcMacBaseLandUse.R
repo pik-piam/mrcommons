@@ -161,7 +161,6 @@ calcMacBaseLandUse <- function(subtype) {
 
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
     xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE, warnNA = FALSE)
-    xCO2[, 1995, ] <- 0 # replace NA with 0 (only CO2 has NA in 1995)
 
     # Read N2O, CH4 baseline for all SSPs/SDP from MAgPIE reports
     xCH4N2O <- calcOutput("MAgPIEReport", subtype = "ch4n2o", aggregate = FALSE)
