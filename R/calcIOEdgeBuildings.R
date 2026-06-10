@@ -39,10 +39,12 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
 
 
   # apply IEA data postprocessing
+  # TODO adjust the mapping
   data <- toolFixIEAdataForIndustrySubsectors(data)
 
   # AGGREGATE ------------------------------------------------------------------
 
+  # TODO separate the mapping
   target <- switch(subtype,
     output_EDGE = "EDGEitems",
     output_EDGE_buildings = "EDGE_buildings"
