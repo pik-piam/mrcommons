@@ -12,16 +12,73 @@
 #' @importFrom tidyr unite
 #'
 convertIEA <- function(x, subtype) {
+  if (subtype == "EnergyBalances-2026") {
+    stop("convert = T not supported for this subtype")
+  }
+
+  if (subtype == "EnergyBalances-latest") {
+
+    # map to old product and flow names
+    # this will be removed once we completely switch to the new format and adjust
+    # all the IEA mappings accordingly
+
+    ieaShortNameMapping <- toolGetMapping("ieaShortNameMapping.csv", type = "sectoral", where = "mrcommons")
+
+    flowMap <- ieaShortNameMapping %>%
+      filter(.data$type == "FLOW") %>%
+      select(-"type")
+
+    flowMap <- rbind(
+      flowMap,
+      data.frame(
+        old_name = setdiff(getNames(x, dim = 2), flowMap$new_name),
+        new_name = setdiff(getNames(x, dim = 2), flowMap$new_name)
+      )
+    )
+
+    flowMap <- arrange(flowMap, .data$new_name)
+
+    getNames(x, dim = 2) <- flowMap[, "old_name"]
+
+    productMap <- ieaShortNameMapping %>%
+      filter(.data$type == "PRODUCT") %>%
+      select(-"type")
+
+
+    productMap <- rbind(
+      productMap,
+      data.frame(
+        old_name = setdiff(getNames(x, dim = 1), productMap$new_name),
+        new_name = setdiff(getNames(x, dim = 1), productMap$new_name)
+      )
+    )
+
+    productMap <- arrange(productMap, .data$new_name)
+
+    getNames(x, dim = 1) <- productMap[, "old_name"]
+  }
+
   if (grepl("EnergyBalances", subtype)) {
+    # remove GLO
+    x <- x["GLO", , , invert = TRUE]
+
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]
-    getItems(x1, dim = 1) <- c("SRB")
+    getItems(x1, dim = 1) <- "SRB"
     x["SRB", , ] <- x["SRB", , ] + x1
-    x <- x[c("KOS"), , , invert = TRUE]
+    x <- x["KOS", , , invert = TRUE]
 
-    # convert electricity outputs (unit conversion between ktoe and GWh)
-    x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- 0.0859845 *
-      x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
+    if (subtype == "EnergyBalances") {
+      # convert electricity outputs (unit conversion between ktoe and GWh, not
+      # needed in 2025 edition of data)
+      x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")] <- 0.0859845 *
+        x[, , c("ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC")]
+    } else if (subtype == "EnergyBalances-latest") {
+      # just drop unit dimension, as all values are already in intended unit:
+      # GWh for "ELOUTPUT", "ELMAINE", "ELAUTOE", "ELMAINC", "ELAUTOC" and ktoe for
+      # everything else
+      x <- magclass::collapseDim(x, dim = 3.3)
+    }
 
     # calculate weight to be used for regional disaggregations
     wp <- calcOutput("Population", scenario = "SSP2", aggregate = FALSE)[, 2010, ]
@@ -30,29 +87,48 @@ convertIEA <- function(x, subtype) {
     wg <- wg / max(wg)
     w <- wp + wg
 
-    # disaggregating Other Africa (IAF),
-    # Other non-OECD Americas (ILA) and
-    # Other non-OECD Asia (IAS) regions to countries
+    # disaggregating regions
+    # - Other Africa (IAF)
+    # - Other non-OECD Americas (ILA)
+    # - Other non-OECD Asia (IAS)
+
     mappingfile <- toolGetMapping(
       type = "regional", name = "regionmappingIeaOther2016.csv",
       returnPathOnly = TRUE, where = "mrcommons"
     )
+
     mapping <- read.csv2(mappingfile, stringsAsFactors = TRUE) %>%
-      filter(!(!!sym("CountryCode") %in% getItems(x, dim = 1)))
-    xadd <- toolAggregate(x[levels(mapping[[2]]), , ], mapping, weight = w[as.vector(mapping[[1]]), , ])
-    x <- x[setdiff(getItems(x, dim = 1), as.vector(unique(mapping[[2]]))), , ]
+      filter(!(.data$CountryCode %in% getItems(x, dim = 1)))
+
+    xadd <- toolAggregate(
+      x = x[unique(mapping$RegionCode), , ],
+      rel = mapping,
+      weight = w[unique(mapping$CountryCode), , ]
+    )
+    x <- x[unique(mapping$RegionCode), , , invert = TRUE]
     x <- mbind(x, xadd)
 
-    # disaggregating extinct countries USSR (SUN) and Yugoslavia (YUG)
-    ISOhistorical <- read.csv2(system.file("extdata", "ISOhistorical.csv", package = "madrat"), stringsAsFactors = FALSE) # nolint
-    ISOhistorical <- ISOhistorical[!ISOhistorical$toISO == "SCG", ] # nolint
-    x <- toolISOhistorical(x,
-      mapping = ISOhistorical,
-      additional_weight = w[ISOhistorical[ISOhistorical$fromISO %in% c("YUG", "SUN"), "toISO"], , ]
+    # disaggregating extinct countries USSR (SUN) and Yugoslavia (YUG) ----
+
+    yugoslavia <- data.frame(
+      fromISO = "YUG",
+      toISO = c("SRB", "MNE", "SVN", "HRV", "MKD", "BIH"),
+      lastYear = "y1989"
+    )
+
+    sun <- toolGetMapping("ISOhistorical.csv", where = "madrat") %>%
+      filter(.data$fromISO == "SUN") %>%
+      mutate("lastYear" = "y1989")
+
+    histMap <- rbind(yugoslavia, sun)
+
+    x <- madrat::toolISOhistorical(x,
+      mapping = histMap, overwrite = TRUE,
+      additional_weight = w[unique(histMap$toISO), , ]
     )
     x[is.na(x)] <- 0
 
-    # filling missing country data
+    # filling missing country data ----
     x <- toolCountryFill(x, 0, verbosity = 2)
 
     # These changes may reduce the amount of CHP plants to below what is actually
@@ -79,9 +155,9 @@ convertIEA <- function(x, subtype) {
     x <- add_columns(x, addnm = missingFlows, dim = 3, fill = 0)
 
     d <- x[, , c("ELMAINE", "ELMAINC", "HEMAINC")]
-    tmp <- mcalc(d, ELMAINE ~ ifelse(HEMAINC > 0, ELMAINE, ELMAINC + ELMAINE), append = FALSE)
+    tmp <- magclass::mcalc(d, ELMAINE ~ ifelse(HEMAINC > 0, ELMAINE, ELMAINC + ELMAINE), append = FALSE)
     x[, , "ELMAINE"] <- tmp
-    tmp <- mcalc(d, ELMAINC ~ ifelse(HEMAINC > 0, ELMAINC, 0), append = FALSE)
+    tmp <- magclass::mcalc(d, ELMAINC ~ ifelse(HEMAINC > 0, ELMAINC, 0), append = FALSE)
     x[, , "ELMAINC"] <- tmp
 
     # for each product: check if the flow "HEAUTOC" > 0, if yes, do nothing;
@@ -100,9 +176,9 @@ convertIEA <- function(x, subtype) {
     x <- add_columns(x, addnm = missingFlows, dim = 3, fill = 0)
 
     d <- x[, , c("ELAUTOE", "HEAUTOC", "ELAUTOC")]
-    tmp <- mcalc(d, ELAUTOE ~ ifelse(HEAUTOC > 0, ELAUTOE, ELAUTOC + ELAUTOE), append = FALSE)
+    tmp <- magclass::mcalc(d, ELAUTOE ~ ifelse(HEAUTOC > 0, ELAUTOE, ELAUTOC + ELAUTOE), append = FALSE)
     x[, , "ELAUTOE"] <- tmp
-    tmp <- mcalc(d, ELAUTOC ~ ifelse(HEAUTOC > 0, ELAUTOC, 0), append = FALSE)
+    tmp <- magclass::mcalc(d, ELAUTOC ~ ifelse(HEAUTOC > 0, ELAUTOC, 0), append = FALSE)
     x[, , "ELAUTOC"] <- tmp
 
 
@@ -112,7 +188,7 @@ convertIEA <- function(x, subtype) {
     # in 2005 as there is no MARBUNK demand at all for REF regions.
 
     x["RUS", seq(1990, 2010, 1), "NONBIODIES.MARBUNK"] <-
-      x["RUS", c(1990, 2010), "NONBIODIES.MARBUNK"] |> time_interpolate(seq(1990, 2010, 1))
+      x["RUS", c(1990, 2010), "NONBIODIES.MARBUNK"] %>% time_interpolate(seq(1990, 2010, 1))
 
     # Adjust totals
     x["RUS", seq(1991, 2009, 1), "TOTAL.MARBUNK"] <-
