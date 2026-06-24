@@ -18,6 +18,8 @@ convertIEA <- function(x, subtype) {
 
   if (subtype == "EnergyBalances-latest") {
 
+    x <- x["GLO", , , invert = TRUE]
+
     # map to old product and flow names
     # this will be removed once we completely switch to the new format and adjust
     # all the IEA mappings accordingly
@@ -59,8 +61,6 @@ convertIEA <- function(x, subtype) {
   }
 
   if (grepl("EnergyBalances", subtype)) {
-    # remove GLO
-    x <- x["GLO", , , invert = TRUE]
 
     # aggregate Kosovo to Serbia
     x1 <- x["KOS", , ]

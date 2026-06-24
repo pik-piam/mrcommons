@@ -11,8 +11,8 @@ readIEA(subtype)
 \itemize{
 \item "EnergyBalances": IEA energy balances until 2022 (2023 incomplete), data updated in Sep 2024,
 the current default for REMIND input data
-\item "EnergyBalances-latest": IEA energy balances until 2022 (2023 incomplete), data updated in Sep 2024,
-currently same as default
+\item "EnergyBalances-latest": IEA energy balances until 2023 (2024 incomplete), data updated in Aug 2025,
+\item "EnergyBalances-2026": incomplete IEA energy balances update from Apr 2026,
 }}
 }
 \value{
@@ -20,15 +20,6 @@ magpie object of the IEA
 }
 \description{
 Read-in an IEA csv file as magpie object
-}
-\examples{
-\dontrun{
-a <- readSource(type = "IEA", subtype = "EnergyBalances")
-}
-
-}
-\seealso{
-\code{\link[madrat:readSource]{madrat::readSource()}}
 }
 \author{
 Anastasis Giannousakis, Lavinia Baumstark, Renato Rodrigues, Falk Benke

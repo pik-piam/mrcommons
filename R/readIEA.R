@@ -59,7 +59,7 @@ readIEA <- function(subtype) {
         mutate("VALUE" = as.numeric(.data$VALUE))
 
 
-      tmp$COUNTRY <- toolCountry2isocode(tmp$COUNTRY, warn = TRUE, mapping = c(
+      tmp$COUNTRY <- toolCountry2isocode(tmp$COUNTRY, warn = FALSE, mapping = c(
         "BURKINAFASO" = "BFA",
         "CONGO_DRC" = "COD",
         "CONGO_REPUB" = "COG",
