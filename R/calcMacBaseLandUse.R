@@ -34,7 +34,7 @@ calcMacBaseLandUse <- function(subtype) {
   y <- add_dimension(y,
                      dim = 3.3,
                      add = "rcp",
-                     nm = c("rcp20", "rcp26", "rcp45", "none"))
+                     nm = c("rcp20", "rcp26", "rcp37", "rcp45", "none"))
 
   if (subtype == "MAgPIE") {
     # Read emission baselines for MAC in REMIND. These data have been calcualted by external scripts, that calcualte
@@ -52,7 +52,7 @@ calcMacBaseLandUse <- function(subtype) {
     }
 
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
-    x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp45", "none"))
+    x <- add_dimension(x, dim = 3.3, add = "rcp", nm = c("rcp20", "rcp26", "rcp37", "rcp45", "none"))
     getSets(x) <- c("region", "year", "type", "c_LU_emi_scen", "rcp")
 
     # emission types that are updated with new MAgPIE 4 data
@@ -161,7 +161,6 @@ calcMacBaseLandUse <- function(subtype) {
 
     # Read CO2 LUC baseline for all SSPs/SDP from MAgPIE reports
     xCO2 <- calcOutput("MAgPIEReport", subtype = "co2", aggregate = FALSE, warnNA = FALSE)
-    xCO2[, 1995, ] <- 0 # replace NA with 0 (only CO2 has NA in 1995)
 
     # Read N2O, CH4 baseline for all SSPs/SDP from MAgPIE reports
     xCH4N2O <- calcOutput("MAgPIEReport", subtype = "ch4n2o", aggregate = FALSE)
