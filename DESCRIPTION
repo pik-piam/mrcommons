@@ -1,8 +1,8 @@
 Type: Package
 Package: mrcommons
 Title: MadRat commons Input Data Library
-Version: 1.70.0
-Date: 2026-06-25
+Version: 1.70.1
+Date: 2026-06-26
 Authors@R: c(
     person("Benjamin Leon", "Bodirsky", , "bodirsky@pik-potsdam.de", role = "aut"),
     person("Kristine", "Karstens", role = "aut"),
@@ -51,6 +51,7 @@ Depends:
     madrat (>= 3.10.0),
     magclass (>= 3.17),
     mrdrivers (>= 7.1.1),
+    mrcommonsenergy (>= 0.3.0),
     mrfaocore (>= 1.0.0),
     mrlandcore (>= 1.0.0),
     mstools (>= 0.6.0),
@@ -64,7 +65,6 @@ Imports:
     magpiesets (>= 0.44.2),
     methods,
     ncdf4,
-    openxlsx,
     purrr,
     quitte,
     raster,
@@ -72,8 +72,8 @@ Imports:
     reshape2,
     rlang,
     stringr,
-    terra,
     tibble,
+    terra,
     tidyr,
     withr,
     zoo

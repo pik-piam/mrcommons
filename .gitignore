@@ -3,6 +3,6 @@
 .RData
 .Ruserdata
 .positai
-mrcommons.Rproj
+*.Rproj
 .Rproj.user
 .positai
