@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2026-05"
+  ver <- "2026-06"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -74,22 +74,19 @@ readMAgPIE <- function(subtype) {
     # Please update scenario names in mrremind::calcBiomassPrices.R if necessary
 
     scenarioNames <- c(
-      "f30_bioen_price_SDP-MC-SSP1-NPi_replaced_flat",
-      "f30_bioen_price_SDP-MC-SSP1-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2_lowEn-NPi_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg1000_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2_lowEn-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2-NPi_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2-PkBudg1000_replaced_flat",
-      "f30_bioen_price_SSP2-SSP2-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP3-SSP2-NPi_replaced_flat",
-      "f30_bioen_price_SSP3-SSP2-PkBudg1000_replaced_flat",
-      "f30_bioen_price_SSP3-SSP2-PkBudg650_replaced_flat",
-      "f30_bioen_price_SSP5-SSP5-NPi_replaced_flat",
-      "f30_bioen_price_SSP5-SSP5-PkBudg1000_replaced_flat",
-      "f30_bioen_price_SSP5-SSP5-PkBudg650_replaced_flat"
+      "f30_bioen_price_SSP1-NPi2025_replaced_flat",      # ssp1.rcp45
+      "f30_bioen_price_SSP1-PkBudg1000_replaced_flat",   # ssp1.rcp26
+      "f30_bioen_price_SSP1-PkBudg750_replaced_flat",    # ssp1.rcp20
+      #"f30_bioen_price_SSP2-EcBudg500_replaced_flat",
+      "f30_bioen_price_SSP2-NDC_replaced_flat",          # ssp2.rcp37
+      "f30_bioen_price_SSP2-NPi2025_replaced_flat",      # ssp2.rcp45  --> ssp5.rcp45
+      "f30_bioen_price_SSP2-PkBudg1000_replaced_flat",   # ssp2.rcp26  --> ssp5.rcp26
+      "f30_bioen_price_SSP2-PkBudg750_replaced_flat",    # ssp2.rcp20  --> ssp5.rcp20
+      "f30_bioen_price_SSP3-NPi2025_replaced_flat",      # ssp3.rcp45
+      "f30_bioen_price_SSP3-PkBudg1000_replaced_flat"    # ssp3.rcp26
+      #"f30_bioen_price_SSP3-rollBack_replaced_flat"      
     )
-
+    
     fileList <- file.path(ver, paste0(scenarioNames, regcode, ".cs4r"))
     setnames  <- c("region", "year", "scenario", "char")
 
