@@ -103,8 +103,6 @@
   calcHistBioplasticProd
 - [`calcHistEmissions()`](calcHistEmissions.md) : historical emissions
   per sector or mac
-- [`calcIOEdgeBuildings()`](calcIOEdgeBuildings.md) :
-  calcIOEdgeBuildings
 - [`calcIPCCefNSoil()`](calcIPCCefNSoil.md) : calcIPCCefNSoil
 - [`calcIPCCfracLeach()`](calcIPCCfracLeach.md) : calcIPCCfracLeach
 - [`calcIniFoodPrice()`](calcIniFoodPrice.md) : calcIniFoodPrice
@@ -186,19 +184,12 @@
 - [`convertCEDS2025()`](convertCEDS2025.md) : convertCEDS2025
 - [`convertCMIP7_CEDS()`](convertCMIP7_CEDS.md) : convertCMIP7_CEDS
 - [`convertDomingues()`](convertDomingues.md) : convertDomingues
-- [`convertEEA_EuropeanEnvironmentAgency()`](convertEEA_EuropeanEnvironmentAgency.md)
-  : Convert European Environment Agency (EEA) data
-- [`convertEU_ReferenceScenario()`](convertEU_ReferenceScenario.md) :
-  Convert EU Reference Scenario
-- [`convertEurostat()`](convertEurostat.md) : Read Eurostat historical
-  emissions (env_air_gge)
 - [`convertExpertGuessSSPLivestockProduction()`](convertExpertGuessSSPLivestockProduction.md)
   : convertExpertGuessSSPLivestockProduction
 - [`convertFeedModel()`](convertFeedModel.md) : Convert FeedModel data
 - [`convertGTAPv8v9()`](convertGTAPv8v9.md) : convertGTAPv8v9
 - [`convertHerridge()`](convertHerridge.md) : convertHerridge
 - [`convertICP2017()`](convertICP2017.md) : convertICP2017
-- [`convertIEA()`](convertIEA.md) : Convert IEA
 - [`convertIEA_EEI()`](convertIEA_EEI.md) : Convert IEA End Uses and
   Efficiency Indicators data to data on ISO country level.
 - [`convertIFA()`](convertIFA.md) : Convert IFA
@@ -206,7 +197,6 @@
 - [`convertISIMIP()`](convertISIMIP.md) : convertISIMIP
 - [`convertImageMacc()`](convertImageMacc.md) : Convert subtypes of the
   ImageMacc data
-- [`convertJRC_IDEES()`](convertJRC_IDEES.md) : Convert JRC IDEES data
 - [`convertKoeppen()`](convertKoeppen.md) : convertKoeppen
 - [`convertLassaletta2014()`](convertLassaletta2014.md) :
   convertLassaletta2014
@@ -267,12 +257,6 @@
 - [`readEDGAR_LU()`](readEDGAR_LU.md) : Read EDGAR_LU
 - [`readEDGARfood()`](readEDGARfood.md) : readEDGARfood
 - [`readEDGARghg()`](readEDGARghg.md) : readEDGAR_GHG
-- [`readEEA_EuropeanEnvironmentAgency()`](readEEA_EuropeanEnvironmentAgency.md)
-  : Read European Environment Agency (EEA) data
-- [`readEU_ReferenceScenario()`](readEU_ReferenceScenario.md) : Read EU
-  Reference Scenario
-- [`readEurostat()`](readEurostat.md) : Read Eurostat historical
-  emissions (env_air_gge)
 - [`readEurostatLivestock()`](readEurostatLivestock.md) : Read
   EUROSTAT_livestock
 - [`readExpertGuessSSPLivestockProduction()`](readExpertGuessSSPLivestockProduction.md)
@@ -296,7 +280,6 @@
 - [`readHerridge()`](readHerridge.md) : readHerridge
 - [`readHoulton2018()`](readHoulton2018.md) : readHoulton2018
 - [`readICP2017()`](readICP2017.md) : readICP2017
-- [`readIEA()`](readIEA.md) : Read IEA
 - [`readIEA_EEI()`](readIEA_EEI.md) : Read-in data from IEA End Uses and
   Efficiency Indicators Database
 - [`readIFA()`](readIFA.md) : Read IFA
@@ -308,7 +291,6 @@
 - [`readIfBB()`](readIfBB.md) : readIfBB
 - [`readImageMacc()`](readImageMacc.md) : Read in ImageMacc Costcurves
   for different subtypes
-- [`readJRC_IDEES()`](readJRC_IDEES.md) : Read JRC IDEES
 - [`readKoeppen()`](readKoeppen.md) : readKoeppen
 - [`readLassaletta2014()`](readLassaletta2014.md) : readLassaletta2014
 - [`readLotzeCampenBiofuel()`](readLotzeCampenBiofuel.md) : Read
@@ -346,5 +328,3 @@
 - [`toolCalcIEAfromStructureMappingPEFE()`](toolCalcIEAfromStructureMappingPEFE.md)
   : toolCalcIEAfromStructureMappingPEFE
 - [`toolPregnant()`](toolPregnant.md) : toolPregnant
-- [`toolSplitBiomass()`](toolSplitBiomass.md) : Split Biomass into
-  modern and traditional

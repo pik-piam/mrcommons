@@ -5,7 +5,7 @@ mapping IEA reported data to ReMIND-MAgPIE items
 ## Usage
 
 ``` r
-toolCalcIEAfromStructureMappingPEFE(data, structureMapping, subtype = "remind")
+toolCalcIEAfromStructureMappingPEFE(data, structureMapping)
 ```
 
 ## Arguments
@@ -17,10 +17,6 @@ toolCalcIEAfromStructureMappingPEFE(data, structureMapping, subtype = "remind")
 - structureMapping:
 
   mapping to use
-
-- subtype:
-
-  remind (default), edge, pfu or magpie
 
 ## Value
 
