@@ -11,7 +11,7 @@
 #' calcOutput("AWMSconfShr")
 #' }
 #' @importFrom magpiesets findset
-calcAWMSconfShr <- function(rev = 0.1) {
+calcAWMSconfShr <- function(rev = "0.1") {
   past <- findset("past")
   out <- calcOutput("AWMSconfShrPast", aggregate = FALSE)
   weight2 <- collapseNames(calcOutput("Excretion", aggregate = FALSE)[, past, "confinement"][, , "nr"])

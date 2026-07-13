@@ -1,4 +1,4 @@
-toolNUEscenarios <- function(x, weight, rev = 0.1, zhang = NULL) {
+toolNUEscenarios <- function(x, weight, rev = "0.1", zhang = NULL) {
   x <- setNames(toolHoldConstantBeyondEnd(x), "constant")
   weight <- setNames(toolHoldConstantBeyondEnd(weight), "constant")
 
