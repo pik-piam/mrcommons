@@ -7,7 +7,7 @@ turning into scenarios for the future.
 ## Usage
 
 ``` r
-calcAWMSconfShr(rev = 0.1)
+calcAWMSconfShr(rev = "0.1")
 ```
 
 ## Arguments
