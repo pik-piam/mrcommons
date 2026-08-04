@@ -2,14 +2,14 @@
 
 Population by age, sex and education.
 
-By default (version = "WCDE") the data is taken from the Wittgenstein
-Centre Human Capital Data Explorer: the historical reconstruction
-(1965-2015) from version 2 (Lutz et al. 2018) is combined with the
-updated SSP projections (2020-2100) from version 3 (K.C. et al. 2024).
-Education is aggregated to the six attainment categories plus "Under 15"
-that are also used in the legacy Lutz2014 data (the finer post-secondary
-split of the WCDE data is dropped). With version = "Lutz2014" the
-previous data source is used instead.
+With version = "WCDE" the data is taken from the Wittgenstein Centre
+Human Capital Data Explorer: the historical reconstruction (1965-2015)
+from version 2 (Lutz et al. 2018) is combined with the updated SSP
+projections (2020-2100) from version 3 (K.C. et al. 2024). Education is
+aggregated to the six attainment categories plus "Under 15" that are
+also used in the legacy Lutz2014 data (the finer post-secondary split of
+the WCDE data is dropped). With version = "Lutz2014" the previous data
+source is used instead.
 
 Population is divided by sex male (M), female (F) and, before
 recalibration, both (B), by five-year age groups and by education.
