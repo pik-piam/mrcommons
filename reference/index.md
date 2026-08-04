@@ -217,6 +217,7 @@
 - [`convertSoilGrids()`](convertSoilGrids.md) : convertSoilGrids
 - [`convertVanDrecht2009()`](convertVanDrecht2009.md) :
   convertVanDrecht2009
+- [`convertWCDE()`](convertWCDE.md) : convertWCDE
 - [`convertWHO()`](convertWHO.md) : convertWHO
 - [`correctAndrijevic2019()`](correctAndrijevic2019.md) :
   correctAndrijevic2019
@@ -243,6 +244,7 @@
   : downloadNitrogenBoundariesGridded
 - [`downloadSoilGrids()`](downloadSoilGrids.md) : downloadSoilGrids
 - [`downloadUN_PopDiv()`](downloadUN_PopDiv.md) : Download UN_PopDiv
+- [`downloadWCDE()`](downloadWCDE.md) : downloadWCDE
 - [`readACCMIP()`](readACCMIP.md) : readACCMIP
 - [`readAdjustGrassi2021()`](readAdjustGrassi2021.md) :
   readAdjustGrassi2021
@@ -320,6 +322,7 @@
   Transport Costs
 - [`readVanDrecht2009()`](readVanDrecht2009.md) : readvanDrecht2009
 - [`readWBGEM()`](readWBGEM.md) : readWBGEM
+- [`readWCDE()`](readWCDE.md) : readWCDE
 - [`readWHO()`](readWHO.md) : Read WHO
 - [`readZhang2015()`](readZhang2015.md) : Read Nitrogen Use Efficiency
   Paramerst from Zhang et al 2015

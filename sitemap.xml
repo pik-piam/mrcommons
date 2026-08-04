@@ -140,6 +140,7 @@
 <url><loc>/reference/convertSSPResults.html</loc></url>
 <url><loc>/reference/convertSoilGrids.html</loc></url>
 <url><loc>/reference/convertVanDrecht2009.html</loc></url>
+<url><loc>/reference/convertWCDE.html</loc></url>
 <url><loc>/reference/convertWHO.html</loc></url>
 <url><loc>/reference/correctAndrijevic2019.html</loc></url>
 <url><loc>/reference/correctEDGARfood.html</loc></url>
@@ -159,6 +160,7 @@
 <url><loc>/reference/downloadNitrogenBoundariesGridded.html</loc></url>
 <url><loc>/reference/downloadSoilGrids.html</loc></url>
 <url><loc>/reference/downloadUN_PopDiv.html</loc></url>
+<url><loc>/reference/downloadWCDE.html</loc></url>
 <url><loc>/reference/index.html</loc></url>
 <url><loc>/reference/mrcommons-package.html</loc></url>
 <url><loc>/reference/readACCMIP.html</loc></url>
@@ -217,6 +219,7 @@
 <url><loc>/reference/readTransportCostsGTAP.html</loc></url>
 <url><loc>/reference/readVanDrecht2009.html</loc></url>
 <url><loc>/reference/readWBGEM.html</loc></url>
+<url><loc>/reference/readWCDE.html</loc></url>
 <url><loc>/reference/readWHO.html</loc></url>
 <url><loc>/reference/readZhang2015.html</loc></url>
 <url><loc>/reference/toolAWMSScenarioCreation.html</loc></url>

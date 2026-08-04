@@ -1,6 +1,6 @@
 # MadRat commons Input Data Library
 
-R package **mrcommons**, version **1.70.4**
+R package **mrcommons**, version **1.72.1**
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3822009.svg)](https://doi.org/10.5281/zenodo.3822009)
 [![R build
@@ -56,7 +56,7 @@ E, Beier F, Oeser J, Pehl M, Leip D, Crawford M, Molina Bacca E, von
 Jeetze P, Martinelli E, Schreyer F, Soergel B, Sauer P, Hötten D, Hasse
 R, Abrahão G, Weigmann P, Dietrich J (2026). “mrcommons: MadRat commons
 Input Data Library.” <doi:10.5281/zenodo.3822009>
-<https://doi.org/10.5281/zenodo.3822009>, Version: 1.70.4,
+<https://doi.org/10.5281/zenodo.3822009>, Version: 1.72.1,
 <https://github.com/pik-piam/mrcommons>.
 
 A BibTeX entry for LaTeX users is
@@ -66,10 +66,10 @@ A BibTeX entry for LaTeX users is
  title = {mrcommons: MadRat commons Input Data Library},
  author = {Benjamin Leon Bodirsky and Kristine Karstens and Lavinia Baumstark and Isabelle Weindl and Xiaoxi Wang and Abhijeet Mishra and Stephen Wirth and Mishko Stevanovic and Nele Steinmetz and Ulrich Kreidenweis and Renato Rodrigues and Roman Popov and Florian Humpenoeder and Anastasis Giannousakis and Antoine Levesque and David Klein and Ewerton Araujo and Eva Bleidorn and Felicitas Beier and Julian Oeser and Michaja Pehl and Debbora Leip and Michael Crawford and Edna {Molina Bacca} and Patrick {von Jeetze} and Eleonora Martinelli and Felix Schreyer and Bjoern Soergel and Pascal Sauer and David Hötten and Robin Hasse and Gabriel Abrahão and Pascal Weigmann and Jan Philipp Dietrich},
  doi = {10.5281/zenodo.3822009},
- date = {2026-07-13},
+ date = {2026-07-23},
  year = {2026},
  url = {https://github.com/pik-piam/mrcommons},
- note = {Version: 1.70.4},
+ note = {Version: 1.72.1},
 }
 ```
 
@@ -292,6 +292,7 @@ A BibTeX entry for LaTeX users is
 - [`convertSoilGrids()`](convertSoilGrids.md) : convertSoilGrids
 - [`convertVanDrecht2009()`](convertVanDrecht2009.md) :
   convertVanDrecht2009
+- [`convertWCDE()`](convertWCDE.md) : convertWCDE
 - [`convertWHO()`](convertWHO.md) : convertWHO
 - [`correctAndrijevic2019()`](correctAndrijevic2019.md) :
   correctAndrijevic2019
@@ -318,6 +319,7 @@ A BibTeX entry for LaTeX users is
   : downloadNitrogenBoundariesGridded
 - [`downloadSoilGrids()`](downloadSoilGrids.md) : downloadSoilGrids
 - [`downloadUN_PopDiv()`](downloadUN_PopDiv.md) : Download UN_PopDiv
+- [`downloadWCDE()`](downloadWCDE.md) : downloadWCDE
 - [`readACCMIP()`](readACCMIP.md) : readACCMIP
 - [`readAdjustGrassi2021()`](readAdjustGrassi2021.md) :
   readAdjustGrassi2021
@@ -395,6 +397,7 @@ A BibTeX entry for LaTeX users is
   Transport Costs
 - [`readVanDrecht2009()`](readVanDrecht2009.md) : readvanDrecht2009
 - [`readWBGEM()`](readWBGEM.md) : readWBGEM
+- [`readWCDE()`](readWCDE.md) : readWCDE
 - [`readWHO()`](readWHO.md) : Read WHO
 - [`readZhang2015()`](readZhang2015.md) : Read Nitrogen Use Efficiency
   Paramerst from Zhang et al 2015
