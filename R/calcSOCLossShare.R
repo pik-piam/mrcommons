@@ -41,7 +41,8 @@ calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipcc
     if (subsystems == "aggregated") {
       magCrop      <- calcOutput("Croparea", physical = TRUE, cellular = TRUE,
                                  irrigation = FALSE, fallow = TRUE, aggregate = FALSE)
-      kcr2all      <- data.frame(list(kcr = getNames(socLossShare), all = rep("all", 19)))
+      kcr2all      <- data.frame(list(kcr = getNames(socLossShare),
+                                      all = rep("all", length(getNames(socLossShare)))))
       socLossShare <- toolAggregate(socLossShare, weight = magCrop, rel = kcr2all, from = "kcr", to = "all", dim = 3)
       getNames(socLossShare) <- "cshare"
     }
