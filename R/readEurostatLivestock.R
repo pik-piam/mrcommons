@@ -23,7 +23,7 @@
 #' a <- readSource("EurostatLivestock", "MeatProd")
 #' }
 #' @importFrom utils read.table head
-#' @importFrom dplyr mutate mutate_all filter `%>%` across rename
+#' @importFrom dplyr mutate mutate_all filter across rename
 #' @importFrom tidyr pivot_longer starts_with matches
 #' @importFrom rlang .data
 #' @importFrom countrycode countrycode
