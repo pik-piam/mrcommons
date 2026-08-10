@@ -28,8 +28,9 @@ number between 0 and 1 to define percentile value for cut off}
 
 \item{average}{averaging period in years (if NULL no averaging is used)}
 
-\item{areaSource}{data source for croparea used in calculation: LandIng Toolbox of FAOLUH.
-The latter one is depreciated.}
+\item{areaSource}{data source for croparea used in calculation: "LandInG" (default)
+or "FAOLUH". The latter one is deprecated. The former default
+"FAO" is no longer accepted.}
 }
 \value{
 MAgPIE object of yields
