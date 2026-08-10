@@ -26,7 +26,7 @@
 readWCDE <- function(subtype = "epop_v3") {
   files <- sort(list.files(pattern = "\\.rds$"))
   if (length(files) == 0) {
-    stop("No WCDE .rds files found. readSource(\"WCDE\") requires a subtype: use ",
+    stop("No WCDE .rds files found. Use ",
          "subtype = \"epop_v3\" (projections 2020-2100) or subtype = \"epop_v2\" ",
          "(historical reconstruction).")
   }
