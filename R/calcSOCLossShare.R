@@ -20,8 +20,10 @@
 calcSOCLossShare <- function(subsystems = FALSE, rate = "change", factor = "ipccReduced2019Fallow",
                              cells = "lpjcell") {
 
+  # read in climate class depending on chosen factor
+  datasource <- gsub("Fallow", "", factor)
   ipccClimate        <- calcOutput("ClimateClass", aggregate = FALSE,
-                                   datasource = factor)
+                                   datasource = datasource)
 
   factor2SCF         <- c(ipccReduced     = "SCF_sub",
                           ipccReduced2019 = "SCF_sub2019",
