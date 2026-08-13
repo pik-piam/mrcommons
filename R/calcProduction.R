@@ -126,8 +126,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
         }
 
         # correct items with no total cropland area for known data mismatches:
-        # where no LUH croparea at all, but FAO production reported
-        # Note: Number of countries with mismatch would reduce if we use the croparea of LandInG
+        # where no croparea at all, but FAO production reported
         isoMAGTotCrop  <- dimSums(isoMAGCroparea, dim = 3)
         noMAGTotCrop   <- (isoMAGTotCrop == 0) * isoMismatch
 
@@ -182,6 +181,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
         if (any(noMAGTotCrop["HKG", , ] != 0)) {
           productionMAG["HKG", , "rainfed"] <- productionFAO["HKG", , ] /
             length(getItems(productionMAG["HKG", , ], dim = 1))
+        }
+        if (any(noMAGTotCrop["SYC", , ] != 0)) {
+          productionMAG["SYC", , "rainfed"] <- productionFAO["SYC", , ] /
+            length(getItems(productionMAG["SYC", , ], dim = 1))
         }
         if (any(noMAGTotCrop["MLT", , ] != 0)) {
           productionMAG["MLT", , "rainfed"] <- productionFAO["MLT", , ] /
