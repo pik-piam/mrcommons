@@ -23,8 +23,10 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
   bg <- dimSums(collapseNames(calcOutput("ResBiomass", cellular = cellular,
                                          plantparts = "bg", aggregate = FALSE)[, , "nr"]), dim = 3.1)
   seed <- dimSums(calcOutput("Seed", cellular = cellular, products = "kcr", aggregate = FALSE)[, , "nr"], dim = 3)
-  fixation <- dimSums(calcOutput("NitrogenFixationPast", fixation_types = "both", sum_plantparts = TRUE,
-                                 aggregate = FALSE, cellular = cellular), dim = 3.2)
+  fixationFreeliving <- dimSums(calcOutput("NitrogenFixationFreeliving", aggregate = FALSE, cellular = cellular),
+                                dim = "crop")
+  fixationCrops <- dimSums(calcOutput("NitrogenFixationSymbiotic", aggregate = FALSE, cellular = cellular),
+                           dim = c(3.2, 3.3))
   som <- calcOutput("SOMlossN", cellular = cellular, aggregate = FALSE)
 
   if (cellular) {
@@ -46,7 +48,8 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
   ag <- ag[, cyears, ]
   bg <- bg[, cyears, ]
   seed <- seed[, cyears, ]
-  fixation <- fixation[, cyears, ]
+  fixationFreeliving <- fixationFreeliving[, cyears, ]
+  fixationCrops <- fixationCrops[, cyears, ]
   som <- som[, cyears, ]
 
   manure <- collapseNames(calcOutput("ManureRecyclingCroplandPast", aggregate = FALSE,
@@ -67,10 +70,10 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
                    setNames(bg, "bg"))
 
   inputsDirect <- mbind(setNames(seed, "seed"),
-                        setNames(fixation[, , "fixation_crops"], "fixation_crops"))
+                        setNames(fixationCrops[, , "fixation_crops"], "fixation_crops"))
 
   inputs <- mbind(
-    setNames(fixation[, , "fixation_freeliving"], "fixation_freeliving"),
+    setNames(fixationFreeliving[, , "fixation_freeliving"], "fixation_freeliving"),
     setNames(manure, "manure_conf"),
     setNames(manureCroplandGrazing, "manure_stubble_grazing"),
     setNames(collapseNames(ag[, , "recycle"]), "ag_recycling"),

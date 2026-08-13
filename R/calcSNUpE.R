@@ -18,8 +18,9 @@
 #' }
 #'
 calcSNUpE <- function(
-    max_snupe = 0.85, # nolint: object_name_linter.
-    cellular = FALSE, rev = 0.1, maccbase = TRUE) {
+  max_snupe = 0.85, # nolint: object_name_linter.
+  cellular = FALSE, rev = "0.1", maccbase = TRUE
+) {
 
   a <- calcOutput("NitrogenBudgetCropland", max_snupe = max_snupe, aggregate = FALSE,
                   deposition = "Nsurplus2", cellular = cellular)
@@ -27,15 +28,13 @@ calcSNUpE <- function(
   a[, , "seed"] <- -a[, , "seed"]
   a[, , "fixation_crops"] <- -a[, , "fixation_crops"]
   a[, , "som"] <- a[, , "som"] * 1
-  outputs <- c(
-    "fixation_crops",
-    "harvest", "ag", "bg", "seed")
-  inputs <- c(
-    "fixation_freeliving",
-    "som", "fertilizer", "deposition",
-    "manure_conf", "manure_stubble_grazing",
-    "bg_recycling", "ag_recycling",
-    "ag_ash", "balanceflow")
+  outputs <- c("fixation_crops",
+               "harvest", "ag", "bg", "seed")
+  inputs <- c("fixation_freeliving",
+              "som", "fertilizer", "deposition",
+              "manure_conf", "manure_stubble_grazing",
+              "bg_recycling", "ag_recycling",
+              "ag_ash", "balanceflow")
   outputs <- dimSums(a[, , outputs], dim = 3.1)
   inputs <- dimSums(a[, , inputs], dim = 3.1)
   sNUpE <- outputs / inputs
@@ -172,7 +171,7 @@ calcSNUpE <- function(
       y2020CHN <- policyEffect + x["CHN", "y2020", "constant"]
       y2020CHN[y2020CHN > 70] <- 70
       x["CHN", , scenarioname] <- convergence(origin = x["CHN", , "constant"], aim = y2020CHN, start_year = "y2010",
-                                            end_year = "y2020", type = "linear")
+                                              end_year = "y2020", type = "linear")
       x["CHN", 2015, scenarioname] <- x["CHN", 2015, scenarioname] - 0.0028612
       return(x)
     }
@@ -252,10 +251,9 @@ calcSNUpE <- function(
     out <- x
   }
 
-  return(list(
-    x = out,
-    weight = weight,
-    unit = "Share",
-    description = "Soil nitrogen uptake efficiency",
-    isocountries = !cellular))
+  return(list(x = out,
+              weight = weight,
+              unit = "Share",
+              description = "Soil nitrogen uptake efficiency",
+              isocountries = !cellular))
 }

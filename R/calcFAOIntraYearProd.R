@@ -16,7 +16,7 @@
 #'
 #' @author David Chen
 #'
-#' @importFrom dplyr group_by count %>% mutate filter
+#' @importFrom dplyr group_by count mutate filter
 #' @importFrom magpiesets findset
 #' @importFrom withr local_options
 
@@ -31,7 +31,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
                         convert = FALSE)[, , day][, , "rf"]
 
   ## aggregate wheat based on binary mask, note wheat mask is also already
-  #masked to cropping area, maybe some inconsistencies when masking again to crop area
+  # masked to cropping area, maybe some inconsistencies when masking again to crop area
   wheat <-  readSource("GGCMICropCalendar", subtype = "wheat_areas", convert = FALSE)
   cropcal[, , "swh"] <- cropcal[, , "swh"] * wheat[, , "swh"]
   cropcal[, , "wwh"] <- cropcal[, , "wwh"] * wheat[, , "wwh"]
@@ -40,25 +40,25 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   cropcal <- cropcal[, , c("swh", "wwh"), invert = TRUE]
 
   ## mask cropcal to current area, assume 2010 area for now to avoid very large dataset
-  areaMask <- calcOutput("Croparea", cellular = TRUE,
-                         aggregate = FALSE)[, 2010, ]
+  areaMask <- calcOutput("Croparea", cellular = TRUE, aggregate = FALSE)[, 2010, ]
   areaMask <- ifelse(areaMask > 0, 1, 0)
   areaMask <- areaMask[, , c("begr", "betr", "foddr", "oilpalm", "others"), invert = TRUE]
 
   ggcmiMapping <- toolGetMapping("MAgPIE_GGCMI.csv", type = "sectoral", where = "mappingfolder")
-  areaMask <- toolAggregate(areaMask, rel = ggcmiMapping, from = "MagPIE", to = "GGCMI", dim = 3, partrel = TRUE)
+  areaMask <- toolAggregate(areaMask, rel = ggcmiMapping, from = "MagPIE",
+                            to = "GGCMI", dim = 3, partrel = TRUE)
 
   cropcal <- cropcal * setYears(areaMask, NULL)
 
   # make data frame to more easily count the share of cropping date within each country
-  cropcaldf <-  as.data.frame(collapseNames(cropcal)) %>%
-                group_by(.data$Value, .data$Region, .data$Data1) %>%
-                dplyr::count() %>%
-                filter(.data$Value != 0)
+  cropcaldf <-  as.data.frame(collapseNames(cropcal)) |>
+    group_by(.data$Value, .data$Region, .data$Data1) |>
+    dplyr::count() |>
+    filter(.data$Value != 0)
 
-  cropcaldf <- cropcaldf %>%
-               group_by(.data$Region, .data$Data1) %>%
-               mutate("share" =  .data$n / sum(.data$n))
+  cropcaldf <- cropcaldf |>
+    group_by(.data$Region, .data$Data1) |>
+    mutate("share" =  .data$n / sum(.data$n))
 
   names(cropcaldf)[names(cropcaldf) == "Value"] <- "day"
   cropcaldf <- cropcaldf[, c("Region", "day", "Data1", "share")]
@@ -88,7 +88,7 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
   mapping <- toolGetMappingCoord2Country()
   mapping$coordiso <- paste(mapping$coords, mapping$iso, sep = ".")
   rice <- toolAggregate(rice, rel = mapping, from = "coordiso", to = "iso",
-                         weight = new.magpie(cells_and_regions = getItems(rice, dim = 1), years = NULL,
+                        weight = new.magpie(cells_and_regions = getItems(rice, dim = 1), years = NULL,
                                             names = getNames(rice), fill = 1))
   rice <- toolCountryFill(rice, fill = 0)
 
@@ -99,76 +99,77 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
 
 
 
-  if (frequency == "monthly") {
-    iprod <- add_dimension(prod, dim = 2.2, add = "month", nm = c(unique(daysMapping$month)))
-  } else if (frequency == "quarterly") {
-    iprod <- add_dimension(prod, dim = 2.2, add = "quarter", nm = c(unique(daysMapping$quarter)))
-  }
+    if (frequency == "monthly") {
+      iprod <- add_dimension(prod, dim = 2.2, add = "month", nm = c(unique(daysMapping$month)))
+    } else if (frequency == "quarterly") {
+      iprod <- add_dimension(prod, dim = 2.2, add = "quarter", nm = c(unique(daysMapping$quarter)))
+    }
 
-  iprod[, , "rice_pro"] <- prod[, , "rice_pro"] *
-                   (setNames(rice[, , "ri1"] * cropcaldf[, , "ri1"], NULL) +
-                      setNames(rice[, , "ri2"] * cropcaldf[, , "ri2"], NULL))
+    iprod[, , "rice_pro"] <- prod[, , "rice_pro"] *
+      (setNames(rice[, , "ri1"] * cropcaldf[, , "ri1"], NULL) +
+         setNames(rice[, , "ri2"] * cropcaldf[, , "ri2"], NULL))
 
-  tece <- c("44|Barley", "71|Rye", "15|Wheat")
-  trce <- c("79|Millet", "83|Sorghum")
-  puls <-  c("176|Beans, dry", "181|Broad beans, horse beans, dry",
-            "187|Peas, dry", "197|Pigeon peas", "191|Chick peas")
+    tece <- c("44|Barley", "71|Rye", "15|Wheat")
+    trce <- c("79|Millet", "83|Sorghum")
+    puls <-  c("176|Beans, dry", "181|Broad beans, horse beans, dry",
+               "187|Peas, dry", "197|Pigeon peas", "191|Chick peas")
 
-  regionalProd <-  collapseNames(readSource("FAO_online", "Crop")[, getItems(iprod,
-                                  dim = 2.1), "production"][, , c(tece, trce, puls)])
+    regionalProd <- readSource("FAO_online", subtype = "Crop")
+    regionalProd <- regionalProd[, getItems(iprod, dim = 2.1), "production"][, , c(tece, trce, puls)]
+    regionalProd <- collapseNames(regionalProd)
 
-  teceRatio <- regionalProd[, , tece] /
-                   dimSums(regionalProd[, , tece], dim = 3)
-  teceRatio[is.na(teceRatio)] <- 0
+    teceRatio <- regionalProd[, , tece] /
+      dimSums(regionalProd[, , tece], dim = 3)
+    teceRatio[is.na(teceRatio)] <- 0
 
-  trceRatio <- regionalProd[, , trce] /
-    dimSums(regionalProd[, , trce], dim = 3)
-  trceRatio[is.na(trceRatio)] <- 0
+    trceRatio <- regionalProd[, , trce] /
+      dimSums(regionalProd[, , trce], dim = 3)
+    trceRatio[is.na(trceRatio)] <- 0
 
-  pulsRatio <- regionalProd[, , puls] /
-    dimSums(regionalProd[, , puls], dim = 3)
-  pulsRatio[is.na(pulsRatio)] <- 0
+    pulsRatio <- regionalProd[, , puls] /
+      dimSums(regionalProd[, , puls], dim = 3)
+    pulsRatio[is.na(pulsRatio)] <- 0
 
 
-  iprod[, , "tece"] <- prod[, , "tece"] *
-    (setNames(teceRatio[, , "44|Barley"], NULL) * setNames(cropcaldf[, , "bar"], NULL) +
-    setNames(teceRatio[, , "71|Rye"], NULL) * setNames(cropcaldf[, , "rye"], NULL) +
-    setNames(teceRatio[, , "15|Wheat"], NULL) * setNames(cropcaldf[, , "wheat"], NULL))
+    iprod[, , "tece"] <- prod[, , "tece"] *
+      (setNames(teceRatio[, , "44|Barley"], NULL) * setNames(cropcaldf[, , "bar"], NULL) +
+         setNames(teceRatio[, , "71|Rye"], NULL) * setNames(cropcaldf[, , "rye"], NULL) +
+         setNames(teceRatio[, , "15|Wheat"], NULL) * setNames(cropcaldf[, , "wheat"], NULL))
 
     iprod[, , "trce"] <- prod[, , "trce"] *
-    (setNames(trceRatio[, , "79|Millet"], NULL) * setNames(cropcaldf[, , "mil"], NULL) +
-       setNames(trceRatio[, , "83|Sorghum"], NULL) * setNames(cropcaldf[, , "sor"], NULL))
+      (setNames(trceRatio[, , "79|Millet"], NULL) * setNames(cropcaldf[, , "mil"], NULL) +
+         setNames(trceRatio[, , "83|Sorghum"], NULL) * setNames(cropcaldf[, , "sor"], NULL))
 
     iprod[, , "puls_pro"] <- prod[, , "puls_pro"] *
       (setNames(dimSums(pulsRatio[, , c("176|Beans, dry",
                                         "181|Broad beans, horse beans, dry")], dim = 3), NULL) *
          setNames(cropcaldf[, , "bea"], NULL) +
-       setNames(dimSums(pulsRatio[, , c("187|Peas, dry",
-                                        "197|Pigeon peas", "191|Chick peas")], dim = 3), NULL) *
-                        setNames(cropcaldf[, , "pea"], NULL))
+         setNames(dimSums(pulsRatio[, , c("187|Peas, dry",
+                                          "197|Pigeon peas", "191|Chick peas")], dim = 3), NULL) *
+           setNames(cropcaldf[, , "pea"], NULL))
 
-   productsLeft <- setdiff(findset("kcr"), c("rice_pro", "tece", "trce", "puls_pro"))
-   calProductsLeft <- setdiff(getNames(cropcaldf), c("bar",
-                                         "rye", "wheat", "ri1", "ri2", "mil", "sor", "pea", "bea"))
-   cropcaldf <- toolAggregate(cropcaldf[, , calProductsLeft],
-                              rel = ggcmiMapping, from = "GGCMI", to = "MagPIE", dim = 3, partrel = TRUE)
+    productsLeft <- setdiff(findset("kcr"), c("rice_pro", "tece", "trce", "puls_pro"))
+    calProductsLeft <- setdiff(getNames(cropcaldf), c("bar", "rye", "wheat", "ri1",
+                                                      "ri2", "mil", "sor", "pea", "bea"))
+    cropcaldf <- toolAggregate(cropcaldf[, , calProductsLeft],
+                               rel = ggcmiMapping, from = "GGCMI", to = "MagPIE", dim = 3, partrel = TRUE)
 
-   missingProducts <- setdiff(productsLeft, getNames(cropcaldf))
+    missingProducts <- setdiff(productsLeft, getNames(cropcaldf))
 
-   if (!is.null(missingProducts)) {
-     cropcaldf <- add_columns(cropcaldf, addnm = missingProducts,
-                              dim = 3.1, fill = 0)
+    if (!is.null(missingProducts)) {
+      cropcaldf <- add_columns(cropcaldf, addnm = missingProducts,
+                               dim = 3.1, fill = 0)
 
-         if (frequency == "monthly") {
-            cropcaldf[, "September", missingProducts] <- 1
-         } else if (frequency == "quarterly") {
-           cropcaldf[, "q3", missingProducts] <- 1
+      if (frequency == "monthly") {
+        cropcaldf[, "September", missingProducts] <- 1
+      } else if (frequency == "quarterly") {
+        cropcaldf[, "q3", missingProducts] <- 1
+      }
+      vcat(1, "Missing calendar information for ", paste(missingProducts, " "),
+           "These assumed (poorly) for now to have single harvest date in September/quarter 3")
     }
-     vcat(1, "Missing calendar information for ", paste(missingProducts, " "),
-          "These assumed (poorly) for now to have single harvest date in September/quarter 3")
-   }
 
-   iprod[, , productsLeft] <- prod[, , productsLeft] * cropcaldf[, , productsLeft]
+    iprod[, , productsLeft] <- prod[, , productsLeft] * cropcaldf[, , productsLeft]
 
   } else if (products == "staples") {
     staples <- c("56|Maize", "236|Soybeans", "15|Wheat",  "27|Rice, paddy")
@@ -179,15 +180,15 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
       iprod <- add_dimension(prod, dim = 2.2, add = "month", nm = c(unique(daysMapping$month)))
     } else if (frequency == "quarterly") {
       iprod <- add_dimension(prod, dim = 2.2, add = "quarter", nm = c(unique(daysMapping$quarter)))
- }
+    }
 
     iprod[, , "rice_pro"] <- prod[, , "rice_pro"] *
       (setNames(rice[, , "ri1"] * cropcaldf[, , "ri1"], NULL) + setNames(rice[, , "ri2"] *
                                                                            cropcaldf[, , "ri2"], NULL))
 
     iprod[, , c("maiz", "soybean", "wheat")] <- prod[, , c("maiz", "soybean", "wheat")] *
-                                 setNames(cropcaldf[, , c("mai", "soy", "wheat")],
-                                          c("maiz", "soybean", "wheat"))
+      setNames(cropcaldf[, , c("mai", "soy", "wheat")],
+               c("maiz", "soybean", "wheat"))
 
     ## convert to Mt
     iprod <- iprod / 10^6
@@ -198,17 +199,17 @@ calcFAOIntraYearProd <- function(day = "harvest_day", products = "kcr",
 
     iprod <- iprod * prodAttributes[, , getItems(iprod, dim = 3)]
 
-} else {
-  stop("Products so far can only kcr or staples")
+  } else {
+    stop("Products so far can only kcr or staples")
   }
   out <- iprod
 
   return(list(x = out,
-              weight = NULL,
-              unit = "Mt DM/Nr/P/K/WM or PJ energy",
-              description = "Crop production: dry matter: Mt (dm),
+    weight = NULL,
+    unit = "Mt DM/Nr/P/K/WM or PJ energy",
+    description = "Crop production: dry matter: Mt (dm),
                              gross energy: PJ (ge), reactive nitrogen: Mt (nr),
                              phosphor: Mt (p), potash: Mt (k), wet matter: Mt (wm)."
-              ))
+  ))
 
-  }
+}
