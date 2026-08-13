@@ -252,7 +252,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
 
     } else {
       ####################################
-      ### pasture production celluluar ###
+      ### pasture production cellular  ###
       ####################################
 
       areaPasture    <- collapseNames(calcOutput("LanduseInitialisation", cellular = TRUE,
