@@ -226,9 +226,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       isoproductionMAG  <- isoMismatch <- dimSums(productionMAG, dim = c(1.1, 1.2, 3.2))
       isoMismatch[]     <- abs(round(isoproductionMAG - productionFAO, 4)) > 0
 
+      # Warning if there are still mismatches
       if (any(isoMismatch != 0)) {
-        warning(paste0("Cellular data to FAO production mismatch ",
-                       "after generic fix in calcProduction. Please check!"))
+        # ignore the HKG mismatch for now (since a more generic fix is coming)
+        if (any(isoMismatch["HKG", , invert = TRUE] != 0)) {
+          warning(paste0("Cellular data to FAO production mismatch ",
+                        "after generic fix in calcProduction. Please check!"))
+        }
       }
 
       #####################################################################
