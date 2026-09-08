@@ -164,12 +164,11 @@ calcMAgPIEReport <- function(subtype) {
       # "-Base-mag-4"       = ".none",  # nolint
     ))
 
-  # Fill missing scenarios expected in REMIND with scenarios that are closest to
-  # them and rename them to the expected scenario names in REMIND no SSP5 data available --> use SSP2 data
-  ssp5 <- x[, , "SSP2"]
-  getNames(ssp5, dim = 1) <- "SSP5"
-  x <- mbind(x, ssp5)
-  # rcp37 must be added to the scenario_config.csv for SSP2-NDC that currently takes 4.5 from the NPI2025
+  # Fill missing scenarios expected in REMIND with scenarios that are closest to them and rename them to the expected scenario names in REMIND
+  # no SSP5 data available --> use SSP2 data
+  SSP5 <- x[, , "SSP2"]
+  getNames(SSP5, dim = 1) <- "SSP5"
+  x <- mbind(x, SSP5)
 
   # Remove years before 2005. They are not relevant for REMIND and would raise warnings about NA,
   # because "Emi|BC|AFOLU|Land|Fires|+|Peat Burning (Mt BC/yr)" is NA for 1995
