@@ -27,7 +27,7 @@ calcOutput("DevelopmentState")
 
 }
 \seealso{
-\code{\link[mrdrivers:calcGDP]{mrdrivers::calcGDPpc()}}
+\code{\link[mrdrivers:calcGDPpc]{mrdrivers::calcGDPpc()}}
 }
 \author{
 Benjamin Leon Bodirsky, Kristine Karstens

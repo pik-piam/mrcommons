@@ -19,8 +19,7 @@ calc1stBioenergyPast <- function() {
       name = "structuremappingPE.csv",
       where = "mrcommons",
       returnPathOnly = TRUE
-    ),
-    subtype = "magpie"
+    )
   )
 
   # Unit conversion from ktoe to PJ

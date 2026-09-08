@@ -4,7 +4,7 @@
 \alias{calcAWMSconfShr}
 \title{calcAWMSconfShr}
 \usage{
-calcAWMSconfShr(rev = 0.1)
+calcAWMSconfShr(rev = "0.1")
 }
 \arguments{
 \item{rev}{revision number of madrat run}
