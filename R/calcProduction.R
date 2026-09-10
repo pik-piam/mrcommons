@@ -3,7 +3,6 @@
 #'
 #' @param products   setname of products ("kcr", "kli", "pasture")
 #' @param cellular   if TRUE production is calculate on cellular level
-#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param calibrated if FALSE, lpj yields will be used uncalibrated,
 #'                   if true, calibrated on FAP production on country level
 #' @param attributes "All" for all crop attributes, or specify e.g. DM (dry matter), Nr (nitrogen) for memory reduction
@@ -21,9 +20,14 @@
 #' @importFrom magclass getSets magpie_expand new.magpie getCPR
 #' @importFrom magpiesets findset
 
+calcProduction <- function(products = "kcr", # nolint
+                           cellular = FALSE,
+                           calibrated = TRUE,
+                           attributes = "all",
+                           irrigation = FALSE) {
 
-calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell", # nolint
-                           calibrated = TRUE, attributes = "all", irrigation = FALSE) {
+  mappingCountryCell <- toolGetMappingCoord2Country()
+  mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
 
   if (products == "kcr") {
 
@@ -44,23 +48,42 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       ################################
       ### crop production cellular ###
       ################################
-      yieldsLPJ      <- calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                   climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                   stage = "smoothed", aggregate = FALSE)
-
-      mappingCountryCell <- toolGetMappingCoord2Country()
-      mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
 
       # crop mapping from LPJmL to MAgPIE categories
-      mappingMAG2LPJ <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv", where = "mappingfolder")
-      mappingMAG2LPJ <- mappingMAG2LPJ[which(mappingMAG2LPJ$MAgPIE %in% magCropTypes), ]
-      yieldsMAG      <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ, from = "LPJmL", to = "MAgPIE",
-                                      dim = 3.1, partrel = TRUE)[, , magCropTypes]
+      mappingMAG2LPJ <- toolGetMapping(name = "MAgPIE_LPJmL.csv",
+                                       type = "sectoral",
+                                       where = "mrlandcore")
+      mappingMAG2LPJ <- mappingMAG2LPJ[mappingMAG2LPJ$MAgPIE %in% magCropTypes, ]
+      cropsLPJmL     <- levels(droplevels(factor(mappingMAG2LPJ$LPJmL5)))
 
-      cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cellular = TRUE,
-                                   irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
+      cropareaMAG <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
+                                cellular = TRUE, irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
 
-      commonYears <- intersect(getYears(yieldsLPJ), getYears(cropareaMAG))
+      # LPJmL yields with default settings
+      # Note: When not all years of cropareaMAG are included in the historical data
+      # of LPJmL, calcOutput returns a warning that is here suppressed, since
+      # the years are in this case filled with toolHoldConstant
+      cfgLPJmL  <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
+      yieldsLPJ <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                            climatetype = cfgLPJmL$baselineHist,
+                                            selectyears = getItems(cropareaMAG, dim = 2),
+                                            aggregate = FALSE)[, , cropsLPJmL]))
+      # Note (for multiple cropping implementation): I did not set multiple cropping
+      # argument (default now: multicropping = FALSE)
+      # It then just goes to the default, so once we activate multiple cropping it would
+      # be multiple cropping yields (where it currently happens), but we should
+      # make sure it's only set to "historical" multiple cropping, never accidentally to
+      # "future/potential" multiple cropping.
+
+      # extend to needed years
+      yieldsLPJ <- toolHoldConstant(yieldsLPJ, years = getItems(cropareaMAG, dim = 2))
+
+      # map LPJmL crops to MAgPIE crops
+      yieldsMAG <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ,
+                                 from = "LPJmL5", to = "MAgPIE", dim = "crop",
+                                 partrel = TRUE)[, , magCropTypes]
+
+      commonYears <- sort(intersect(getYears(yieldsLPJ), getYears(cropareaMAG)))
       cropareaMAG <- cropareaMAG[, commonYears, ]
       yieldsLPJ   <- yieldsLPJ[, commonYears, ]
       yieldsMAG   <- yieldsMAG[, commonYears, ]
@@ -73,15 +96,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
                                    from = "iso", to = "coordiso", partrel = TRUE)
         getSets(tauCell) <- c("x", "y", "iso", "year", "ItemCodeItem")
 
-        commonYears <- intersect(getYears(tauCell), getYears(yieldsMAG))
-        cropareaMAG <- cropareaMAG[, commonYears, ]
-        tauCell     <- tauCell[, commonYears, ]
-        yieldsMAG   <- yieldsMAG[, commonYears, ]
-
         yieldsMAG <- tauCell * yieldsMAG
       }
 
-      productionMAG  <- yieldsMAG * cropareaMAG
+      productionMAG <- yieldsMAG * cropareaMAG
 
       #####################################################################
       # correct production mismatch - generic approach
@@ -92,14 +110,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       productionFAO     <- calcOutput("FAOmassbalance",
                                       aggregate = FALSE)[, , "production.dm"][countries, , prods]
       productionFAO     <- collapseNames(productionFAO)
-
-      commonYears   <- intersect(getYears(productionFAO), getYears(isoproductionMAG))
-      cropareaMAG   <- cropareaMAG[, commonYears, ]
-      productionMAG <- productionMAG[, commonYears, ]
-      isoproductionMAG <- isoproductionMAG[, commonYears, ]
-      productionFAO    <- productionFAO[, commonYears, ]
-      yieldsMAG        <- yieldsMAG[, commonYears, ]
-
       isoMismatch[, , ] <- abs(round(isoproductionMAG - productionFAO, 4)) > 0
 
       if (any(isoMismatch != 0)) {
@@ -251,24 +261,36 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       productionMAG  <- collapseNames(calcOutput("FAOmassbalance", aggregate = FALSE)[, , "pasture.production"])
 
     } else {
-      ####################################
-      ### pasture production celluluar ###
-      ####################################
-
-      areaPasture    <- collapseNames(calcOutput("LanduseInitialisation", cellular = TRUE,
-                                                 cells = "lpjcell",
-                                                 selectyears = seq(1965, 2015, 5),
+      ###################################
+      ### pasture production cellular ###
+      ###################################
+      areaPasture    <- collapseNames(calcOutput("LanduseInitialisation",
+                                                 cellular = TRUE,
                                                  aggregate = FALSE)[, , "past"])
-      yieldsPasture  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                                 climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                                 stage = "smoothed", aggregate = FALSE)[, , "mgrass.rainfed"])
 
-      commonYears <- intersect(getYears(areaPasture), getYears(yieldsPasture))
+      # LPJmL yields with default settings for pasture (grassland yields only exist for rainfed conditions)
+      # Note: When not all commonYears are included in the historical data
+      # of LPJmL, calcOutput returns a warning that is here suppressed, since
+      # the years are in this case filled with toolHoldConstant.
+      # Once historical LPJmL data is updated, this warning becomes irrelevant
+      cfgLPJmL  <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
+      yieldsPasture <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                                                 climatetype = cfgLPJmL$baselineHist,
+                                                                 selectyears = getItems(areaPasture, dim = 2),
+                                                                 aggregate = FALSE)[, , "grassland"][, , "rainfed"]))
+      # Note (for multiple cropping implementation): I did not set multiple cropping
+      # argument (default now: multicropping = FALSE)
+      # It then just goes to the default, so once we activate multiple cropping it would
+      # be multiple cropping yields (where it currently happens), but we should
+      # make sure it's only set to "historical" multiple cropping, never accidentally to
+      # "future/potential" multiple cropping.
+
+      # extend to needed years
+      yieldsPasture <- toolHoldConstant(yieldsPasture, years = getItems(areaPasture, dim = 2))
+
+      commonYears   <- sort(intersect(getYears(yieldsPasture), getYears(areaPasture)))
       areaPasture   <- areaPasture[, commonYears, ]
       yieldsPasture <- yieldsPasture[, commonYears, ]
-
-      mappingCountryCell <- toolGetMappingCoord2Country()
-      mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
 
       if (calibrated) {
 
@@ -276,11 +298,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
                                     aggregate = FALSE)
         tauCell       <- toolAggregate(x = tau, rel = mappingCountryCell,
                                        from = "iso", to = "coordiso", partrel = TRUE)
-
-        commonYears   <- intersect(getYears(tauCell), getYears(yieldsPasture))
-        yieldsPasture <- yieldsPasture[, commonYears, ]
-        tauCell       <- tauCell[, commonYears, ]
-        areaPasture   <- areaPasture[, commonYears, ]
 
         yieldsPasture <- tauCell * yieldsPasture
       }
@@ -295,9 +312,9 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       productionFAO     <- collapseNames(calcOutput("FAOmassbalance",
                                                     aggregate = FALSE)[countries, , "pasture.production.dm"])
 
-      commonYears   <- intersect(getYears(productionFAO), getYears(isoproductionMAG))
-      areaPasture   <- areaPasture[, commonYears, ]
-      productionMAG <- productionMAG[, commonYears, ]
+      commonYears      <- sort(intersect(getYears(productionFAO), getYears(isoproductionMAG)))
+      areaPasture      <- areaPasture[, commonYears, ]
+      productionMAG    <- productionMAG[, commonYears, ]
       isoproductionMAG <- isoproductionMAG[, commonYears, ]
       productionFAO    <- productionFAO[, commonYears, ]
       yieldsPasture    <- yieldsPasture[, commonYears, ]
@@ -323,10 +340,11 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
 
         if (any(noPastureYields != 0)) {
           # distribute corresponding to pasture area share
-          productionMAG     <- productionMAG * (1 - noPastureYields) +
-            noPastureYields * toolAggregate(toolIso2CellCountries(productionFAO, cells = "lpjcell"),
+          productionMAG <- productionMAG * (1 - noPastureYields) +
+            noPastureYields * toolAggregate(toolIso2CellCountries(productionFAO),
                                             rel = mappingCountryCell,
-                                            weight = areaPasture + 10^(-10), from = "iso", to = "coordiso")
+                                            weight = areaPasture + 10^(-10),
+                                            from = "iso", to = "coordiso")
         }
       }
 
@@ -363,12 +381,6 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
     x <- x[, , attributes]
   }
 
-  if (cellular) {
-    if (cells == "magpiecell") {
-      x <- toolCoord2Isocell(x, cells = cells)
-      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
-    }
-  }
   # Check for NAs and negatives
   if (any(round(x, digits = 4) < 0)) {
     stop("calcProduction produced negative values")

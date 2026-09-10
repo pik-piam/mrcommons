@@ -3,8 +3,9 @@
 #'
 #' @param landusetypes all or only one (to save computation memory)
 #' @param months FALSE for yearly average, TRUE for monthly values
-#' @param convert FALSE for raw values of temperature, TRUE add temperature of 15 degrees for countries
-#' without observations or land mass.
+#' @param convert FALSE for raw values of temperature,
+#'                TRUE add temperature of 15 degrees for countries
+#'                without observations or land mass.
 #'
 #' @return List of magpie object with results on country level, weight on country level, unit and description.
 #' @author Benjamin Leon Bodirsky
@@ -17,19 +18,23 @@
 
 
 calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE) {
-
-  temp <- calcOutput("LPJmLClimateInput_new", lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
-                     climatetype = "GSWP3-W5E5:historical",
-                     variable    = "temperature:monthlyMean",
-                     stage       = "smoothed", aggregate = FALSE)
+  # extract default arguments for LPJmL
+  cfg <- toolLPJmLDefault()
+  # read in temperature used in LPJmL historical baseline climate scenario
+  temp <- calcOutput("LPJmLClimateInput",
+                     lpjmlVersion = cfg$defaultLPJmLVersion, climatetype = cfg$baselineHist,
+                     variable = "temperature:monthlyMean", stage = "smoothed",
+                     aggregate = FALSE)
 
   if (!months) {
     temp <- dimSums(temp, dim = 3.1) / 12
   }
 
-  landuse <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+  landuse <- calcOutput("LanduseInitialisation", cellular = TRUE,
+                        cells = "lpjcell", aggregate = FALSE)
   landuse <- collapseDim(addLocation(landuse), dim = c("N", "cell"))
-  landuse <- time_interpolate(landuse, interpolated_year = getYears(temp), extrapolation_type = "constant")
+  landuse <- time_interpolate(landuse, interpolated_year = getYears(temp),
+                              extrapolation_type = "constant")
 
   # Aggregation
   landuseSum <- dimSums(landuse, dim = 3)
@@ -59,7 +64,8 @@ calcTemperature <- function(landusetypes = "all", months = FALSE, convert = TRUE
   }
 
   weight <- calcOutput("LanduseInitialisation", cellular = FALSE, aggregate = FALSE)
-  weight <- time_interpolate(weight, interpolated_year = getYears(out), extrapolation_type = "constant")
+  weight <- time_interpolate(weight, interpolated_year = getYears(out),
+                             extrapolation_type = "constant")
   if (landusetypes != "all") {
     weight <- weight[, , landusetypes]
   }
