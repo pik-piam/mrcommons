@@ -31,7 +31,7 @@ calcSeed <- function(cellular = FALSE, cells = "lpjcell", products = "kall",
     seedShr[is.infinite(seedShr)] <- 0
 
     production     <- calcOutput("Production", products = "kcr",
-                                 cellular = cellular, cells = "lpjcell",
+                                 cellular = cellular,
                                  irrigation = irrigation,
                                  calibrated = TRUE, attributes = attributes, aggregate = FALSE)[, , products]
     seed           <- production * seedShr[getItems(production, dim = 1.3), , ]

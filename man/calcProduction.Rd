@@ -7,7 +7,6 @@
 calcProduction(
   products = "kcr",
   cellular = FALSE,
-  cells = "lpjcell",
   calibrated = TRUE,
   attributes = "all",
   irrigation = FALSE
@@ -17,8 +16,6 @@ calcProduction(
 \item{products}{setname of products ("kcr", "kli", "pasture")}
 
 \item{cellular}{if TRUE production is calculate on cellular level}
-
-\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{calibrated}{if FALSE, lpj yields will be used uncalibrated,
 if true, calibrated on FAP production on country level}

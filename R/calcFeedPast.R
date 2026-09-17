@@ -3,8 +3,7 @@
 #'
 #' @param balanceflow if TRUE, a feed balance flow is included in total feed demand, if not it is excluded.
 #' @param products    products in feed baskets that shall be reported
-#' @param cellular    if TRUE value is calculated on cellular level with returned data just in dry matter
-#' @param cells       Switch between "magpiecell" (59199) and "lpjcell" (67420)
+#' @param cellular    if TRUE value is calculate on cellular level with returned datajust in dry matter
 #' @param nutrients   nutrients like dry matter (DM), reactive nitrogen (Nr), Phosphorus (P),
 #'                    Generalizable Energy (GE) and wet matter (WM).
 #' @param yearly whether to calculate yearly data or only magpie 5year timesteps
@@ -17,7 +16,7 @@
 #' @importFrom magpiesets findset
 #' @importFrom magclass getNames
 
-calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell",
+calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE,
                          products = "kall", nutrients = "all", yearly = FALSE) {
 
   if (cellular && (length(nutrients) > 1)) {
@@ -30,7 +29,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
   past <- findset("past_til2020")
   products2           <- findset(products, noset = "original")
 
-  kliProduction       <- calcOutput("Production", products = "kli", cells = "lpjcell",
+  kliProduction       <- calcOutput("Production", products = "kli",
                                     cellular = cellular, aggregate = FALSE)
   livestockProduction <- collapseNames(kliProduction[, , "dm"])
   if (yearly == FALSE) {
@@ -45,7 +44,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
   feedBaskets         <- feedBaskets[, , products2]
 
   if (cellular) {
-    feedBaskets <- toolIso2CellCountries(feedBaskets, cells = "lpjcell")
+    feedBaskets <- toolIso2CellCountries(feedBaskets)
   }
 
   cyears <- intersect(getYears(feedBaskets), getYears(animalProduction))
@@ -75,13 +74,7 @@ calcFeedPast <- function(balanceflow = TRUE, cellular = FALSE, cells = "lpjcell"
   unit                <- "Mt DM/Nr/P/K/WM or PJ energy"
   description         <- paste("Feed: dry matter: Mt (dm), gross energy: PJ (ge), reactive nitrogen: Mt (nr),",
                                "phosphor: Mt (p), potash: Mt (k), wet matter: Mt (wm).")
-  if (cellular) {
-    if (cells == "magpiecell") {
-      feedConsumption <- toolCoord2Isocell(feedConsumption, cells = cells)
-      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
-
-    }
-  }
+  
   return(list(x = feedConsumption,
               weight = NULL,
               unit = unit,

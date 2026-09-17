@@ -7,7 +7,6 @@
 #' @author Pascal Weigmann
 
 convertCMIP7_CEDS <- function(x) {
-
   # add Kosovo to Serbia
   kos <- x["kos", , ]
   getItems(kos, dim = 1) <- "srb"

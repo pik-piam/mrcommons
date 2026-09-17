@@ -24,43 +24,65 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
   if (sectoral %in% c("kcr", "lpj")) {
     # Mappings
     cropsMAgPIE  <- findset("kcr")
-    mag2lpj      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv", where = "mappingfolder")
+    mag2lpj      <- toolGetMapping(name = "MAgPIE_LPJmL.csv", type = "sectoral",
+                                   where = "mrlandcore")
     mag2lpj      <- mag2lpj[mag2lpj$MAgPIE %in% cropsMAgPIE, ]
-    cropsLPJmL   <- levels(droplevels(factor(mag2lpj$LPJmL)))
+    cropsLPJmL   <- levels(droplevels(factor(mag2lpj$LPJmL5)))
 
     # Load LPJ yields and area on cell level
-    yieldsLPJmL  <- collapseNames(calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                             climatetype = "GSWP3-W5E5:historical", subtype = "harvest",
-                                             stage = "smoothed", aggregate = FALSE)[, , cropsLPJmL])
-
-    if (sectoral == "kcr") {
-      yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
-                                     from = "LPJmL", to = "MAgPIE", dim = 3.1)
-    }
-
+    # croparea
     cropareaLPJmL   <- calcOutput("Croparea", sectoral = sectoral, physical = TRUE,
                                   cellular = TRUE, irrigation = TRUE, aggregate = FALSE)
 
-    commonYears     <- intersect(getYears(cropareaLPJmL), getYears(yieldsLPJmL))
+    # HACKATHON: In calcProduction we now set this to calcYieldsLPJmL.
+    # I'm actually not sure what is better. See comments there about multiple cropping argument.
+    # We should decide for one way and do hte same here and in calcProduction
+    # and all other instances.
+    cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
+
+    # LPJmL yields with default settings
+    # Note: When not all years of cropareaMAG are included in the historical data
+    # of LPJmL, calcOutput returns a warning that is here suppressed, since
+    # the years are in this case filled with toolHoldConstant
+    yieldsLPJmL <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                                             climatetype = cfgLPJmL$baselineHist,
+                                                             selectyears = getItems(cropareaLPJmL, dim = 2),
+                                                             aggregate = FALSE)[, , cropsLPJmL]))
+    # Note (for multiple cropping implementation): I did not set multiple cropping
+    # argument (default now: multicropping = FALSE)
+    # It then just goes to the default, so once we activate multiple cropping it would
+    # be multiple cropping yields (where it currently happens), but we should
+    # make sure it's only set to "historical" multiple cropping, never accidentally to
+    # "future/potential" multiple cropping.
+
+    # extend years
+    yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(cropareaLPJmL, dim = 2))
+
+    if (sectoral == "kcr") {
+      yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
+                                     from = "LPJmL5", to = "MAgPIE", dim = "crop")
+    }
+
+    commonYears     <- sort(intersect(getYears(cropareaLPJmL), getYears(yieldsLPJmL)))
     cropareaLPJmL   <- cropareaLPJmL[, commonYears, ]
     yieldsLPJmL     <- yieldsLPJmL[, commonYears, ]
 
     productionLPJmL <- yieldsLPJmL[, commonYears, ] * cropareaLPJmL[, commonYears, ]
     # Aggregate to countries and across irrigation dimension
-    productionLPJmL <- dimSums(productionLPJmL, dim = c(1.1, 1.2, 3.2))
+    productionLPJmL <- dimSums(productionLPJmL, dim = c("x", "y", "irrigation"))
 
     # Load FAO data and caluculate FAO yields on country level
     productionFAO   <- collapseNames(calcOutput("FAOmassbalance",
                                                 aggregate = FALSE)[, , "production"][, , "dm"][, , cropsMAgPIE])
 
-    commonYears     <- intersect(getYears(productionFAO), getYears(productionLPJmL))
+    commonYears     <- sort(intersect(getYears(productionFAO), getYears(productionLPJmL)))
     productionLPJmL <- productionLPJmL[, commonYears, ]
     productionFAO   <- productionFAO[, commonYears, ]
     cropareaLPJmL   <- cropareaLPJmL[, commonYears, ]
 
     if (sectoral == "lpj") {
       productionFAO <- toolAggregate(productionFAO, rel = mag2lpj,
-                                     from = "MAgPIE", to = "LPJmL", dim = 3.1)
+                                     from = "MAgPIE", to = "LPJmL5", dim = 3.1)
     }
 
     # Getting overlapping countries
@@ -103,15 +125,27 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     #  ?Old comment: if only one indicator is required over all crops, I suggest a weighting over area harvested
 
   } else if (sectoral == "pasture") {
+
+    # read in pasture area
+    pastareaMAgPIE <- collapseNames(calcOutput("LanduseInitialisation",
+                                               cellular = TRUE,
+                                               aggregate = FALSE)[, , "past"])
+
     # Load LPJ yields and area on cell level
-    yieldsLPJmL           <- calcOutput("LPJmL_new", version = "ggcmi_phase3_nchecks_9ca735cb",
-                                        climatetype = "GSWP3-W5E5:historical", subtype = "harvest", stage = "smoothed",
-                                        aggregate = FALSE)[, , "mgrass.rainfed"]
-    pastareaMAgPIE        <- calcOutput("LanduseInitialisation", cellular = TRUE, cells = "lpjcell",
-                                        selectyears = seq(1965, 2015, 5), aggregate = FALSE)[, , "past"]
+    cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
+    yieldsLPJmL  <- suppressWarnings(collapseNames(calcOutput("LPJmLTransform",
+                                                              years = getItems(pastareaMAgPIE, dim = 2),
+                                                              lpjmlversion = cfgLPJmL$defaultLPJmLVersion,
+                                                              climatetype = cfgLPJmL$baselineHist,
+                                                              subtype = "cropsRF:pft_harvestc",
+                                                              stage = "smoothed:cut",
+                                                              aggregate = FALSE)[, , "rainfed"][, , "grassland"]))
+    # extend years to all past
+    yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(pastareaMAgPIE, dim = 2))
+
     getNames(yieldsLPJmL) <- getNames(pastareaMAgPIE) <- "pasture"
 
-    commonYears           <- intersect(getYears(pastareaMAgPIE), getYears(yieldsLPJmL))
+    commonYears           <- sort(intersect(getYears(pastareaMAgPIE), getYears(yieldsLPJmL)))
     pastareaMAgPIE        <- pastareaMAgPIE[, commonYears, ]
     yieldsLPJmL           <- yieldsLPJmL[, commonYears, ]
 
@@ -123,7 +157,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     productionFAO    <- collapseNames(calcOutput("FAOmassbalance",
                                                  aggregate = FALSE)[, , "production"][, , "dm"][, , "pasture"])
 
-    commonYears     <- intersect(getYears(productionFAO), getYears(productionLPJmL))
+    commonYears     <- sort(intersect(getYears(productionFAO), getYears(productionLPJmL)))
     productionLPJmL <- productionLPJmL[, commonYears, ]
     productionFAO   <- productionFAO[, commonYears, ]
     pastareaMAgPIE  <- pastareaMAgPIE[, commonYears, ]
