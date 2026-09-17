@@ -16,7 +16,7 @@
 readMAgPIE <- function(subtype) {
 
   # input data version
-  ver <- "2026-06"
+  ver <- "2026-09"
 
   if (subtype == "EmiAirPoll") {
     x <- read.csv(file.path(ver, "emiAPexo.csv"), row.names = 1)
@@ -48,17 +48,17 @@ readMAgPIE <- function(subtype) {
     # !!! ATTENTION !!!
     # Please update scenario names in calcMAgPIEReport.R
 
-    fileList <- c("C_SSP1-NPi2025_2026-05-20_03.41.57-mag-4.mif",     # ssp1.rcp45
-                  "C_SSP1-PkBudg1000_2026-05-20_03.44.55-mag-4.mif",  # ssp1.rcp26
-                  "C_SSP1-PkBudg750_2026-05-20_03.43.26-mag-4.mif",   # ssp1.rcp20
-                  "C_SSP2-NDC_2026-05-20_03.30.02-mag-4.mif",         # ssp2.rcp37
-                  "C_SSP2-NPi2025_2026-05-19_19.50.08-mag-4.mif",     # ssp2.rcp45  --> ssp5.rcp45
-                  "C_SSP2-PkBudg1000_2026-05-20_03.34.31-mag-4.mif",  # ssp2.rcp26  --> ssp5.rcp26
-                  "C_SSP2-PkBudg750_2026-05-20_03.31.32-mag-4.mif",   # ssp2.rcp20  --> ssp5.rcp20
+    fileList <- c("C_SSP1-NPi2025_2026-09-05_14.52.09-mag-4.mif",     # ssp1.rcp45
+                  "C_SSP1-PkBudg1000_2026-09-05_14.52.28-mag-4.mif",  # ssp1.rcp26
+                  "C_SSP1-PkBudg750_2026-09-05_14.52.19-mag-4.mif",   # ssp1.rcp20
+                  "C_SSP2-NDC_2026-09-05_14.51.11-mag-4.mif",         # ssp2.rcp37
+                  "C_SSP2-NPi2025_2026-09-05_08.17.05-mag-4.mif",     # ssp2.rcp45  --> ssp5.rcp45
+                  "C_SSP2-PkBudg1000_2026-09-05_14.51.40-mag-4.mif",  # ssp2.rcp26  --> ssp5.rcp26
+                  "C_SSP2-PkBudg750_2026-09-05_14.51.21-mag-4.mif",   # ssp2.rcp20  --> ssp5.rcp20
                   #"C_SSP2-PkBudg750_wo100EJBiobound_2026-05-20_03.33.02-mag-4.mif", # cannot be used because it has the same rcp as SSP2-PkBudg750 (rcp20)
                   #"C_SSP2-EcBudg500_2026-05-20_03.36.01-mag-4.mif",                 # cannot be used because it has the same rcp as SSP2-PkBudg1000 (rcp26)
-                  "C_SSP3-NPi2025_2026-05-20_03.37.30-mag-4.mif",     #ssp3.rcp45
-                  "C_SSP3-PkBudg1000_2026-05-20_03.38.59-mag-4.mif"   #ssp3.rcp26
+                  "C_SSP3-NPi2025_2026-05-20_03.37.30-mag-4.mif",     #ssp3.rcp45 ! Note: this is data from May 2026 because SSP3 failed in September 2026
+                  "C_SSP3-PkBudg1000_2026-05-20_03.38.59-mag-4.mif"   #ssp3.rcp26 ! Note: this is data from May 2026 because SSP3 failed in September 2026
                   #"C_SSP3-rollBack_2026-05-20_03.40.28-mag-4.mif"                   # cannot be used because it has the same rcp as SSP3-NPi2025 (rcp45)
                   )
 
