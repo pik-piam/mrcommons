@@ -63,8 +63,22 @@ calcMAgPIEReport <- function(subtype) {
       "Emissions|CO2|Land|Land-use Change|Soil|Land Conversion|+|Withdrawals (Mt CO2/yr);co2lucNegUnintent",
       "Emissions|CO2|Land|Land-use Change|Soil|Soil Carbon Management|+|Withdrawals (Mt CO2/yr);co2lucNegIntentSCM",
       "Emissions|CO2|Land|Land-use Change|Timber|+|Storage in HWP (Mt CO2/yr);co2lucNegIntentTimber",
-      "Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP (Mt CO2/yr);co2lucPos"
+      "Emissions|CO2|Land|Land-use Change|Timber|+|Release from HWP (Mt CO2/yr);co2lucPos",
+      # Land-use-change children that only newer MAgPIE reports carry (magpie4 >= 2.82): regrowth of the
+      # separate other-planted-forest pool, and the legacy-clearing decay tail (its Storage and Release
+      # children). Dropped below when absent.
+      "Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest (Mt CO2/yr);co2lucNegUnintent",
+      "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release (Mt CO2/yr);co2lucPos",
+      "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage (Mt CO2/yr);co2lucNegUnintent"
     )
+
+    # Only the three children above are optional: drop them when the report lacks them, so older reports
+    # aggregate to the same result. Every other mapping row stays required, so a genuinely missing (e.g.
+    # renamed) variable still fails loudly in the subsetting below instead of understating the subtypes.
+    optionalNames <- c("Emissions|CO2|Land|Land-use Change|Regrowth|+|Other Planted Forest (Mt CO2/yr)",
+                       "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Release (Mt CO2/yr)",
+                       "Emissions|CO2|Land|Land-use Change|Legacy clearing|+|Storage (Mt CO2/yr)")
+    mapping <- mapping[!mapping$magpieNames %in% setdiff(optionalNames, getNames(x, dim = 3)), ]
 
     # aggregate (sum over) MAgPIE variables to REMIND entys
     x <- toolAggregate(x[, , mapping$magpieNames], rel = mapping, from = "magpieNames", to = "remindNames", dim = 3.3)
@@ -164,11 +178,11 @@ calcMAgPIEReport <- function(subtype) {
       # "-Base-mag-4"       = ".none",  # nolint
     ))
 
-  # Fill missing scenarios expected in REMIND with scenarios that are closest to them and rename them to the expected scenario names in REMIND
-  # no SSP5 data available --> use SSP2 data
-  SSP5 <- x[, , "SSP2"]
-  getNames(SSP5, dim = 1) <- "SSP5"
-  x <- mbind(x, SSP5)
+  # Fill missing scenarios expected in REMIND with scenarios that are closest to them and rename them
+  # to the expected scenario names in REMIND. No SSP5 data available --> use SSP2 data
+  ssp5 <- x[, , "SSP2"]
+  getNames(ssp5, dim = 1) <- "SSP5"
+  x <- mbind(x, ssp5)
 
   # Remove years before 2005. They are not relevant for REMIND and would raise warnings about NA,
   # because "Emi|BC|AFOLU|Land|Fires|+|Peat Burning (Mt BC/yr)" is NA for 1995
