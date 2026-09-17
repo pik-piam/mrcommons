@@ -74,7 +74,7 @@ convertSSPResults <- function(x) {
                  "Agricultural Demand|Bioenergy|2nd generation (million t DM/yr)")
 
   # use harvested area as weight
-  weightBio <- setYears(dimSums(calcOutput("Croparea", sectoral = "kcr", physical = TRUE, aggregate = FALSE),
+  weightBio <- setYears(dimSums(calcOutput("Croparea", physical = TRUE, aggregate = FALSE),
                                 dim = 3)[, 2010, ], NULL)
 
   for (sel in selection) {

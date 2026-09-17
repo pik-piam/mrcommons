@@ -37,8 +37,9 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
                                  irrigation = irrigation, attributes = "nr", aggregate = FALSE)[, past, ])
   seed <- collapseNames(calcOutput("Seed", cellular = cellular, products = "kcr",
                                    attributes = "nr", irrigation = irrigation, aggregate = FALSE)[, past, ])
-  fixation <- calcOutput("NitrogenFixationPast", cellular = cellular, irrigation = irrigation,
-                         fixation_types = "fixation_crops", aggregate = FALSE)
+  fixation <- calcOutput("NitrogenFixationSymbiotic", cellular = cellular, irrigation = irrigation,
+                         aggregate = FALSE)
+  fixation <- dimSums(fixation, dim = 3.2)
 
   if (irrigation2 != "FALSE") { # again, for size reasons
     harvest <- harvest[, , irrigation2]
@@ -52,13 +53,13 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
     add_dimension(harvest, nm = "harvest", dim = 3.1),
     add_dimension(ag, nm = "ag", dim = 3.1),
     add_dimension(bg, nm = "bg", dim = 3.1),
-    add_dimension(-fixation[, getYears(harvest),], nm = "fixation_crops", dim = 3.1),
+    -fixation[, getYears(harvest), ],
     add_dimension(-seed, nm = "seed", dim = 3.1)
   )
 
   if (indicator == "by_physical_area") {
     area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE, cellular = cellular,
-                                     irrigation = irrigation, sectoral = "kcr")[, past, ])
+                                     irrigation = irrigation)[, past, ])
     if (irrigation2 != "FALSE") { # again, for size reasons
       area <- area[, , irrigation2]
     }
@@ -71,7 +72,7 @@ calcNitrogenWithdrawalByCrop <- function(indicator = "total", cellular = FALSE, 
     unit <- "t Nr per ha physical area"
   } else if (indicator == "by_area_harvested") {
     area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular, irrigation = irrigation,
-                                     aggregate = FALSE, sectoral = "kcr")[, past, ])
+                                     aggregate = FALSE)[, past, ])
     if (irrigation2 != "FALSE") { # again, for size reasons
       area <- area[, , irrigation2]
     }

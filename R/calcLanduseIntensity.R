@@ -24,7 +24,8 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
   if (sectoral %in% c("kcr", "lpj")) {
     # Mappings
     cropsMAgPIE  <- findset("kcr")
-    mag2lpj      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv", where = "mappingfolder")
+    mag2lpj      <- toolGetMapping(type = "sectoral", name = "MAgPIE_LPJmL.csv",
+                                   where = "mappingfolder")
     mag2lpj      <- mag2lpj[mag2lpj$MAgPIE %in% cropsMAgPIE, ]
     cropsLPJmL   <- levels(droplevels(factor(mag2lpj$LPJmL)))
 
