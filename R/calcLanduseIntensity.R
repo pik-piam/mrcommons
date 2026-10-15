@@ -133,13 +133,12 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # Load LPJ yields and area on cell level
     cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
-    yieldsLPJmL  <- suppressWarnings(collapseNames(calcOutput("LPJmLTransform",
-                                                              years = getItems(pastareaMAgPIE, dim = 2),
-                                                              lpjmlversion = cfgLPJmL$defaultLPJmLVersion,
-                                                              climatetype = cfgLPJmL$baselineHist,
-                                                              subtype = "cropsRF:pft_harvestc",
-                                                              stage = "smoothed:cut",
-                                                              aggregate = FALSE)[, , "rainfed"][, , "grassland"]))
+    # read rainfed grass yields
+    yieldsLPJmL  <- collapseNames(calcOutput("YieldsLPJmL",
+                                             lpjml       = cfgLPJmL$defaultLPJmLVersion,
+                                             climatetype = cfgLPJmL$baselineHist,
+                                             selectyears = getItems(pastareaMAgPIE, dim = 2),
+                                             aggregate   = FALSE)[, , "grassland"][, , "rainfed"])
     # extend years to all past
     yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(pastareaMAgPIE, dim = 2))
 
@@ -167,6 +166,14 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
                                   getItems(productionFAO, dim = 1.1))
     productionLPJmL  <- productionLPJmL[regions, , ]
     productionFAO    <- productionFAO[regions, , ]
+
+    # A country without LPJmL grass production gets tau = Inf below, which is then set to 0
+    # without a message. If no country and year has a value other than zero (all zero, all NA,
+    # or nothing in common with the FAO data), the input is unusable: stop.
+    if (all(productionLPJmL == 0, na.rm = TRUE)) {
+      stop("calcLanduseIntensity: LPJmL pasture production has no non-zero value in any country ",
+           "and year, so pasture tau cannot be computed from it.")
+    }
 
     # Calculate TAU as ratio of FAO to LPJmL yields
     tau              <- productionFAO / productionLPJmL
