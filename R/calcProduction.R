@@ -60,14 +60,11 @@ calcProduction <- function(products = "kcr", # nolint
                                 cellular = TRUE, irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
 
       # LPJmL yields with default settings
-      # Note: When not all years of cropareaMAG are included in the historical data
-      # of LPJmL, calcOutput returns a warning that is here suppressed, since
-      # the years are in this case filled with toolHoldConstant
       cfgLPJmL  <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
-      yieldsLPJ <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+      yieldsLPJ <- collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
                                             climatetype = cfgLPJmL$baselineHist,
-                                            selectyears = getItems(cropareaMAG, dim = 2),
-                                            aggregate = FALSE)[, , cropsLPJmL]))
+                                            selectyears = NULL,
+                                            aggregate = FALSE)[, , cropsLPJmL])
       # Note (for multiple cropping implementation): I did not set multiple cropping
       # argument (default now: multicropping = FALSE)
       # It then just goes to the default, so once we activate multiple cropping it would
@@ -77,6 +74,7 @@ calcProduction <- function(products = "kcr", # nolint
 
       # extend to needed years
       yieldsLPJ <- toolHoldConstant(yieldsLPJ, years = getItems(cropareaMAG, dim = 2))
+      yieldsLPJ <- yieldsLPJ[, getItems(cropareaMAG, dim = 2), ]
 
       # map LPJmL crops to MAgPIE crops
       yieldsMAG <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ,
@@ -269,15 +267,11 @@ calcProduction <- function(products = "kcr", # nolint
                                                  aggregate = FALSE)[, , "past"])
 
       # LPJmL yields with default settings for pasture (grassland yields only exist for rainfed conditions)
-      # Note: When not all commonYears are included in the historical data
-      # of LPJmL, calcOutput returns a warning that is here suppressed, since
-      # the years are in this case filled with toolHoldConstant.
-      # Once historical LPJmL data is updated, this warning becomes irrelevant
       cfgLPJmL  <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
-      yieldsPasture <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
-                                                                 climatetype = cfgLPJmL$baselineHist,
-                                                                 selectyears = getItems(areaPasture, dim = 2),
-                                                                 aggregate = FALSE)[, , "grassland"][, , "rainfed"]))
+      yieldsPasture <- collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                                climatetype = cfgLPJmL$baselineHist,
+                                                selectyears = NULL,
+                                                aggregate = FALSE)[, , "grassland"][, , "rainfed"])
       # Note (for multiple cropping implementation): I did not set multiple cropping
       # argument (default now: multicropping = FALSE)
       # It then just goes to the default, so once we activate multiple cropping it would

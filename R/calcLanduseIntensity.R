@@ -41,13 +41,10 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
 
     # LPJmL yields with default settings
-    # Note: When not all years of cropareaMAG are included in the historical data
-    # of LPJmL, calcOutput returns a warning that is here suppressed, since
-    # the years are in this case filled with toolHoldConstant
-    yieldsLPJmL <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
-                                                             climatetype = cfgLPJmL$baselineHist,
-                                                             selectyears = getItems(cropareaLPJmL, dim = 2),
-                                                             aggregate = FALSE)[, , cropsLPJmL]))
+    yieldsLPJmL <- collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                            climatetype = cfgLPJmL$baselineHist,
+                                            selectyears = NULL,
+                                            aggregate = FALSE)[, , cropsLPJmL])
     # Note (for multiple cropping implementation): I did not set multiple cropping
     # argument (default now: multicropping = FALSE)
     # It then just goes to the default, so once we activate multiple cropping it would
@@ -57,6 +54,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # extend years
     yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(cropareaLPJmL, dim = 2))
+    yieldsLPJmL <- yieldsLPJmL[, getItems(cropareaLPJmL, dim = 2), ]
 
     if (sectoral == "kcr") {
       yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
@@ -137,10 +135,11 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     yieldsLPJmL  <- collapseNames(calcOutput("YieldsLPJmL",
                                              lpjml       = cfgLPJmL$defaultLPJmLVersion,
                                              climatetype = cfgLPJmL$baselineHist,
-                                             selectyears = getItems(pastareaMAgPIE, dim = 2),
+                                             selectyears = NULL,
                                              aggregate   = FALSE)[, , "grassland"][, , "rainfed"])
     # extend years to all past
     yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(pastareaMAgPIE, dim = 2))
+    yieldsLPJmL <- yieldsLPJmL[, getItems(pastareaMAgPIE, dim = 2), ]
 
     getNames(yieldsLPJmL) <- getNames(pastareaMAgPIE) <- "pasture"
 
