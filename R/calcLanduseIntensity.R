@@ -166,9 +166,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     productionLPJmL  <- productionLPJmL[regions, , ]
     productionFAO    <- productionFAO[regions, , ]
 
-    # A country without LPJmL grass production gets tau = Inf below, which is then set to 0
-    # without a message. If no country and year has a value other than zero (all zero, all NA,
-    # or nothing in common with the FAO data), the input is unusable: stop.
+    # stop if LPJmL grass production is zero (or NA) everywhere
     if (all(productionLPJmL == 0, na.rm = TRUE)) {
       stop("calcLanduseIntensity: LPJmL pasture production has no non-zero value in any country ",
            "and year, so pasture tau cannot be computed from it.")
