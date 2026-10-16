@@ -281,6 +281,7 @@ calcProduction <- function(products = "kcr", # nolint
 
       # extend to needed years
       yieldsPasture <- toolHoldConstant(yieldsPasture, years = getItems(areaPasture, dim = 2))
+      yieldsPasture <- yieldsPasture[, getItems(areaPasture, dim = 2), ]
 
       commonYears   <- sort(intersect(getYears(yieldsPasture), getYears(areaPasture)))
       areaPasture   <- areaPasture[, commonYears, ]
