@@ -41,13 +41,10 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
     cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
 
     # LPJmL yields with default settings
-    # Note: When not all years of cropareaMAG are included in the historical data
-    # of LPJmL, calcOutput returns a warning that is here suppressed, since
-    # the years are in this case filled with toolHoldConstant
-    yieldsLPJmL <- suppressWarnings(collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
-                                                             climatetype = cfgLPJmL$baselineHist,
-                                                             selectyears = getItems(cropareaLPJmL, dim = 2),
-                                                             aggregate = FALSE)[, , cropsLPJmL]))
+    yieldsLPJmL <- collapseNames(calcOutput("YieldsLPJmL", lpjml = cfgLPJmL$defaultLPJmLVersion,
+                                            climatetype = cfgLPJmL$baselineHist,
+                                            selectyears = NULL,
+                                            aggregate = FALSE)[, , cropsLPJmL])
     # Note (for multiple cropping implementation): I did not set multiple cropping
     # argument (default now: multicropping = FALSE)
     # It then just goes to the default, so once we activate multiple cropping it would
@@ -57,6 +54,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # extend years
     yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(cropareaLPJmL, dim = 2))
+    yieldsLPJmL <- yieldsLPJmL[, getItems(cropareaLPJmL, dim = 2), ]
 
     if (sectoral == "kcr") {
       yieldsLPJmL   <- toolAggregate(yieldsLPJmL, rel = mag2lpj,
@@ -133,15 +131,15 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # Load LPJ yields and area on cell level
     cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
-    yieldsLPJmL  <- suppressWarnings(collapseNames(calcOutput("LPJmLTransform",
-                                                              years = getItems(pastareaMAgPIE, dim = 2),
-                                                              lpjmlversion = cfgLPJmL$defaultLPJmLVersion,
-                                                              climatetype = cfgLPJmL$baselineHist,
-                                                              subtype = "cropsRF:pft_harvestc",
-                                                              stage = "smoothed:cut",
-                                                              aggregate = FALSE)[, , "rainfed"][, , "grassland"]))
+    # read rainfed grass yields
+    yieldsLPJmL  <- collapseNames(calcOutput("YieldsLPJmL",
+                                             lpjml       = cfgLPJmL$defaultLPJmLVersion,
+                                             climatetype = cfgLPJmL$baselineHist,
+                                             selectyears = NULL,
+                                             aggregate   = FALSE)[, , "grassland"][, , "rainfed"])
     # extend years to all past
     yieldsLPJmL <- toolHoldConstant(yieldsLPJmL, years = getItems(pastareaMAgPIE, dim = 2))
+    yieldsLPJmL <- yieldsLPJmL[, getItems(pastareaMAgPIE, dim = 2), ]
 
     getNames(yieldsLPJmL) <- getNames(pastareaMAgPIE) <- "pasture"
 
@@ -167,6 +165,12 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
                                   getItems(productionFAO, dim = 1.1))
     productionLPJmL  <- productionLPJmL[regions, , ]
     productionFAO    <- productionFAO[regions, , ]
+
+    # stop if LPJmL grass production is zero (or NA) everywhere
+    if (all(productionLPJmL == 0, na.rm = TRUE)) {
+      stop("calcLanduseIntensity: LPJmL pasture production has no non-zero value in any country ",
+           "and year, so pasture tau cannot be computed from it.")
+    }
 
     # Calculate TAU as ratio of FAO to LPJmL yields
     tau              <- productionFAO / productionLPJmL
