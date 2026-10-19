@@ -21,21 +21,17 @@
 calcClimateClass <- function(datasource = "koeppen") {
 
   if (datasource == "koeppen") {
-
-    x      <- readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")
-
+    x <- readSource("Koeppen", subtype = "cellular", convert = "onlycorrect")
   } else if (grepl("ipcc", datasource)) {
-
     x <- readSource("IPCCClimate", convert = "onlycorrect")
     getNames(x) <- gsub(" ", "_", tolower(getNames(x)))
 
     if (grepl("ipccReduced", datasource)) {
-      reduceIPCC  <- toolGetMapping("IPCC2IPCCreduced.csv", type = "sectoral", where = "mappingfolder")
-      x           <- toolAggregate(x, reduceIPCC, from = "ipcc", to = datasource, dim = 3, partrel = TRUE)
+      reduceIPCC <- toolGetMapping("IPCC2IPCCreduced.csv", type = "sectoral", where = "mappingfolder")
+      x <- toolAggregate(x, reduceIPCC, from = "ipcc", to = datasource, dim = 3, partrel = TRUE)
     }
-
   } else {
-    stop("Source inc calcClimateClass unkown.")
+    stop("Source in calcClimateClass unkown.")
   }
 
   weight <- calcOutput("LandArea", aggregate = FALSE)

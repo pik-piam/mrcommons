@@ -9,7 +9,6 @@
 #' calcOutput("calcLivestockGridded")
 #' }
 #'
-#' @importFrom magpiesets findset
 
 calcLivestockGridded <- function(details = FALSE) {
 
@@ -23,7 +22,7 @@ calcLivestockGridded <- function(details = FALSE) {
   ruminants     <- c("livst_milk", "livst_rum")
 
   # Divide ruminants in extensive and intensive depending on feedmix
-  feedPast      <- calcOutput("FeedPast", nutrients = "nr", aggregate = FALSE)
+  feedPast            <- calcOutput("FeedPast", nutrients = "nr", aggregate = FALSE)
   commonYears         <- intersect(getYears(feedPast), getYears(livestockProduction))
   feedPast            <- feedPast[, commonYears, ]
   livestockProduction <- livestockProduction[, commonYears, ]
@@ -42,7 +41,7 @@ calcLivestockGridded <- function(details = FALSE) {
 
   # calculate extensive ruminant production per cell from pasture production share
   pastureProduction     <- collapseNames(calcOutput("Production", products = "pasture",
-                                                    cellular = TRUE, cells = "lpjcell",
+                                                    cellular = TRUE,
                                                     calibrated = TRUE, aggregate = FALSE)[, , "nr"])
 
   commonYears   <- intersect(getYears(pastureProduction), getYears(livestockProduction))
@@ -58,7 +57,7 @@ calcLivestockGridded <- function(details = FALSE) {
 
   # calculate intensive ruminant production per cell from cropland share
   kcrProduction <- calcOutput("Production", products = "kcr",
-                              cellular = TRUE, cells = "lpjcell", aggregate = FALSE)
+                              cellular = TRUE, aggregate = FALSE)
   kcrProduction <- kcrProduction[, , "dm"][, , c("betr", "begr"), invert = TRUE]
 
   commonYears   <- intersect(getYears(kcrProduction), getYears(livestockProduction))

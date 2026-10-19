@@ -7,7 +7,6 @@
 calcFeedBalanceflow(
   per_livestock_unit = FALSE,
   cellular = FALSE,
-  cells = "lpjcell",
   products = "kall",
   future = "constant",
   yearly = FALSE
@@ -17,8 +16,6 @@ calcFeedBalanceflow(
 \item{per_livestock_unit}{default false}
 
 \item{cellular}{if TRUE value is calculated on cellular level}
-
-\item{cells}{Switch between "magpiecell" (59199) and "lpjcell" (67420)}
 
 \item{products}{products in feed baskets that shall be reported}
 

@@ -87,6 +87,14 @@ calcNitrogenBudgetCropland <- function(cellular = FALSE,
     outMinusIn <- dimSums(outputs, dim = 3.1) - dimSums(inputsDirect, dim = 3.1)
     balanceflow <- (outMinusIn / max_snupe) - dimSums(inputs, dim = 3.1)
     balanceflow[balanceflow < 0] <- 0
+    
+    # Ensure total inputs are non-negative (handle floating point precision)
+    totalInputs <- dimSums(inputs, dim = 3.1) + balanceflow
+    tolerance <- 1e-12  # Conservative threshold above machine epsilon
+    needsAdjustment <- totalInputs < tolerance
+    balanceflow[needsAdjustment] <- balanceflow[needsAdjustment] + 
+                                    (tolerance - totalInputs[needsAdjustment])
+    
   } else {
     balanceflow <- dimSums(outputs, dim = 3.1) * 0
   }

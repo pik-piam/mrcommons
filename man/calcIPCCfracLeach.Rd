@@ -4,9 +4,17 @@
 \alias{calcIPCCfracLeach}
 \title{calcIPCCfracLeach}
 \usage{
-calcIPCCfracLeach(cellular = TRUE)
+calcIPCCfracLeach(
+  lpjml = "lpjml5.10.0-m4",
+  climatetype = "MRI-ESM2-0:ssp245",
+  cellular = TRUE
+)
 }
 \arguments{
+\item{lpjml}{LPJmL version passed to calcLPJmLTransform for potential evapotranspiration}
+
+\item{climatetype}{Climate model passed to calcLPJmLTransform for potential evapotranspiration}
+
 \item{cellular}{if true, returned on cell level}
 }
 \value{

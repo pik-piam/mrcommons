@@ -4,12 +4,10 @@
 \alias{calcSOMlossN}
 \title{calcSOMlossN}
 \usage{
-calcSOMlossN(cellular = FALSE, cells = "lpjcell")
+calcSOMlossN(cellular = FALSE)
 }
 \arguments{
 \item{cellular}{if TRUE cellular level is returned}
-
-\item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 }
 \value{
 List of magpie object with results on country or cellular level,
