@@ -20,11 +20,8 @@ calcAnimalStocks <- function(grouping = "IPCC") {
 
   marketSwineShare <- 0.9 # table 10.19
 
-  # LiveHead2024 is FAOSTAT QCL: CPC-based item names (e.g. "882|Raw milk of cattle") and
-  # dairy animals as element "Milk_Animals_(An)".
-  # Read with convert = "onlycorrect" and replicate convertFAO_online's remaining steps with
-  # fill = NA instead of fill = 0, so toolFillStockGaps() can tell genuine gaps from real
-  # zeros; any NA still left after gap-filling is cleaned to 0 before the return() below.
+  # converted here instead of in convertFAO_online() to keep NAs, so that toolFillStockGaps()
+  # can tell gaps from real zeros
   fao <- readSource("FAO_online", "LiveHead2024", convert = "onlycorrect")
   relativeDelete <- c("Yield_(100_g/ha)", "Yield_Carcass_Weight_(Hg/An)", "Yield_(100mg/An)",
                       "Yield_(No/An)", "Yield_(100_mg/An)", "Yield_(100_g/An)",
@@ -32,36 +29,28 @@ calcAnimalStocks <- function(grouping = "IPCC") {
                       "Yield_(100_g)", "Yield_(kg/ha)", "Yield_Carcass_Weight_(g/An)",
                       "Yield_Carcass_Weight_(kg/An)")
   relativeDelete <- relativeDelete[relativeDelete %in% getItems(fao, dim = 3.2)]
-  if (length(relativeDelete) > 0) fao <- fao[, , relativeDelete, invert = TRUE]
-
-  # convert = "onlycorrect" skips convertFAO_online(), so its country handling is repeated
-  # here: the former countries XET (Ethiopia PDR), XBL (Belgium-Luxembourg) and XSD (Sudan
-  # former) are split to their successors, and XCN (China, mainland) replaces FAO's China
-  # total, which also contains TWN, HKG and MAC. toolCountryFill() would otherwise drop these
-  # codes, e.g. Ethiopia's cattle stock before 1993, which FAO reports only under XET.
-  additionalMapping <- list()
-  if (all(c("XET", "ETH", "ERI") %in% getItems(fao, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XET", "ETH", "y1992"), c("XET", "ERI", "y1992")))
-  }
-  if (all(c("XBL", "BEL", "LUX") %in% getItems(fao, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XBL", "BEL", "y1999"), c("XBL", "LUX", "y1999")))
-  }
-  if (all(c("XSD", "SSD", "SDN") %in% getItems(fao, dim = 1.1))) {
-    additionalMapping <- append(additionalMapping, list(c("XSD", "SSD", "y2011"), c("XSD", "SDN", "y2011")))
-  }
-  if ("XCN" %in% getItems(fao, dim = 1.1)) {
-    if ("CHN" %in% getItems(fao, dim = 1.1)) fao <- fao["CHN", , , invert = TRUE]
-    getItems(fao, dim = 1)[getItems(fao, dim = 1) == "XCN"] <- "CHN"
+  if (length(relativeDelete) > 0) {
+    fao <- fao[, , relativeDelete, invert = TRUE]
   }
 
-  # toolISOhistorical() warns whenever the successor-country weight it looks up for some
-  # unrelated item/element is NA in the split year - harmless (falls back to weight 0 for
-  # just that item), but noisy given how many real NAs this file's fao object carries.
-  # Silenced here; doesn't affect any values.
-  fao <- suppressWarnings(toolISOhistorical(fao, overwrite = TRUE, additional_mapping = additionalMapping))
+  prep <- toolFAOcountryPrep(fao)
+  # NA weights are expected, as NAs are kept; they are set to 0 for the affected items only
+  fao <- suppressSpecificWarnings(
+    toolISOhistorical(prep$x, overwrite = TRUE, additional_mapping = prep$additionalMapping),
+    "Weight in toolISOhistorical contained NAs", fixed = TRUE
+  )
   fao <- toolCountryFill(fao, fill = NA, verbosity = 2)
 
   liveHead <- dimSums(fao, dim = "ElementShort")
+
+  # gaps are filled per item before summing, so that a gap in one item is not masked by the others
+  fillCombined <- function(stock, production) {
+    filled <- stock
+    for (i in seq_len(ndata(stock))) {
+      filled[, , i] <- as.vector(toolFillStockGaps(stock[, , i], production[, , i]))
+    }
+    return(dimSums(filled, dim = 3))
+  }
 
   # gap-filled species totals; the dairy/laying sub-populations are subtracted from them below
   cattleStock  <- toolFillStockGaps(liveHead[, , "866|Cattle"],
@@ -72,8 +61,10 @@ calcAnimalStocks <- function(grouping = "IPCC") {
                                     fao[, , "977|Meat of sheep, fresh or chilled.Production_(t)"])
   goatStock    <- toolFillStockGaps(liveHead[, , "1016|Goats"],
                                     fao[, , "1017|Meat of goat, fresh or chilled.Production_(t)"])
-  chickenStock <- toolFillStockGaps(toolCombineItems(liveHead, c("1057|Chickens", "1083|Other birds"), dim = 3.1),
-                                    fao[, , "1058|Meat of chickens, fresh or chilled.Production_(t)"])
+  chickenHeadItems <- c("1057|Chickens", "1083|Other birds")
+  chickenMeatItems <- c("1058|Meat of chickens, fresh or chilled.Production_(t)",
+                        "1089|Meat of pigeons and other birds nec, fresh, chilled or frozen.Production_(t)")
+  chickenStock <- fillCombined(liveHead[, , chickenHeadItems], fao[, , chickenMeatItems])
   # species used directly as IPCC categories, without a subtraction
   swineStock   <- toolFillStockGaps(liveHead[, , "1034|Swine / pigs"],
                                     fao[, , "1035|Meat of pig with the bone, fresh or chilled.Production_(t)"])
@@ -82,24 +73,18 @@ calcAnimalStocks <- function(grouping = "IPCC") {
   duckStock    <- toolFillStockGaps(liveHead[, , "1068|Ducks"],
                                     fao[, , "1069|Meat of ducks, fresh or chilled.Production_(t)"])
 
-  # camels, turkey (geese+turkeys) and mules/asses each have a matching FAO meat-
-  # production series, combined on both sides with toolCombineItems() before gap-filling,
-  # same as chickenStock/layerStock below.
   camelHeadItems <- c("1126|Camels", "1157|Other camelids")
   camelMeatItems <- c("1127|Meat of camels, fresh or chilled.Production_(t)",
                       "1158|Meat of other domestic camelids, fresh or chilled.Production_(t)")
-  camelStock <- toolFillStockGaps(toolCombineItems(liveHead, camelHeadItems, dim = 3.1),
-                                  toolCombineItems(fao, camelMeatItems, dim = 3))
+  camelStock <- fillCombined(liveHead[, , camelHeadItems], fao[, , camelMeatItems])
   turkeyHeadItems <- c("1072|Geese", "1079|Turkeys")
   turkeyMeatItems <- c("1073|Meat of geese, fresh or chilled.Production_(t)",
                        "1080|Meat of turkeys, fresh or chilled.Production_(t)")
-  turkeyStock <- toolFillStockGaps(toolCombineItems(liveHead, turkeyHeadItems, dim = 3.1),
-                                   toolCombineItems(fao, turkeyMeatItems, dim = 3))
+  turkeyStock <- fillCombined(liveHead[, , turkeyHeadItems], fao[, , turkeyMeatItems])
   muleAssHeadItems <- c("1107|Asses", "1110|Mules and hinnies")
   muleAssMeatItems <- c("1108|Meat of asses, fresh or chilled.Production_(t)",
                         "1111|Meat of mules, fresh or chilled.Production_(t)")
-  muleAssStock <- toolFillStockGaps(toolCombineItems(liveHead, muleAssHeadItems, dim = 3.1),
-                                    toolCombineItems(fao, muleAssMeatItems, dim = 3))
+  muleAssStock <- fillCombined(liveHead[, , muleAssHeadItems], fao[, , muleAssMeatItems])
 
   # dairy/laying sub-population series (used below to split each species' total stock
   # into dairy-or-layer vs other/broiler), gap-filled against milk/egg production rather
@@ -112,12 +97,12 @@ calcAnimalStocks <- function(grouping = "IPCC") {
   dairySheepStock <- toolFillStockGaps(dairySheepRaw, fao[, , "982|Raw milk of sheep.Production_(t)"])
   dairyGoatRaw    <- fao[, , "1020|Raw milk of goats.Milk_Animals_(An)"]
   dairyGoatStock  <- toolFillStockGaps(dairyGoatRaw, fao[, , "1020|Raw milk of goats.Production_(t)"])
-  layerRaw        <- toolCombineItems(fao, c("1062|Hen eggs in shell, fresh.Laying_(An)",
-                                             "1091|Eggs from other birds in shell, fresh, nec.Laying_(An)"), dim = 3)
+  layerHeadItems <- c("1062|Hen eggs in shell, fresh.Laying_(An)",
+                      "1091|Eggs from other birds in shell, fresh, nec.Laying_(An)")
   layerProdItems <- c("1062|Hen eggs in shell, fresh.Production_(t)",
                       "1091|Eggs from other birds in shell, fresh, nec.Production_(t)")
-  layerStock      <- toolFillStockGaps(layerRaw,
-                                       toolCombineItems(fao, layerProdItems, dim = 3))
+  layerRaw        <- toolCombineItems(fao, layerHeadItems, dim = 3)
+  layerStock      <- fillCombined(fao[, , layerHeadItems], fao[, , layerProdItems])
   dairyCamelRaw   <- fao[, , "1130|Raw milk of camel.Milk_Animals_(An)"]
   dairyCamelStock <- toolFillStockGaps(dairyCamelRaw, fao[, , "1130|Raw milk of camel.Production_(t)"])
 
