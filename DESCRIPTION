@@ -37,7 +37,8 @@ Authors@R: c(
     person("Robin", "Hasse", role = "aut"),
     person("Gabriel", "Abrahão", role = "aut"),
     person("Pascal", "Weigmann", role = "aut"),
-    person("Jan Philipp", "Dietrich", , "dietrich@pik-potsdam.de", role = c("aut", "cre"))
+    person("Jan Philipp", "Dietrich", , "dietrich@pik-potsdam.de", role = c("aut", "cre")),
+    person("Bin", "Lin", role = "aut")
   )
 Description: Provides useful functions and a common structure to all the
     input data required to run models like MAgPIE and REMIND of model
