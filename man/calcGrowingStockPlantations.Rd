@@ -13,12 +13,12 @@ calcGrowingStockPlantations(indicator = "per_ha")
 List of magpie objects with results on country level, weight on country level, unit and description.
 }
 \description{
-Calculates the growing stocks from FAO data for planted forests (plantations).
+Growing stock of plantation forest (FRA 2025) in the year 2025, the MAgPIE calibration target.
+See \code{\link{calcGrowingStockFRA}} for the fill of countries without a stock entry.
 }
 \examples{
 \dontrun{
 calcOutput("GrowingStockPlantations", indicator = "per_ha", aggregate = TRUE)
-calcOutput("GrowingStockPlantations", indicator = "total", aggregate = TRUE)
 }
 
 }
