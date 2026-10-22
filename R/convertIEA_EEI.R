@@ -15,7 +15,7 @@ convertIEA_EEI <- function(x) { #nolint object_name_linter
   x["SRB", , ] <- x["SRB", , ] + x1
   x <- x[c("KOS"), , , invert = TRUE]
 
-  x <- toolCountryFill(x, 0, verbosity = 2)
+  x <- toolCountryFill(x, verbosity = 2)
 
   return(x)
 }
