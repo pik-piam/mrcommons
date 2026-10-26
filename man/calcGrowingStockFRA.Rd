@@ -16,9 +16,10 @@ List of magpie objects with results on country level, weight on country level, u
 }
 \description{
 Growing stock of one FRA 2025 forest category at country level, all reporting years.
-For plantation and other planted forest, a country with area in the category but no
-growing stock entry gets the planted-forest growing stock. The weight is the category
-area, so such countries weigh in with their category area, not with their planted-forest area.
+A country without a growing stock entry gets the planted-forest growing stock (plantation,
+other planted forest) or the whole-forest growing stock (naturally regenerating forest).
+The weight is the category area; a country still without a value gets no weight.
+Totals of such countries are 0.
 }
 \examples{
 \dontrun{

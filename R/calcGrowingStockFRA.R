@@ -1,10 +1,10 @@
 #' @title calcGrowingStockFRA
 #' @description
 #' Growing stock of one FRA 2025 forest category at country level, all reporting years.
-#' For plantation and other planted forest, a country without a growing stock entry gets the
-#' planted-forest growing stock. The weight is the category area, so a filled country counts
-#' with its category area (nothing if it has none), and the planted-forest value only carries
-#' a region that has no area in the category at all.
+#' A country without a growing stock entry gets the planted-forest growing stock (plantation,
+#' other planted forest) or the whole-forest growing stock (naturally regenerating forest).
+#' The weight is the category area; a country still without a value gets no weight.
+#' Totals of such countries are 0.
 #'
 #' @param category FRA category: "plantation", "other_planted" or "nat_reg".
 #' @param indicator Either "per_ha" (m3/ha, area-weighted) or "total" (Mm3, absolute).
@@ -34,12 +34,10 @@ calcGrowingStockFRA <- function(category = "plantation", indicator = "per_ha") {
   cat <- FRAnames(category)
   x <- collapseNames(perHa[, , cat])
   weight <- collapseNames(area[, , cat])
-  fill <- integer(0)
-  if (category != "nat_reg") {
-    planted <- collapseNames(perHa[, , "Managed Forest"])
-    fill <- which(x == 0 & planted > 0)
-    x[fill] <- planted[fill]
-  }
+  fallback <- collapseNames(perHa[, , ifelse(category == "nat_reg", "Forest", "Managed Forest")])
+  fill <- which(x == 0 & fallback > 0)
+  x[fill] <- fallback[fill]
+  weight[x == 0] <- 0
 
   if (indicator == "per_ha") {
     unit <- "m3/ha"
@@ -59,5 +57,5 @@ calcGrowingStockFRA <- function(category = "plantation", indicator = "per_ha") {
               min = 0,
               unit = unit,
               description = paste("Growing stock of", cat, "as reported by FRA 2025,",
-                                  "countries without a stock entry filled with planted forest")))
+                                  "countries without a stock entry filled with planted or whole forest")))
 }
