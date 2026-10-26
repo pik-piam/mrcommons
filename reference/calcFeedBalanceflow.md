@@ -7,6 +7,7 @@ Calculates feed balance flows from MAgPIE-Feed model to meet FAO data
 ``` r
 calcFeedBalanceflow(
   per_livestock_unit = FALSE,
+  lastHistoricalYear = 2020,
   cellular = FALSE,
   cells = "lpjcell",
   products = "kall",
@@ -20,6 +21,10 @@ calcFeedBalanceflow(
 - per_livestock_unit:
 
   default false
+
+- lastHistoricalYear:
+
+  last year of historical data before held constant into future
 
 - cellular:
 
