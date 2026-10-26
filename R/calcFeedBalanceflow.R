@@ -147,7 +147,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
     feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
                                   products = products, future = future, aggregate = FALSE,
-                                  yearly = yearly)
+                                  lastHistoricalYear = lastHistoricalYear, yearly = yearly)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
                                                     cellular = cellular, cells = "lpjcell",
                                                     aggregate = FALSE)[, , kli][, , "dm"])
