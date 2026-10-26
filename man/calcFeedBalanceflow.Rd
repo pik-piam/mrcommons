@@ -6,6 +6,7 @@
 \usage{
 calcFeedBalanceflow(
   per_livestock_unit = FALSE,
+  lastHistoricalYear = 2020,
   cellular = FALSE,
   cells = "lpjcell",
   products = "kall",
@@ -15,6 +16,8 @@ calcFeedBalanceflow(
 }
 \arguments{
 \item{per_livestock_unit}{default false}
+
+\item{lastHistoricalYear}{last year of historical data before held constant into future}
 
 \item{cellular}{if TRUE value is calculated on cellular level}
 
