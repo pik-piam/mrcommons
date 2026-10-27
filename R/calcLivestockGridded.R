@@ -36,8 +36,8 @@ calcLivestockGridded <- function(details = FALSE) {
   getNames(pastbasedFeed) <- getNames(cropbasedFeed) <- ruminants
 
   ruminantProduction    <- collapseNames(livestockProduction[, , ruminants])
-  extensiveRuminant     <- ruminantProduction * cropbasedFeed
-  intensiveRuminant     <- ruminantProduction * pastbasedFeed
+  extensiveRuminant     <- ruminantProduction * pastbasedFeed
+  intensiveRuminant     <- ruminantProduction * cropbasedFeed
 
   # calculate extensive ruminant production per cell from pasture production share
   pastureProduction     <- collapseNames(calcOutput("Production", products = "pasture",
