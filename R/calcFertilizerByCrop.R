@@ -36,6 +36,7 @@ calcFertilizerByCrop <- function(indicator = "total", deposition = "Nsurplus2", 
     data <- toolNAreplace(x = out, weight = weight)
     weight <- data$weight
     out <- data$x
+    unit <- "t Nr per ha area harvested"
   } else if (indicator == "by_area_harvested") {
     area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular,
                                      aggregate = FALSE)[, past, ])
