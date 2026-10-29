@@ -15,13 +15,11 @@ toolFillStockGaps(stock, production)
 Stock series with gaps filled.
 }
 \description{
-Fills NA gaps in an FAO census stock series using the matching production
-series as evidence: sandwiched gaps are interpolated, leading/trailing gaps filled to
-the nearest real value where production is non-zero (or the gap is a single year), the
-rest left at 0. A year for which FAO reports no production at all is not evidence that
-the herd is gone: it is filled if the series only lacks its last one or two years, or
-if the nearest reported production before and after it is positive. Genuine NA gaps
-are kept distinct from real reported zeros.
+Fills NA gaps in an FAO census stock series, using the matching production as
+evidence: a sandwiched gap is interpolated; a leading or trailing gap takes the nearest
+real value where production is above zero, where the gap is a single year, where only the
+last one or two years are missing, or where the nearest reported production on both sides
+is positive; the rest stays 0. A production of 0 is evidence, a missing one is not.
 }
 \seealso{
 \code{\link[=calcAnimalStocks]{calcAnimalStocks()}}

@@ -1,7 +1,9 @@
 #' @title toolImputeSubShare
 #' @description Imputes a still-missing dairy/laying sub-population as this country's most
 #'   recent real share (carried forward) times the year's total, clamped between 0 and the total.
-#'   Only genuine NA gaps are eligible; a real reported 0 is never overwritten.
+#'   Only genuine NA gaps are eligible; a real reported 0 is never overwritten. Before a
+#'   country's first real observation there is no share to carry and FAO reports no production
+#'   either, so those years stay with the remainder category.
 #' @param sub Sub-population series after toolFillStockGaps().
 #' @param total Species total the sub-population is part of.
 #' @param subRaw Sub-population as read from FAO before gap-filling (distinguishes real 0 from NA).
