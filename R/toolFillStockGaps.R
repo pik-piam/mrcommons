@@ -1,8 +1,28 @@
+# Which years of a leading/trailing gap may be filled from the nearest real value?
+# A year with production reported above 0 is evidence that the herd exists, and so is a
+# single-year gap. A year without any production figure is no evidence that the herd is
+# gone: it is filled if the series only lacks its last one or two years, or if the
+# nearest reported production before and after it is positive. A reported 0 blocks the
+# fill. Internal helper of toolFillStockGaps().
+toolStockGapSupport <- function(p, s, e, trailing) {
+  known   <- which(!is.na(p))
+  bridged <- vapply(s:e, function(t) {
+    before <- known[known < t]
+    after  <- known[known > t]
+    length(before) > 0 && length(after) > 0 && p[max(before)] > 0 && p[min(after)] > 0
+  }, logical(1))
+  recent <- trailing && e - s + 1 <= 2
+  (e - s + 1 == 1) | (!is.na(p[s:e]) & p[s:e] > 0) | (is.na(p[s:e]) & (recent | bridged))
+}
+
 #' @title toolFillStockGaps
 #' @description Fills NA gaps in an FAO census stock series using the matching production
 #'   series as evidence: sandwiched gaps are interpolated, leading/trailing gaps filled to
 #'   the nearest real value where production is non-zero (or the gap is a single year), the
-#'   rest left at 0. Genuine NA gaps are kept distinct from real reported zeros.
+#'   rest left at 0. A year for which FAO reports no production at all is not evidence that
+#'   the herd is gone: it is filled if the series only lacks its last one or two years, or
+#'   if the nearest reported production before and after it is positive. Genuine NA gaps
+#'   are kept distinct from real reported zeros.
 #' @param stock Stock series (magpie object) with genuine gaps marked NA.
 #' @param production Matching production series used as fill evidence.
 #' @return Stock series with gaps filled.
@@ -35,8 +55,7 @@ toolFillStockGaps <- function(stock, production) {
         # evidence in each year
         trailing <- e == length(v)
         anchor   <- if (trailing) v[s - 1] else v[e + 1]
-        supported <- (e - s + 1 == 1) | (!is.na(p[s:e]) & p[s:e] > 0)
-        v[s:e][supported] <- anchor
+        v[s:e][toolStockGapSupport(p, s, e, trailing)] <- anchor
       }
     }
     stockArr[i, ] <- v

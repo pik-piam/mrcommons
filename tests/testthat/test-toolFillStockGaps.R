@@ -42,3 +42,22 @@ test_that("a series FAO never tracked comes back as 0", {
   prod  <- mg(m2(c(1, 1), c(1, 1), c(1, 1), c(1, 1)))
   expect_equal(as.vector(toolFillStockGaps(stock, prod)["AAA", , ]), c(0, 0, 0, 0))
 })
+
+test_that("the last two years of a series without stock or production figures are carried forward", {
+  stock <- mg(m2(c(100, 10), c(200, 20), c(NA, NA), c(NA, NA)))
+  prod  <- mg(m2(c(1, 1), c(1, 1), c(NA, NA), c(NA, 0)))
+  out   <- toolFillStockGaps(stock, prod)
+  expect_equal(as.vector(out["AAA", , ]), c(100, 200, 200, 200))
+  # BBB: production is reported as 0 in the last year, so that year stays 0
+  expect_equal(as.vector(out["BBB", , ]), c(10, 20, 20, 0))
+})
+
+test_that("a year without a production figure between two years with production is filled", {
+  stock <- mg(m2(c(100, 10), c(NA, NA), c(NA, NA), c(NA, NA), c(NA, NA), c(NA, NA)))
+  prod  <- mg(m2(c(1, 1), c(1, 1), c(NA, NA), c(NA, NA), c(1, 0), c(NA, NA)))
+  out   <- toolFillStockGaps(stock, prod)
+  # AAA: years 3-4 lie between years with production; year 6 has none after it
+  expect_equal(as.vector(out["AAA", , ]), c(100, 100, 100, 100, 100, 0))
+  # BBB: production is reported as 0 in year 5, so years 3-4 are not filled
+  expect_equal(as.vector(out["BBB", , ]), c(10, 10, 0, 0, 0, 0))
+})
