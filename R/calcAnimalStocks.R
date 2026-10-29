@@ -22,7 +22,7 @@ calcAnimalStocks <- function(grouping = "IPCC") {
 
   # converted here instead of in convertFAO_online() to keep NAs, so that toolFillStockGaps()
   # can tell gaps from real zeros
-  fao <- readSource("FAO_online", "LiveHead2024", convert = "onlycorrect")
+  fao <- readSource("FAO_online", "CropLive", convert = "onlycorrect")
   relativeDelete <- c("Yield_(100_g/ha)", "Yield_Carcass_Weight_(Hg/An)", "Yield_(100mg/An)",
                       "Yield_(No/An)", "Yield_(100_mg/An)", "Yield_(100_g/An)",
                       "Yield_Carcass_Weight_(100_g/An)", "Yield_Carcass_Weight_(0_1_g/An)",
