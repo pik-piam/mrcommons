@@ -118,6 +118,9 @@ calcAnimalStocks <- function(grouping = "IPCC") {
   # (no in-dataset production evidence), using directly comparable national-statistics figures.
   # Narrow by design: only where a specific, cross-checked number was found, only for years
   # still at 0, never overwriting FAO-resolved years; ambiguous cases are left at 0.
+  # the fills end at the last year FAO reports, so that they do not fall behind and leave a
+  # new year at 0 once FAO publishes it
+  lastFao <- max(getYears(fao, as.integer = TRUE))
   applyExternalFill <- function(x, iso, years, value) {
     yrCols <- paste0("y", years)
     cur <- x[iso, yrCols, ]
@@ -129,40 +132,40 @@ calcAnimalStocks <- function(grouping = "IPCC") {
 
   # poultry layers (DPo)
   # Bulgaria Ministry of Agriculture and Food, 2024
-  layerStock <- applyExternalFill(layerStock, "BGR", 2021:2024, 4392000)
-  layerStock <- applyExternalFill(layerStock, "GLP", 2007:2024, 220155)  # DAAF Guadeloupe RA2020, 2020
-  layerStock <- applyExternalFill(layerStock, "GUF", 2007:2024, 72000)   # DAAF Guyane Memento 2017, 2016
+  layerStock <- applyExternalFill(layerStock, "BGR", 2021:lastFao, 4392000)
+  layerStock <- applyExternalFill(layerStock, "GLP", 2007:lastFao, 220155)  # DAAF Guadeloupe RA2020, 2020
+  layerStock <- applyExternalFill(layerStock, "GUF", 2007:lastFao, 72000)   # DAAF Guyane Memento 2017, 2016
   # Eurostat egg-laying-hen statistics, 2022 (likely a slight
   # underestimate given IE's growing production trend since)
-  layerStock <- applyExternalFill(layerStock, "IRL", 2021:2024, 3100000)
+  layerStock <- applyExternalFill(layerStock, "IRL", 2021:lastFao, 3100000)
   # last FAO value (2006) held constant - low confidence,
   # Agreste Martinique census notes an ongoing decline
-  layerStock <- applyExternalFill(layerStock, "MTQ", 2007:2024, 95000)
+  layerStock <- applyExternalFill(layerStock, "MTQ", 2007:lastFao, 95000)
   # last FAO value (2006) held constant - medium confidence
-  layerStock <- applyExternalFill(layerStock, "REU", 2007:2024, 508000)
+  layerStock <- applyExternalFill(layerStock, "REU", 2007:lastFao, 508000)
 
   # ducks (Dk) - main species total, not a dairy/laying sub-population
   # DAAF Guyane Memento 2017, 2015 (700 canards a gaver +
   # 4,000 canards a rotir); last FAO value (30,000) was ~6x too high
-  duckStock <- applyExternalFill(duckStock, "GUF", 2007:2024, 4700)
-  duckStock <- applyExternalFill(duckStock, "IRL", 2021:2024, 434000) # last FAO value (2020) held constant
+  duckStock <- applyExternalFill(duckStock, "GUF", 2007:lastFao, 4700)
+  duckStock <- applyExternalFill(duckStock, "IRL", 2021:lastFao, 434000) # last FAO value (2020) held constant
   # last FAO value (2001) held constant - low confidence, decades old
-  duckStock <- applyExternalFill(duckStock, "MTQ", 2002:2024, 590000)
-  duckStock <- applyExternalFill(duckStock, "REU", 2007:2024, 520000) # last FAO value (2006) held constant
+  duckStock <- applyExternalFill(duckStock, "MTQ", 2002:lastFao, 590000)
+  duckStock <- applyExternalFill(duckStock, "REU", 2007:lastFao, 520000) # last FAO value (2006) held constant
 
   # dairy cows (DCt)
-  dairyCowsStock <- applyExternalFill(dairyCowsStock, "MTQ", 2007:2024, 96)    # DAAF Martinique Memento 2016, 2015;
+  dairyCowsStock <- applyExternalFill(dairyCowsStock, "MTQ", 2007:lastFao, 96)    # DAAF Martinique Memento 2016, 2015;
   # last FAO value (2,565, 2006) was ~27x too high
-  dairyCowsStock <- applyExternalFill(dairyCowsStock, "REU", 2007:2024, 27280) # last FAO value (2006) held constant
+  dairyCowsStock <- applyExternalFill(dairyCowsStock, "REU", 2007:lastFao, 27280) # last FAO value (2006) held constant
 
   # dairy buffalo (DBf)
   # last FAO value (2019) held constant; negligibly small
-  dairyBufStock <- applyExternalFill(dairyBufStock, "ALB", 2020:2024, 29)
+  dairyBufStock <- applyExternalFill(dairyBufStock, "ALB", 2020:lastFao, 29)
   # Philippine Statistics Authority Dairy Situation Report,
   # 2023 - real growth since the 1990 baseline (8,000), so this
   # flat fill understates the 1990s-2000s and likely
   # overstates the 1991-1992 transition years slightly
-  dairyBufStock <- applyExternalFill(dairyBufStock, "PHL", 1991:2024, 30151)
+  dairyBufStock <- applyExternalFill(dairyBufStock, "PHL", 1991:lastFao, 30151)
 
   dairyCowsStock  <- toolClampToTotal(dairyCowsStock,  cattleStock,  "dairy cows")
   dairyBufStock   <- toolClampToTotal(dairyBufStock,   buffaloStock, "dairy buffalo")
