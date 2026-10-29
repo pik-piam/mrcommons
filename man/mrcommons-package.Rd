@@ -56,6 +56,7 @@ Authors:
   \item Robin Hasse
   \item Gabriel Abrahão
   \item Pascal Weigmann
+  \item Bin Lin
 }
 
 }
