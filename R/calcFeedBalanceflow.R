@@ -7,6 +7,7 @@
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @param yearly whether to calculate yearly data or only magpie 5year timesteps
+#' @param lastHistoricalYear last year of historical data before held constant into future
 #' @return List of magpie objects with results on country or cellular level, unit and description.
 #'
 #' @author Isabelle Weindl, Kristine Karstens
@@ -15,6 +16,7 @@
 #' calcOutput("FeedBalanceflow")
 #' }
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
+                                lastHistoricalYear = 2020,
                                 cellular = FALSE,
                                 cells = "lpjcell",
                                 products = "kall",
@@ -25,6 +27,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
   products2 <- findset(products, noset = "orignal")
   past      <- findset("past_til2020")
+  past <-  past[as.integer(sub("^y", "", past)) <= lastHistoricalYear]
 
   if (!perLivestockUnit) {
     prodAttributes      <- calcOutput("Attributes", aggregate = FALSE)
@@ -44,7 +47,13 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     magFeedShare     <- magFeed / dimSums(magFeed, dim = 3.1)
     magFeedShare[is.nan(magFeedShare)] <- 0
     commonproducts <- intersect(getNames(faoFeed, dim = 1), getNames(magFeed, dim = 2))
-    faoFeed <- faoFeed[, getYears(magFeed), ]
+    cyears2 <- intersect(getYears(faoFeed), getYears(magFeed))
+    faoFeed <- faoFeed[, cyears2, ]
+    magFeed <- magFeed[, cyears2, ]
+    magFeedShare <- magFeedShare[, cyears2, ]
+    faoFeednutrients <- faoFeednutrients[, cyears2, ]
+    magFeednutrients <- magFeednutrients[, cyears2, ]
+
     faoFeednutrients <- faoFeednutrients[, getYears(magFeed), ]
     # include estimates for pasture feed demand to benchmark data faoFeed:
     faoFeed[, , "pasture"] <- collapseNames(dimSums(magFeed, dim = 3.1))[, , "pasture"]
@@ -135,11 +144,10 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
   } else if (perLivestockUnit) {
 
     kli  <- findset("kli")
-    past <- findset("past_til2020")
 
     feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
                                   products = products, future = future, aggregate = FALSE,
-                                  yearly = yearly)
+                                  lastHistoricalYear = lastHistoricalYear, yearly = yearly)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
                                                     cellular = cellular, cells = "lpjcell",
                                                     aggregate = FALSE)[, , kli][, , "dm"])
