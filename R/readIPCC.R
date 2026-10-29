@@ -50,6 +50,7 @@ readIPCC <- function(subtype) {
              SCF_input        = "ch5_F_I.csv",
              SCF_sub          = "ch5_F_LU.csv",
              SCF_sub2019      = "ch5_F_LU_2019.csv",
+             SCF_sub2019_2    = "ch5_F_LU_2019_2.csv",
              SCF_LU           = "ch5_F_LU_raw.csv",
              SCF_LU2019       = "ch5_F_LU_2019_raw.csv",
              manure_table5p5c = "19R_V4_Ch05_Cropland_Table5p5C.csv",
