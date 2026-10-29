@@ -53,7 +53,7 @@ Depends:
     magclass (>= 3.17),
     mrdrivers (>= 7.1.1),
     mrcommonsenergy (>= 0.3.0),
-    mrfaocore (>= 1.10.3),
+    mrfaocore (>= 1.10.0),
     mrlandcore (>= 1.0.0),
     mstools (>= 0.6.0),
     R (>= 4.1.0)
