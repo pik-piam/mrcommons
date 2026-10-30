@@ -29,7 +29,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum") {
     production   <- production [, commonYears, ]
 
     if (cellular) {
-      devStatePast    <- toolIso2CellCountries(devStatePast, cells = "lpjcell")
+      devStatePast    <- toolIso2CellCountries(devStatePast)
     }
 
     # if the following parameters are changed, they also have to be changed in the GAMS code!
@@ -70,7 +70,7 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum") {
                                         - fieldbalance[, , "burned"] - fieldbalance[, , "ash"]))[, , "nr"])
       removalshare[is.nan(removalshare)] <- 1
 
-      removalshare <- toolIso2CellCountries(removalshare, cells = "lpjcell")
+      removalshare <- toolIso2CellCountries(removalshare)
       cell2Coord   <- toolGetMappingCoord2Country(pretty = TRUE)
       removalshare <- toolAggregate(x = removalshare, rel = cell2Coord,
                                     from = "iso", to = "coords", partrel = TRUE)
@@ -99,7 +99,6 @@ calcResFieldBalancePast <- function(cellular = FALSE, products = "sum") {
     removal <- removal + correctRemoval
     recycle <- round(production - removal - burn, 8)  # taking ash into recycling
     removal <- round(removal, 8)
-
 
     if (any(correctRemoval != 0)) {
       vcat(2, "Residue removal was corrected in areas, where there was not enough residue biomass available.")
