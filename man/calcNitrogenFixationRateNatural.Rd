@@ -18,10 +18,6 @@ calcOutput("NitrogenFixationRateNatural")
 }
 
 }
-\seealso{
-\code{\link[=calcNitrogenFixationPast]{calcNitrogenFixationPast()}}
-\code{\link[=readHerridge]{readHerridge()}}
-}
 \author{
 Benjamin Leon Bodirsky
 }

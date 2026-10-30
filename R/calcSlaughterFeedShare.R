@@ -1,7 +1,8 @@
 #' @importFrom magclass dimOrder
 #' @importFrom magpiesets findset
 
-calcSlaughterFeedShare <- function(balanceflow = TRUE) {
+calcSlaughterFeedShare <- function(balanceflow = TRUE,
+                                   lastHistoricalYear = 2020) {
 
   fbask                  <- calcOutput("FeedBaskets", aggregate = FALSE)
   getNames(fbask, dim = 1) <- paste0("alias_", getNames(fbask, dim = 1))
@@ -13,7 +14,8 @@ calcSlaughterFeedShare <- function(balanceflow = TRUE) {
 
   if (balanceflow) {
 
-    fbaskbalance <- calcOutput("FeedBalanceflow", aggregate = FALSE, per_livestock_unit = TRUE)
+    fbaskbalance <- calcOutput("FeedBalanceflow", lastHistoricalYear = lastHistoricalYear,
+                               aggregate = FALSE, per_livestock_unit = TRUE)
     fbaskbalance <- dimSums(fbaskbalance * attributes, dim = 3.2)
 
     fbask        <- fbask + fbaskbalance[, , kli]

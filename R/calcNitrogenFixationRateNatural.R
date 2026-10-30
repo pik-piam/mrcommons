@@ -2,9 +2,6 @@
 #' @description calculates fixation rates from natural ecosystems based on evapostranspiration
 #' @return List of magpie objects with results on global level, empty weight, unit and description.
 #' @author Benjamin Leon Bodirsky
-#' @seealso
-#' [calcNitrogenFixationPast()]
-#' [readHerridge()]
 #' @examples
 #' \dontrun{
 #' calcOutput("NitrogenFixationRateNatural")
