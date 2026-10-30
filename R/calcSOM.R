@@ -23,7 +23,7 @@
 #' @author Benjamin Leon Bodirsky, Kristine Karstens
 #' @examples
 #' \dontrun{
-#' calcOutput("SOM2")
+#' calcOutput("SOM")
 #' }
 #'
 calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjcell") {

@@ -36,7 +36,7 @@ This is done in delta cropland soilc.
 }
 \examples{
 \dontrun{
-calcOutput("SOM2")
+calcOutput("SOM")
 }
 
 }
