@@ -36,7 +36,7 @@ calcLanduseIntensity <- function(sectoral = "kcr", rescale = TRUE) {
 
     # HACKATHON: In calcProduction we now set this to calcYieldsLPJmL.
     # I'm actually not sure what is better. See comments there about multiple cropping argument.
-    # We should decide for one way and do hte same here and in calcProduction
+    # We should decide for one way and do the same here and in calcProduction
     # and all other instances.
     cfgLPJmL     <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
 

@@ -27,7 +27,9 @@ calcProduction <- function(products = "kcr", # nolint
                            irrigation = FALSE) {
 
   mappingCountryCell <- toolGetMappingCoord2Country()
-  mappingCountryCell$coordiso <- paste(mappingCountryCell$coords, mappingCountryCell$iso, sep = ".")
+  mappingCountryCell$coordiso <- paste(mappingCountryCell$coords,
+                                       mappingCountryCell$iso,
+                                       sep = ".")
 
   if (products == "kcr") {
 
@@ -57,7 +59,8 @@ calcProduction <- function(products = "kcr", # nolint
       cropsLPJmL     <- levels(droplevels(factor(mappingMAG2LPJ$LPJmL5)))
 
       cropareaMAG <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
-                                cellular = TRUE, irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
+                                cellular = TRUE, irrigation = TRUE,
+                                aggregate = FALSE)[, , magCropTypes]
 
       # LPJmL yields with default settings
       cfgLPJmL  <- mrlandcore::toolLPJmLDefault(suppressNote = FALSE)
@@ -93,6 +96,11 @@ calcProduction <- function(products = "kcr", # nolint
         tauCell   <- toolAggregate(x = tau, rel = mappingCountryCell,
                                    from = "iso", to = "coordiso", partrel = TRUE)
         getSets(tauCell) <- c("x", "y", "iso", "year", "ItemCodeItem")
+
+        commonYears <- intersect(getYears(tauCell), getYears(yieldsMAG))
+        cropareaMAG <- cropareaMAG[, commonYears, ]
+        tauCell     <- tauCell[, commonYears, ]
+        yieldsMAG   <- yieldsMAG[, commonYears, ]
 
         yieldsMAG <- tauCell * yieldsMAG
       }
