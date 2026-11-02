@@ -3,7 +3,6 @@
 #'
 #' @param per_livestock_unit default false
 #' @param cellular   if TRUE value is calculated on cellular level
-#' @param cells      Switch between "magpiecell" (59199) and "lpjcell" (67420)
 #' @param products products in feed baskets that shall be reported
 #' @param future if FALSE, only past years will be reported (reduces memory)
 #' @param yearly whether to calculate yearly data or only magpie 5year timesteps
@@ -18,7 +17,6 @@
 calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
                                 lastHistoricalYear = 2020,
                                 cellular = FALSE,
-                                cells = "lpjcell",
                                 products = "kall",
                                 future = "constant",
                                 yearly = FALSE) {
@@ -40,7 +38,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     faoFeed          <- collapseNames(faoFeednutrients[, , "dm"])
     faoFeed          <- add_columns(faoFeed, addnm = "pasture", dim = 3.1)
 
-    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE, cells = "lpjcell",
+    magFeednutrients <- calcOutput("FeedPast", balanceflow = FALSE, cellular = FALSE,
                                    aggregate = FALSE, nutrients = "all", products = products, yearly = yearly)
     magFeed          <- magFeednutrients[, , "dm"]
 
@@ -85,14 +83,12 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     feedBalanceflow2[is.na(feedBalanceflow2)]  <- 0
 
     if (any(round(dimSums(feedBalanceflow2, dim = 3.1) - feedBalanceflow, 5) != 0)) {
-
       vcat(verbosity = 2, paste(
                                 "Difficult to distribute the balanceflow between different livestock",
                                 "commodities, because it is not used at all in the feedbaskets.",
                                 "Distributed to ruminants for now."))
       overflow                                <- feedBalanceflow - dimSums(feedBalanceflow2, dim = 3.1)
       feedBalanceflow2[, , "alias_livst_rum"] <- feedBalanceflow2[, , "alias_livst_rum"] + overflow
-
     }
 
     feedBalanceflow  <- feedBalanceflow2
@@ -102,7 +98,7 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
       countryToCell <- toolGetMappingCoord2Country()
       countryToCell$coordiso <- paste(countryToCell$coords, countryToCell$iso, sep = ".")
       magFeedCell      <- calcOutput("FeedPast", balanceflow = FALSE,
-                                     cellular = TRUE, cells = "lpjcell",
+                                     cellular = TRUE,
                                      aggregate = FALSE, nutrients = "dm",
                                      products = products, yearly = yearly)
       magFeedCell      <- magFeedCell[, , commonproducts]
@@ -145,11 +141,11 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
 
     kli  <- findset("kli")
 
-    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular, cells = "lpjcell",
+    feedBalanceflow <- calcOutput("FeedBalanceflow", cellular = cellular,
                                   products = products, future = future, aggregate = FALSE,
                                   lastHistoricalYear = lastHistoricalYear, yearly = yearly)
     livestockProduction <- collapseNames(calcOutput("Production", products = "kli",
-                                                    cellular = cellular, cells = "lpjcell",
+                                                    cellular = cellular,
                                                     aggregate = FALSE)[, , kli][, , "dm"])
     if (yearly == FALSE) {
       cyears <- intersect(past, getYears(livestockProduction))
@@ -174,13 +170,6 @@ calcFeedBalanceflow <- function(per_livestock_unit = FALSE, # nolint
     stop("per_livestock_unit has to be boolean")
   }
 
-  if (cellular) {
-    if (cells == "magpiecell") {
-      feedBalanceflow <- toolCoord2Isocell(feedBalanceflow, cells = cells)
-      vcat(verbosity = 1, "magpiecell deprecated, please use lpjcell")
-
-    }
-  }
 
   return(list(x = feedBalanceflow,
               weight = weight,

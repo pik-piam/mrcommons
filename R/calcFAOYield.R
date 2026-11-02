@@ -4,7 +4,9 @@
 #' @param physical   physical area or havested area
 #' @param attributes in dm, wm, ge, nr, p, k
 #' @param cellular   if TRUE value is calculate on cellular level
-#' @param areaSource data source for croparea used in calculation: FAO or Toolbox
+#' @param areaSource data source for croparea used in calculation: "LandInG" (default)
+#'                   or "FAOLUH". The latter one is deprecated. The former default
+#'                   "FAO" is no longer accepted.
 #' @param irrigation distinguish irrigation or not
 #' @param cut        FALSE (default) - do not cut off yields,
 #'                   number between 0 and 1 to define percentile value for cut off
@@ -14,32 +16,20 @@
 #' @importFrom stats quantile
 
 calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
-                         cellular = FALSE, cut = FALSE, average = 5, areaSource = "FAO") {
+                         cellular = FALSE, cut = FALSE, average = 5, areaSource = "LandInG") {
 
   production <- calcOutput("Production", products = "kcr", attributes = attributes,
-                           irrigation = irrigation, cellular = cellular,
-                           cells = "lpjcell", aggregate = FALSE)
-  selectyears <- getItems(production, dim = "year")
+                           irrigation = irrigation, cellular = cellular, aggregate = FALSE)
 
-  if (areaSource == "FAO") {
+  area <- calcOutput("Croparea", physical = physical, cellular = cellular,
+                     irrigation = irrigation, aggregate = FALSE, datasource = areaSource)
 
-    area <- calcOutput("Croparea", sectoral = "kcr", physical = physical,
-                       cellular = cellular,
-                       irrigation = irrigation, aggregate = FALSE)
-
-  } else if (areaSource == "LandInG") {
-
-    area <- calcOutput("CropareaLandInG", sectoral = "kcr", physical = physical,
-                       irrigation = irrigation, selectyears = selectyears,
-                       cellular = cellular, cells = "lpjcell", aggregate = FALSE)
-  } else {
-    stop("Please specify which area should be used for calculation.
-         Note: LandInG should be FAO-consistent.")
-  }
 
   faoyears   <- intersect(getYears(production), getYears(area))
 
-  yield      <- collapseNames(production[, faoyears, ]) / area[, faoyears, ]
+  yield      <- ifelse(area[, faoyears, ] > 1e-6,
+                        collapseNames(production[, faoyears, ]) / area[, faoyears, ],
+                       NA)
   yield[yield == Inf | yield == -Inf | is.nan(yield) | yield == 0] <- NA
 
   # If cut!=FALSE, cut yields at 'cut'-percentile and hold constant from there on
@@ -69,8 +59,8 @@ calcFAOYield <- function(physical = TRUE, attributes = "dm", irrigation = FALSE,
   yield[na] <- low[na]
 
   if (!is.null(average)) {
-    area    <- toolTimeAverage(area, average)
-    yield   <- toolTimeAverage(yield, average)
+    area    <- madrat::toolTimeAverage(area, average)
+    yield   <- madrat::toolTimeAverage(yield, average)
   }
 
   cyears <- intersect(getYears(yield), getYears(area))

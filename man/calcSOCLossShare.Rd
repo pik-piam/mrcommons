@@ -7,7 +7,7 @@
 calcSOCLossShare(
   subsystems = FALSE,
   rate = "change",
-  factor = "ipccReduced",
+  factor = "ipccReduced2019Fallow",
   cells = "lpjcell"
 )
 }
@@ -18,7 +18,8 @@ if aggregated crop specific factors will be aggregated using crop area}
 
 \item{rate}{if change, change rates will be reported; if loss, loss rates will be reported}
 
-\item{factor}{switch for different ipcc versions (ipccReduced, ipccReduced2019)}
+\item{factor}{switch for different ipcc versions (ipccReduced, ipccReduced2019, ipccReduced2019Fallow)
+for the parameters of FLU in Table 5.5 of IPCC Guidelines for National Greenhouse Gas Inventories Chapter 5.}
 
 \item{cells}{"magpiecell" for 59199 cells or "lpjcell" for 67420 cells}
 }

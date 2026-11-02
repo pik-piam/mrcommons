@@ -4,6 +4,9 @@
 #' Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide
 #' Emission from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction.
 #' Alterra. http://library.wur.nl/WebQuery/wurpubs/406284.
+#'
+#' @param lpjml LPJmL version passed to calcLPJmLTransform for potential evapotranspiration
+#' @param climatetype Climate model passed to calcLPJmLTransform for potential evapotranspiration
 #' @param cellular if true, returned on cell level
 #'
 #' @return List of magpie objects with results on country level, weight on country level, unit and description.
@@ -15,34 +18,40 @@
 #' a <- calcOutput("IPCCfracLeach", cellular = FALSE)
 #' }
 #'
-
-calcIPCCfracLeach <- function(cellular = TRUE) {
+calcIPCCfracLeach <- function(lpjml       = "lpjml5.10.0-m4",
+                              climatetype = "MRI-ESM2-0:ssp245",
+                              cellular    = TRUE) {
 
   if (cellular) {
 
     past <- magpiesets::findset("past_til2020")
     past <- as.integer(gsub("y", "", past))
+
     # approach based on
     # Velthof, Gerardus Lambertus, and J. Mosquera Losada. 2011. Calculation of Nitrous Oxide Emission
     # from Agriculture in the Netherlands: Update of Emission Factors and Leaching Fraction. Alterra.
     # http://library.wur.nl/WebQuery/wurpubs/406284.
     # estimate potential evapotranspiration using LPJmL (based on Priestley–Taylor PET model)
 
-    pet    <- calcOutput("LPJmL_new",
-                         version = "LPJmL4_for_MAgPIE_44ac93de",
-                         climatetype = "GSWP3-W5E5:historical",
-                         subtype = "mpet",
-                         stage = "smoothed",
-                         aggregate = FALSE)
+    pet    <- calcOutput("LPJmLTransform",
+                         lpjmlversion = lpjml,
+                         climatetype  = climatetype,
+                         subtype      = "pnv:pet",
+                         aggregate    = FALSE) / 10 # unit transformation from mm -> m^3/ha
+
+    pet <- toolHoldConstant(pet, years = past)
     cyears <- intersect(getYears(pet, as.integer = TRUE), past)
     pet <- pet[, cyears, ]
 
-    precipitation   <- calcOutput("LPJmLClimateInput_new",
-                                  lpjmlVersion = "LPJmL4_for_MAgPIE_44ac93de",
-                                  climatetype  = "GSWP3-W5E5:historical",
-                                  variable = "precipitation:monthlySum",
-                                  stage = "smoothed",
-                                  aggregate = FALSE)
+    # extract default arguments for LPJmL
+    cfg <- toolLPJmLDefault()
+    # read in precipitation for default historical climate scenario used for LPJmL runs
+    precipitation <- calcOutput("LPJmLClimateInput", climatetype = cfg$baselineHist,
+                                variable = "precipitation:monthlySum", stage = "smoothed",
+                                lpjmlVersion = cfg$defaultLPJmLVersion, aggregate = FALSE)
+
+    dimnames(precipitation)[[3]] <- as.character(seq(1, 12))
+    precipitation <- toolHoldConstant(precipitation, years = past)
     precipitation <- precipitation[, cyears, ]
 
     ratio <- precipitation / (pet + 0.001)

@@ -19,10 +19,10 @@
 convertISIMIP <- function(x, subtype) {
 
   if (grepl("^airww", subtype)) {
-    # read in LUH landarea as weight
-    luh3 <- calcOutput("LUH3", cellular = TRUE, yrs = 1995, aggregate = FALSE)
-    landarea <- dimSums(luh3, 3)
-    landarea <- collapseDim(landarea, dim = "iso") + 10^-10
+    # read in Landuse Initialisation landarea as weight
+    landArea <- calcOutput("LandArea", aggregate = FALSE)
+    landArea <- collapseDim(landArea, dim = "iso") + 10^-10
+
 
     x        <- collapseDim(x, dim = "region")
 
@@ -30,6 +30,6 @@ convertISIMIP <- function(x, subtype) {
     stop("Aggregation rule for given subtype \"", subtype, "\" not defined!")
   }
 
-  return(toolAggregateCell2Country(x, weight = landarea, fill = 0))
+  return(toolAggregateCell2Country(x, weight = landArea, fill = 0))
 
 }
