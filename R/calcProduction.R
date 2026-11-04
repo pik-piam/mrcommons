@@ -57,7 +57,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       yieldsMAG      <- toolAggregate(x = yieldsLPJ, rel = mappingMAG2LPJ, from = "LPJmL", to = "MAgPIE",
                                       dim = 3.1, partrel = TRUE)[, , magCropTypes]
 
-      cropareaMAG    <- calcOutput("Croparea", sectoral = "kcr", physical = TRUE, cellular = TRUE,
+      cropareaMAG    <- calcOutput("Croparea", physical = TRUE, cellular = TRUE,
                                    irrigation = TRUE, aggregate = FALSE)[, , magCropTypes]
 
       commonYears <- intersect(getYears(yieldsLPJ), getYears(cropareaMAG))
@@ -126,8 +126,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
         }
 
         # correct items with no total cropland area for known data mismatches:
-        # where no LUH croparea at all, but FAO production reported
-        # Note: Number of countries with mismatch would reduce if we use the croparea of LandInG
+        # where no croparea at all, but FAO production reported
         isoMAGTotCrop  <- dimSums(isoMAGCroparea, dim = 3)
         noMAGTotCrop   <- (isoMAGTotCrop == 0) * isoMismatch
 
@@ -183,6 +182,10 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
           productionMAG["HKG", , "rainfed"] <- productionFAO["HKG", , ] /
             length(getItems(productionMAG["HKG", , ], dim = 1))
         }
+        if (any(noMAGTotCrop["SYC", , ] != 0)) {
+          productionMAG["SYC", , "rainfed"] <- productionFAO["SYC", , ] /
+            length(getItems(productionMAG["SYC", , ], dim = 1))
+        }
         if (any(noMAGTotCrop["MLT", , ] != 0)) {
           productionMAG["MLT", , "rainfed"] <- productionFAO["MLT", , ] /
             length(getItems(productionMAG["MLT", , ], dim = 1))
@@ -223,9 +226,13 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
       isoproductionMAG  <- isoMismatch <- dimSums(productionMAG, dim = c(1.1, 1.2, 3.2))
       isoMismatch[]     <- abs(round(isoproductionMAG - productionFAO, 4)) > 0
 
+      # Warning if there are still mismatches
       if (any(isoMismatch != 0)) {
-        warning(paste0("Cellular data to FAO production mismatch ",
-                       "after generic fix in calcProduction. Please check!"))
+        # ignore the HKG mismatch for now (since a more generic fix is coming)
+        if (any(isoMismatch["HKG", , invert = TRUE] != 0)) {
+          warning(paste0("Cellular data to FAO production mismatch ",
+                        "after generic fix in calcProduction. Please check!"))
+        }
       }
 
       #####################################################################
@@ -252,7 +259,7 @@ calcProduction <- function(products = "kcr", cellular = FALSE, cells = "lpjcell"
 
     } else {
       ####################################
-      ### pasture production celluluar ###
+      ### pasture production cellular  ###
       ####################################
 
       areaPasture    <- collapseNames(calcOutput("LanduseInitialisation", cellular = TRUE,

@@ -47,11 +47,11 @@ calcSOM <- function(climatetype = "historical", subtype = "stock", cells = "lpjc
   cropArea    <- dimSums(states[, , crops], dim = 3)
   noncropArea <- dimSums(states, dim = 3) - cropArea
 
-  cropshare  <- toolFillYears(calcOutput("Croparea", sectoral = "kcr", physical = TRUE,
+  cropshare  <- toolFillYears(calcOutput("Croparea", physical = TRUE, fallow = TRUE,
                                          cellular = TRUE, irrigation = FALSE, aggregate = FALSE), cyears)
   cropshare  <- toolConditionalReplace(cropshare / dimSums(cropshare, dim = 3), "is.na()", 0)
   carbshare  <- calcOutput("SOCLossShare", aggregate = FALSE, subsystems = TRUE,
-                           rate = "change", factor = "ipccReduced", cells = "lpjcell")
+                           rate = "change", cells = "lpjcell")
   cshare     <- dimSums(cropshare * carbshare, dim = 3)
   cshare[cshare == 0] <- 1 # target for cropland in cells without cropland equal to nat veg just as backup.
 

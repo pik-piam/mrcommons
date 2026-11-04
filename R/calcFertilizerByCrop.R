@@ -1,8 +1,8 @@
 #' @title calcFertilizerByCrop
 #' @description calculates the crop-specific use of different N inputs
 #'
-#' @param indicator total: estimates the inputs per total crop production; by_harvest estimates the inputs
-#' per ton harvest; by_area estimates the inputs per area harvested
+#' @param indicator total: estimates the inputs per total crop production; by_physical_area and by_area_harvested
+#' estimates the inputs per unit of land
 #' @param deposition if FALSE, deposition is not accounted for in the distribution. Use FALSE to avoid
 #' circularities in calcNitrogenBudget
 #' @param cellular cellular disaggreagation or national values
@@ -29,16 +29,17 @@ calcFertilizerByCrop <- function(indicator = "total", deposition = "Nsurplus2", 
                                                 dim = 3.1) * withdrawal[, cyears, ]
   if (indicator == "by_physical_area") {
     area <- collapseNames(calcOutput("Croparea", aggregate = FALSE, physical = TRUE,
-                                     cellular = cellular, sectoral = "kcr")[, cyears, ])
+                                     cellular = cellular)[, cyears, ])
     out <- inputsPerCrop[, , getNames(area)] / area
     weight <- out
     weight[, , ] <- area
     data <- toolNAreplace(x = out, weight = weight)
     weight <- data$weight
     out <- data$x
+    unit <- "t Nr per ha area harvested"
   } else if (indicator == "by_area_harvested") {
     area <- collapseNames(calcOutput("Croparea", physical = FALSE, cellular = cellular,
-                                     aggregate = FALSE, sectoral = "kcr")[, past, ])
+                                     aggregate = FALSE)[, past, ])
     out <- inputsPerCrop[, , getNames(area)] / area
     weight <- out
     weight[, , ] <- area
