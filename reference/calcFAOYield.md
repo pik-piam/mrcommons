@@ -12,7 +12,7 @@ calcFAOYield(
   cellular = FALSE,
   cut = FALSE,
   average = 5,
-  areaSource = "FAO"
+  areaSource = "LandInG"
 )
 ```
 
@@ -45,7 +45,9 @@ calcFAOYield(
 
 - areaSource:
 
-  data source for croparea used in calculation: FAO or Toolbox
+  data source for croparea used in calculation: "LandInG" (default) or
+  "FAOLUH". The latter one is deprecated. The former default "FAO" is no
+  longer accepted.
 
 ## Value
 

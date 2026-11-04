@@ -20,10 +20,6 @@ calcNitrogenBNF(cellular = FALSE)
 List of magpie objects with results on country level, weight on country
 level, unit and description.
 
-## See also
-
-[`calcNitrogenFixationPast()`](calcNitrogenFixationPast.md)
-
 ## Author
 
 Benjamin Leon Bodirsky

@@ -135,10 +135,12 @@
   calcNitrogenBudgetOcean
 - [`calcNitrogenBudgetPasture()`](calcNitrogenBudgetPasture.md) :
   calcNitrogenBudgetPasture
-- [`calcNitrogenFixationPast()`](calcNitrogenFixationPast.md) :
-  calcNitrogenFixationPast
+- [`calcNitrogenFixationFreeliving()`](calcNitrogenFixationFreeliving.md)
+  : calcNitrogenFixationFreeliving
 - [`calcNitrogenFixationRateNatural()`](calcNitrogenFixationRateNatural.md)
   : calcNitrogenFixationRateNatural
+- [`calcNitrogenFixationSymbiotic()`](calcNitrogenFixationSymbiotic.md)
+  : calcNitrogenFixationSymbiotic
 - [`calcNitrogenWithdrawalByCrop()`](calcNitrogenWithdrawalByCrop.md) :
   calcNitrogenWithdrawalByCrop
 - [`calcNuePasture()`](calcNuePasture.md) : calcNuePasture

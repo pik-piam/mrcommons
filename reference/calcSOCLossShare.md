@@ -8,7 +8,7 @@ Calculates soil organic carbon loss share on cellular level
 calcSOCLossShare(
   subsystems = FALSE,
   rate = "change",
-  factor = "ipccReduced",
+  factor = "ipccReduced2019Fallow",
   cells = "lpjcell"
 )
 ```
@@ -28,7 +28,9 @@ calcSOCLossShare(
 
 - factor:
 
-  switch for different ipcc versions (ipccReduced, ipccReduced2019)
+  switch for different ipcc versions (ipccReduced, ipccReduced2019,
+  ipccReduced2019Fallow) for the parameters of FLU in Table 5.5 of IPCC
+  Guidelines for National Greenhouse Gas Inventories Chapter 5.
 
 - cells:
 

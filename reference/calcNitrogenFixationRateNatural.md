@@ -20,11 +20,6 @@ calcNitrogenFixationRateNatural(cells = "lpjcell")
 List of magpie objects with results on global level, empty weight, unit
 and description.
 
-## See also
-
-[`calcNitrogenFixationPast()`](calcNitrogenFixationPast.md)
-[`readHerridge()`](readHerridge.md)
-
 ## Author
 
 Benjamin Leon Bodirsky

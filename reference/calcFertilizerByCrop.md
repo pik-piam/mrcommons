@@ -16,9 +16,9 @@ calcFertilizerByCrop(
 
 - indicator:
 
-  total: estimates the inputs per total crop production; by_harvest
-  estimates the inputs per ton harvest; by_area estimates the inputs per
-  area harvested
+  total: estimates the inputs per total crop production;
+  by_physical_area and by_area_harvested estimates the inputs per unit
+  of land
 
 - deposition:
 

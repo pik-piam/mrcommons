@@ -8,7 +8,7 @@ the future, SNuPE scenarios are added.
 ## Usage
 
 ``` r
-calcSNUpE(max_snupe = 0.85, cellular = FALSE, rev = 0.1, maccbase = TRUE)
+calcSNUpE(max_snupe = 0.85, cellular = FALSE, rev = "0.1", maccbase = TRUE)
 ```
 
 ## Arguments

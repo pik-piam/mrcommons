@@ -1,5 +1,7 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>/404.html</loc></url>
+<url><loc>/CODE_STYLE.html</loc></url>
+<url><loc>/CONTRIBUTING.html</loc></url>
 <url><loc>/LICENSE-text.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
@@ -83,8 +85,9 @@
 <url><loc>/reference/calcNitrogenBudgetNonagland.html</loc></url>
 <url><loc>/reference/calcNitrogenBudgetOcean.html</loc></url>
 <url><loc>/reference/calcNitrogenBudgetPasture.html</loc></url>
-<url><loc>/reference/calcNitrogenFixationPast.html</loc></url>
+<url><loc>/reference/calcNitrogenFixationFreeliving.html</loc></url>
 <url><loc>/reference/calcNitrogenFixationRateNatural.html</loc></url>
+<url><loc>/reference/calcNitrogenFixationSymbiotic.html</loc></url>
 <url><loc>/reference/calcNitrogenWithdrawalByCrop.html</loc></url>
 <url><loc>/reference/calcNuePasture.html</loc></url>
 <url><loc>/reference/calcNutrientBudgetSewage.html</loc></url>
