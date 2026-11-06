@@ -26,5 +26,5 @@ calcOutput("AnimalStocks")
 \code{\link[=readIPCC]{readIPCC()}}
 }
 \author{
-Benjamin Leon Bodirsky
+Benjamin Leon Bodirsky, Bin Lin
 }

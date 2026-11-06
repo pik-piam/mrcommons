@@ -164,6 +164,7 @@ importFrom(reshape2,
 )
 importFrom(rlang,.data)
 importFrom(stats,
+  approx,
   na.omit,
   quantile,
   reshape,
