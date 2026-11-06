@@ -278,10 +278,7 @@ calcAnimalStocks <- function(grouping = "IPCC") {
 
   # sort according to n_rate animal categories
 
-  # any NA remaining here is a country FAO never tracked for that item at all (dropped by
-  # toolCountryFill(fill = NA) at read-in), not a within-series gap - toolFillStockGaps()
-  # and toolImputeSubShare() already handled those. Cleaned up only here because the steps
-  # above need the NA/real-zero distinction.
+  # toolFillStockGaps() already sets every unresolved gap to 0; this only guards later changes
   animals[is.na(animals)] <- 0
 
   # remove all negative values
